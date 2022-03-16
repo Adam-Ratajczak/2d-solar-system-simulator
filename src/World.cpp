@@ -10,7 +10,7 @@
 #include <iostream>
 
 World::World(){
-    font.loadFromFile("Pulang.ttf");
+    font.loadFromFile("../assets/Pulang.ttf");
 }
 
 void World::add_planet(const Planet &planet){
