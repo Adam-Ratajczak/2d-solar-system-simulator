@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
 add_executable(
-    src/out
+    out
     src/main.cpp
     src/Planet.cpp
     src/World.cpp
