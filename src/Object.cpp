@@ -14,10 +14,10 @@ Vector2 Object::attraction(const Object& other){
     return Vector2(std::cos(theta) * force, std::sin(theta) * force);
 }
 
-bool Object::hover(Vector2 mouse_pos){
+bool Object::hover(View& view, Vector2 mouse_pos){
     sf::Text label(m_name, World::font, 15);
     label.setFillColor(sf::Color::White);
-    label.setPosition(m_pos * World::SCALE + World::offset);
+    label.setPosition(view.world_to_screen(m_pos));
     auto bounds = label.getLocalBounds();
     auto pos = label.getPosition();
 
@@ -30,7 +30,7 @@ bool Object::hover(Vector2 mouse_pos){
     return false;
 }
 
-void Object::draw(sf::RenderWindow& window){
+void Object::draw(View& view){
     sf::VertexArray trail(sf::LinesStrip, m_trail.size());
 
     unsigned i = 0;
@@ -39,24 +39,26 @@ void Object::draw(sf::RenderWindow& window){
         trail[i].color = m_color;
         trail[i].color.a = 128;
 
-        trail[i].position = l * World::SCALE + World::offset;
+        trail[i].position = view.world_to_screen(l);
         i++;
     }
 
-    sf::CircleShape planet_circle(m_radius * World::SCALE, 100);
-    planet_circle.setOrigin(m_radius * World::SCALE, m_radius * World::SCALE);
+    sf::CircleShape planet_circle(m_radius * view.scale(), 100);
+    planet_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
 
     if(World::mode){
-        planet_circle.setRadius(m_radius / 1e7 * World::zoom);
-        planet_circle.setOrigin(m_radius / 1e7 * World::zoom, m_radius / 1e7 * World::zoom);
+        planet_circle.setRadius(m_radius / 1e7 * view.scale());
+        planet_circle.setOrigin(m_radius / 1e7 * view.scale(), m_radius / 1e7 * view.scale());
     }
 
     planet_circle.setFillColor(m_color);
-    planet_circle.setPosition(m_pos * World::SCALE + World::offset);
+    planet_circle.setPosition(view.world_to_screen(m_pos));
+
+    auto& target = view.target();
 
     if(m_trail.size() > 2)
-        window.draw(trail);
-    window.draw(planet_circle);
+        target.draw(trail);
+    target.draw(planet_circle);
 
     sf::Text label(m_name, World::font, 15);
     label.setFillColor(sf::Color::White);
@@ -64,5 +66,5 @@ void Object::draw(sf::RenderWindow& window){
     auto bounds = label.getLocalBounds();
     label.setOrigin(bounds.width / 2, bounds.height / 2);
 
-    window.draw(label);
+    target.draw(label);
 }

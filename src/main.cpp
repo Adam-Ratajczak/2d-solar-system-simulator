@@ -6,19 +6,14 @@
 
 unsigned World::object_count = 0;
 bool World::collisions = true;
-Vector2 World::offset;
-sf::View World::view;
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Intro");
-    auto sizes = window.getSize();
 
-    World::offset = sizes / 2;
     World::mode = 0;
-    World::view = window.getDefaultView();
 
-    World world;
+    World world {window};
 
     window.setFramerateLimit(60);
     
@@ -89,17 +84,17 @@ int main()
 
     while (window.isOpen())
     {
-        world.get_events(window);
+        world.get_events();
         
         window.clear();
 
         world.update();
 
-        world.draw(window);
+        world.draw();
 
-        world.handle_creative_mode(window);
+        world.handle_creative_mode();
 
-        world.handle_focus(window);
+        world.handle_focus();
 
         window.display();
     }

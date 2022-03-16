@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Vector2.hpp"
+#include "View.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <list>
+
 class Object{
 protected:
     double m_mass, m_density;
@@ -18,6 +20,6 @@ public:
     Vector2 m_pos;
     std::string m_name;
     
-    void draw(sf::RenderWindow&);
-    bool hover(Vector2 mouse_pos);
+    void draw(View&);
+    bool hover(View& view, Vector2 mouse_pos);
 };

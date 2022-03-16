@@ -9,7 +9,6 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-double World::SCALE = 1000 / AU;
 
 Planet::Planet(
     double mass, 

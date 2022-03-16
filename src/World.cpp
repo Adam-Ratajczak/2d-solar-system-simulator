@@ -9,7 +9,8 @@
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
-World::World(){
+World::World(sf::RenderWindow& window)
+: view(window) {
     font.loadFromFile("../assets/Pulang.ttf");
 }
 
@@ -24,17 +25,18 @@ Vector2 prev_pos, pos;
 double mass = 0, distance;
 
 bool World::mode = 0;
-double World::zoom = 1;
 sf::Font World::font;
 
-void World::get_events(sf::RenderWindow &window){
+void World::get_events(){
+    sf::Event event;
+    auto& window = view.target();
     while(window.pollEvent(event)){
         if (event.type == sf::Event::Closed)
             window.close();
         else if(event.type == sf::Event::MouseButtonPressed){
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
                 if(clicks == 0){
-                    prev_pos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    prev_pos = view.screen_to_world({static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y)});
                 }else if(clicks == 1){
                     color.r = rand() % 256;
                     color.g = rand() % 256;
@@ -46,7 +48,7 @@ void World::get_events(sf::RenderWindow &window){
                     dragging = true;
 
                     for(auto& planet : planet_list){
-                        if(planet.hover(prev_pos)){
+                        if(planet.hover(view, prev_pos)){
                             focusing = &planet;
                             focused = true;
                         }
@@ -73,30 +75,27 @@ void World::get_events(sf::RenderWindow &window){
                 }
             }else{
                 if (event.mouseWheelScroll.delta <= -1){
-                    SCALE *= 1.1f;
-                    zoom *= 1.1;
+                    view.apply_zoom(1.1);
                 }else if (event.mouseWheelScroll.delta >= 1){
-                    SCALE *= .9f;
-                    zoom *= 0.9;
+                    view.apply_zoom(1 / 1.1);
                 }
                 break;
             }
         }else if(event.type == sf::Event::MouseMoved){
             if(dragging){
-                const sf::Vector2f newPos = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
-                    const sf::Vector2f deltaPos = prev_pos - newPos;
-                    view.setCenter(view.getCenter() + deltaPos);
-                    window.setView(view);
-                    prev_pos = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
-                    break;
+                Vector2 mouse_pos {static_cast<double>(event.mouseMove.x), static_cast<double>(event.mouseMove.y)};
+                const sf::Vector2f newPos = view.screen_to_world(mouse_pos);
+                const sf::Vector2f deltaPos = prev_pos - newPos;
+                view.set_offset(view.offset() + deltaPos);
+                std::cout << "mouse_pos: " << mouse_pos << " view offset: " << view.offset() << " prev_pos: " << prev_pos << " delta_pos: " << deltaPos << std::endl;
+                break;
             }
         }else if(event.type == sf::Event::MouseButtonReleased){
             dragging = false;
             break;
         }else if(event.type == sf::Event::KeyReleased){
             if(event.key.code == sf::Keyboard::Space){
-                view = window.getDefaultView();
-                window.setView(view);
+                view.reset();
             }else if(event.key.code == sf::Keyboard::Right){
                 speed *= 2;
                 if(speed == 0)
@@ -110,34 +109,34 @@ void World::get_events(sf::RenderWindow &window){
     }
 }
 
-void World::handle_creative_mode(sf::RenderWindow& window){
-    auto sizes = window.getSize();
+void World::handle_creative_mode(){
+    // TODO: Make it working
     if(clicks == 1){
-        pos = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+        pos = view.screen_to_world({static_cast<double>(event.mouseMove.x), static_cast<double>(event.mouseMove.y)});
         sf::CircleShape ring;
         distance = get_distance(prev_pos, pos);
         ring.setRadius(distance);
         ring.setFillColor(sf::Color(0, 0, 0, 0));
         ring.setOutlineColor(sf::Color::White);
         ring.setOrigin(distance, distance);
-        ring.setOutlineThickness(2 * zoom);
+        ring.setOutlineThickness(2 * view.scale());
         ring.setPointCount(100);
         ring.setPosition(prev_pos);
-        window.draw(ring);
+        view.target().draw(ring);
         sf::VertexArray line(sf::Lines, 2);
         line[0].color = sf::Color::White;
         line[1].color = sf::Color::White;
         line[0].position = prev_pos;
         line[1].position = pos;
-        window.draw(line);
+        view.target().draw(line);
 
-        distance /= SCALE;
+        //distance /= SCALE;
         if(World::mode)
             distance /= 1e7;
 
         sf::Text text("Radius: " + std::to_string(distance) + " m", font, 20);
-        text.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 0)));
-        window.draw(text);
+        text.setPosition(view.world_to_screen({}));
+        view.target().draw(text);
     }else if(clicks == 2){
         sf::CircleShape ring;
         ring.setRadius(distance);
@@ -147,32 +146,32 @@ void World::handle_creative_mode(sf::RenderWindow& window){
         ring.setPosition(prev_pos);
 
         if(World::mode){
-            ring.setRadius(distance / 1e7 * World::zoom);
-            ring.setOrigin(distance / 1e7 * World::zoom, distance / 1e7 * World::zoom);
+            ring.setRadius(distance / 1e7 * view.scale());
+            ring.setOrigin(distance / 1e7 * view.scale(), distance / 1e7 * view.scale());
         }
 
-        window.draw(ring);
+        view.target().draw(ring);
         sf::Text text("Mass: 10^" + std::to_string(mass) + " kg", font, 20);
-        text.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 0)));
-        window.draw(text);
+        text.setPosition(view.world_to_screen({}));
+        view.target().draw(text);
     }else if(clicks == 3){
         collisions = false;
-        pos = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+        pos = view.screen_to_world({static_cast<double>(event.mouseMove.x), static_cast<double>(event.mouseMove.y)});
         sf::CircleShape ring;
         ring.setRadius(distance);
         ring.setFillColor(color);
         ring.setOrigin(distance, distance);
         ring.setPointCount(100);
         ring.setPosition(prev_pos);
-        window.draw(ring);
+        view.target().draw(ring);
         sf::VertexArray line(sf::Lines, 2);
         line[0].color = sf::Color::White;
         line[1].color = sf::Color::White;
         line[0].position = prev_pos;
         line[1].position = pos;
-        window.draw(line);
+        view.target().draw(line);
         Planet temp_planet(std::pow(10, mass), distance, 
-            (prev_pos - offset) / SCALE,
+            view.screen_to_world(prev_pos),
             (pos - prev_pos) / 200, 
             color, "Temporary planet", 1000);
         std::list<Planet> temp_planets = planet_list;
@@ -184,14 +183,14 @@ void World::handle_creative_mode(sf::RenderWindow& window){
             }
         }
         collisions = true;
-        temp_planets.back().draw(window);
-        sf::Text text("Velocity: " + std::to_string(((pos - prev_pos) / SCALE).magnitude()) + " m/s", font, 20);
-        text.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 0)));
-        window.draw(text);
+        temp_planets.back().draw(view);
+        sf::Text text("Velocity: " + std::to_string(((pos - prev_pos)).magnitude()) + " m/s", font, 20);
+        text.setPosition(view.world_to_screen({}));
+        view.target().draw(text);
     }else if(clicks == 4){
         planet_list.push_back(
             Planet(std::pow(10, mass), distance, 
-            (prev_pos - offset) / SCALE,
+            view.screen_to_world(prev_pos),
             (pos - prev_pos) / 200, 
             color, "Planet" + std::to_string(object_count), 2000));
         clicks = 0;
@@ -206,18 +205,15 @@ void World::update(){
     }
 }
 
-void World::draw(sf::RenderWindow &window){
+void World::draw(){
     for(auto& p : planet_list)
-        p.draw(window);
+        p.draw(view);
 }
 
-void World::handle_focus(sf::RenderWindow& window){
+void World::handle_focus(){
     if(focused){
-        view.setCenter(focusing->m_pos * SCALE + offset);
-        window.setView(view);
-        
         for(auto& moon : focusing->moon_list){
-            moon.draw(window);
+            moon.draw(view);
             std::cout << moon.m_name << " " << moon.m_pos << "\n";
         }
     }
