@@ -1,7 +1,10 @@
 #include "Planet.hpp"
 #include "Vector2.hpp"
 #include "World.hpp"
+#include "gui/Slider.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <iostream>
 
 unsigned World::object_count = 0;
@@ -82,8 +85,15 @@ int main()
         Vector2(0, -5430), 
         sf::Color(0, 111, 255), "Neptune", 70000));
 
+        Slider slider(0, 10, 0.1);
+        slider.set_position(sf::Vector2f(0, 0));
+        slider.set_size(200, 5);
+        slider.set_display_attributes(sf::Color(192, 192, 192), sf::Color::White);
+
     while (window.isOpen())
     {
+        slider.draw(window);
+        
         world.get_events();
         
         window.clear();
