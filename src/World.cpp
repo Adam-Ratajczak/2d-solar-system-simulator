@@ -44,8 +44,7 @@ void World::get_events(){
                     for(auto& planet : planet_list){
                         if(planet.hover(view, world_click_pos)){
                             std::cout << "yay focused: " << planet.m_name << std::endl;
-                            focusing = &planet;
-                            focused = true;
+                            focused_planet = &planet;
                         }
                     }
                 }
@@ -57,7 +56,7 @@ void World::get_events(){
                 }else {
                     clicks = 0;
                 }
-                focused = false;
+                focused_planet = nullptr;
             }
             break;
         }else if(event.type == sf::Event::MouseWheelScrolled){
@@ -205,20 +204,20 @@ void World::update(){
 void World::draw(){
     for(auto& p : planet_list)
     {
-        if(&p == focusing)
+        if(&p == focused_planet)
             std::cout << "focusing draw(): " << p.m_pos << std::endl;
         p.draw(view);
     }
 }
 
 void World::handle_focus(){
-    if(focused){
-        for(auto& moon : focusing->moon_list){
+    if(focused_planet){
+        for(auto& moon : focused_planet->moon_list){
             moon.draw(view);
             std::cout << moon.m_name << " " << moon.m_pos << "\n";
         }
-        std::cout << "focusing handle_focus(): " << focusing->m_pos << std::endl;
-        view.set_offset(focusing->m_pos);
+        std::cout << "focusing handle_focus(): " << focused_planet->m_pos << std::endl;
+        view.set_offset(focused_planet->m_pos);
     }
 }
 

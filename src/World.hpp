@@ -15,12 +15,12 @@ class World{
 private:
     std::list<Planet> planet_list;
     sf::Event event;
-    Planet* focusing;
+    Planet* focused_planet = nullptr;
 
     // TODO: Move it to GUI.
     unsigned clicks = 0, speed = 1;
     sf::Color color;
-    bool edit = false, dragging = false, focused = false;
+    bool edit = false, dragging = false;
     Vector2 prev_pos, pos;
     double mass = 0, distance;
 
