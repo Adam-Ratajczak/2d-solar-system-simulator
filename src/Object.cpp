@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <iostream>
 
 Vector2 Object::attraction(const Object& other){
     double distance = get_distance(this->m_pos, other.m_pos);
@@ -15,19 +16,10 @@ Vector2 Object::attraction(const Object& other){
 }
 
 bool Object::hover(View& view, Vector2 mouse_pos){
-    sf::Text label(m_name, World::font, 15);
-    label.setFillColor(sf::Color::White);
-    label.setPosition(view.world_to_screen(m_pos));
-    auto bounds = label.getLocalBounds();
-    auto pos = label.getPosition();
-
-    if(mouse_pos.x > pos.x - bounds.width / 2 && mouse_pos.x < pos.x + bounds.width / 2){
-        if(mouse_pos.y > pos.y - bounds.height / 2 && mouse_pos.y < pos.y + bounds.height / 2){
-            return true;
-        }
-    }
-
-    return false;
+    double dst = mouse_pos.distance_to(m_pos);
+    if(m_name == "Mercury")
+        std::cout << dst << " <? " << 20 / view.scale() << " s=" << view.scale() << std::endl;
+    return dst < 20 / view.scale();
 }
 
 void Object::draw(View& view){

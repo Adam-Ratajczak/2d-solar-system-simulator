@@ -95,17 +95,11 @@ int main()
         slider.draw(window);
         
         world.get_events();
-        
         window.clear();
-
         world.update();
-
-        world.draw();
-
-        world.handle_creative_mode();
-
         world.handle_focus();
-
+        world.draw();
+        world.handle_creative_mode();
         window.display();
     }
 

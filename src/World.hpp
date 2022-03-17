@@ -17,6 +17,13 @@ private:
     sf::Event event;
     Planet* focusing;
 
+    // TODO: Move it to GUI.
+    unsigned clicks = 0, speed = 1;
+    sf::Color color;
+    bool edit = false, dragging = false, focused = false;
+    Vector2 prev_pos, pos;
+    double mass = 0, distance;
+
 public:
     explicit World(sf::RenderWindow& window);
 

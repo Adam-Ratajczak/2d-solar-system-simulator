@@ -18,12 +18,6 @@ void World::add_planet(const Planet &planet){
     planet_list.push_back(planet);
 }
 
-unsigned clicks = 0, speed = 1;
-sf::Color color;
-bool edit = false, dragging = false, focused = false;
-Vector2 prev_pos, pos;
-double mass = 0, distance;
-
 bool World::mode = 0;
 sf::Font World::font;
 
@@ -34,9 +28,10 @@ void World::get_events(){
         if (event.type == sf::Event::Closed)
             window.close();
         else if(event.type == sf::Event::MouseButtonPressed){
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            if(event.mouseButton.button == sf::Mouse::Left){
+                auto world_click_pos = view.screen_to_world({static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y)});
                 if(clicks == 0){
-                    prev_pos = view.screen_to_world({static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y)});
+                    prev_pos = world_click_pos;
                 }else if(clicks == 1){
                     color.r = rand() % 256;
                     color.g = rand() % 256;
@@ -46,9 +41,9 @@ void World::get_events(){
                     clicks++;
                 else{
                     dragging = true;
-
                     for(auto& planet : planet_list){
-                        if(planet.hover(view, prev_pos)){
+                        if(planet.hover(view, world_click_pos)){
+                            std::cout << "yay focused: " << planet.m_name << std::endl;
                             focusing = &planet;
                             focused = true;
                         }
@@ -87,7 +82,7 @@ void World::get_events(){
                 const sf::Vector2f newPos = view.screen_to_world(mouse_pos);
                 const sf::Vector2f deltaPos = prev_pos - newPos;
                 view.set_offset(view.offset() + deltaPos);
-                std::cout << "mouse_pos: " << mouse_pos << " view offset: " << view.offset() << " prev_pos: " << prev_pos << " delta_pos: " << deltaPos << std::endl;
+                //std::cout << "mouse_pos: " << mouse_pos << " view offset: " << view.offset() << " prev_pos: " << prev_pos << " delta_pos: " << deltaPos << std::endl;
                 break;
             }
         }else if(event.type == sf::Event::MouseButtonReleased){
@@ -105,6 +100,8 @@ void World::get_events(){
             }else if(event.key.code == sf::Keyboard::C){
                 edit = !edit;
             }
+        } else if(event.type == sf::Event::Resized) {
+            window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
         }
     }
 }
@@ -207,7 +204,11 @@ void World::update(){
 
 void World::draw(){
     for(auto& p : planet_list)
+    {
+        if(&p == focusing)
+            std::cout << "focusing draw(): " << p.m_pos << std::endl;
         p.draw(view);
+    }
 }
 
 void World::handle_focus(){
@@ -216,6 +217,8 @@ void World::handle_focus(){
             moon.draw(view);
             std::cout << moon.m_name << " " << moon.m_pos << "\n";
         }
+        std::cout << "focusing handle_focus(): " << focusing->m_pos << std::endl;
+        view.set_offset(focusing->m_pos);
     }
 }
 

@@ -30,6 +30,13 @@ public:
     operator sf::Vector2f(){
         return sf::Vector2f(x, y);
     }
+
+    double distance_to(Vector2 const& other) const
+    {
+        double dx = x - other.x;
+        double dy = y - other.y;
+        return std::sqrt(dx*dx+dy*dy);
+    }
 };
 
 inline Vector2 operator+(Vector2 a, Vector2 b){return Vector2(a.x + b.x, a.y + b.y);}
