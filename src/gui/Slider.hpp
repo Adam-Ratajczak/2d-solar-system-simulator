@@ -11,6 +11,7 @@ class Slider{
     double m_val;
     const double m_min_val, m_max_val;
     double m_step;
+    bool m_dragging = false;
 
     const bool m_mode; // 0 for linear, 1 for logarithmic
 
