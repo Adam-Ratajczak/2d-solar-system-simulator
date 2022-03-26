@@ -44,45 +44,45 @@ Object::Object(
     World::object_count++;
 }
 
-void Object::update(std::list<Object>& planet_list){
+void Object::update(std::list<Object>& object_list){
     Vector2 temp_vel;
-    for(auto& planet : planet_list){
-        if(this != &planet){
-            double distance = get_distance(this->m_pos, planet.m_pos);
+    for(auto& object : object_list){
+        if(this != &object){
+            double distance = get_distance(this->m_pos, object.m_pos);
 
-            if(distance < this->m_radius + planet.m_radius){
+            if(distance < this->m_radius + object.m_radius){
                 if(!World::collisions)
                     break;
                 
-                std::cout << this->m_name << " - " << planet.m_name << "\n";
+                std::cout << this->m_name << " - " << object.m_name << "\n";
 
-                double log10m1 = std::log10(this->m_mass), log10m2 = std::log10(planet.m_mass);
+                double log10m1 = std::log10(this->m_mass), log10m2 = std::log10(object.m_mass);
 
-                if(this->m_mass < planet.m_mass){
-                    this->m_name = planet.m_name;
-                    this->m_trail = planet.m_trail;
+                if(this->m_mass < object.m_mass){
+                    this->m_name = object.m_name;
+                    this->m_trail = object.m_trail;
                 }
 
-                double final_mass = this->m_mass + planet.m_mass, f1 = log10m1 / (log10m1 + log10m2), f2 = log10m2 / (log10m1 + log10m2);
-                this->m_color.r = this->m_color.r * f1 + planet.m_color.r * f2;
-                this->m_color.g = this->m_color.g * f1 + planet.m_color.g * f2;
-                this->m_color.b = this->m_color.b * f1 + planet.m_color.b * f2;
-                this->m_color.a = this->m_color.a * f1 + planet.m_color.a * f2;
+                double final_mass = this->m_mass + object.m_mass, f1 = log10m1 / (log10m1 + log10m2), f2 = log10m2 / (log10m1 + log10m2);
+                this->m_color.r = this->m_color.r * f1 + object.m_color.r * f2;
+                this->m_color.g = this->m_color.g * f1 + object.m_color.g * f2;
+                this->m_color.b = this->m_color.b * f1 + object.m_color.b * f2;
+                this->m_color.a = this->m_color.a * f1 + object.m_color.a * f2;
 
                 f1 = this->m_mass / final_mass;
-                f2 = planet.m_mass / final_mass;
+                f2 = object.m_mass / final_mass;
 
-                this->m_vel = this->m_vel * f1 + planet.m_vel * f2;
-                this->m_density = this->m_density * f1 + planet.m_density * f2;
+                this->m_vel = this->m_vel * f1 + object.m_vel * f2;
+                this->m_density = this->m_density * f1 + object.m_density * f2;
                 this->m_mass = final_mass;
 
                 double new_area = this->m_mass / this->m_density + M_PI * this->m_radius * this->m_radius / this->m_density;
                 this->m_radius = std::sqrt(new_area / M_PI);
 
-                planet_list.remove(planet);
+                object_list.remove(object);
                 break;
             }else{
-                temp_vel -= attraction(planet);
+                temp_vel -= attraction(object);
             }
         }
     }
@@ -112,26 +112,26 @@ void Object::draw(View& view){
         i++;
     }
 
-    sf::CircleShape planet_circle(m_radius * view.scale(), 100);
-    planet_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
+    sf::CircleShape object_circle(m_radius * view.scale(), 100);
+    object_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
 
     if(World::mode){
-        planet_circle.setRadius(m_radius / 1e7 * view.scale());
-        planet_circle.setOrigin(m_radius / 1e7 * view.scale(), m_radius / 1e7 * view.scale());
+        object_circle.setRadius(m_radius / 1e7 * view.scale());
+        object_circle.setOrigin(m_radius / 1e7 * view.scale(), m_radius / 1e7 * view.scale());
     }
 
-    planet_circle.setFillColor(m_color);
-    planet_circle.setPosition(view.world_to_screen(m_pos));
+    object_circle.setFillColor(m_color);
+    object_circle.setPosition(view.world_to_screen(m_pos));
 
     auto& target = view.target();
 
     if(m_trail.size() > 2)
         target.draw(trail);
-    target.draw(planet_circle);
+    target.draw(object_circle);
 
     sf::Text label(m_name, World::font, 15);
     label.setFillColor(sf::Color::White);
-    label.setPosition(planet_circle.getPosition());
+    label.setPosition(object_circle.getPosition());
     auto bounds = label.getLocalBounds();
     label.setOrigin(bounds.width / 2, bounds.height / 2);
 

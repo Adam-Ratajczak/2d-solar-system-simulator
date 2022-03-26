@@ -14,8 +14,8 @@ World::World(sf::RenderWindow& window)
     font.loadFromFile("../assets/Pulang.ttf");
 }
 
-void World::add_planet(const Object &planet){
-    planet_list.push_back(planet);
+void World::add_object(const Object &object){
+    object_list.push_back(object);
 }
 
 bool World::mode = 0;
@@ -32,14 +32,14 @@ void World::get_events(sf::Event& event){
                 auto world_click_pos = view.screen_to_world({static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y)});
                 prev_pos = world_click_pos;
                 dragging = true;
-                for(auto& planet : planet_list){
-                    if(planet.hover(view, world_click_pos)){
-                        // std::cout << "yay focused: " << planet.m_name << std::endl;
-                        focused_planet = &planet;
+                for(auto& object : object_list){
+                    if(object.hover(view, world_click_pos)){
+                        // std::cout << "yay focused: " << object.m_name << std::endl;
+                        focused_object = &object;
                     }
                 } 
             }else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
-                focused_planet = nullptr;
+                focused_object = nullptr;
             }
             break;
         }else if(event.type == sf::Event::MouseWheelScrolled){
@@ -80,31 +80,31 @@ void World::get_events(sf::Event& event){
 
 void World::update(){
     for(unsigned i = 0; i < speed; i++){
-        for(auto& p : planet_list){
-            p.update(planet_list);
+        for(auto& p : object_list){
+            p.update(object_list);
         }
     }
 }
 
 void World::draw(){
-    for(auto& p : planet_list)
+    for(auto& p : object_list)
     {
-        // if(&p == focused_planet)
+        // if(&p == focused_object)
         //     std::cout << "focusing draw(): " << p.m_pos << std::endl;
         p.draw(view);
     }
 }
 
 void World::handle_focus(){
-    if(focused_planet){
-        view.set_offset(focused_planet->m_pos);
+    if(focused_object){
+        view.set_offset(focused_object->m_pos);
     }
 }
 
-Object& World::get_planet(const std::string name){
-    for(auto& planet : planet_list){
-        if(planet.m_name == name)
-            return planet;
+Object& World::get_object(const std::string name){
+    for(auto& object : object_list){
+        if(object.m_name == name)
+            return object;
     }
-    return planet_list.back();
+    return object_list.back();
 }

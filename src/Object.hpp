@@ -21,7 +21,7 @@ public:
     Vector2 m_pos;
     std::string m_name;
     
-    void update(std::list<Object>& planet_list);
+    void update(std::list<Object>& object_list);
     void draw(View&);
     bool hover(View& view, Vector2 mouse_pos);
 };

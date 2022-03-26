@@ -12,9 +12,9 @@
 
 class World{
 private:
-    std::list<Object> planet_list;
+    std::list<Object> object_list;
     sf::Event event;
-    Object* focused_planet = nullptr;
+    Object* focused_object = nullptr;
 
     // TODO: Move it to GUI.
     unsigned clicks = 0, speed = 1;
@@ -34,9 +34,9 @@ public:
     void get_events(sf::Event& event);
     void update();
     void draw();
-    void add_planet(const Object& planet);
+    void add_object(const Object& object);
     void handle_focus();
-    Object& get_planet(const std::string name);
+    Object& get_object(const std::string name);
 };
 
 void prepare_solar(World& world);
