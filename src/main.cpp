@@ -16,8 +16,6 @@ int main()
     
     window.setFramerateLimit(60);
 
-    World::mode = 0;
-
     World world {window};
 
     GUI gui(window);

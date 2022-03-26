@@ -12,7 +12,6 @@
 
 class World{
 private:
-    std::list<Object> object_list;
     sf::Event event;
     Object* focused_object = nullptr;
 
@@ -25,11 +24,10 @@ public:
 
     static sf::Font font;
     static Object* most_massive_object;
-    static bool mode;
     View view;
     static unsigned object_count;
-    static bool collisions;
-    static bool dragging;
+    static bool collisions, dragging, reverse;
+    static std::list<Object> object_list;
 
     World();
     void get_events(sf::Event& event);

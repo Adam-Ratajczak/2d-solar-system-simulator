@@ -53,9 +53,9 @@ void Object::calculate_propieties(){
 
 }
 
-void Object::update(std::list<Object>& object_list){
+void Object::update(){
     Vector2 temp_vel;
-    for(auto& object : object_list){
+    for(auto& object : World::object_list){
         if(this != &object){
             double distance = get_distance(this->m_pos, object.m_pos);
 
@@ -88,7 +88,7 @@ void Object::update(std::list<Object>& object_list){
                 double new_area = this->m_mass / this->m_density + M_PI * this->m_radius * this->m_radius / this->m_density;
                 this->m_radius = std::sqrt(new_area / M_PI);
 
-                object_list.remove(object);
+                World::object_list.remove(object);
                 break;
             }else{
                 temp_vel -= attraction(object);
@@ -124,11 +124,6 @@ void Object::draw(View& view){
     sf::CircleShape object_circle(m_radius * view.scale(), 100);
     object_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
 
-    if(World::mode){
-        object_circle.setRadius(m_radius / 1e7 * view.scale());
-        object_circle.setOrigin(m_radius / 1e7 * view.scale(), m_radius / 1e7 * view.scale());
-    }
-
     object_circle.setFillColor(m_color);
     object_circle.setPosition(view.world_to_screen(m_pos));
 
@@ -161,7 +156,7 @@ void Object::draw(View& view){
 
     if(this->m_focused){
         unsigned exponent = std::log10(m_mass);
-        sf::Text mass("Mass: " + std::to_string(m_mass / std::pow(10, exponent)) + " 10 ^ " + std::to_string(exponent) + " kg", World::font, 15);
+        sf::Text mass("Mass: " + std::to_string(m_mass / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", World::font, 15);
         mass.setFillColor(sf::Color::White);
         auto bounds = mass.getLocalBounds();
         mass.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 0));

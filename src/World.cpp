@@ -9,6 +9,11 @@
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
+bool World::dragging = 0, World::reverse = false;
+sf::Font World::font;
+Object* World::most_massive_object = nullptr;
+std::list<Object> World::object_list;
+
 World::World(sf::RenderWindow& window)
 : view(window) {
     font.loadFromFile("../assets/Pulang.ttf");
@@ -21,11 +26,6 @@ void World::add_object(const Object &object){
         most_massive_object = &object_list.back();
     // std::cout << most_massive_object->m_name << "\n";
 }
-
-bool World::mode = 0;
-bool World::dragging = 0;
-sf::Font World::font;
-Object* World::most_massive_object = nullptr;
 
 void World::get_events(sf::Event& event){
     auto& window = view.target();
@@ -74,11 +74,36 @@ void World::get_events(sf::Event& event){
             if(event.key.code == sf::Keyboard::Space){
                 view.reset();
             }else if(event.key.code == sf::Keyboard::Right){
-                speed *= 2;
-                if(speed == 0)
+                if(!reverse){
+                    speed *= 2;
+                }else{
+                    speed /= 2;
+                }
+
+                if(speed == 0 && reverse){
+                    reverse = false;
+                }else if(speed == 0){
                     speed = 1;
+                    for(auto& p : object_list){
+                        p.m_vel = -p.m_vel;
+                    }
+                }
             }else if(event.key.code == sf::Keyboard::Left){
-                speed /= 2;
+                if(!reverse){
+                    speed /= 2;
+                }else{
+                    speed *= 2;
+                }
+
+                if(speed == 0 && !reverse){
+                    reverse = true;
+                }else if(speed == 0){
+                    speed = 1;
+                    reverse = true;
+                    for(auto& p : object_list){
+                        p.m_vel = -p.m_vel;
+                    }
+                }
             }
         } else if(event.type == sf::Event::Resized) {
             window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
@@ -89,7 +114,7 @@ void World::get_events(sf::Event& event){
 void World::update(){
     for(unsigned i = 0; i < speed; i++){
         for(auto& p : object_list){
-            p.update(object_list);
+            p.update();
         }
     }
 }

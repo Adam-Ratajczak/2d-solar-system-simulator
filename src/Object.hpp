@@ -10,7 +10,6 @@
 class Object{
 protected:
     double m_density;
-    Vector2 m_vel;
     sf::Color m_color;
     unsigned m_tres;
     std::list<Vector2> m_trail;
@@ -23,11 +22,12 @@ protected:
 public:
     Object(double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres);
     Vector2 m_pos;
+    Vector2 m_vel;
     std::string m_name;
     bool m_focused = 0;
     double m_mass;
     
-    void update(std::list<Object>& object_list);
+    void update();
     void draw(View&);
     bool hover(View& view, Vector2 mouse_pos);
     void calculate_propieties();
