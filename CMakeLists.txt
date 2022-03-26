@@ -13,6 +13,7 @@ add_executable(
     src/Object.cpp
     src/gui/Slider.cpp
     src/gui/Button.cpp
+    src/gui/Textbox.cpp
     src/gui/GUI.cpp
     src/SolarSystem.cpp
 )
