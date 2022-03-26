@@ -16,11 +16,16 @@ World::World(sf::RenderWindow& window)
 
 void World::add_object(const Object &object){
     object_list.push_back(object);
+
+    if(most_massive_object == nullptr || most_massive_object->m_mass < object_list.back().m_mass)
+        most_massive_object = &object_list.back();
+    // std::cout << most_massive_object->m_name << "\n";
 }
 
 bool World::mode = 0;
 bool World::dragging = 0;
 sf::Font World::font;
+Object* World::most_massive_object = nullptr;
 
 void World::get_events(sf::Event& event){
     auto& window = view.target();

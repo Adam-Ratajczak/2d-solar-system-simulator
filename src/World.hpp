@@ -24,6 +24,7 @@ public:
     explicit World(sf::RenderWindow& window);
 
     static sf::Font font;
+    static Object* most_massive_object;
     static bool mode;
     View view;
     static unsigned object_count;
