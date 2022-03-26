@@ -13,12 +13,12 @@ bool World::collisions = true;
 int main()
 {
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Intro");
+    
+    window.setFramerateLimit(60);
 
     World::mode = 0;
 
     World world {window};
-
-    window.setFramerateLimit(60);
     
     prepare_solar(world);
 
@@ -29,7 +29,6 @@ int main()
         world.update();
         world.handle_focus();
         world.draw();
-        world.handle_creative_mode();
         window.display();
     }
 

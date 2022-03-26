@@ -19,10 +19,8 @@ private:
 
     // TODO: Move it to GUI.
     unsigned clicks = 0, speed = 1;
-    sf::Color color;
-    bool edit = false, dragging = false;
-    Vector2 prev_pos, pos;
-    double mass = 0, distance;
+    bool dragging = false;
+    Vector2 prev_pos;
 
 public:
     explicit World(sf::RenderWindow& window);
@@ -38,7 +36,6 @@ public:
     void update();
     void draw();
     void add_planet(const Planet& planet);
-    void handle_creative_mode();
     void handle_focus();
     Planet& get_planet(const std::string name);
     void add_moon(const std::string planet_label, const std::string moon_name, double mass, double radius, double distance, double vel, uint8_t color, unsigned tres);

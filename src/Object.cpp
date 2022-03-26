@@ -17,8 +17,8 @@ Vector2 Object::attraction(const Object& other){
 
 bool Object::hover(View& view, Vector2 mouse_pos){
     double dst = mouse_pos.distance_to(m_pos);
-    if(m_name == "Mercury")
-        std::cout << dst << " <? " << 20 / view.scale() << " s=" << view.scale() << std::endl;
+    // if(m_name == "Mercury")
+    //     std::cout << dst << " <? " << 20 / view.scale() << " s=" << view.scale() << std::endl;
     return dst < 20 / view.scale();
 }
 
