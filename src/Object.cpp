@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <utility>
 
 Object::Object(
     double mass, 
@@ -28,7 +29,7 @@ Object::Object(
     m_density = m_mass / (M_PI * radius * radius);
     m_tres = tres;
 
-    m_trail.push_back(m_pos);
+    m_trail.push_back({m_pos, m_vel});
     World::object_count++;
 }
 
@@ -53,7 +54,29 @@ void Object::calculate_propieties(){
 
 }
 
+bool con = 1;
+
 void Object::update(){
+    if(World::reverse && m_trail.size() > 1 && con){
+        this->m_pos = m_trail.back().first;
+        this->m_vel = -m_trail.back().second;
+        m_trail.pop_back();
+        return;
+    }
+
+    if(World::reverse)
+        con = 0;
+
+    if(!World::reverse && m_trail.size() > 1 && !con){
+        this->m_pos = m_trail.back().first;
+        this->m_vel = -m_trail.back().second;
+        m_trail.pop_back();
+        return;
+    }
+
+    if(!World::reverse)
+        con = 1;
+
     Vector2 temp_vel;
     for(auto& object : World::object_list){
         if(this != &object){
@@ -100,7 +123,7 @@ void Object::update(){
     m_pos += m_vel * TIMESTAMP;
 
     // if(m_pos != m_trail.back())
-    m_trail.push_back(m_pos);
+    m_trail.push_back({m_pos, m_vel});
     
     if(m_trail.size() > m_tres)
         m_trail.pop_front();
@@ -117,7 +140,7 @@ void Object::draw(View& view){
         trail[i].color = m_color;
         trail[i].color.a = 128;
 
-        trail[i].position = view.world_to_screen(l);
+        trail[i].position = view.world_to_screen(l.first);
         i++;
     }
 

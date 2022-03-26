@@ -12,7 +12,7 @@ protected:
     double m_density;
     sf::Color m_color;
     unsigned m_tres;
-    std::list<Vector2> m_trail;
+    std::list<std::pair<Vector2, Vector2> > m_trail;
     double m_radius;
     Vector2 attraction(const Object&);
 
