@@ -9,10 +9,8 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 add_executable(
     out
     src/main.cpp
-    src/Planet.cpp
     src/World.cpp
     src/Object.cpp
-    src/Moon.cpp
     src/gui/Slider.cpp
     src/gui/FreeButton.cpp
     src/gui/GUI.cpp

@@ -61,7 +61,7 @@ void Slider::set_position(const sf::Vector2f new_pos){
 
 Vector2 mouse_pos;
 
-void Slider::draw(sf::RenderWindow& window){
+void Slider::get_events(sf::Event &event){
     float posx, posy;
     if(m_mode)
         posx = m_pos.x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * m_width;
@@ -69,26 +69,25 @@ void Slider::draw(sf::RenderWindow& window){
         posx = m_pos.x + (m_val - m_min_val) / (m_max_val - m_min_val) * m_len;
     posy = m_pos.y - m_width * 2;
 
-    /*sf::Event event;
-    while (window.pollEvent(event)) {
-        if(event.type == sf::Event::MouseButtonPressed){
-            if(mouse_pos.x >= posx && mouse_pos.x <= posx + m_width && mouse_pos.y >= posy && mouse_pos.y <= posy + m_width * 5){
-                mouse_pos = sf::Mouse::getPosition();
-                m_dragging = true;
-                std::cout << "XD\n";
-            }
-        }else if(event.type == sf::Event::MouseButtonReleased){
-            m_dragging = false;
-        }else if(sf::Event::MouseMoved){
-            if(m_dragging){
-                float delta_pos = sf::Mouse::getPosition().x - mouse_pos.x;
-                unsigned count = (m_max_val - m_min_val) / m_step;
-                float step = m_len / m_step;
-                m_val += step * count;
-            }
+    if(event.type == sf::Event::MouseButtonPressed){
+        if(mouse_pos.x >= posx && mouse_pos.x <= posx + m_width && mouse_pos.y >= posy && mouse_pos.y <= posy + m_width * 5){
+            mouse_pos = sf::Mouse::getPosition();
+            m_dragging = true;
+            // std::cout << "XD\n";
         }
-    }*/
+    }else if(event.type == sf::Event::MouseButtonReleased){
+        m_dragging = false;
+    }else if(sf::Event::MouseMoved){
+        if(m_dragging){
+            float delta_pos = sf::Mouse::getPosition().x - mouse_pos.x;
+            unsigned count = (m_max_val - m_min_val) / m_step;
+            float step = m_len / m_step;
+            m_val += step * count;
+        }
+    }
+}
 
+void Slider::draw(sf::RenderWindow& window){
     sf::RectangleShape slider;
     slider.setSize(sf::Vector2f(m_len, m_width));
     slider.setPosition(m_pos);
@@ -116,4 +115,3 @@ void Slider::draw(sf::RenderWindow& window){
     window.draw(slider_value);
     // std::cout << "XD\n";
 }
-

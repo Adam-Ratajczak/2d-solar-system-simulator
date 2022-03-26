@@ -5,6 +5,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 #include <string>
 
 class Slider{
@@ -30,6 +31,7 @@ public:
     double get_value() const;
     double& set_value(const double val);
 
+    void get_events(sf::Event& event);
     void draw(sf::RenderWindow& window);
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color);

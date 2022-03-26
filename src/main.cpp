@@ -1,4 +1,3 @@
-#include "Planet.hpp"
 #include "Vector2.hpp"
 #include "World.hpp"
 #include "gui/GUI.hpp"
@@ -21,7 +20,7 @@ int main()
 
     World world {window};
 
-    GUI gui;
+    GUI gui(window);
     
     prepare_solar(world);
 
@@ -35,7 +34,7 @@ int main()
         world.handle_focus();
         world.draw();
 
-        gui.draw(window);
+        gui.draw();
 
         window.display();
     }

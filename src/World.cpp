@@ -1,5 +1,5 @@
 #include "World.hpp"
-#include "Planet.hpp"
+#include "Object.hpp"
 #include "Vector2.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -14,7 +14,7 @@ World::World(sf::RenderWindow& window)
     font.loadFromFile("../assets/Pulang.ttf");
 }
 
-void World::add_planet(const Planet &planet){
+void World::add_planet(const Object &planet){
     planet_list.push_back(planet);
 }
 
@@ -97,28 +97,14 @@ void World::draw(){
 
 void World::handle_focus(){
     if(focused_planet){
-        for(auto& moon : focused_planet->moon_list){
-            moon.draw(view);
-            // std::cout << moon.m_name << " " << moon.m_pos << "\n";
-        }
-        // std::cout << "focusing handle_focus(): " << focused_planet->m_pos << std::endl;
         view.set_offset(focused_planet->m_pos);
     }
 }
 
-Planet& World::get_planet(const std::string name){
+Object& World::get_planet(const std::string name){
     for(auto& planet : planet_list){
         if(planet.m_name == name)
             return planet;
     }
     return planet_list.back();
-}
-
-void World::add_moon(const std::string planet_label, const std::string moon_name, double mass, double radius, double distance, double velocity, uint8_t color, unsigned tres){
-    auto& planet = this->get_planet(planet_label);
-
-    Vector2 pos(planet.m_pos.x - distance, planet.m_pos.y);
-    Vector2 vel(planet.m_vel.x, planet.m_vel.y - velocity);
-
-    planet.moon_list.push_back(Moon(mass, radius, pos, vel, sf::Color(color, color, color), moon_name, tres));
 }

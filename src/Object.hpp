@@ -17,9 +17,13 @@ protected:
     Vector2 attraction(const Object&);
 
 public:
+    Object(double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres);
     Vector2 m_pos;
     std::string m_name;
     
+    void update(std::list<Object>& planet_list);
     void draw(View&);
     bool hover(View& view, Vector2 mouse_pos);
 };
+
+inline bool operator==(const Object& a, const Object& b){return &a == &b;}
