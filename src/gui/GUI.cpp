@@ -8,7 +8,7 @@
 GUI::GUI(){
     sf::Image image;
     image.loadFromFile("../assets/createButton.png");
-    FreeButton buttonCreate(sf::Vector2f(0, 0), image, 3, 0.5);
+    FreeButton buttonCreate(sf::Vector2f(0, 0), image, 4, 0.4);
 
     m_create_button = buttonCreate;
 }
@@ -19,4 +19,5 @@ void GUI::draw(sf::RenderWindow &window){
 
 void GUI::get_events(sf::Event &event){
     m_create_button.event_listener(event, EventListening::ONCLICK);
+    m_create_button.event_listener(event, EventListening::ONRELASE);
 }

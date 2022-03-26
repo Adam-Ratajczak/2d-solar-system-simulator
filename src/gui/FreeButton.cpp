@@ -7,6 +7,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
+#include "../World.hpp"
 
 FreeButton::FreeButton(sf::Vector2f pos, sf::Image img, unsigned states, float scale){
     auto width = img.getSize().x / states;
@@ -34,29 +35,35 @@ void FreeButton::event_listener(sf::Event& event, EventListening mode){
     if(sf::Rect<float>(m_pos, m_size).contains(mouse_pos.x, mouse_pos.y)){
         if(m_mode == 0)
             m_mode = 1;
+        else if(m_mode == 2)
+            m_mode = 3;
         switch (mode) {
         case EventListening::ONCLICK:
             if(event.type == sf::Event::MouseButtonPressed){
                 // expression();
-                if(m_mode == 1)
-                    m_mode = 2;
-                else if(m_mode == 2)
-                    m_mode = 0;
+                if(!drag){
+                    if(m_mode == 1)
+                        m_mode = 2;
+                    else if(m_mode == 3)
+                        m_mode = 0;
+                    drag = 1;
+                }
             }
             break;
         case EventListening::HOVER:
                 // expression();
             break;
         case EventListening::ONRELASE:
-
             if(event.type == sf::Event::MouseButtonReleased){
                 // expression();
+                drag = 0;
             }
           break;
         }
-
-        if(m_mode == 1)
-            m_mode = 0;
+        World::dragging = 0;
+    }else{
+        if(m_mode % 2 != 0)
+            m_mode--;
     }
 }
 

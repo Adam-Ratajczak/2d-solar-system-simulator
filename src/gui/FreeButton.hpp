@@ -10,11 +10,12 @@
 class FreeButton{
     sf::Vector2f m_pos, m_size;
     std::vector<sf::Texture> m_tex;
-    unsigned m_mode = 0;
     float m_scale;
+    bool drag = false;
 public:
     FreeButton(sf::Vector2f pos, sf::Image img, unsigned states, float scale);
     FreeButton() = default;
+    unsigned m_mode = 0;
 
 // template<typename lambda>
     void event_listener(sf::Event& event, EventListening mode);

@@ -19,6 +19,7 @@ void World::add_planet(const Planet &planet){
 }
 
 bool World::mode = 0;
+bool World::dragging = 0;
 sf::Font World::font;
 
 void World::get_events(sf::Event& event){

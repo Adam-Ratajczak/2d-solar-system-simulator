@@ -19,7 +19,6 @@ private:
 
     // TODO: Move it to GUI.
     unsigned clicks = 0, speed = 1;
-    bool dragging = false;
     Vector2 prev_pos;
 
 public:
@@ -30,6 +29,7 @@ public:
     View view;
     static unsigned object_count;
     static bool collisions;
+    static bool dragging;
 
     World();
     void get_events(sf::Event& event);
