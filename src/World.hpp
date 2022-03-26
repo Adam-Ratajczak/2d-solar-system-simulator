@@ -43,3 +43,5 @@ public:
     Planet& get_planet(const std::string name);
     void add_moon(const std::string planet_label, const std::string moon_name, double mass, double radius, double distance, double vel, uint8_t color, unsigned tres);
 };
+
+void prepare_solar(World& world);

@@ -13,6 +13,8 @@ add_executable(
     src/World.cpp
     src/Object.cpp
     src/Moon.cpp
+    src/gui/Slider.cpp
+    src/SolarSystem.cpp
 )
 target_link_libraries(
     out

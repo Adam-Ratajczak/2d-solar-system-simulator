@@ -69,7 +69,7 @@ void Slider::draw(sf::RenderWindow& window){
         posx = m_pos.x + (m_val - m_min_val) / (m_max_val - m_min_val) * m_len;
     posy = m_pos.y - m_width * 2;
 
-    sf::Event event;
+    /*sf::Event event;
     while (window.pollEvent(event)) {
         if(event.type == sf::Event::MouseButtonPressed){
             if(mouse_pos.x >= posx && mouse_pos.x <= posx + m_width && mouse_pos.y >= posy && mouse_pos.y <= posy + m_width * 5){
@@ -87,7 +87,7 @@ void Slider::draw(sf::RenderWindow& window){
                 m_val += step * count;
             }
         }
-    }
+    }*/
 
     sf::RectangleShape slider;
     slider.setSize(sf::Vector2f(m_len, m_width));
