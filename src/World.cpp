@@ -34,7 +34,7 @@ void World::get_events(){
                 dragging = true;
                 for(auto& planet : planet_list){
                     if(planet.hover(view, world_click_pos)){
-                        std::cout << "yay focused: " << planet.m_name << std::endl;
+                        // std::cout << "yay focused: " << planet.m_name << std::endl;
                         focused_planet = &planet;
                     }
                 } 
@@ -99,7 +99,7 @@ void World::handle_focus(){
     if(focused_planet){
         for(auto& moon : focused_planet->moon_list){
             moon.draw(view);
-            std::cout << moon.m_name << " " << moon.m_pos << "\n";
+            // std::cout << moon.m_name << " " << moon.m_pos << "\n";
         }
         // std::cout << "focusing handle_focus(): " << focused_planet->m_pos << std::endl;
         view.set_offset(focused_planet->m_pos);
