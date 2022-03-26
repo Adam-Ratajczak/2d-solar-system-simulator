@@ -1,5 +1,5 @@
 #include "GUI.hpp"
-#include "FreeButton.hpp"
+#include "Button.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -10,7 +10,7 @@
 GUI::GUI(sf::RenderWindow& window) : m_window(window), m_slider_1(0, 100, 1), m_slider_2(0, 100, 1), m_slider_3(0, 100, 1){
     sf::Image image;
     image.loadFromFile("../assets/createButton.png");
-    FreeButton buttonCreate(sf::Vector2f(0, 0), image, 4, 0.4);
+    Button buttonCreate(sf::Vector2f(0, 0), image, 4, 0.4);
     m_create_button = buttonCreate;
 
     m_slider_1.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));

@@ -1,4 +1,4 @@
-#include "FreeButton.hpp"
+#include "Button.hpp"
 #include "GUI.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -9,7 +9,7 @@
 #include <iostream>
 #include "../World.hpp"
 
-FreeButton::FreeButton(sf::Vector2f pos, sf::Image img, unsigned states, float scale){
+Button::Button(sf::Vector2f pos, sf::Image img, unsigned states, float scale){
     auto width = img.getSize().x / states;
     auto height = img.getSize().y;
 
@@ -29,7 +29,7 @@ FreeButton::FreeButton(sf::Vector2f pos, sf::Image img, unsigned states, float s
 }
 
 // template<typename lambda>
-void FreeButton::event_listener(sf::Event& event, EventListening mode){
+void Button::event_listener(sf::Event& event, EventListening mode){
     auto mouse_pos = sf::Mouse::getPosition();
 
     if(sf::Rect<float>(m_pos, m_size).contains(mouse_pos.x, mouse_pos.y)){
@@ -67,7 +67,7 @@ void FreeButton::event_listener(sf::Event& event, EventListening mode){
     }
 }
 
-void FreeButton::draw(sf::RenderWindow &window){
+void Button::draw(sf::RenderWindow &window){
     sf::Sprite sprite;
     sprite.setTexture(m_tex[m_mode]);
     sprite.setPosition(m_pos);

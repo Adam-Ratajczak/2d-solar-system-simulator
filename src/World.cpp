@@ -34,11 +34,14 @@ void World::get_events(sf::Event& event){
                 dragging = true;
                 for(auto& object : object_list){
                     if(object.hover(view, world_click_pos)){
-                        // std::cout << "yay focused: " << object.m_name << std::endl;
+                        if(focused_object != nullptr)
+                            focused_object->m_focused = false;
                         focused_object = &object;
+                        focused_object->m_focused = true;
                     }
                 } 
             }else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+                focused_object->m_focused = false;
                 focused_object = nullptr;
             }
             break;

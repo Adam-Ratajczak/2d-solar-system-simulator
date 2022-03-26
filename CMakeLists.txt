@@ -12,7 +12,7 @@ add_executable(
     src/World.cpp
     src/Object.cpp
     src/gui/Slider.cpp
-    src/gui/FreeButton.cpp
+    src/gui/Button.cpp
     src/gui/GUI.cpp
     src/SolarSystem.cpp
 )

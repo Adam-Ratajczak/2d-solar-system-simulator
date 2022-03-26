@@ -20,6 +20,7 @@ public:
     Object(double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres);
     Vector2 m_pos;
     std::string m_name;
+    bool m_focused = 0;
     
     void update(std::list<Object>& object_list);
     void draw(View&);

@@ -7,14 +7,14 @@
 #include <SFML/Window/Event.hpp>
 #include "../Constants.hpp"
 
-class FreeButton{
+class Button{
     sf::Vector2f m_pos, m_size;
     std::vector<sf::Texture> m_tex;
     float m_scale;
     bool drag = false;
 public:
-    FreeButton(sf::Vector2f pos, sf::Image img, unsigned states, float scale);
-    FreeButton() = default;
+    Button(sf::Vector2f pos, sf::Image img, unsigned states, float scale);
+    Button() = default;
     unsigned m_mode = 0;
 
 // template<typename lambda>

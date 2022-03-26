@@ -3,6 +3,8 @@
 #include "World.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <cmath>
 #include <iostream>
 
 Vector2 Object::attraction(const Object& other){
@@ -129,11 +131,23 @@ void Object::draw(View& view){
         target.draw(trail);
     target.draw(object_circle);
 
+    auto pos = object_circle.getPosition();
+
     sf::Text label(m_name, World::font, 15);
     label.setFillColor(sf::Color::White);
-    label.setPosition(object_circle.getPosition());
+    label.setPosition(pos);
     auto bounds = label.getLocalBounds();
     label.setOrigin(bounds.width / 2, bounds.height / 2);
 
     target.draw(label);
+
+    if(this->m_focused){
+        sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " m / s", World::font, 15);
+        vel.setFillColor(sf::Color::White);
+        vel.setPosition(sf::Vector2f(pos.x, pos.y + 20));
+        auto bounds = vel.getLocalBounds();
+        vel.setOrigin(bounds.width / 2, bounds.height / 2);
+
+        target.draw(vel);
+    }
 }
