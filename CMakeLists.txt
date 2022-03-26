@@ -14,6 +14,8 @@ add_executable(
     src/Object.cpp
     src/Moon.cpp
     src/gui/Slider.cpp
+    src/gui/FreeButton.cpp
+    src/gui/GUI.cpp
     src/SolarSystem.cpp
 )
 target_link_libraries(

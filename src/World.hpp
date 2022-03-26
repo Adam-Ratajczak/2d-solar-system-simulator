@@ -32,7 +32,7 @@ public:
     static bool collisions;
 
     World();
-    void get_events();
+    void get_events(sf::Event& event);
     void update();
     void draw();
     void add_planet(const Planet& planet);

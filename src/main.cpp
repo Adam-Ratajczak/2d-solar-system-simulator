@@ -1,10 +1,11 @@
 #include "Planet.hpp"
 #include "Vector2.hpp"
 #include "World.hpp"
-#include "gui/Slider.hpp"
+#include "gui/GUI.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 #include <iostream>
 
 unsigned World::object_count = 0;
@@ -19,16 +20,21 @@ int main()
     World::mode = 0;
 
     World world {window};
+
+    GUI gui;
     
     prepare_solar(world);
 
     while (window.isOpen()){
-        
-        world.get_events();
+        sf::Event event;
+        world.get_events(event);
         window.clear();
         world.update();
         world.handle_focus();
         world.draw();
+
+        gui.draw(window);
+
         window.display();
     }
 

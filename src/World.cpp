@@ -21,8 +21,7 @@ void World::add_planet(const Planet &planet){
 bool World::mode = 0;
 sf::Font World::font;
 
-void World::get_events(){
-    sf::Event event;
+void World::get_events(sf::Event& event){
     auto& window = view.target();
     while(window.pollEvent(event)){
         if (event.type == sf::Event::Closed)
