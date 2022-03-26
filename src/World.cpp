@@ -1,6 +1,7 @@
 #include "World.hpp"
 #include "Object.hpp"
 #include "Vector2.hpp"
+#include "gui/Date.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -15,7 +16,7 @@ Object* World::most_massive_object = nullptr;
 std::list<Object> World::object_list;
 
 World::World(sf::RenderWindow& window)
-: view(window) {
+: view(window), date(2000) {
     font.loadFromFile("../assets/Pulang.ttf");
 }
 
@@ -113,6 +114,11 @@ void World::get_events(sf::Event& event){
 
 void World::update(){
     for(unsigned i = 0; i < speed; i++){
+        if(!reverse)
+            date.day_count++;
+        else
+            date.day_count--;
+        
         for(auto& p : object_list){
             p.update();
         }
@@ -122,10 +128,15 @@ void World::update(){
 void World::draw(){
     for(auto& p : object_list)
     {
-        // if(&p == focused_object)
-        //     std::cout << "focusing draw(): " << p.m_pos << std::endl;
         p.draw(view);
     }
+
+    // std::cout << date.to_string() << "\n";
+
+    sf::Text date_text(date.to_string(), font, 25);
+    date_text.setFillColor(sf::Color::White);
+    date_text.setPosition(10, view.target().getSize().y - 35);
+    view.target().draw(date_text);
 }
 
 void World::handle_focus(){
