@@ -67,7 +67,7 @@ void Slider::handle_event(sf::Event& event)
 
             // round to step
             m_val /= m_step;
-            m_val = std::floor(m_val);
+            m_val = std::round(m_val);
             m_val *= m_step;
 
             std::cout << get_value() << std::endl;
@@ -99,10 +99,10 @@ void Slider::draw(sf::RenderWindow& window) const
 
     sf::RectangleShape slider_value;
     auto knob_size_x = calculate_knob_size();
-    slider_value.setSize(sf::Vector2f(knob_size_x, size().y));
+    slider_value.setSize(sf::Vector2f(knob_size_x, 20.f));
     slider_value.setFillColor(m_fg_color);
 
-    slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, position().y);
+    slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, position().y + size().y / 2 - 10.f);
     window.draw(slider_value);
     // std::cout << "XD\n"
 }
