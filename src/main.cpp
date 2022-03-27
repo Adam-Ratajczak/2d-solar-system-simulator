@@ -24,10 +24,13 @@ int main()
 
     while (window.isOpen()){
         sf::Event event;
+
         while(window.pollEvent(event)) {
             world.get_events(event);
             gui.get_events(event);
         }
+
+        window.setView(sf::View(sf::FloatRect({0, 0}, sf::Vector2f(window.getSize()))));
         
         window.clear();
         world.update();
