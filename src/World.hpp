@@ -23,7 +23,6 @@ private:
 public:
     explicit World(sf::RenderWindow& window);
 
-    static sf::Font font;
     static Object* most_massive_object;
     View view;
     Date date;

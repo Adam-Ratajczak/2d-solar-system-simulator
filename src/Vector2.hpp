@@ -53,6 +53,8 @@ inline Vector2& operator/=(Vector2& a, double b){return a = a / b;}
 
 inline bool operator==(Vector2& a, Vector2& b){return a.x == b.x && a.y == b.y;}
 inline bool operator!=(Vector2& a, Vector2& b){return !(a == b);}
+inline bool operator==(const Vector2& a, const Vector2& b){return a.x == b.x && a.y == b.y;}
+inline bool operator!=(const Vector2& a, const Vector2& b){return !(a == b);}
 
 inline std::ostream& operator<<(std::ostream& out, Vector2 vec){return out << "(" << vec.x << ", " << vec.y << ")";}
 

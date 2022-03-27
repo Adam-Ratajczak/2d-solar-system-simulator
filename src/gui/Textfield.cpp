@@ -1,5 +1,6 @@
 #include "Textfield.hpp"
 #include "../World.hpp"
+#include "GUI.hpp"
 #include <SFML/System/Vector2.hpp>
 
 Textfield::Textfield(Container* c, sf::IntRect rect)
@@ -29,7 +30,7 @@ void Textfield::draw(sf::RenderWindow& window) const{
 
     window.draw(rect);
 
-    sf::Text text(m_content, World::font, size().y - 4);
+    sf::Text text(m_content, GUI::font, size().y - 4);
     text.setFillColor(m_text_color);
     auto bouds = text.getLocalBounds();
 

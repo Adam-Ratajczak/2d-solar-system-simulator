@@ -2,6 +2,7 @@
 #include "Object.hpp"
 #include "Vector2.hpp"
 #include "gui/Date.hpp"
+#include "gui/GUI.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -11,15 +12,11 @@
 #include <iostream>
 
 bool World::dragging = 0, World::reverse = false;
-sf::Font World::font;
 Object* World::most_massive_object = nullptr;
 std::list<Object> World::object_list;
 
 World::World(sf::RenderWindow& window)
-: view(window), date(2000)
-{
-    font.loadFromFile("../assets/Pulang.ttf");
-}
+: view(window), date(2000){}
 
 void World::add_object(const Object& object)
 {
@@ -167,7 +164,7 @@ void World::draw()
 
     // std::cout << date.to_string() << "\n";
 
-    sf::Text date_text(date.to_string(), font, 25);
+    sf::Text date_text(date.to_string(), GUI::font, 25);
     date_text.setFillColor(sf::Color::White);
     date_text.setPosition(10, view.target().getSize().y - 35);
     view.target().draw(date_text);

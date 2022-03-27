@@ -1,7 +1,7 @@
 #include "Object.hpp"
-#include "Object.hpp"
 #include "Vector2.hpp"
 #include "World.hpp"
+#include "gui/GUI.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -159,7 +159,7 @@ void Object::draw(View& view){
 
     auto pos = object_circle.getPosition();
 
-    sf::Text label(m_name, World::font, 15);
+    sf::Text label(m_name, GUI::font, 15);
     label.setFillColor(sf::Color::White);
     label.setPosition(pos);
     auto bounds = label.getLocalBounds();
@@ -205,19 +205,19 @@ void Object::draw(View& view){
 
     if(this->m_focused){
         unsigned exponent = std::log10(m_mass);
-        sf::Text mass("Mass: " + std::to_string(m_mass / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", World::font, 15);
+        sf::Text mass("Mass: " + std::to_string(m_mass / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", GUI::font, 15);
         mass.setFillColor(sf::Color::White);
         auto bounds = mass.getLocalBounds();
         mass.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 0));
         target.draw(mass);
 
-        sf::Text radius("Radius: " + std::to_string((int)m_radius / 1000) + " km", World::font, 15);
+        sf::Text radius("Radius: " + std::to_string((int)m_radius / 1000) + " km", GUI::font, 15);
         radius.setFillColor(sf::Color::White);
         bounds = radius.getLocalBounds();
         radius.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 1));
         target.draw(radius);
 
-        sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " m / s", World::font, 15);
+        sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " m / s", GUI::font, 15);
         vel.setFillColor(sf::Color::White);
         bounds = vel.getLocalBounds();
         vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 2));
@@ -226,31 +226,31 @@ void Object::draw(View& view){
         if(this == World::most_massive_object)
             return;
 
-        sf::Text dist("Distance from the " + World::most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", World::font, 15);;
+        sf::Text dist("Distance from the " + World::most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);;
         dist.setFillColor(sf::Color::White);
         bounds = dist.getLocalBounds();
         dist.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 3));
         target.draw(dist);
 
-        sf::Text ap("Object apogee: " + std::to_string(m_ap / AU) + " AU", World::font, 15);
+        sf::Text ap("Object apogee: " + std::to_string(m_ap / AU) + " AU", GUI::font, 15);
         ap.setFillColor(sf::Color::White);
         bounds = ap.getLocalBounds();
         ap.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 4));
         target.draw(ap);
 
-        sf::Text ap_vel("Velocity at apogee: " + std::to_string((int)m_ap_vel) + " m / s", World::font, 15);
+        sf::Text ap_vel("Velocity at apogee: " + std::to_string((int)m_ap_vel) + " m / s", GUI::font, 15);
         ap_vel.setFillColor(sf::Color::White);
         bounds = ap_vel.getLocalBounds();
         ap_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 5));
         target.draw(ap_vel);
 
-        sf::Text pe("Object perigee: " + std::to_string(m_pe / AU) + " AU", World::font, 15);
+        sf::Text pe("Object perigee: " + std::to_string(m_pe / AU) + " AU", GUI::font, 15);
         pe.setFillColor(sf::Color::White);
         bounds = pe.getLocalBounds();
         pe.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 6));
         target.draw(pe);
 
-        sf::Text pe_vel("Velocity at perigee: " + std::to_string((int)m_pe_vel) + " m / s", World::font, 15);
+        sf::Text pe_vel("Velocity at perigee: " + std::to_string((int)m_pe_vel) + " m / s", GUI::font, 15);
         pe_vel.setFillColor(sf::Color::White);
         bounds = pe_vel.getLocalBounds();
         pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));

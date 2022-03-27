@@ -1,5 +1,6 @@
 #include "Textbox.hpp"
 #include "../World.hpp"
+#include "GUI.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -60,7 +61,7 @@ void Textbox::draw(sf::RenderWindow& window) const
 
     window.draw(rect);
 
-    sf::Text text(m_content, World::font, size().y - 4);
+    sf::Text text(m_content, GUI::font, size().y - 4);
     text.setFillColor(m_text_color);
     text.setPosition(sf::Vector2f(position().x + 2, position().y + 2));
 

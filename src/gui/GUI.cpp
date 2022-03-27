@@ -18,9 +18,12 @@ static sf::Image load_image(std::string path)
     return image;
 }
 
-GUI::GUI(sf::RenderWindow& wnd)
-: Container(nullptr), m_window(wnd)
+sf::Font GUI::font;
+
+GUI::GUI(World& world, sf::RenderWindow& wnd)
+: Container(nullptr), m_window(wnd), m_world(world)
 {
+    font.loadFromFile("../assets/Pulang.ttf");
     set_layout<VerticalBoxLayout>();
 
     auto container = add_widget<Container>();
@@ -78,7 +81,18 @@ GUI::GUI(sf::RenderWindow& wnd)
         container->set_visible(state);
     };
     m_create_button->set_active(false);
+    
+    auto sizes = m_window.getSize();
+    m_home_button = add_widget<Button>(sf::Vector2f(), load_image("../assets/homeButton.png"), 0.4);
+    m_home_button->set_position({static_cast<float>(sizes.x - 172 * 0.4 - 10), static_cast<float>(sizes.y - 172 * 0.4 - 10)});
+    m_home_button->on_change = [world = &m_world](bool state) mutable {
+        world->view.set_offset(sf::Vector2f(0, 0));
+        world->view.set_zoom(1);
+    };
 
+    if(m_world.view.offset() != Vector2(0, 0)){
+        std::cout << m_home_button->is_active() << "\n";
+    }
 }
 
 void GUI::relayout()
