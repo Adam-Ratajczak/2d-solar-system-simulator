@@ -13,7 +13,7 @@ public:
     bool is_hover() const { return m_hover; }
 
     virtual void handle_event(sf::Event& event);
-    virtual void draw(sf::RenderWindow& window) const = 0;
+    virtual void draw(sf::RenderWindow& window) const;
 
     void set_position(sf::Vector2f p) { m_pos = p; set_needs_relayout(); }
     void set_size(sf::Vector2f s) { m_size = s; set_needs_relayout(); }

@@ -19,7 +19,7 @@ class Slider : public Widget {
     const bool m_mode; // 0 for linear, 1 for logarithmic
 
     sf::Color m_bg_color, m_fg_color, m_text_color;
-    unsigned m_len, m_width, m_text_size;
+    unsigned m_text_size;
     std::string m_string;
 
 public:
@@ -35,10 +35,10 @@ public:
     virtual void draw(sf::RenderWindow& window) const override;
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color);
-    // TODO: Share this with Widget.
-    void set_size(unsigned len, unsigned width);
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
 
 private:
+    float calculate_knob_size() const;
+
     TextPos m_text_pos;
 };

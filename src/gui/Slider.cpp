@@ -34,12 +34,6 @@ void Slider::set_display_attributes(sf::Color bg_color, sf::Color fg_color)
     m_fg_color = fg_color;
 }
 
-void Slider::set_size(unsigned len, unsigned width)
-{
-    m_len = len;
-    m_width = width;
-}
-
 void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos text_pos)
 {
     m_text_size = text_size;
@@ -51,22 +45,17 @@ Vector2 mouse_pos;
 
 void Slider::handle_event(sf::Event& event)
 {
-    // TODO: Make it working.
     float posx, posy;
     if(m_mode)
-        posx = position().x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * m_width;
+        posx = position().x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * size().x;
     else
-        posx = position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * m_len;
-    posy = position().y - m_width * 2;
+        posx = position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().y;
+    posy = position().y - size().x * 2;
 
     if(event.type == sf::Event::MouseButtonPressed)
     {
-        if(mouse_pos.x >= posx && mouse_pos.x <= posx + m_width && mouse_pos.y >= posy && mouse_pos.y <= posy + m_width * 5)
-        {
-            mouse_pos = sf::Mouse::getPosition();
+        if(is_mouse_over({event.mouseButton.x, event.mouseButton.y}))
             m_dragging = true;
-            // std::cout << "XD\n";
-        }
     }
     else if(event.type == sf::Event::MouseButtonReleased)
     {
@@ -76,40 +65,49 @@ void Slider::handle_event(sf::Event& event)
     {
         if(m_dragging)
         {
-            float delta_pos = sf::Mouse::getPosition().x - mouse_pos.x;
-            unsigned count = (m_max_val - m_min_val) / m_step;
-            float step = m_len / m_step;
-            m_val += step * count;
+            auto mouse_pos_relative_to_slider = sf::Vector2f({static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)}) - position();
+            m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
+            m_val = std::min(std::max(m_min_val, m_val), m_max_val);
+
+            // round to step
+            m_val /= m_step;
+            m_val = std::floor(m_val);
+            m_val *= m_step;
         }
     }
 }
 
+float Slider::calculate_knob_size() const
+{
+    return std::max(4.0, size().x / (m_max_val - m_min_val) * m_step);
+}
+
 void Slider::draw(sf::RenderWindow& window) const
 {
-    sf::RectangleShape slider;
-    slider.setSize(sf::Vector2f(m_len, m_width));
-    slider.setPosition(position());
+    sf::RectangleShape slider({size().x, 5.f});
+    slider.setPosition(position().x, position().y + size().y / 2 - 2.5f);
     slider.setFillColor(m_bg_color);
     window.draw(slider);
 
     // std::cout << slider.getPosition().x << " " << slider.getPosition().y << "\n";
 
     sf::RectangleShape bound;
-    bound.setSize(sf::Vector2f(m_width, m_width * 3));
+    bound.setSize(sf::Vector2f(2, 10));
     bound.setFillColor(m_bg_color);
-    bound.setPosition(position().x, position().y - m_width);
+    bound.setPosition(position().x, position().y + size().y / 2 - 5);
     window.draw(bound);
-    bound.setPosition(position().x + m_len - m_width, position().y - m_width);
+    bound.setPosition(position().x + size().x - 2, position().y + size().y / 2 - 5);
     window.draw(bound);
 
     sf::RectangleShape slider_value;
-    slider_value.setSize(sf::Vector2f(m_width, m_width * 5));
+    auto knob_size_x = calculate_knob_size();
+    slider_value.setSize(sf::Vector2f(knob_size_x, size().y));
     slider_value.setFillColor(m_fg_color);
 
     if(m_mode)
-        slider_value.setPosition(position().x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * m_width, position().y - m_width * 2);
+        slider_value.setPosition(position().x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * size().y - knob_size_x / 2, position().y);
     else
-        slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * m_len, position().y - m_width * 2);
+        slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, position().y);
     window.draw(slider_value);
     // std::cout << "XD\n";
 }

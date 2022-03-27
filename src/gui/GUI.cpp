@@ -19,7 +19,7 @@ static sf::Image load_image()
 GUI::GUI(sf::RenderWindow& window)
 : m_window(window)
 , m_slider_1(*this, 0, 100, 1)
-, m_slider_2(*this, 0, 100, 1)
+, m_slider_2(*this, 0, 100, 10)
 , m_slider_3(*this, 0, 100, 1)
 , m_text_1(*this, sf::IntRect(50, 400, 200, 30))
 , m_create_button(*this, {}, load_image(), 0.4)
@@ -35,9 +35,9 @@ GUI::GUI(sf::RenderWindow& window)
     m_slider_2.set_position(sf::Vector2f(50, 200));
     m_slider_3.set_position(sf::Vector2f(50, 300));
 
-    m_slider_1.set_size(200, 3);
-    m_slider_2.set_size(200, 3);
-    m_slider_3.set_size(200, 3);
+    m_slider_1.set_size({200, 15});
+    m_slider_2.set_size({200, 15});
+    m_slider_3.set_size({200, 15});
 
     m_widgets.push_back(&m_create_button);
     m_widgets.push_back(&m_text_1);

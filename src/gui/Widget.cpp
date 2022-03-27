@@ -14,6 +14,16 @@ void Widget::handle_event(sf::Event& event)
     }
 }
 
+void Widget::draw(sf::RenderWindow& window) const
+{
+    sf::RectangleShape outline(size());
+    outline.setPosition(position());
+    outline.setOutlineThickness(1);
+    outline.setOutlineColor(sf::Color::Red);
+    outline.setFillColor(sf::Color::Transparent);
+    window.draw(outline);
+}
+
 void Widget::relayout_if_needed()
 {
     if(!m_needs_relayout)
