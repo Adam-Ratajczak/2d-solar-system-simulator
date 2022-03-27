@@ -37,7 +37,7 @@ m_text_1("", sf::IntRect(50, 400, 200, 30)){
 void GUI::draw(){
     m_create_button.draw(m_window);
 
-    if(m_create_button.m_mode >= 2){
+    if(m_create_button.is_active()){
         m_slider_1.draw(m_window);
         m_slider_2.draw(m_window);
         m_slider_3.draw(m_window);
@@ -46,10 +46,9 @@ void GUI::draw(){
 }
 
 void GUI::get_events(sf::Event &event){
-    m_create_button.event_listener(event, EventListening::ONCLICK);
-    m_create_button.event_listener(event, EventListening::ONRELASE);
+    m_create_button.event_listener(event);
 
-    if(m_create_button.m_mode >= 2){
+    if(m_create_button.is_active()){
         m_slider_1.get_events(event);
         m_slider_2.get_events(event);
         m_slider_3.get_events(event);

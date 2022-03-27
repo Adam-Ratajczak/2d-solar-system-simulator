@@ -12,13 +12,22 @@ class Button{
     std::vector<sf::Texture> m_tex;
     float m_scale;
     bool drag = false;
+
+    bool m_hover = false;
+    bool m_active = false;
+
+    int state_to_texture_index() const { return (m_active << 1) | m_hover; }
+    bool is_mouse_over(sf::Vector2i) const;
+
 public:
     Button(sf::Vector2f pos, sf::Image img, unsigned states, float scale);
     Button() = default;
-    unsigned m_mode = 0;
+
+    bool is_hover() const { return m_hover; }
+    bool is_active() const { return m_active; }
 
 // template<typename lambda>
-    void event_listener(sf::Event& event, EventListening mode);
+    void event_listener(sf::Event& event);
 
     void draw(sf::RenderWindow& window);
 };
