@@ -1,6 +1,5 @@
 #include "Button.hpp"
 #include "../World.hpp"
-#include "GUI.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -9,7 +8,8 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Button::Button(sf::Vector2f pos, sf::Image img, float scale)
+Button::Button(GUI& gui, sf::Vector2f pos, sf::Image img, float scale)
+: Widget(gui)
 {
     constexpr int STATES = 4;
 
@@ -26,7 +26,7 @@ Button::Button(sf::Vector2f pos, sf::Image img, float scale)
     }
 
     set_position(pos);
-    set_size({width * scale, height * scale});
+    set_size({ width * scale, height * scale });
     m_scale = scale;
 }
 

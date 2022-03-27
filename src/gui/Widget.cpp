@@ -13,3 +13,12 @@ void Widget::handle_event(sf::Event& event)
         m_hover = is_mouse_over(mouse_pos);
     }
 }
+
+void Widget::relayout_if_needed()
+{
+    if(!m_needs_relayout)
+        return;
+    m_needs_relayout = true;
+
+    // TODO: Actually implement layout.
+}

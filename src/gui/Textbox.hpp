@@ -16,7 +16,7 @@ class Textbox : public Widget
     unsigned m_limit = 16;
 
 public:
-    Textbox(std::string text, sf::IntRect rect);
+    Textbox(GUI& gui, sf::IntRect rect);
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
     virtual void handle_event(sf::Event& event) override;

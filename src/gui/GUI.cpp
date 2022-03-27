@@ -8,16 +8,22 @@
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
-GUI::GUI(sf::RenderWindow& window) : m_window(window), 
-m_slider_1(0, 100, 1), 
-m_slider_2(0, 100, 1), 
-m_slider_3(0, 100, 1),
-m_text_1("", sf::IntRect(50, 400, 200, 30)){
+static sf::Image load_image()
+{
+    // TODO: Error handling
     sf::Image image;
     image.loadFromFile("../assets/createButton.png");
-    Button buttonCreate(sf::Vector2f(0, 0), image, 0.4);
-    m_create_button = buttonCreate;
+    return image;
+}
 
+GUI::GUI(sf::RenderWindow& window)
+: m_window(window)
+, m_slider_1(*this, 0, 100, 1)
+, m_slider_2(*this, 0, 100, 1)
+, m_slider_3(*this, 0, 100, 1)
+, m_text_1(*this, sf::IntRect(50, 400, 200, 30))
+, m_create_button(*this, {}, load_image(), 0.4)
+{
     m_slider_1.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
     m_slider_2.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
     m_slider_3.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
@@ -32,12 +38,21 @@ m_text_1("", sf::IntRect(50, 400, 200, 30)){
     m_slider_1.set_size(200, 3);
     m_slider_2.set_size(200, 3);
     m_slider_3.set_size(200, 3);
+
+    m_widgets.push_back(&m_create_button);
+    m_widgets.push_back(&m_text_1);
 }
 
-void GUI::draw(){
+void GUI::draw()
+{
+    for(auto* w: m_widgets)
+        w->relayout_if_needed();
+
+    // TODO: Proper widget hierarchy
     m_create_button.draw(m_window);
 
-    if(m_create_button.is_active()){
+    if(m_create_button.is_active())
+    {
         m_slider_1.draw(m_window);
         m_slider_2.draw(m_window);
         m_slider_3.draw(m_window);
@@ -45,14 +60,16 @@ void GUI::draw(){
     }
 }
 
-void GUI::get_events(sf::Event &event){
+void GUI::get_events(sf::Event& event)
+{
     // FIXME: Widget hierarchy (must be done anyway for layout system)
     m_create_button.handle_event(event);
 
-    if(m_create_button.is_active()){
-        m_slider_1.get_events(event);
-        m_slider_2.get_events(event);
-        m_slider_3.get_events(event);
+    if(m_create_button.is_active())
+    {
+        m_slider_1.handle_event(event);
+        m_slider_2.handle_event(event);
+        m_slider_3.handle_event(event);
         m_text_1.handle_event(event);
     }
 }
