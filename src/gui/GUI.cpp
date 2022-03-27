@@ -49,6 +49,12 @@ GUI::GUI(sf::RenderWindow& wnd)
     m_text_1 = container->add_widget<Textbox>(sf::IntRect(50, 400, 200, 30));
     m_text_1->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
     m_text_1->set_limit(13);
+
+    m_textfield_1 = container->add_widget<Text>(sf::IntRect(50, 400, 200, 30));
+    m_textfield_1->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+    m_textfield_1->set_font_size(20);
+    m_textfield_1->set_content("My Textfield");
+    m_textfield_1->set_alignment(Text::Align::RIGHT);
     
     m_create_button = add_widget<Button>(sf::Vector2f(), load_image(), 0.4);
     m_create_button->set_position({10, 10});

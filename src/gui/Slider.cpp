@@ -70,7 +70,7 @@ void Slider::handle_event(sf::Event& event)
             m_val = std::round(m_val);
             m_val *= m_step;
 
-            std::cout << get_value() << std::endl;
+            // std::cout << get_value() << std::endl;
         }
     }
 }

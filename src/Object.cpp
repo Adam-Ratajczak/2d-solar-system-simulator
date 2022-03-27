@@ -87,7 +87,7 @@ void Object::update(){
                 if(!World::collisions)
                     break;
                 
-                std::cout << this->m_name << " - " << object.m_name << "\n";
+                // std::cout << this->m_name << " - " << object.m_name << "\n";
 
                 double log10m1 = std::log10(this->m_mass), log10m2 = std::log10(object.m_mass);
 
