@@ -8,8 +8,8 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Button::Button(GUI& gui, sf::Vector2f pos, sf::Image img, float scale)
-: Widget(gui)
+Button::Button(Container* c, sf::Vector2f pos, sf::Image img, float scale)
+: Widget(c)
 {
     constexpr int STATES = 4;
 

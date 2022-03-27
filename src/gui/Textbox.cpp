@@ -10,8 +10,8 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Textbox::Textbox(GUI& gui, sf::IntRect rect)
-: Widget(gui)
+Textbox::Textbox(Container* c, sf::IntRect rect)
+: Widget(c)
 {
     set_position({static_cast<float>(rect.left), static_cast<float>(rect.top)});
     set_size({static_cast<float>(rect.width), static_cast<float>(rect.height)});

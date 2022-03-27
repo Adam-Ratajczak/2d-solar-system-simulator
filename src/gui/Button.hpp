@@ -14,7 +14,7 @@ class Button : public Widget
     int state_to_texture_index() const { return (m_active << 1) | is_hover(); }
 
 public:
-    Button(GUI& gui, sf::Vector2f pos, sf::Image img, float scale);
+    Button(Container*, sf::Vector2f pos, sf::Image img, float scale);
 
     bool is_active() const { return m_active; }
     void set_active(bool active) { m_active = active; on_change(active); }

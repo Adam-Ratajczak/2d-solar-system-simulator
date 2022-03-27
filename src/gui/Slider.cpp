@@ -8,8 +8,8 @@
 #include <cmath>
 #include <iostream>
 
-Slider::Slider(GUI& gui, double min_val, double max_val, double step)
-: Widget(gui), m_min_val(min_val), m_max_val(max_val), m_step(step), m_val((min_val + max_val) / 2)
+Slider::Slider(Container* c, double min_val, double max_val, double step)
+: Widget(c), m_min_val(min_val), m_max_val(max_val), m_step(step), m_val((min_val + max_val) / 2)
 {
 }
 

@@ -24,6 +24,13 @@ void Widget::draw(sf::RenderWindow& window) const
     window.draw(outline);
 }
 
+void Widget::update_and_draw(sf::RenderWindow& window)
+{
+    relayout_if_needed();
+    Widget::draw(window);
+    this->draw(window);
+}
+
 void Widget::relayout_if_needed()
 {
     if(!m_needs_relayout)

@@ -18,7 +18,7 @@ int main()
 
     World world {window};
 
-    GUI gui(window);
+    GUI gui;
     
     prepare_solar(world);
 
@@ -27,7 +27,7 @@ int main()
 
         while(window.pollEvent(event)) {
             world.get_events(event);
-            gui.get_events(event);
+            gui.handle_event(event);
         }
 
         window.setView(sf::View(sf::FloatRect({0, 0}, sf::Vector2f(window.getSize()))));
@@ -37,7 +37,7 @@ int main()
         world.handle_focus();
         world.draw();
 
-        gui.draw();
+        gui.update_and_draw(window);
 
         window.display();
     }

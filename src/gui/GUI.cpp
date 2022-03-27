@@ -16,8 +16,8 @@ static sf::Image load_image()
     return image;
 }
 
-GUI::GUI(sf::RenderWindow& window)
-: m_window(window)
+GUI::GUI()
+: Container(nullptr)
 {
     m_slider_1 = add_widget<Slider>(0, 100, 1);
     m_slider_1->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
@@ -48,25 +48,4 @@ GUI::GUI(sf::RenderWindow& window)
         m_slider_3->set_visible(state);
     };
     m_create_button->set_active(false);
-}
-
-void GUI::draw()
-{
-    for(auto const& w: m_widgets)
-    {
-        if(w->is_visible())
-        {
-            w->relayout_if_needed();
-            w->draw(m_window);
-        }
-    }
-}
-
-void GUI::get_events(sf::Event& event)
-{
-    for(auto const& w: m_widgets)
-    {
-        if(w->is_visible())
-            w->handle_event(event);
-    }
 }

@@ -32,7 +32,7 @@ public:
         TOP, RIGHT, BOTTOM, LEFT
     };
 
-    Slider(GUI&, double min_val, double max_val, double step = 1);
+    Slider(Container*, double min_val, double max_val, double step = 1);
     double get_value() const;
     double get_raw_value() const { return m_val; }
     void set_value(const double val);
