@@ -9,11 +9,11 @@
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
-static sf::Image load_image()
+static sf::Image load_image(std::string path)
 {
     // TODO: Error handling
     sf::Image image;
-    image.loadFromFile("../assets/createButton.png");
+    image.loadFromFile(path);
     return image;
 }
 
@@ -25,7 +25,7 @@ GUI::GUI(sf::RenderWindow& wnd)
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
     container->set_position({100, 10});
-    container->set_size({500, 200});
+    container->set_size({500, 500});
     auto& layout = container->set_layout<VerticalBoxLayout>();
     layout.set_spacing(10);
 
@@ -55,13 +55,29 @@ GUI::GUI(sf::RenderWindow& wnd)
     m_textfield_1->set_font_size(20);
     m_textfield_1->set_content("My Textfield");
     m_textfield_1->set_alignment(Text::Align::RIGHT);
+
+    auto horizontal_container = container->add_widget<Container>();
+    horizontal_container->set_position({0, 0});
+    horizontal_container->set_size({500, 500});
+    auto& horizontal_layout = horizontal_container->set_layout<HorizontalBoxLayout>();
+    horizontal_layout.set_spacing(10);
+
+    m_slider_4 = horizontal_container->add_widget<Slider>(0, 100, 1);
+    m_slider_4->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
+    m_slider_4->set_position(sf::Vector2f(50, 200));
+    m_slider_4->set_size({200, 5});
+
+    m_text_2 = horizontal_container->add_widget<Textbox>(sf::IntRect(50, 400, 200, 30));
+    m_text_2->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+    m_text_2->set_limit(13);
     
-    m_create_button = add_widget<Button>(sf::Vector2f(), load_image(), 0.4);
+    m_create_button = add_widget<Button>(sf::Vector2f(), load_image("../assets/createButton.png"), 0.4);
     m_create_button->set_position({10, 10});
     m_create_button->on_change = [container = container.get()](bool state) {
         container->set_visible(state);
     };
     m_create_button->set_active(false);
+
 }
 
 void GUI::relayout()

@@ -7,6 +7,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 #include <iostream>
+#include "../World.hpp"
 
 Slider::Slider(Container* c, double min_val, double max_val, double step)
 : Widget(c), m_min_val(min_val), m_max_val(max_val), m_step(step), m_val((min_val + max_val) / 2)
@@ -61,6 +62,7 @@ void Slider::handle_event(sf::Event& event)
     {
         if(m_dragging)
         {
+            World::dragging = false;
             auto mouse_pos_relative_to_slider = sf::Vector2f({static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)}) - position();
             m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
             m_val = std::min(std::max(m_min_val, m_val), m_max_val);

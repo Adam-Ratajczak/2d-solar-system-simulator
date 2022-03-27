@@ -17,6 +17,18 @@ void VerticalBoxLayout::run()
     }
 }
 
+void HorizontalBoxLayout::run()
+{
+    size_t index = 0;
+    float size = (m_container.size().x - (m_spacing * (widgets().size() - 1))) / widgets().size();
+    for(auto& w : widgets())
+    {
+        w->set_position({m_container.position().x + index * size + m_spacing * index, m_container.position().y});
+        w->set_size({size, m_container.size().x});
+        index++;
+    }
+}
+
 void Container::update_and_draw(sf::RenderWindow& window)
 {
     Widget::update_and_draw(window);

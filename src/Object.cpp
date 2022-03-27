@@ -178,30 +178,30 @@ void Object::draw(View& view){
         m_pe_vel = m_vel.magnitude();
     }
 
-    pos = view.screen_to_world(sf::Mouse::getPosition());
-    double av = (m_ap + m_pe / 2), d = get_distance(pos, World::most_massive_object->m_pos);
+    // pos = view.screen_to_world(sf::Mouse::getPosition());
+    // double av = (m_ap + m_pe / 2), d = get_distance(pos, World::most_massive_object->m_pos);
 
-    if(std::fabs(d - av) <= 2e10){
-        auto closest = m_trail.front();
-        double closest_distance = get_distance(closest.first, World::most_massive_object->m_pos);
+    // if(std::fabs(d - av) <= 2e10){
+    //     auto closest = m_trail.front();
+    //     double closest_distance = get_distance(closest.first, World::most_massive_object->m_pos);
 
-        for(auto& t : m_trail){
-            double dist = get_distance(t.first, World::most_massive_object->m_pos);
+    //     for(auto& t : m_trail){
+    //         double dist = get_distance(t.first, World::most_massive_object->m_pos);
 
-            if(dist < closest_distance){
-                closest = t;
-                closest_distance = dist;
-            }
-        }
+    //         if(dist < closest_distance){
+    //             closest = t;
+    //             closest_distance = dist;
+    //         }
+    //     }
 
-        // std::cout << view.world_to_screen(closest.first) << "\n";
+    //     // std::cout << view.world_to_screen(closest.first) << "\n";
 
-        sf::CircleShape circle(3);
-        circle.setFillColor(m_color);
-        circle.setOrigin(sf::Vector2f(3, 3));
-        circle.setPosition(view.world_to_screen(closest.first));
-        target.draw(circle);
-    }
+    //     sf::CircleShape circle(3);
+    //     circle.setFillColor(m_color);
+    //     circle.setOrigin(sf::Vector2f(3, 3));
+    //     circle.setPosition(view.world_to_screen(closest.first));
+    //     target.draw(circle);
+    // }
 
     if(this->m_focused){
         unsigned exponent = std::log10(m_mass);

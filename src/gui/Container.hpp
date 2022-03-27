@@ -38,6 +38,20 @@ private:
     float m_spacing;
 };
 
+class HorizontalBoxLayout : public Layout
+{
+public:
+    HorizontalBoxLayout(Container& c)
+    : Layout(c) {}
+
+    void set_spacing(float s) { m_spacing = s; }
+
+private:
+    virtual void run() override;
+
+    float m_spacing;
+};
+
 class Container : public Widget
 {
 public:
