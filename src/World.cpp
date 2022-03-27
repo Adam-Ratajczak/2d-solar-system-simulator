@@ -87,11 +87,7 @@ void World::get_events(sf::Event& event)
     }
     else if(event.type == sf::Event::KeyReleased)
     {
-        if(event.key.code == sf::Keyboard::Space)
-        {
-            view.reset();
-        }
-        else if(event.key.code == sf::Keyboard::Right)
+        if(event.key.code == sf::Keyboard::Right)
         {
             if(!reverse)
             {
