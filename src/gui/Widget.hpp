@@ -38,6 +38,7 @@ public:
     bool is_visible() const { return m_visible; }
 
 protected:
+    virtual void relayout() {}
     virtual bool is_mouse_over(sf::Vector2i) const;
 
     void set_needs_relayout() { m_needs_relayout = true; }

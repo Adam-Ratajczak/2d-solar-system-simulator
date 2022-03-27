@@ -1,5 +1,9 @@
 #include "Widget.hpp"
 
+#include "Container.hpp"
+
+#include <cassert>
+
 bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const
 {
     return sf::Rect<float>(m_pos, m_size).contains(mouse_pos.x, mouse_pos.y);
@@ -35,7 +39,6 @@ void Widget::relayout_if_needed()
 {
     if(!m_needs_relayout)
         return;
-    m_needs_relayout = true;
-
-    // TODO: Actually implement layout.
+    relayout();
+    m_needs_relayout = false;
 }

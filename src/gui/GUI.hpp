@@ -16,7 +16,11 @@ class GUI : public Container
     std::shared_ptr<Slider> m_slider_2;
     std::shared_ptr<Slider> m_slider_3;
     std::shared_ptr<Textbox> m_text_1;
+    sf::RenderWindow& m_window;
 
 public:
-    GUI();
+    GUI(sf::RenderWindow& wnd);
+
+private:
+    virtual void relayout() override;
 };

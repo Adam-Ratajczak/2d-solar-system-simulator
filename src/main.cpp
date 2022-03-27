@@ -13,25 +13,26 @@ bool World::collisions = true;
 int main()
 {
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Intro");
-    
+
     window.setFramerateLimit(60);
 
-    World world {window};
+    World world { window };
+    GUI gui { window };
 
-    GUI gui;
-    
     prepare_solar(world);
 
-    while (window.isOpen()){
+    while(window.isOpen())
+    {
         sf::Event event;
 
-        while(window.pollEvent(event)) {
+        while(window.pollEvent(event))
+        {
             world.get_events(event);
             gui.handle_event(event);
         }
 
-        window.setView(sf::View(sf::FloatRect({0, 0}, sf::Vector2f(window.getSize()))));
-        
+        window.setView(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
+
         window.clear();
         world.update();
         world.handle_focus();
