@@ -1,6 +1,7 @@
 #include "Slider.hpp"
 #include "../Vector2.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
@@ -8,16 +9,21 @@
 #include <iostream>
 
 Slider::Slider(GUI& gui, double min_val, double max_val, double step)
-: Widget(gui), m_min_val(min_val), m_max_val(max_val), m_step(step), m_mode(0), m_val((min_val + max_val) / 2)
+: Widget(gui), m_min_val(min_val), m_max_val(max_val), m_step(step), m_val((min_val + max_val) / 2)
 {
 }
 
 double Slider::get_value() const
 {
-    return m_val;
+    switch(m_mode)
+    {
+        case Mode::Linear: return m_val;
+        case Mode::Exponential: return std::pow(m_exponent, m_val);
+    }
+    return 0;
 }
 
-double& Slider::set_value(const double val)
+void Slider::set_value(double val)
 {
     if(val < m_min_val)
         m_val = m_min_val;
@@ -25,7 +31,6 @@ double& Slider::set_value(const double val)
         m_val = m_max_val;
     else
         m_val = val;
-    return m_val;
 }
 
 void Slider::set_display_attributes(sf::Color bg_color, sf::Color fg_color)
@@ -41,17 +46,8 @@ void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos
     m_text_pos = text_pos;
 }
 
-Vector2 mouse_pos;
-
 void Slider::handle_event(sf::Event& event)
 {
-    float posx, posy;
-    if(m_mode)
-        posx = position().x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * size().x;
-    else
-        posx = position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().y;
-    posy = position().y - size().x * 2;
-
     if(event.type == sf::Event::MouseButtonPressed)
     {
         if(is_mouse_over({event.mouseButton.x, event.mouseButton.y}))
@@ -73,6 +69,8 @@ void Slider::handle_event(sf::Event& event)
             m_val /= m_step;
             m_val = std::floor(m_val);
             m_val *= m_step;
+
+            std::cout << get_value() << std::endl;
         }
     }
 }
@@ -104,10 +102,7 @@ void Slider::draw(sf::RenderWindow& window) const
     slider_value.setSize(sf::Vector2f(knob_size_x, size().y));
     slider_value.setFillColor(m_fg_color);
 
-    if(m_mode)
-        slider_value.setPosition(position().x + std::log10(m_val - m_min_val) / std::log10(m_max_val - m_min_val) * size().y - knob_size_x / 2, position().y);
-    else
-        slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, position().y);
+    slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, position().y);
     window.draw(slider_value);
-    // std::cout << "XD\n";
+    // std::cout << "XD\n"
 }

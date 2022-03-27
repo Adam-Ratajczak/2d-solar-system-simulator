@@ -20,13 +20,16 @@ GUI::GUI(sf::RenderWindow& window)
 : m_window(window)
 , m_slider_1(*this, 0, 100, 1)
 , m_slider_2(*this, 0, 100, 10)
-, m_slider_3(*this, 0, 100, 1)
+, m_slider_3(*this, 0, 10, 1)
 , m_text_1(*this, sf::IntRect(50, 400, 200, 30))
 , m_create_button(*this, {}, load_image(), 0.4)
 {
     m_slider_1.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
     m_slider_2.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
     m_slider_3.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
+
+    m_slider_3.set_mode(Slider::Mode::Exponential);
+    m_slider_3.set_exponent(4);
 
     m_text_1.set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
     m_text_1.set_limit(13);
