@@ -46,12 +46,13 @@ void GUI::draw(){
 }
 
 void GUI::get_events(sf::Event &event){
+    // FIXME: Widget hierarchy (must be done anyway for layout system)
     m_create_button.handle_event(event);
 
     if(m_create_button.is_active()){
         m_slider_1.get_events(event);
         m_slider_2.get_events(event);
         m_slider_3.get_events(event);
-        m_text_1.get_events(event);
+        m_text_1.handle_event(event);
     }
 }

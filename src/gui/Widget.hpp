@@ -17,10 +17,12 @@ public:
     void set_size(sf::Vector2f s) { m_size = s; }
 
     sf::Vector2f position() const { return m_pos; }
+    sf::Vector2f size() const { return m_size; }
 
-private:
+protected:
     virtual bool is_mouse_over(sf::Vector2i) const;
 
+private:
     sf::Vector2f m_pos, m_size;
     bool m_hover = false;
 };
