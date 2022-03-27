@@ -42,37 +42,40 @@ GUI::GUI(sf::RenderWindow& window)
     m_slider_2.set_size({200, 15});
     m_slider_3.set_size({200, 15});
 
+    m_create_button.on_change = [this](bool state) {
+        m_text_1.set_visible(state);
+        m_slider_1.set_visible(state);
+        m_slider_2.set_visible(state);
+        m_slider_3.set_visible(state);
+    };
+
+    m_create_button.set_active(false);
+
+    // FIXME: This should not be needed.
     m_widgets.push_back(&m_create_button);
     m_widgets.push_back(&m_text_1);
+    m_widgets.push_back(&m_slider_1);
+    m_widgets.push_back(&m_slider_2);
+    m_widgets.push_back(&m_slider_3);
 }
 
 void GUI::draw()
 {
     for(auto* w: m_widgets)
-        w->relayout_if_needed();
-
-    // TODO: Proper widget hierarchy
-    m_create_button.draw(m_window);
-
-    if(m_create_button.is_active())
     {
-        m_slider_1.draw(m_window);
-        m_slider_2.draw(m_window);
-        m_slider_3.draw(m_window);
-        m_text_1.draw(m_window);
+        if(w->is_visible())
+        {
+            w->relayout_if_needed();
+            w->draw(m_window);
+        }
     }
 }
 
 void GUI::get_events(sf::Event& event)
 {
-    // FIXME: Widget hierarchy (must be done anyway for layout system)
-    m_create_button.handle_event(event);
-
-    if(m_create_button.is_active())
+    for(auto* w: m_widgets)
     {
-        m_slider_1.handle_event(event);
-        m_slider_2.handle_event(event);
-        m_slider_3.handle_event(event);
-        m_text_1.handle_event(event);
+        if(w->is_visible())
+            w->handle_event(event);
     }
 }

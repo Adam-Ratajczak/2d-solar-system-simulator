@@ -24,6 +24,9 @@ public:
     // FIXME: This should be private somehow.
     void relayout_if_needed();
 
+    void set_visible(bool visible) { m_visible = visible; }
+    bool is_visible() const { return m_visible; }
+
 protected:
     virtual bool is_mouse_over(sf::Vector2i) const;
 
@@ -35,4 +38,5 @@ private:
     sf::Vector2f m_pos, m_size;
     bool m_hover = false;
     bool m_needs_relayout = false;
+    bool m_visible = true;
 };
