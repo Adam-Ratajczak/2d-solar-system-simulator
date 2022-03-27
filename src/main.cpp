@@ -24,8 +24,10 @@ int main()
 
     while (window.isOpen()){
         sf::Event event;
-        world.get_events(event);
-        gui.get_events(event);
+        while(window.pollEvent(event)) {
+            world.get_events(event);
+            gui.get_events(event);
+        }
         
         window.clear();
         world.update();
