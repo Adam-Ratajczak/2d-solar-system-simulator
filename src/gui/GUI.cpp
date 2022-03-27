@@ -15,7 +15,7 @@ m_slider_3(0, 100, 1),
 m_text_1("", sf::IntRect(50, 400, 200, 30)){
     sf::Image image;
     image.loadFromFile("../assets/createButton.png");
-    Button buttonCreate(sf::Vector2f(0, 0), image, 4, 0.4);
+    Button buttonCreate(sf::Vector2f(0, 0), image, 0.4);
     m_create_button = buttonCreate;
 
     m_slider_1.set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
@@ -46,7 +46,7 @@ void GUI::draw(){
 }
 
 void GUI::get_events(sf::Event &event){
-    m_create_button.event_listener(event);
+    m_create_button.handle_event(event);
 
     if(m_create_button.is_active()){
         m_slider_1.get_events(event);

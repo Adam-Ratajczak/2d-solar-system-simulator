@@ -8,14 +8,15 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
 add_executable(
     out
-    src/main.cpp
-    src/World.cpp
     src/Object.cpp
-    src/gui/Slider.cpp
-    src/gui/Button.cpp
-    src/gui/Textbox.cpp
-    src/gui/GUI.cpp
     src/SolarSystem.cpp
+    src/World.cpp
+    src/main.cpp
+    src/gui/Button.cpp
+    src/gui/GUI.cpp
+    src/gui/Slider.cpp
+    src/gui/Textbox.cpp
+    src/gui/Widget.cpp
 )
 target_link_libraries(
     out
