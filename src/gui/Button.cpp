@@ -30,14 +30,16 @@ Button::Button(GUI& gui, sf::Vector2f pos, sf::Image img, float scale)
     m_scale = scale;
 }
 
-// template<typename lambda>
 void Button::handle_event(sf::Event& event)
 {
     Widget::handle_event(event);
     if(is_hover())
     {
         if(event.type == sf::Event::MouseButtonReleased)
+        {
             m_active = !m_active;
+            on_change(m_active);
+        }
         // FIXME: VERY HACKY REMOVE THAT ASAP
         World::dragging = false;
     }
