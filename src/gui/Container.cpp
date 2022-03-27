@@ -24,7 +24,7 @@ void HorizontalBoxLayout::run()
     for(auto& w : widgets())
     {
         w->set_position({m_container.position().x + index * size + m_spacing * index, m_container.position().y});
-        w->set_size({size, m_container.size().x});
+        w->set_size({size, m_container.size().y});
         index++;
     }
 }

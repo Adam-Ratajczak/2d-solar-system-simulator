@@ -25,7 +25,7 @@ GUI::GUI(sf::RenderWindow& wnd)
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
     container->set_position({100, 10});
-    container->set_size({500, 500});
+    container->set_size({500, 400});
     auto& layout = container->set_layout<VerticalBoxLayout>();
     layout.set_spacing(10);
 
