@@ -55,8 +55,11 @@ void World::get_events(sf::Event& event)
         }
         else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
         {
-            focused_object->m_focused = false;
-            focused_object = nullptr;
+            if(focused_object)
+            {
+                focused_object->m_focused = false;
+                focused_object = nullptr;
+            }
         }
     }
     else if(event.type == sf::Event::MouseWheelScrolled)
@@ -136,9 +139,7 @@ void World::get_events(sf::Event& event)
                 }
             }
         }
-    } /* else if(event.type == sf::Event::Resized) {
-         window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-     }*/
+    }
 }
 
 void World::update()
