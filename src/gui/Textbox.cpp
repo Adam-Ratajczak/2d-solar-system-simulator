@@ -37,7 +37,7 @@ void Textbox::handle_event(sf::Event& event)
             {
                 m_content = m_content.substr(0, m_content.size() - 1);
             }
-            else if(event.text.unicode <= 128)
+            else if(event.text.unicode < 128 && event.text.unicode >= 32)
             {
                 if(m_content.size() < m_limit)
                     m_content += static_cast<char>(event.text.unicode);
