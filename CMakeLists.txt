@@ -18,7 +18,7 @@ add_executable(
     src/gui/GUI.cpp
     src/gui/Slider.cpp
     src/gui/Textbox.cpp
-    src/gui/Text.cpp
+    src/gui/Textfield.cpp
     src/gui/Widget.cpp
 )
 target_link_libraries(

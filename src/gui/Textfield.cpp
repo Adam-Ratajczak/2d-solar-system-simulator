@@ -1,26 +1,26 @@
-#include "Text.hpp"
+#include "Textfield.hpp"
 #include "../World.hpp"
 #include <SFML/System/Vector2.hpp>
 
-Text::Text(Container* c, sf::IntRect rect)
+Textfield::Textfield(Container* c, sf::IntRect rect)
 : Widget(c)
 {
     set_position({static_cast<float>(rect.left), static_cast<float>(rect.top)});
     set_size({static_cast<float>(rect.width), static_cast<float>(rect.height)});
 }
 
-void Text::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
+void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
     m_bg_color = bg_color;
     m_fg_color = fg_color;
     m_text_color = text_color;
 }
 
-void Text::handle_event(sf::Event &event){
+void Textfield::handle_event(sf::Event &event){
 
 
 }
 
-void Text::draw(sf::RenderWindow& window) const{
+void Textfield::draw(sf::RenderWindow& window) const{
     sf::RectangleShape rect(size());
     rect.setPosition(position());
     rect.setFillColor(m_bg_color);

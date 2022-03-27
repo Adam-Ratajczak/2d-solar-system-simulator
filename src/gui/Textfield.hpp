@@ -2,7 +2,7 @@
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
 
-class Text : public Widget{
+class Textfield : public Widget{
 public:
     enum class Align{
         LEFT,
@@ -15,7 +15,7 @@ private:
     unsigned m_font_size = 20;
     Align m_alignment = Align::LEFT;
 public:
-    Text(Container* c, sf::IntRect rect);
+    Textfield(Container* c, sf::IntRect rect);
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
     virtual void handle_event(sf::Event& event) override;

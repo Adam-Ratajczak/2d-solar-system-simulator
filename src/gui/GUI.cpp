@@ -1,6 +1,7 @@
 #include "GUI.hpp"
 #include "Button.hpp"
 #include "Container.hpp"
+#include "Textfield.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -50,11 +51,11 @@ GUI::GUI(sf::RenderWindow& wnd)
     m_text_1->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
     m_text_1->set_limit(13);
 
-    m_textfield_1 = container->add_widget<Text>(sf::IntRect(50, 400, 200, 30));
+    m_textfield_1 = container->add_widget<Textfield>(sf::IntRect(50, 400, 200, 30));
     m_textfield_1->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     m_textfield_1->set_font_size(20);
     m_textfield_1->set_content("My Textfield");
-    m_textfield_1->set_alignment(Text::Align::RIGHT);
+    m_textfield_1->set_alignment(Textfield::Align::RIGHT);
 
     auto horizontal_container = container->add_widget<Container>();
     horizontal_container->set_position({0, 0});
