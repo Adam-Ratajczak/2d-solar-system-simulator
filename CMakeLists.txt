@@ -28,3 +28,4 @@ target_link_libraries(
     sfml-graphics
     sfml-window
 )
+add_compile_options(out -Werror=non-virtual-dtor)
