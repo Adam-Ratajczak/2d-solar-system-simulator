@@ -21,6 +21,8 @@ class GUI : public Container
     std::shared_ptr<Slider> m_slider_4;
     std::shared_ptr<Textbox> m_text_1;
     std::shared_ptr<Textbox> m_text_2;
+    std::shared_ptr<Textbox> m_text_3;
+    std::shared_ptr<Textbox> m_text_4;
     std::shared_ptr<Textfield> m_textfield_1;
     sf::RenderWindow& m_window;
     World& m_world;

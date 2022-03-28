@@ -2,8 +2,10 @@
 
 #include "Widget.hpp"
 
+#include <initializer_list>
 #include <memory>
 #include <type_traits>
+#include <vector>
 
 class Container;
 
@@ -17,6 +19,9 @@ public:
 
     virtual void run() = 0;
 
+    void set_multipliers(std::initializer_list<float> list);
+
+    std::vector<float> m_multipliers;
 protected:
     Container& m_container;
 
@@ -63,6 +68,7 @@ public:
     {
         auto widget = std::make_shared<T>(this, std::forward<Args>(args)...);
         m_widgets.push_back(widget);
+        m_layout->m_multipliers.push_back(1);
         return widget;
     }
 
@@ -85,6 +91,7 @@ public:
     }
 
     void clear_layout() { m_layout = nullptr; }
+    std::unique_ptr<Layout>& get_layout(){return m_layout;}
 
 protected:
     virtual void relayout() override;

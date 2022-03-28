@@ -74,6 +74,16 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
     m_text_2 = horizontal_container->add_widget<Textbox>(sf::IntRect(50, 400, 200, 30));
     m_text_2->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
     m_text_2->set_limit(13);
+
+    m_text_3 = horizontal_container->add_widget<Textbox>(sf::IntRect(50, 400, 200, 30));
+    m_text_3->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+    m_text_3->set_limit(13);
+
+    m_text_4 = horizontal_container->add_widget<Textbox>(sf::IntRect(50, 400, 200, 30));
+    m_text_4->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+    m_text_4->set_limit(13);
+
+    horizontal_container->get_layout()->set_multipliers({0.5, 1.5, 0.7, 1.3});
     
     m_create_button = add_widget<Button>(sf::Vector2f(), load_image("../assets/createButton.png"), 0.4);
     m_create_button->set_position({10, 10});
@@ -89,10 +99,6 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
         world->view.set_offset(sf::Vector2f(0, 0));
         world->view.set_zoom(1);
     };
-
-    if(m_world.view.offset() != Vector2(0, 0)){
-        std::cout << m_home_button->is_active() << "\n";
-    }
 }
 
 void GUI::relayout()
