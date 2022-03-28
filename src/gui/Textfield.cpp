@@ -18,24 +18,27 @@ void Textfield::draw(sf::RenderWindow& window) const{
     sf::RectangleShape rect(size());
     rect.setPosition(position());
     rect.setFillColor(m_bg_color);
-    rect.setOutlineColor(m_fg_color);
-    rect.setOutlineThickness(3);
+    /*rect.setOutlineColor(m_fg_color);
+    rect.setOutlineThickness(3);*/
 
     window.draw(rect);
 
-    sf::Text text(m_content, GUI::font, size().y - 4);
+    sf::Text text(m_content, GUI::font, 15);
     text.setFillColor(m_text_color);
-    auto bouds = text.getLocalBounds();
+    auto bounds = text.getLocalBounds();
+
+    // The -5 is needed because SFML doesn't take descenders into account
+    auto y_center_factor = size().y / 2 - bounds.height / 2 - 5;
 
     switch (m_alignment) {
-        case Align::LEFT:
-            text.setPosition(sf::Vector2f(position().x + 2, position().y + 2));
+        case Align::CenterLeft:
+            text.setPosition(sf::Vector2f(position().x + 2, position().y + 2 + y_center_factor ));
         break;
-        case Align::CENTER:
-            text.setPosition(sf::Vector2f(position().x + size().x / 2 - bouds.width / 2, position().y + 2));
+        case Align::Center:
+            text.setPosition(sf::Vector2f(position().x + size().x / 2 - bounds.width / 2, position().y + y_center_factor));
         break;
-        case Align::RIGHT:
-            text.setPosition(sf::Vector2f(position().x + size().x - bouds.width - 2, position().y + 2));
+        case Align::CenterRight:
+            text.setPosition(sf::Vector2f(position().x + size().x - bounds.width - 2, position().y + y_center_factor));
         break;
     }
 

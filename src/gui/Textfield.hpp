@@ -5,15 +5,15 @@
 class Textfield : public Widget{
 public:
     enum class Align{
-        LEFT,
-        CENTER,
-        RIGHT
+        CenterLeft,
+        Center,
+        CenterRight
     };
 private:
     std::string m_content;
     sf::Color m_bg_color, m_fg_color, m_text_color;
     unsigned m_font_size = 20;
-    Align m_alignment = Align::LEFT;
+    Align m_alignment = Align::CenterLeft;
 public:
     Textfield(Container* c)
     : Widget(c) {}
