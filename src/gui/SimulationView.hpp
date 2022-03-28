@@ -30,6 +30,10 @@ public:
         m_zoom = 1;
     };
 
+    std::function<void(sf::Vector2f pos)> on_coord_measure;
+
+    void start_coords_measure() { m_coord_measure = true; }
+
 private:
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
@@ -40,6 +44,8 @@ private:
     double m_zoom = 1;
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
+    sf::Vector2f m_prev_mouse_pos;
     Vector2 m_prev_pos;
     bool m_dragging = false;
+    bool m_coord_measure = false;
 };

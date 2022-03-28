@@ -15,13 +15,15 @@
 class GUI : public Container
 {
 public:
-    explicit GUI(World& world, sf::RenderWindow& wnd);
+    explicit GUI(World& world, Root& root);
     static sf::Font font;
 
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
 private:
+    virtual void relayout() override;
+
     std::shared_ptr<ToggleButton> m_create_button;
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;
@@ -42,7 +44,5 @@ private:
 
     std::shared_ptr<SimulationView> m_simulation_view;
 
-    Vector2 m_coords, m_mouse_pos;
-
-    virtual void relayout() override;
+    sf::Vector2f m_new_object_pos;
 };

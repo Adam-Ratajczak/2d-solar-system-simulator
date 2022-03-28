@@ -9,10 +9,6 @@ class Textbox : public Widget
 {
     std::string m_content;
     sf::Color m_bg_color, m_fg_color, m_text_color;
-
-    // TODO: Move this to Widget.
-    bool focused = false;
-
     unsigned m_limit = 16;
 
 public:

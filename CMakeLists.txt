@@ -16,6 +16,7 @@ add_executable(
     src/gui/Button.cpp
     src/gui/Container.cpp
     src/gui/GUI.cpp
+    src/gui/Root.cpp
     src/gui/SimulationView.cpp
     src/gui/Slider.cpp
     src/gui/Textbox.cpp

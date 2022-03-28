@@ -133,7 +133,6 @@ void Container::update_and_draw(sf::RenderWindow& window)
 
 void Container::do_handle_event(Event& event)
 {
-    // FIXME: Proper stacking contexts
     for(auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
     {
         auto& widget = *it;
@@ -144,7 +143,9 @@ void Container::do_handle_event(Event& event)
                 break;
         }
     }
-    Widget::handle_event(event);
+    // FIXME: Proper stacking contexts
+    if(!event.is_handled())
+        Widget::handle_event(event);
 }
 
 void Container::relayout()

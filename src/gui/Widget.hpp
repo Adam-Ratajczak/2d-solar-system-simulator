@@ -3,7 +3,9 @@
 #include "Units.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+
 class Container;
+class Root;
 
 struct LengthVector
 {
@@ -31,12 +33,9 @@ private:
 class Widget
 {
 public:
-    explicit Widget(sf::RenderWindow& wnd)
-    : m_window(wnd) {}
-
     explicit Widget(Container& parent);
 
-    virtual ~Widget() = default;
+    virtual ~Widget();
 
     bool is_hover() const { return m_hover; }
 
@@ -78,11 +77,19 @@ public:
         m_visible = visible;
         set_needs_relayout();
     }
+
     bool is_visible() const { return m_visible; }
 
-    sf::RenderWindow& window() const { return m_window; }
+    void set_focused();
+    bool is_focused() const;
+
+    sf::RenderWindow& window() const;
+    Container* parent() const { return m_parent; }
 
 protected:
+    explicit Widget(Root& root)
+    : m_root(root) {}
+
     virtual void relayout() {}
     virtual bool is_mouse_over(sf::Vector2i) const;
     virtual void update() {}
@@ -91,8 +98,10 @@ protected:
     void set_needs_relayout() { m_needs_relayout = true; }
 
 private:
+    friend Container;
+
     Container* m_parent = nullptr;
-    sf::RenderWindow& m_window;
+    Root& m_root;
     sf::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
     bool m_hover = false;

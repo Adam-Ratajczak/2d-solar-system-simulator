@@ -21,16 +21,9 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
 void Textbox::handle_event(Event& event)
 {
     auto pos = sf::Mouse::getPosition();
-    if(event.type() == sf::Event::MouseButtonPressed)
+    if(event.type() == sf::Event::TextEntered)
     {
-        // FIXME: This should be handled at Widget level.
-        focused = is_mouse_over({ event.event().mouseButton.x, event.event().mouseButton.y });
-        if(focused)
-            event.set_handled();
-    }
-    else if(event.type() == sf::Event::TextEntered)
-    {
-        if(focused)
+        if(is_focused())
         {
             if(event.event().text.unicode == '\b')
             {
@@ -41,8 +34,8 @@ void Textbox::handle_event(Event& event)
                 if(m_content.size() < m_limit)
                     m_content += static_cast<char>(event.event().text.unicode);
             }
+            event.set_handled();
         }
-        event.set_handled();
     }
 }
 
@@ -52,7 +45,7 @@ void Textbox::draw(sf::RenderWindow& window) const
     rect.setPosition(position());
     rect.setFillColor(m_bg_color);
 
-    if(focused)
+    if(is_focused())
     {
         rect.setOutlineColor(m_fg_color);
         rect.setOutlineThickness(3);

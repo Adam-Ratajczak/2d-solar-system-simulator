@@ -73,9 +73,6 @@ private:
 class Container : public Widget
 {
 public:
-    explicit Container(sf::RenderWindow& wnd)
-    : Widget(wnd) {}
-
     explicit Container(Container& parent)
     : Widget(parent) {}
 
@@ -105,8 +102,12 @@ public:
     std::unique_ptr<Layout>& get_layout() {return m_layout;}
 
 protected:
+    explicit Container(Root& root)
+    : Widget(root) {}
+
     virtual void relayout() override;
     WidgetList m_widgets;
+    Widget* m_focused_widget { nullptr };
 
 private:
     friend Layout;
