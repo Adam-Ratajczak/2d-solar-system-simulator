@@ -3,6 +3,8 @@
 #include "Container.hpp"
 
 #include <cassert>
+#include <typeinfo>
+#include <iostream>
 
 bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const
 {
@@ -16,6 +18,8 @@ void Widget::handle_event(sf::Event& event)
         sf::Vector2i mouse_pos { event.mouseMove.x, event.mouseMove.y };
         m_hover = is_mouse_over(mouse_pos);
     }
+    else if(event.type == sf::Event::Resized)
+        set_needs_relayout();
 }
 
 void Widget::draw(sf::RenderWindow& window) const
@@ -39,6 +43,7 @@ void Widget::relayout_if_needed()
 {
     if(!m_needs_relayout)
         return;
-    relayout();
+    std::cout << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
+    this->relayout();
     m_needs_relayout = false;
 }

@@ -15,7 +15,8 @@ private:
     unsigned m_font_size = 20;
     Align m_alignment = Align::LEFT;
 public:
-    Textfield(Container* c, sf::IntRect rect);
+    Textfield(Container* c)
+    : Widget(c) {}
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
     virtual void handle_event(sf::Event& event) override;

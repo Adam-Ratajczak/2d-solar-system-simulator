@@ -57,6 +57,17 @@ private:
     float m_spacing;
 };
 
+// Just assigns expected_size to size.
+class BasicLayout : public Layout
+{
+public:
+    BasicLayout(Container& c)
+    : Layout(c) {}
+
+private:
+    virtual void run() override;
+};
+
 class Container : public Widget
 {
 public:

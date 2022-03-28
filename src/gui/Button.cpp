@@ -8,7 +8,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Button::Button(Container* c, sf::Vector2f pos, sf::Image img, float scale)
+Button::Button(Container* c, sf::Image img)
 : Widget(c)
 {
     constexpr int STATES = 4;
@@ -24,10 +24,6 @@ Button::Button(Container* c, sf::Vector2f pos, sf::Image img, float scale)
         texture.loadFromImage(img, sf::IntRect(width * i, 0, width, height));
         m_tex.push_back(texture);
     }
-
-    set_position(pos);
-    set_size({ width * scale, height * scale });
-    m_scale = scale;
 }
 
 void Button::handle_event(sf::Event& event)
@@ -51,7 +47,8 @@ void Button::draw(sf::RenderWindow& window) const
     sprite.setTexture(m_tex[state_to_texture_index()]);
     sprite.setPosition(position());
 
-    sprite.setScale(sf::Vector2f(m_scale, m_scale));
+    auto tex_size = sprite.getTexture()->getSize();
+    sprite.setScale(size().x / tex_size.x, size().y / tex_size.y);
 
     window.draw(sprite);
 }

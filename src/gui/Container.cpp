@@ -1,5 +1,7 @@
 #include "Container.hpp"
 
+#include <iostream>
+
 WidgetList& Layout::widgets()
 {
     return m_container.m_widgets;
@@ -19,8 +21,8 @@ void VerticalBoxLayout::run()
     float size = (m_container.size().y - (m_spacing * (widgets().size() - 1))) / widgets().size();
     for(auto& w : widgets())
     {
-        w->set_position({m_container.position().x, m_container.position().y + total_size + m_spacing * index});
-        w->set_size({m_container.size().x, size * m_multipliers[index]});
+        w->set_raw_position({m_container.position().x, m_container.position().y + total_size + m_spacing * index});
+        w->set_raw_size({m_container.size().x, size * m_multipliers[index]});
         total_size += size * m_multipliers[index];
         index++;
     }
@@ -32,10 +34,31 @@ void HorizontalBoxLayout::run()
     float size = (m_container.size().x - (m_spacing * (widgets().size() - 1))) / widgets().size();
     for(auto& w : widgets())
     {
-        w->set_position({m_container.position().x + total_size + m_spacing * index, m_container.position().y});
-        w->set_size({size * m_multipliers[index], m_container.size().y});
+        w->set_raw_position({m_container.position().x + total_size + m_spacing * index, m_container.position().y});
+        w->set_raw_size({size * m_multipliers[index], m_container.size().y});
         total_size += size * m_multipliers[index];
         index++;
+    }
+}
+
+void BasicLayout::run()
+{
+    auto resolve_position = [&](double container_size, double widget_size, Length const& expected_position) -> float {
+        switch(expected_position.unit())
+        {
+            case Length::Px: return expected_position.value();
+            case Length::PxOtherSide: return container_size - widget_size - expected_position.value();
+            default: return 0;
+        }
+    };
+
+    for(auto& w : widgets())
+    {
+        auto expected_position = w->expected_position();
+        w->set_raw_size({w->expected_size().x.value(), w->expected_size().y.value()});
+        auto x = resolve_position(m_container.size().x, w->size().x, expected_position.x);
+        auto y = resolve_position(m_container.size().y, w->size().y, expected_position.y);
+        w->set_raw_position({x + m_container.position().x, y + m_container.position().y});
     }
 }
 

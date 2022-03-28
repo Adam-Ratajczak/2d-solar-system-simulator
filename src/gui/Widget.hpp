@@ -4,37 +4,94 @@
 
 class Container;
 
+class Length
+{
+public:
+    enum Unit
+    {
+        Auto,
+        Px,
+        PxOtherSide
+    };
+
+    constexpr Length() = default;
+
+    constexpr Length(Unit unit)
+    : m_unit(unit) {}
+
+    constexpr Length(float v, Unit unit)
+    : m_value(v), m_unit(unit) {}
+
+    constexpr Unit unit() const { return m_unit; }
+    constexpr float value() const { return m_value; }
+
+    constexpr Length operator-() const { return {-m_value, m_unit}; }
+
+private:
+    Unit m_unit = Auto;
+    float m_value = 0;
+};
+
+constexpr Length operator""_px(long double v)
+{
+    return Length(v, Length::Px);
+}
+
+constexpr Length operator""_px_o(long double v)
+{
+    return Length(v, Length::PxOtherSide);
+}
+
+struct LengthVector { Length x; Length y; };
+
 class Widget
 {
-
 public:
     Widget(Container* parent)
     : m_parent(parent) {}
+
+    virtual ~Widget() = default;
 
     bool is_hover() const { return m_hover; }
 
     virtual void handle_event(sf::Event& event);
     virtual void draw(sf::RenderWindow& window) const;
 
-    void set_position(sf::Vector2f p)
+    void set_raw_position(sf::Vector2f p)
     {
         m_pos = p;
-        set_needs_relayout();
     }
-    void set_size(sf::Vector2f s)
+    void set_raw_size(sf::Vector2f s)
     {
         m_size = s;
+    }
+
+    void set_position(LengthVector l)
+    {
+        m_expected_pos = l;
+        set_needs_relayout();
+    }
+
+    void set_size(LengthVector l)
+    {
+        m_expected_size = l;
         set_needs_relayout();
     }
 
     sf::Vector2f position() const { return m_pos; }
     sf::Vector2f size() const { return m_size; }
+    LengthVector expected_position() const { return m_expected_pos; }
+    LengthVector expected_size() const { return m_expected_size; }
 
     // FIXME: These should be private somehow.
     void relayout_if_needed();
     virtual void update_and_draw(sf::RenderWindow&);
 
-    void set_visible(bool visible) { m_visible = visible; }
+    void set_visible(bool visible)
+    {
+        m_visible = visible;
+        set_needs_relayout();
+    }
     bool is_visible() const { return m_visible; }
 
 protected:
@@ -44,10 +101,10 @@ protected:
     void set_needs_relayout() { m_needs_relayout = true; }
 
 private:
-    // FIXME: Full hierarchy, not just GUI -> widgets...
     Container* m_parent = nullptr;
     sf::Vector2f m_pos, m_size;
+    LengthVector m_expected_pos, m_expected_size;
     bool m_hover = false;
-    bool m_needs_relayout = false;
+    bool m_needs_relayout = true;
     bool m_visible = true;
 };

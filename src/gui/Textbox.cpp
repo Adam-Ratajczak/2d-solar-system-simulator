@@ -11,13 +11,6 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Textbox::Textbox(Container* c, sf::IntRect rect)
-: Widget(c)
-{
-    set_position({static_cast<float>(rect.left), static_cast<float>(rect.top)});
-    set_size({static_cast<float>(rect.width), static_cast<float>(rect.height)});
-}
-
 void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color)
 {
     m_bg_color = bg_color;
