@@ -38,7 +38,7 @@ void HorizontalBoxLayout::run()
         {
             case Length::Px:
             case Length::PxOtherSide:
-                std::cout << "test" << std::endl;
+                // std::cout << "test" << std::endl;
                 size = w->input_size().x.value();
                 break;
             case Length::Auto:

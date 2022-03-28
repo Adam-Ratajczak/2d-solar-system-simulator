@@ -12,7 +12,7 @@ bool World::collisions = true;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Intro");
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "2D Solar System Simulator");
 
     window.setFramerateLimit(60);
 
@@ -33,7 +33,9 @@ int main()
         // FIXME: View should be set by GUI.
         window.setView(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
         window.clear();
+
         gui.update_and_draw(window);
+
         window.display();
     }
 

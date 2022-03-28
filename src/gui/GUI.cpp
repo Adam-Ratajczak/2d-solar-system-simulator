@@ -4,12 +4,17 @@
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include "ToggleButton.hpp"
+#include "../Object.hpp"
+#include "../World.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Mouse.hpp>
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -22,6 +27,7 @@ static sf::Image load_image(std::string path)
 }
 
 sf::Font GUI::font;
+bool m_coord_measure = false;
 
 GUI::GUI(World& world, sf::RenderWindow& wnd)
 : Container(wnd)
@@ -215,14 +221,42 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
     color_b_value_textfield->set_content(std::to_string((int)m_color_b_slider->get_value()));
     color_b_value_textfield->set_alignment(Textfield::Align::Center);
 
-    layout.set_multipliers({ 1, 1, 1, 1, 3 });
+    auto name_container = container->add_widget<Container>();
+    auto& name_layout = name_container->set_layout<HorizontalBoxLayout>();
+    name_layout.set_spacing(10);
+
+    auto name_textfield = name_container->add_widget<Textfield>();
+    name_textfield->set_size({ 150.0_px, Length::Auto });
+    name_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+    name_textfield->set_font_size(20);
+    name_textfield->set_content("Name: ");
+    name_textfield->set_alignment(Textfield::Align::CenterLeft);
+
+    m_name_textbox = name_container->add_widget<Textbox>();
+    m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+    m_name_textbox->set_limit(8);
+    m_name_textbox->set_content("Planet");
+
+    name_layout.set_multipliers({2.f / 3, 4.f / 3});
+
+    layout.set_multipliers({ 1, 1, 1, 1, 3, 1 });
+
+    m_coords_button = add_widget<Button>(load_image("../assets/coordsButton.png"));
+    m_coords_button->set_position({ 10.0_px, 100.0_px });
+    m_coords_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+    m_coords_button->set_visible(false);
+    m_coords_button->on_click = [coord_measure = &m_coord_measure]()
+    {
+        *coord_measure = true;
+    };
 
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
     m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_create_button->on_change = [container = container.get()](bool state)
+    m_create_button->on_change = [container = container.get(), m_coords_button = m_coords_button.get()](bool state)
     {
         container->set_visible(state);
+        m_coords_button->set_visible(state);
     };
     m_create_button->set_active(false);
 
@@ -234,6 +268,32 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
         m_simulation_view->set_zoom(1);
     };
+
+    m_add_object_button = add_widget<Button>(load_image("../assets/addObjectButton.png"));
+    m_add_object_button->set_position({ 10.0_px, 190.0_px });
+    m_add_object_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+    m_add_object_button->set_visible(false);
+    m_add_object_button->on_click = [this]()
+    {
+        double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
+        double radius = std::stod(m_radius_textbox->get_content()) * 1000;
+
+        double theta = m_direction_slider->get_value();
+        double velocity = std::stod(m_velocity_textbox->get_content());
+        Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
+
+        sf::Color color(
+            m_color_r_slider->get_value(),
+            m_color_g_slider->get_value(),
+            m_color_b_slider->get_value()
+        );
+
+        std::string name = m_name_textbox->get_content();
+
+        Object planet(mass, radius, m_coords, vel, color, name, 1000);
+
+        World::object_list.push_back(planet);
+    };
 }
 
 void GUI::relayout()
@@ -244,9 +304,71 @@ void GUI::relayout()
     Container::relayout();
 }
 
+void GUI::update_and_draw(sf::RenderWindow& window){
+
+    Widget::update_and_draw(window);
+    for(auto const& w : m_widgets)
+    {
+        if(w->is_visible())
+            w->update_and_draw(window);
+    }
+    
+    if(m_coord_measure){
+        auto sizes = m_simulation_view->size();
+
+        sf::VertexArray v_line(sf::Lines, 2);
+        v_line[0].color = sf::Color::Red;
+        v_line[1].color = sf::Color::Red;
+        v_line[0].position.x = m_mouse_pos.x;
+        v_line[0].position.y = 0;
+        v_line[1].position.x = m_mouse_pos.x;
+        v_line[1].position.y = sizes.y;
+
+        window.draw(v_line);
+
+        sf::VertexArray h_line(sf::Lines, 2);
+        h_line[0].color = sf::Color::Red;
+        h_line[1].color = sf::Color::Red;
+        h_line[0].position.x = 0;
+        h_line[0].position.y = m_mouse_pos.y;
+        h_line[1].position.x = sizes.x;
+        h_line[1].position.y = m_mouse_pos.y;
+
+        window.draw(h_line);
+
+        // std::cout << m_mouse_pos << "\n";
+    }
+
+    // if(m_add_object_button->is_visible()){
+    //     double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
+    //     double radius = std::stod(m_radius_textbox->get_content()) * 1000;
+
+    //     double theta = m_direction_slider->get_value();
+    //     double velocity = std::stod(m_velocity_textbox->get_content());
+    //     Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
+
+    //     sf::Color color(
+    //         m_color_r_slider->get_value(),
+    //         m_color_g_slider->get_value(),
+    //         m_color_b_slider->get_value()
+    //     );
+
+    //     std::string name = m_name_textbox->get_content();
+
+    //     Object planet(mass, radius, m_coords, vel, color, name, 1000);
+    // }
+}
+
 void GUI::handle_event(sf::Event& event)
 {
     Container::handle_event(event);
     if(event.type == sf::Event::Closed)
         window().close();
+    else if(event.type == sf::Event::MouseMoved)
+        m_mouse_pos = Vector2(event.mouseMove.x, event.mouseMove.y);
+    else if(event.type == sf::Event::MouseButtonPressed){
+        m_coord_measure = false;
+        m_coords = m_simulation_view->screen_to_world(m_mouse_pos);
+        m_add_object_button->set_visible(true);
+    }
 }

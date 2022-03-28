@@ -103,10 +103,10 @@ public:
 
 protected:
     virtual void relayout() override;
+    WidgetList m_widgets;
 
 private:
     friend Layout;
 
     std::unique_ptr<Layout> m_layout;
-    WidgetList m_widgets;
 };
