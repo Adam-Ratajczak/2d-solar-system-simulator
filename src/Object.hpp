@@ -6,6 +6,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
 #include <list>
+#include <string>
 
 class Object{
 protected:
@@ -31,6 +32,7 @@ public:
     void draw(View&);
     bool hover(View& view, Vector2 mouse_pos);
     void calculate_propieties();
+    void add_object(double mass, double radius, double distance, double angle, double velocity, sf::Color color, std::string name, unsigned tres);
 };
 
 inline bool operator==(const Object& a, const Object& b){return &a == &b;}
