@@ -5,7 +5,7 @@
 class ToggleButton : public Button
 {
 public:
-    ToggleButton(Container*, sf::Image);
+    ToggleButton(Container&, sf::Image);
 
     bool is_active() const { return m_active; }
     void set_active(bool active)

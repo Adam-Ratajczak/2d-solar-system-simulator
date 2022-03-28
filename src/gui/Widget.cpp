@@ -3,8 +3,13 @@
 #include "Container.hpp"
 
 #include <cassert>
-#include <typeinfo>
 #include <iostream>
+#include <typeinfo>
+
+Widget::Widget(Container& parent)
+: m_parent(&parent), m_window(parent.m_window)
+{
+}
 
 bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const
 {
@@ -34,6 +39,7 @@ void Widget::draw(sf::RenderWindow& window) const
 
 void Widget::update_and_draw(sf::RenderWindow& window)
 {
+    update();
     relayout_if_needed();
     Widget::draw(window);
     this->draw(window);

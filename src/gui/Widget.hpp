@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include "Units.hpp"
 class Container;
 
@@ -9,8 +10,10 @@ struct LengthVector { Length x; Length y; };
 class Widget
 {
 public:
-    Widget(Container* parent)
-    : m_parent(parent) {}
+    explicit Widget(sf::RenderWindow& wnd)
+    : m_window(wnd) {}
+
+    explicit Widget(Container& parent);
 
     virtual ~Widget() = default;
 
@@ -56,14 +59,18 @@ public:
     }
     bool is_visible() const { return m_visible; }
 
+    sf::RenderWindow& window() const { return m_window; }
+
 protected:
     virtual void relayout() {}
     virtual bool is_mouse_over(sf::Vector2i) const;
+    virtual void update() {}
 
     void set_needs_relayout() { m_needs_relayout = true; }
 
 private:
     Container* m_parent = nullptr;
+    sf::RenderWindow& m_window;
     sf::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
     bool m_hover = false;

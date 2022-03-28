@@ -9,13 +9,15 @@ public:
         Center,
         CenterRight
     };
+
 private:
     std::string m_content;
     sf::Color m_bg_color, m_fg_color, m_text_color;
     unsigned m_font_size = 20;
     Align m_alignment = Align::CenterLeft;
+
 public:
-    Textfield(Container* c)
+    explicit Textfield(Container& c)
     : Widget(c) {}
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);

@@ -11,32 +11,31 @@
 #include <list>
 #include <string>
 
-class World{
-private:
-    sf::Event event;
-    Object* focused_object = nullptr;
-
-    // TODO: Move it to GUI.
-    unsigned clicks = 0, speed = 1;
-    Vector2 prev_pos;
-
+class World
+{
 public:
-    explicit World(sf::RenderWindow& window);
+    World();
 
     static Object* most_massive_object;
-    View view;
     Date date;
     static unsigned object_count;
     static bool collisions, dragging, reverse;
     static std::list<Object> object_list;
 
-    World();
-    void get_events(sf::Event& event);
+    // FIXME: Make it a signed float and private.
+    unsigned speed = 1;
+
     void update();
-    void draw();
+    void draw(SimulationView const& view);
     void add_object(const Object& object);
-    void handle_focus();
     Object& get_object(const std::string name);
+
+    template<class C>
+    void for_each_object(C callback)
+    {
+        for(auto& it : object_list)
+            callback(it);
+    }
 };
 
 void prepare_solar(World& world);

@@ -14,28 +14,30 @@
 #include <utility>
 
 Object::Object(
-    double mass, 
-    double radius, 
-    Vector2 pos, 
-    Vector2 vel, 
+    double mass,
+    double radius,
+    Vector2 pos,
+    Vector2 vel,
     sf::Color color,
     std::string name,
-    unsigned tres){
+    unsigned tres)
+{
 
-    m_mass = mass; 
-    m_radius = radius; 
-    m_pos = pos; 
-    m_vel = vel; 
+    m_mass = mass;
+    m_radius = radius;
+    m_pos = pos;
+    m_vel = vel;
     m_color = color;
     m_name = name;
     m_density = m_mass / (M_PI * radius * radius);
     m_tres = tres;
 
-    m_trail.push_back({m_pos, m_vel});
+    m_trail.push_back({ m_pos, m_vel });
     World::object_count++;
 }
 
-Vector2 Object::attraction(const Object& other){
+Vector2 Object::attraction(const Object& other)
+{
     double distance = get_distance(this->m_pos, other.m_pos);
     Vector2 dist = this->m_pos - other.m_pos;
 
@@ -45,21 +47,24 @@ Vector2 Object::attraction(const Object& other){
     return Vector2(std::cos(theta) * force, std::sin(theta) * force);
 }
 
-bool Object::hover(View& view, Vector2 mouse_pos){
+bool Object::hover(SimulationView& view, Vector2 mouse_pos)
+{
     double dst = mouse_pos.distance_to(m_pos);
     // if(m_name == "Mercury")
     //     std::cout << dst << " <? " << 20 / view.scale() << " s=" << view.scale() << std::endl;
     return dst < 20 / view.scale();
 }
 
-void Object::calculate_propieties(){
-
+void Object::calculate_propieties()
+{
 }
 
 bool con = 1;
 
-void Object::update(){
-    if(World::reverse && m_trail.size() > 1 && con){
+void Object::update()
+{
+    if(World::reverse && m_trail.size() > 1 && con)
+    {
         this->m_pos = m_trail.back().first;
         this->m_vel = -m_trail.back().second;
         m_trail.pop_back();
@@ -69,7 +74,8 @@ void Object::update(){
     if(World::reverse)
         con = 0;
 
-    if(!World::reverse && m_trail.size() > 1 && !con){
+    if(!World::reverse && m_trail.size() > 1 && !con)
+    {
         this->m_pos = m_trail.back().first;
         this->m_vel = -m_trail.back().second;
         m_trail.pop_back();
@@ -80,19 +86,23 @@ void Object::update(){
         con = 1;
 
     Vector2 temp_vel;
-    for(auto& object : World::object_list){
-        if(this != &object){
+    for(auto& object : World::object_list)
+    {
+        if(this != &object)
+        {
             double distance = get_distance(this->m_pos, object.m_pos);
 
-            if(distance < this->m_radius + object.m_radius){
+            if(distance < this->m_radius + object.m_radius)
+            {
                 if(!World::collisions)
                     break;
-                
+
                 // std::cout << this->m_name << " - " << object.m_name << "\n";
 
                 double log10m1 = std::log10(this->m_mass), log10m2 = std::log10(object.m_mass);
 
-                if(this->m_mass < object.m_mass){
+                if(this->m_mass < object.m_mass)
+                {
                     this->m_name = object.m_name;
                     this->m_trail = object.m_trail;
                 }
@@ -115,7 +125,9 @@ void Object::update(){
 
                 World::object_list.remove(object);
                 break;
-            }else{
+            }
+            else
+            {
                 temp_vel -= attraction(object);
             }
         }
@@ -125,20 +137,22 @@ void Object::update(){
     m_pos += m_vel * TIMESTAMP;
 
     // if(m_pos != m_trail.back())
-    m_trail.push_back({m_pos, m_vel});
-    
+    m_trail.push_back({ m_pos, m_vel });
+
     if(m_trail.size() > m_tres)
         m_trail.pop_front();
-            
-    // std::cout << m_name << ": " << m_trail.size() << "\n"; 
+
+    // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
 
-void Object::draw(View& view){
+void Object::draw(SimulationView const& view)
+{
     sf::VertexArray trail(sf::LinesStrip, m_trail.size());
 
     unsigned i = 0;
 
-    for(auto& l : m_trail){
+    for(auto& l : m_trail)
+    {
         trail[i].color = m_color;
         trail[i].color.a = 128;
 
@@ -152,7 +166,7 @@ void Object::draw(View& view){
     object_circle.setFillColor(m_color);
     object_circle.setPosition(view.world_to_screen(m_pos));
 
-    auto& target = view.target();
+    auto& target = view.window();
 
     if(m_trail.size() > 2)
         target.draw(trail);
@@ -169,12 +183,14 @@ void Object::draw(View& view){
     target.draw(label);
     double distance_from_object = get_distance(this->m_pos, World::most_massive_object->m_pos);
 
-    if(m_ap < distance_from_object){
+    if(m_ap < distance_from_object)
+    {
         m_ap = distance_from_object;
         m_ap_vel = m_vel.magnitude();
     }
 
-    if(m_pe > distance_from_object){
+    if(m_pe > distance_from_object)
+    {
         m_pe = distance_from_object;
         m_pe_vel = m_vel.magnitude();
     }
@@ -204,7 +220,8 @@ void Object::draw(View& view){
     //     target.draw(circle);
     // }
 
-    if(this->m_focused){
+    if(this->m_focused)
+    {
         unsigned exponent = std::log10(m_mass);
         sf::Text mass("Mass: " + std::to_string(m_mass / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", GUI::font, 15);
         mass.setFillColor(sf::Color::White);
@@ -227,7 +244,8 @@ void Object::draw(View& view){
         if(this == World::most_massive_object)
             return;
 
-        sf::Text dist("Distance from the " + World::most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);;
+        sf::Text dist("Distance from the " + World::most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
+        ;
         dist.setFillColor(sf::Color::White);
         bounds = dist.getLocalBounds();
         dist.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 3));
@@ -259,7 +277,8 @@ void Object::draw(View& view){
     }
 }
 
-void Object::add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres){
+void Object::add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres)
+{
     Vector2 pos(std::cos(theta.rad()) * distance, std::sin(theta.rad()) * distance);
     pos += this->m_pos;
 

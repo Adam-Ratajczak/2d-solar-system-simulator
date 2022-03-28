@@ -7,9 +7,8 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 #include <iostream>
-#include "../World.hpp"
 
-Slider::Slider(Container* c, double min_val, double max_val, double step)
+Slider::Slider(Container& c, double min_val, double max_val, double step)
 : Widget(c), m_min_val(min_val), m_max_val(max_val), m_step(step), m_val((min_val + max_val) / 2)
 {
 }
@@ -18,8 +17,10 @@ double Slider::get_value() const
 {
     switch(m_mode)
     {
-        case Mode::Linear: return m_val;
-        case Mode::Exponential: return std::pow(m_exponent, m_val);
+        case Mode::Linear:
+            return m_val;
+        case Mode::Exponential:
+            return std::pow(m_exponent, m_val);
     }
     return 0;
 }
@@ -32,6 +33,9 @@ void Slider::set_value(double val)
         m_val = m_max_val;
     else
         m_val = val;
+
+    if(on_change)
+        on_change(get_value());
 }
 
 void Slider::set_display_attributes(sf::Color bg_color, sf::Color fg_color)
@@ -51,7 +55,7 @@ void Slider::handle_event(sf::Event& event)
 {
     if(event.type == sf::Event::MouseButtonPressed)
     {
-        if(is_mouse_over({event.mouseButton.x, event.mouseButton.y}))
+        if(is_mouse_over({ event.mouseButton.x, event.mouseButton.y }))
             m_dragging = true;
     }
     else if(event.type == sf::Event::MouseButtonReleased)
@@ -62,8 +66,7 @@ void Slider::handle_event(sf::Event& event)
     {
         if(m_dragging)
         {
-            World::dragging = false;
-            auto mouse_pos_relative_to_slider = sf::Vector2f({static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)}) - position();
+            auto mouse_pos_relative_to_slider = sf::Vector2f({ static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) }) - position();
             m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
             m_val = std::min(std::max(m_min_val, m_val), m_max_val);
 
@@ -72,7 +75,8 @@ void Slider::handle_event(sf::Event& event)
             m_val = std::round(m_val);
             m_val *= m_step;
 
-            // std::cout << get_value() << std::endl;
+            if(on_change)
+                on_change(get_value());
         }
     }
 }
@@ -84,7 +88,7 @@ float Slider::calculate_knob_size() const
 
 void Slider::draw(sf::RenderWindow& window) const
 {
-    sf::RectangleShape slider({size().x, 5.f});
+    sf::RectangleShape slider({ size().x, 5.f });
     slider.setPosition(position().x, position().y + size().y / 2 - 2.5f);
     slider.setFillColor(m_bg_color);
     window.draw(slider);

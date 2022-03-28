@@ -10,7 +10,7 @@ class Button : public Widget
     bool m_active = false;
 
 public:
-    Button(Container*, sf::Image);
+    Button(Container&, sf::Image);
 
     std::function<void()> on_click;
 

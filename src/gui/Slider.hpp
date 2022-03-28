@@ -32,7 +32,7 @@ public:
         TOP, RIGHT, BOTTOM, LEFT
     };
 
-    Slider(Container*, double min_val, double max_val, double step = 1);
+    Slider(Container&, double min_val, double max_val, double step = 1);
     double get_value() const;
     double get_raw_value() const { return m_val; }
     void set_value(const double val);
@@ -47,6 +47,8 @@ public:
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color);
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
+
+    std::function<void(double)> on_change;
 
 private:
     float calculate_knob_size() const;

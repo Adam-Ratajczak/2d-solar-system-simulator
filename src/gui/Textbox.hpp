@@ -16,7 +16,7 @@ class Textbox : public Widget
     unsigned m_limit = 16;
 
 public:
-    Textbox(Container* c)
+    explicit Textbox(Container& c)
     : Widget(c) {}
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);

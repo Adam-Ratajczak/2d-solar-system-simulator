@@ -23,11 +23,13 @@ static sf::Image load_image(std::string path)
 
 sf::Font GUI::font;
 
-GUI::GUI(World& world)
-: Container(nullptr), m_world(world), m_window(world.view.target())
+GUI::GUI(World& world, sf::RenderWindow& wnd)
+: Container(wnd)
 {
     font.loadFromFile("../assets/Pulang.ttf");
     set_layout<BasicLayout>();
+
+    m_simulation_view = add_widget<SimulationView>(world);
 
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
@@ -41,7 +43,7 @@ GUI::GUI(World& world)
     mass_layout.set_spacing(10);
 
     auto mass_textfield = mass_container->add_widget<Textfield>();
-    mass_textfield->set_size({150.0_px, Length::Auto});
+    mass_textfield->set_size({ 150.0_px, Length::Auto });
     mass_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     mass_textfield->set_font_size(20);
     mass_textfield->set_content("Mass: ");
@@ -79,7 +81,7 @@ GUI::GUI(World& world)
     radius_layout.set_spacing(10);
 
     auto radius_textfield = radius_container->add_widget<Textfield>();
-    radius_textfield->set_size({150.0_px, Length::Auto});
+    radius_textfield->set_size({ 150.0_px, Length::Auto });
     radius_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     radius_textfield->set_font_size(20);
     radius_textfield->set_content("Radius: ");
@@ -101,7 +103,7 @@ GUI::GUI(World& world)
     velocity_layout.set_spacing(10);
 
     auto velocity_textfield = velocity_container->add_widget<Textfield>();
-    velocity_textfield->set_size({150.0_px, Length::Auto});
+    velocity_textfield->set_size({ 150.0_px, Length::Auto });
     velocity_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     velocity_textfield->set_font_size(20);
     velocity_textfield->set_content("Velocity: ");
@@ -123,7 +125,7 @@ GUI::GUI(World& world)
     direction_layout.set_spacing(10);
 
     auto direction_textfield = direction_container->add_widget<Textfield>();
-    direction_textfield->set_size({150.0_px, Length::Auto});
+    direction_textfield->set_size({ 150.0_px, Length::Auto });
     direction_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     direction_textfield->set_font_size(20);
     direction_textfield->set_content("Direction: ");
@@ -135,8 +137,13 @@ GUI::GUI(World& world)
     auto direction_unit_textfield = direction_container->add_widget<Textfield>();
     direction_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     direction_unit_textfield->set_font_size(20);
-    direction_unit_textfield->set_content(std::to_string((int)m_direction_slider->get_value()) + " [deg] ");
+    direction_unit_textfield->set_content(std::to_string((int)m_direction_slider->get_value()) + " [deg]");
     direction_unit_textfield->set_alignment(Textfield::Align::Center);
+
+    m_direction_slider->on_change = [direction_unit_textfield](double value)
+    {
+        direction_unit_textfield->set_content(std::to_string((int)value) + " [deg]");
+    };
 
     auto main_color_container = container->add_widget<Container>();
     auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
@@ -153,7 +160,7 @@ GUI::GUI(World& world)
     color_r_layout.set_spacing(10);
 
     auto color_r_textfield = color_r_container->add_widget<Textfield>();
-    color_r_textfield->set_size({150.0_px, Length::Auto});
+    color_r_textfield->set_size({ 150.0_px, Length::Auto });
     color_r_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     color_r_textfield->set_font_size(20);
     color_r_textfield->set_content("Red: ");
@@ -173,7 +180,7 @@ GUI::GUI(World& world)
     color_g_layout.set_spacing(10);
 
     auto color_g_textfield = color_g_container->add_widget<Textfield>();
-    color_g_textfield->set_size({150.0_px, Length::Auto});
+    color_g_textfield->set_size({ 150.0_px, Length::Auto });
     color_g_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     color_g_textfield->set_font_size(20);
     color_g_textfield->set_content("Green: ");
@@ -193,7 +200,7 @@ GUI::GUI(World& world)
     color_b_layout.set_spacing(10);
 
     auto color_b_textfield = color_b_container->add_widget<Textfield>();
-    color_b_textfield->set_size({150.0_px, Length::Auto});
+    color_b_textfield->set_size({ 150.0_px, Length::Auto });
     color_b_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     color_b_textfield->set_font_size(20);
     color_b_textfield->set_content("Blue: ");
@@ -219,21 +226,27 @@ GUI::GUI(World& world)
     };
     m_create_button->set_active(false);
 
-    auto sizes = m_window.getSize();
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
     m_home_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_home_button->on_click = [&world]()
+    m_home_button->on_click = [this]()
     {
-        world.view.set_offset(sf::Vector2f(0, 0));
-        world.view.set_zoom(1);
+        m_simulation_view->set_offset(sf::Vector2f(0, 0));
+        m_simulation_view->set_zoom(1);
     };
 }
 
 void GUI::relayout()
 {
     // TODO: Don't do this in every tick.
-    set_raw_size(sf::Vector2f(m_window.getSize()));
+    set_raw_size(sf::Vector2f(window().getSize()));
 
     Container::relayout();
+}
+
+void GUI::handle_event(sf::Event& event)
+{
+    Container::handle_event(event);
+    if(event.type == sf::Event::Closed)
+        window().close();
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../World.hpp"
 #include "Button.hpp"
 #include "Container.hpp"
+#include "SimulationView.hpp"
 #include "Slider.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
@@ -14,6 +14,13 @@
 
 class GUI : public Container
 {
+public:
+    explicit GUI(World& world, sf::RenderWindow& wnd);
+    static sf::Font font;
+
+    virtual void handle_event(sf::Event&) override;
+
+private:
     std::shared_ptr<ToggleButton> m_create_button;
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;
@@ -30,16 +37,10 @@ class GUI : public Container
     std::shared_ptr<Slider> m_color_g_slider;
     std::shared_ptr<Slider> m_color_b_slider;
 
-    sf::RenderWindow& m_window;
-    World& m_world;
+    std::shared_ptr<SimulationView> m_simulation_view;
 
     Vector2 m_coords;
     double m_mass;
 
-public:
-    GUI(World& world);
-    static sf::Font font;
-
-private:
     virtual void relayout() override;
 };

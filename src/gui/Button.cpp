@@ -1,5 +1,4 @@
 #include "Button.hpp"
-#include "../World.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -9,13 +8,9 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Button::Button(Container* c, sf::Image img)
+Button::Button(Container& c, sf::Image img)
 : Widget(c)
 {
-    constexpr int STATES = 4;
-
-    auto width = img.getSize().x / STATES;
-    auto height = img.getSize().y;
     m_texture.loadFromImage(img);
 }
 
@@ -29,8 +24,6 @@ void Button::handle_event(sf::Event& event)
             m_active = !m_active;
             on_click_impl();
         }
-        // FIXME: VERY HACKY REMOVE THAT ASAP
-        World::dragging = false;
     }
 }
 

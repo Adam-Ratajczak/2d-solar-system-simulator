@@ -71,13 +71,16 @@ private:
 class Container : public Widget
 {
 public:
-    Container(Container* parent)
+    explicit Container(sf::RenderWindow& wnd)
+    : Widget(wnd) {}
+
+    explicit Container(Container& parent)
     : Widget(parent) {}
 
-    template<class T, class... Args> requires(std::is_base_of_v<Widget, T> && requires(Container* c, Args&&... args) { T(c, args...); })
+    template<class T, class... Args> requires(std::is_base_of_v<Widget, T> && requires(Container& c, Args&&... args) { T(c, args...); })
     std::shared_ptr<T> add_widget(Args&&... args)
     {
-        auto widget = std::make_shared<T>(this, std::forward<Args>(args)...);
+        auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         m_widgets.push_back(widget);
         m_layout->m_multipliers.push_back(1);
         return widget;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vector2.hpp"
-#include "View.hpp"
+#include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -9,12 +9,13 @@
 #include <list>
 #include <string>
 
-class Object{
+class Object
+{
 protected:
     double m_density;
     sf::Color m_color;
     unsigned m_tres;
-    std::list<std::pair<Vector2, Vector2> > m_trail;
+    std::list<std::pair<Vector2, Vector2>> m_trail;
     double m_radius;
     Vector2 attraction(const Object&);
 
@@ -28,12 +29,15 @@ public:
     std::string m_name;
     bool m_focused = 0;
     double m_mass;
-    
+
     void update();
-    void draw(View&);
-    bool hover(View& view, Vector2 mouse_pos);
+    void draw(SimulationView const&);
+    bool hover(SimulationView& view, Vector2 mouse_pos);
     void calculate_propieties();
     void add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres);
 };
 
-inline bool operator==(const Object& a, const Object& b){return &a == &b;}
+inline bool operator==(const Object& a, const Object& b)
+{
+    return &a == &b;
+}

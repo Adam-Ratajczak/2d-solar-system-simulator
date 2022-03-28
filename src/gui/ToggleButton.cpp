@@ -1,7 +1,7 @@
 #include "ToggleButton.hpp"
 
 // FIXME: SFML doesn't define move constructors anyway, the copy will be made :(
-ToggleButton::ToggleButton(Container* c, sf::Image img)
+ToggleButton::ToggleButton(Container& c, sf::Image img)
 : Button(c, std::move(img)) {}
 
 void ToggleButton::on_click_impl()

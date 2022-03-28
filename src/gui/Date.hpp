@@ -29,9 +29,10 @@ public:
             days = -days;
         }
 
-        int i = 0, sum = 0;
+        int i = 1, sum = 0;
         while(sum < days) {
-            sum += month_day_count[i];
+            // FIXME: modulo is a quick fix for an overflow
+            sum += month_day_count[i % 12];
             if(years % 4 == 0 && i == 2)
                 sum++;
             i++;
@@ -41,7 +42,8 @@ public:
         if(i == 12)
             i = 11;
 
-        sum -= month_day_count[i];
+        // FIXME: modulo is a quick fix for an overflow
+        sum -= month_day_count[i % 12];
 
         if(years % 4 == 0 && i == 2)
             sum--;
