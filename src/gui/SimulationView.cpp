@@ -2,13 +2,13 @@
 
 #include "../World.hpp"
 
-void SimulationView::handle_event(sf::Event& event)
+void SimulationView::handle_event(Event& event)
 {
-    if(event.type == sf::Event::MouseButtonPressed)
+    if(event.type() == sf::Event::MouseButtonPressed)
     {
-        if(event.mouseButton.button == sf::Mouse::Left)
+        if(event.event().mouseButton.button == sf::Mouse::Left)
         {
-            auto world_click_pos = screen_to_world({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
+            auto world_click_pos = screen_to_world({ static_cast<double>(event.event().mouseButton.x), static_cast<double>(event.event().mouseButton.y) });
             m_prev_pos = world_click_pos;
             m_dragging = true;
             // clang-format off
@@ -32,32 +32,32 @@ void SimulationView::handle_event(sf::Event& event)
             }
         }
     }
-    else if(event.type == sf::Event::MouseWheelScrolled)
+    else if(event.type() == sf::Event::MouseWheelScrolled)
     {
-        if(event.mouseWheelScroll.delta > 0)
+        if(event.event().mouseWheelScroll.delta > 0)
             apply_zoom(1.1);
         else
             apply_zoom(1 / 1.1);
     }
-    else if(event.type == sf::Event::MouseMoved)
+    else if(event.type() == sf::Event::MouseMoved)
     {
         if(m_dragging)
         {
-            Vector2 mouse_pos { static_cast<double>(event.mouseMove.x), static_cast<double>(event.mouseMove.y) };
+            Vector2 mouse_pos { static_cast<double>(event.event().mouseMove.x), static_cast<double>(event.event().mouseMove.y) };
             const sf::Vector2f newPos = screen_to_world(mouse_pos);
             const sf::Vector2f deltaPos = m_prev_pos - newPos;
             set_offset(offset() + deltaPos);
             // std::cout << "mouse_pos: " << mouse_pos << " view offset: " << view.offset() << " prev_pos: " << prev_pos << " delta_pos: " << deltaPos << std::endl;
         }
     }
-    else if(event.type == sf::Event::MouseButtonReleased)
+    else if(event.type() == sf::Event::MouseButtonReleased)
     {
         m_dragging = false;
     }
-    else if(event.type == sf::Event::KeyReleased)
+    else if(event.type() == sf::Event::KeyReleased)
     {
         // FIXME: This is too complex.
-        if(event.key.code == sf::Keyboard::Right)
+        if(event.event().key.code == sf::Keyboard::Right)
         {
             if(!m_world.reverse)
                 m_world.speed *= 2;
@@ -73,7 +73,7 @@ void SimulationView::handle_event(sf::Event& event)
                     { p.m_vel = -p.m_vel; });
             }
         }
-        else if(event.key.code == sf::Keyboard::Left)
+        else if(event.event().key.code == sf::Keyboard::Left)
         {
             if(!m_world.reverse)
                 m_world.speed /= 2;

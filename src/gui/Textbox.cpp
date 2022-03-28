@@ -18,25 +18,31 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_text_color = text_color;
 }
 
-void Textbox::handle_event(sf::Event& event)
+void Textbox::handle_event(Event& event)
 {
     auto pos = sf::Mouse::getPosition();
-    if(event.type == sf::Event::MouseButtonPressed)
-        focused = is_mouse_over({ event.mouseButton.x, event.mouseButton.y });
-    else if(event.type == sf::Event::TextEntered)
+    if(event.type() == sf::Event::MouseButtonPressed)
+    {
+        // FIXME: This should be handled at Widget level.
+        focused = is_mouse_over({ event.event().mouseButton.x, event.event().mouseButton.y });
+        if(focused)
+            event.set_handled();
+    }
+    else if(event.type() == sf::Event::TextEntered)
     {
         if(focused)
         {
-            if(event.text.unicode == '\b')
+            if(event.event().text.unicode == '\b')
             {
                 m_content = m_content.substr(0, m_content.size() - 1);
             }
-            else if(event.text.unicode < 128 && event.text.unicode >= 32)
+            else if(event.event().text.unicode < 128 && event.event().text.unicode >= 32)
             {
                 if(m_content.size() < m_limit)
-                    m_content += static_cast<char>(event.text.unicode);
+                    m_content += static_cast<char>(event.event().text.unicode);
             }
         }
+        event.set_handled();
     }
 }
 

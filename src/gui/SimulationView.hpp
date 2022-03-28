@@ -31,7 +31,7 @@ public:
     };
 
 private:
-    virtual void handle_event(sf::Event& event) override;
+    virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
     virtual void update() override;
 

@@ -43,7 +43,7 @@ public:
     void set_mode(Mode mode) { m_mode = mode; }
     void set_exponent(double exp) { m_exponent = exp; }
 
-    virtual void handle_event(sf::Event& event) override;
+    virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color);

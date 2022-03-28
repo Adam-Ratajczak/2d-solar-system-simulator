@@ -14,7 +14,7 @@ public:
 
     std::function<void()> on_click;
 
-    virtual void handle_event(sf::Event&) override;
+    virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
 protected:

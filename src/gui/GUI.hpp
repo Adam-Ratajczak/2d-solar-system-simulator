@@ -18,7 +18,7 @@ public:
     explicit GUI(World& world, sf::RenderWindow& wnd);
     static sf::Font font;
 
-    virtual void handle_event(sf::Event&) override;
+    virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
 private:

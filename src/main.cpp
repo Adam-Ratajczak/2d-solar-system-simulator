@@ -23,7 +23,10 @@ int main()
         sf::Event event;
 
         while(window.pollEvent(event))
-            gui.handle_event(event);
+        {
+            Event gui_event(event);
+            gui.do_handle_event(gui_event);
+        }
 
         world.update();
     

@@ -16,14 +16,25 @@ bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const
     return sf::Rect<float>(m_pos, m_size).contains(mouse_pos.x, mouse_pos.y);
 }
 
-void Widget::handle_event(sf::Event& event)
+void Widget::do_handle_event(Event& event)
 {
-    if(event.type == sf::Event::MouseMoved)
+    Widget::handle_event(event);
+    handle_event(event);
+}
+
+void Widget::handle_event(Event& event)
+{
+    if(event.type() == sf::Event::MouseMoved)
     {
-        sf::Vector2i mouse_pos { event.mouseMove.x, event.mouseMove.y };
+        sf::Vector2i mouse_pos { event.event().mouseMove.x, event.event().mouseMove.y };
         m_hover = is_mouse_over(mouse_pos);
     }
-    else if(event.type == sf::Event::Resized)
+    else if(event.type() == sf::Event::MouseButtonPressed)
+    {
+        if(m_hover)
+            event.set_handled();
+    }
+    else if(event.type() == sf::Event::Resized)
         set_needs_relayout();
 }
 

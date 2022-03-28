@@ -1,11 +1,32 @@
 #pragma once
 
+#include "Units.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "Units.hpp"
 class Container;
 
-struct LengthVector { Length x; Length y; };
+struct LengthVector
+{
+    Length x;
+    Length y;
+};
+
+class Event
+{
+public:
+    Event(sf::Event const& event)
+    : m_event(event) {}
+
+    sf::Event event() const { return m_event; }
+    bool is_handled() const { return m_handled; }
+    void set_handled() { m_handled = true; }
+
+    sf::Event::EventType type() const { return m_event.type; }
+
+private:
+    sf::Event m_event;
+    bool m_handled = false;
+};
 
 class Widget
 {
@@ -19,7 +40,7 @@ public:
 
     bool is_hover() const { return m_hover; }
 
-    virtual void handle_event(sf::Event& event);
+    virtual void do_handle_event(Event& event);
     virtual void draw(sf::RenderWindow& window) const;
 
     void set_raw_position(sf::Vector2f p)
@@ -65,6 +86,7 @@ protected:
     virtual void relayout() {}
     virtual bool is_mouse_over(sf::Vector2i) const;
     virtual void update() {}
+    virtual void handle_event(Event&);
 
     void set_needs_relayout() { m_needs_relayout = true; }
 

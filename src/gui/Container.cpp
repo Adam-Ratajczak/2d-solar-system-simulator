@@ -104,14 +104,20 @@ void Container::update_and_draw(sf::RenderWindow& window)
     }
 }
 
-void Container::handle_event(sf::Event& event)
+void Container::do_handle_event(Event& event)
 {
-    Widget::handle_event(event);
-    for(auto const& w : m_widgets)
+    // FIXME: Proper stacking contexts
+    for(auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
     {
-        if(w->is_visible())
-            w->handle_event(event);
+        auto& widget = *it;
+        if(widget->is_visible())
+        {
+            widget->do_handle_event(event);
+            if(event.is_handled())
+                break;
+        }
     }
+    Widget::handle_event(event);
 }
 
 void Container::relayout()

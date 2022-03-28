@@ -51,14 +51,17 @@ void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos
     m_text_pos = text_pos;
 }
 
-void Slider::handle_event(sf::Event& event)
+void Slider::handle_event(Event& event)
 {
-    if(event.type == sf::Event::MouseButtonPressed)
+    if(event.type() == sf::Event::MouseButtonPressed)
     {
-        if(is_mouse_over({ event.mouseButton.x, event.mouseButton.y }))
+        if(is_mouse_over({ event.event().mouseButton.x, event.event().mouseButton.y }))
+        {
             m_dragging = true;
+            event.set_handled();
+        }
     }
-    else if(event.type == sf::Event::MouseButtonReleased)
+    else if(event.type() == sf::Event::MouseButtonReleased)
     {
         m_dragging = false;
     }
@@ -66,7 +69,7 @@ void Slider::handle_event(sf::Event& event)
     {
         if(m_dragging)
         {
-            auto mouse_pos_relative_to_slider = sf::Vector2f({ static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) }) - position();
+            auto mouse_pos_relative_to_slider = sf::Vector2f({ static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) }) - position();
             m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
             m_val = std::min(std::max(m_min_val, m_val), m_max_val);
 

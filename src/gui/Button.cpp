@@ -14,16 +14,12 @@ Button::Button(Container& c, sf::Image img)
     m_texture.loadFromImage(img);
 }
 
-void Button::handle_event(sf::Event& event)
+void Button::handle_event(Event& event)
 {
-    Widget::handle_event(event);
-    if(is_hover())
+    if(event.event().type == sf::Event::MouseButtonReleased && is_hover())
     {
-        if(event.type == sf::Event::MouseButtonReleased)
-        {
-            m_active = !m_active;
-            on_click_impl();
-        }
+        m_active = !m_active;
+        on_click_impl();
     }
 }
 
@@ -49,6 +45,6 @@ sf::Color Button::color_for_state() const
 {
     sf::Color base_color = sf::Color(92, 89, 89);
     if(is_hover())
-        base_color += sf::Color{50, 50, 50};
+        base_color += sf::Color { 50, 50, 50 };
     return base_color;
 }

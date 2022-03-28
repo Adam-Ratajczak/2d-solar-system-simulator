@@ -352,17 +352,20 @@ void GUI::draw(sf::RenderWindow& window) const
     // }
 }
 
-void GUI::handle_event(sf::Event& event)
+void GUI::handle_event(Event& event)
 {
-    Container::handle_event(event);
-    if(event.type == sf::Event::Closed)
+    if(event.type() == sf::Event::Closed)
+    {
         window().close();
-    else if(event.type == sf::Event::MouseMoved)
-        m_mouse_pos = Vector2(event.mouseMove.x, event.mouseMove.y);
-    else if(event.type == sf::Event::MouseButtonPressed)
+        event.set_handled();
+    }
+    else if(event.type() == sf::Event::MouseMoved)
+        m_mouse_pos = Vector2(event.event().mouseMove.x, event.event().mouseMove.y);
+    else if(event.type() == sf::Event::MouseButtonPressed)
     {
         m_coord_measure = false;
         m_coords = m_simulation_view->screen_to_world(m_mouse_pos);
         m_add_object_button->set_visible(true);
+        event.set_handled();
     }
 }

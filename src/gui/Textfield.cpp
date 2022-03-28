@@ -9,11 +9,6 @@ void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, s
     m_text_color = text_color;
 }
 
-void Textfield::handle_event(sf::Event &event){
-
-
-}
-
 void Textfield::draw(sf::RenderWindow& window) const{
     sf::RectangleShape rect(size());
     rect.setPosition(position());
