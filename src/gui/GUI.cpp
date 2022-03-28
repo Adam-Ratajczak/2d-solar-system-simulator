@@ -1,11 +1,11 @@
 #include "GUI.hpp"
+#include "../Object.hpp"
+#include "../World.hpp"
 #include "Button.hpp"
 #include "Container.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include "ToggleButton.hpp"
-#include "../Object.hpp"
-#include "../World.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -237,7 +237,7 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
     m_name_textbox->set_limit(8);
     m_name_textbox->set_content("Planet");
 
-    name_layout.set_multipliers({2.f / 3, 4.f / 3});
+    name_layout.set_multipliers({ 2.f / 3, 4.f / 3 });
 
     layout.set_multipliers({ 1, 1, 1, 1, 3, 1 });
 
@@ -285,8 +285,7 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
         sf::Color color(
             m_color_r_slider->get_value(),
             m_color_g_slider->get_value(),
-            m_color_b_slider->get_value()
-        );
+            m_color_b_slider->get_value());
 
         std::string name = m_name_textbox->get_content();
 
@@ -304,16 +303,10 @@ void GUI::relayout()
     Container::relayout();
 }
 
-void GUI::update_and_draw(sf::RenderWindow& window){
-
-    Widget::update_and_draw(window);
-    for(auto const& w : m_widgets)
+void GUI::draw(sf::RenderWindow& window) const
+{
+    if(m_coord_measure)
     {
-        if(w->is_visible())
-            w->update_and_draw(window);
-    }
-    
-    if(m_coord_measure){
         auto sizes = m_simulation_view->size();
 
         sf::VertexArray v_line(sf::Lines, 2);
@@ -366,7 +359,8 @@ void GUI::handle_event(sf::Event& event)
         window().close();
     else if(event.type == sf::Event::MouseMoved)
         m_mouse_pos = Vector2(event.mouseMove.x, event.mouseMove.y);
-    else if(event.type == sf::Event::MouseButtonPressed){
+    else if(event.type == sf::Event::MouseButtonPressed)
+    {
         m_coord_measure = false;
         m_coords = m_simulation_view->screen_to_world(m_mouse_pos);
         m_add_object_button->set_visible(true);

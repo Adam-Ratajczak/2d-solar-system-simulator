@@ -19,7 +19,7 @@ public:
     static sf::Font font;
 
     virtual void handle_event(sf::Event&) override;
-    virtual void update_and_draw(sf::RenderWindow& window) override;
+    virtual void draw(sf::RenderWindow& window) const override;
 
 private:
     std::shared_ptr<ToggleButton> m_create_button;
