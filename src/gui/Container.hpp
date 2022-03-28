@@ -84,7 +84,8 @@ public:
     {
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         m_widgets.push_back(widget);
-        m_layout->m_multipliers.push_back(1);
+        if(m_layout)
+            m_layout->m_multipliers.push_back(1);
         return widget;
     }
 
