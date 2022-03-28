@@ -8,7 +8,8 @@ public:
     {
         Auto,
         Px,
-        PxOtherSide
+        PxOtherSide,
+        Percent
     };
 
     constexpr Length() = default;

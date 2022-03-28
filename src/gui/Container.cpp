@@ -7,22 +7,25 @@ WidgetList& Layout::widgets()
     return m_container.m_widgets;
 }
 
-void Layout::set_multipliers(std::initializer_list<float> list){
+void Layout::set_multipliers(std::initializer_list<float> list)
+{
     m_multipliers.clear();
 
-    for(auto& l : list){
+    for(auto& l : list)
+    {
         m_multipliers.push_back(l);
     }
 }
 
 void VerticalBoxLayout::run()
 {
+    // TODO: Match HBL
     size_t index = 0, total_size = 0;
     float size = (m_container.size().y - (m_spacing * (widgets().size() - 1))) / widgets().size();
     for(auto& w : widgets())
     {
-        w->set_raw_position({m_container.position().x, m_container.position().y + total_size + m_spacing * index});
-        w->set_raw_size({m_container.size().x, size * m_multipliers[index]});
+        w->set_raw_position({ m_container.position().x, m_container.position().y + total_size + m_spacing * index });
+        w->set_raw_size({ m_container.size().x, size * m_multipliers[index] });
         total_size += size * m_multipliers[index];
         index++;
     }
@@ -41,11 +44,15 @@ void HorizontalBoxLayout::run()
                 // std::cout << "test" << std::endl;
                 size = w->input_size().x.value();
                 break;
+            case Length::Percent:
+                std::cout << size << std::endl;
+                size = w->input_size().x.value() * m_container.size().x / 100.0;
+                break;
             case Length::Auto:
                 size = 0;
                 break;
         }
-        w->set_raw_size({size, m_container.size().y});
+        w->set_raw_size({ size, m_container.size().y });
     }
 
     // 2. Compute size available for auto-sized widgets
@@ -66,8 +73,8 @@ void HorizontalBoxLayout::run()
     for(auto& w : widgets())
     {
         if(w->input_size().x.unit() == Length::Auto)
-            w->set_raw_size({autosized_widget_size, m_container.size().y});
-        w->set_raw_position({m_container.position().x + current_position, m_container.position().y});
+            w->set_raw_size({ autosized_widget_size, m_container.size().y });
+        w->set_raw_position({ m_container.position().x + current_position, m_container.position().y });
         current_position += w->size().x + m_spacing;
         index++;
     }
@@ -75,22 +82,42 @@ void HorizontalBoxLayout::run()
 
 void BasicLayout::run()
 {
-    auto resolve_position = [&](double container_size, double widget_size, Length const& input_position) -> float {
+    auto resolve_position = [&](double container_size, double widget_size, Length const& input_position) -> float
+    {
         switch(input_position.unit())
         {
-            case Length::Px: return input_position.value();
-            case Length::PxOtherSide: return container_size - widget_size - input_position.value();
-            default: return 0;
+            case Length::Px:
+                return input_position.value();
+            case Length::PxOtherSide:
+                return container_size - widget_size - input_position.value();
+            case Length::Percent:
+                return widget_size * container_size / 100.0;
+            default:
+                return 0;
+        }
+    };
+
+    auto resolve_size = [&](double container_size, Length const& input_size) -> float
+    {
+        switch(input_size.unit())
+        {
+            case Length::Px:
+            case Length::PxOtherSide:
+                return input_size.value();
+            case Length::Percent:
+                return input_size.value() * container_size / 100.0;
+            default:
+                return 0;
         }
     };
 
     for(auto& w : widgets())
     {
         auto input_position = w->input_position();
-        w->set_raw_size({w->input_size().x.value(), w->input_size().y.value()});
+        w->set_raw_size({ resolve_size(m_container.size().x, w->input_size().x), resolve_size(m_container.size().y, w->input_size().y) });
         auto x = resolve_position(m_container.size().x, w->size().x, input_position.x);
         auto y = resolve_position(m_container.size().y, w->size().y, input_position.y);
-        w->set_raw_position({x + m_container.position().x, y + m_container.position().y});
+        w->set_raw_position({ x + m_container.position().x, y + m_container.position().y });
     }
 }
 
