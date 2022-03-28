@@ -43,7 +43,7 @@ void Widget::relayout_if_needed()
 {
     if(!m_needs_relayout)
         return;
-    std::cout << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
+    // std::cout << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
     this->relayout();
     m_needs_relayout = false;
 }

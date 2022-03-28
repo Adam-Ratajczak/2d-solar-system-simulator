@@ -17,7 +17,7 @@ int main()
     window.setFramerateLimit(60);
 
     World world { window };
-    GUI gui { world, window };
+    GUI gui { world };
 
     prepare_solar(world);
 

@@ -36,7 +36,7 @@ class GUI : public Container
     double m_mass;
 
 public:
-    GUI(World& world, sf::RenderWindow& wnd);
+    GUI(World& world);
     static sf::Font font;
 
 private:
