@@ -7,14 +7,12 @@
 
 class Button : public Widget
 {
-    std::vector<sf::Texture> m_tex;
+    sf::Texture m_texture;
     float m_scale = 1;
     bool m_active = false;
 
-    int state_to_texture_index() const { return (m_active << 1) | is_hover(); }
-
 public:
-    Button(Container*, sf::Image img);
+    Button(Container*, sf::Image);
 
     bool is_active() const { return m_active; }
     void set_active(bool active) { m_active = active; on_change(active); }

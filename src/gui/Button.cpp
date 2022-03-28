@@ -1,5 +1,6 @@
 #include "Button.hpp"
 #include "../World.hpp"
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -15,15 +16,7 @@ Button::Button(Container* c, sf::Image img)
 
     auto width = img.getSize().x / STATES;
     auto height = img.getSize().y;
-
-    // std::cout << width << ", " << height << " NIGGER\n";
-
-    for(unsigned i = 0; i < STATES; i++)
-    {
-        sf::Texture texture;
-        texture.loadFromImage(img, sf::IntRect(width * i, 0, width, height));
-        m_tex.push_back(texture);
-    }
+    m_texture.loadFromImage(img);
 }
 
 void Button::handle_event(sf::Event& event)
@@ -43,8 +36,21 @@ void Button::handle_event(sf::Event& event)
 
 void Button::draw(sf::RenderWindow& window) const
 {
+    auto color_for_state = [this]() {
+        sf::Color base_color = is_active() ? sf::Color(0, 80, 255) : sf::Color(92, 89, 89);
+        if(is_hover())
+            base_color += sf::Color{50, 50, 50};
+        return base_color;
+    };
+
+    sf::CircleShape cs_bg(0.5);
+    cs_bg.setScale(size());
+    cs_bg.setPosition(position());
+    cs_bg.setFillColor(color_for_state());
+    window.draw(cs_bg);
+
     sf::Sprite sprite;
-    sprite.setTexture(m_tex[state_to_texture_index()]);
+    sprite.setTexture(m_texture);
     sprite.setPosition(position());
 
     auto tex_size = sprite.getTexture()->getSize();
