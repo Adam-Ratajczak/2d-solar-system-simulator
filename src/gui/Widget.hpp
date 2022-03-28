@@ -1,46 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-
+#include "Units.hpp"
 class Container;
-
-class Length
-{
-public:
-    enum Unit
-    {
-        Auto,
-        Px,
-        PxOtherSide
-    };
-
-    constexpr Length() = default;
-
-    constexpr Length(Unit unit)
-    : m_unit(unit) {}
-
-    constexpr Length(float v, Unit unit)
-    : m_value(v), m_unit(unit) {}
-
-    constexpr Unit unit() const { return m_unit; }
-    constexpr float value() const { return m_value; }
-
-    constexpr Length operator-() const { return {-m_value, m_unit}; }
-
-private:
-    Unit m_unit = Auto;
-    float m_value = 0;
-};
-
-constexpr Length operator""_px(long double v)
-{
-    return Length(v, Length::Px);
-}
-
-constexpr Length operator""_px_o(long double v)
-{
-    return Length(v, Length::PxOtherSide);
-}
 
 struct LengthVector { Length x; Length y; };
 

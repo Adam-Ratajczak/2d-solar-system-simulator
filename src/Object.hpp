@@ -2,6 +2,7 @@
 
 #include "Vector2.hpp"
 #include "View.hpp"
+#include "gui/Units.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
@@ -32,7 +33,7 @@ public:
     void draw(View&);
     bool hover(View& view, Vector2 mouse_pos);
     void calculate_propieties();
-    void add_object(double mass, double radius, double distance, double angle, double velocity, sf::Color color, std::string name, unsigned tres);
+    void add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres);
 };
 
 inline bool operator==(const Object& a, const Object& b){return &a == &b;}

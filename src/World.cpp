@@ -16,7 +16,7 @@ Object* World::most_massive_object = nullptr;
 std::list<Object> World::object_list;
 
 World::World(sf::RenderWindow& window)
-: view(window), date(2000){}
+: view(window), date(1990.3){}
 
 void World::add_object(const Object& object)
 {

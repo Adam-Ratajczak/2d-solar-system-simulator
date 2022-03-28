@@ -2,6 +2,7 @@
 #include "Vector2.hpp"
 #include "World.hpp"
 #include "gui/GUI.hpp"
+#include "gui/Units.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -258,11 +259,11 @@ void Object::draw(View& view){
     }
 }
 
-void Object::add_object(double mass, double radius, double distance, double angle, double velocity, sf::Color color, std::string name, unsigned tres){
-    Vector2 pos(std::cos(angle) * distance, std::sin(angle) * distance);
+void Object::add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres){
+    Vector2 pos(std::cos(theta.rad()) * distance, std::sin(theta.rad()) * distance);
     pos += this->m_pos;
 
-    Vector2 vel(std::cos(angle - M_PI / 2) * velocity, std::sin(angle - M_PI / 2) * velocity);
+    Vector2 vel(std::cos(theta.rad() - M_PI / 2) * velocity, std::sin(theta.rad() - M_PI / 2) * velocity);
     vel += this->m_vel;
 
     World::object_list.push_back(Object(mass, radius, pos, vel, color, name, tres));

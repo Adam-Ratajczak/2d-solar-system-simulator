@@ -19,7 +19,7 @@ const unsigned month_day_count[12]{
 class Date{
 public:
     int day_count;
-    Date(int year) : day_count(year * 365.25){};
+    Date(float year) : day_count(year * 365.25){};
 
     std::string to_string(){
         int years = day_count / 365.25;
