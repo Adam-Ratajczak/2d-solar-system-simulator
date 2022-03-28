@@ -17,53 +17,59 @@ void Layout::set_multipliers(std::initializer_list<float> list)
     }
 }
 
-void VerticalBoxLayout::run()
+void BoxLayout::run()
 {
-    // TODO: Match HBL
-    size_t index = 0, total_size = 0;
-    float size = (m_container.size().y - (m_spacing * (widgets().size() - 1))) / widgets().size();
-    for(auto& w : widgets())
+    //std::cout << "BOXLAYOUT " << m_container.size().x << "," << m_container.size().y << " spacing=" << m_spacing << std::endl;
+    auto vec2f_main_coord_by_orientation = [this](auto vec) -> auto
     {
-        w->set_raw_position({ m_container.position().x, m_container.position().y + total_size + m_spacing * index });
-        w->set_raw_size({ m_container.size().x, size * m_multipliers[index] });
-        total_size += size * m_multipliers[index];
-        index++;
-    }
-}
+        if(m_orientation == Orientation::Horizontal)
+            return vec.x;
+        return vec.y;
+    };
+    auto vec2f_cross_coord_by_orientation = [this](auto vec) -> auto
+    {
+        if(m_orientation == Orientation::Vertical)
+            return vec.x;
+        return vec.y;
+    };
+    auto convert_vector_by_orientation = [this](sf::Vector2f vec)
+    {
+        if(m_orientation == Orientation::Vertical)
+            return sf::Vector2f { vec.y, vec.x };
+        return vec;
+    };
 
-void HorizontalBoxLayout::run()
-{
     // 1. Compute widget size (in main axis) if it has fixed size
     for(auto& w : widgets())
     {
         float size = 0;
-        switch(w->input_size().x.unit())
+        switch(vec2f_main_coord_by_orientation(w->input_size()).unit())
         {
             case Length::Px:
             case Length::PxOtherSide:
                 // std::cout << "test" << std::endl;
-                size = w->input_size().x.value();
+                size = vec2f_main_coord_by_orientation(w->input_size()).value();
                 break;
             case Length::Percent:
                 std::cout << size << std::endl;
-                size = w->input_size().x.value() * m_container.size().x / 100.0;
+                size = vec2f_main_coord_by_orientation(w->input_size()).value() * vec2f_main_coord_by_orientation(m_container.size()) / 100.0;
                 break;
             case Length::Auto:
                 size = 0;
                 break;
         }
-        w->set_raw_size({ size, m_container.size().y });
+        w->set_raw_size(convert_vector_by_orientation({ size, vec2f_cross_coord_by_orientation(m_container.size()) }));
     }
 
     // 2. Compute size available for auto-sized widgets
-    float available_size_for_autosized_widgets = m_container.size().x;
+    float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(m_container.size());
     size_t autosized_widget_count = 0;
     for(auto& w : widgets())
     {
-        if(w->input_size().x.unit() == Length::Auto)
+        if(vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
             autosized_widget_count++;
         else
-            available_size_for_autosized_widgets -= w->size().x + m_spacing;
+            available_size_for_autosized_widgets -= vec2f_main_coord_by_orientation(w->size()) + m_spacing;
     }
 
     // 3. Set autosized widgets' size + arrange widgets
@@ -72,12 +78,19 @@ void HorizontalBoxLayout::run()
     size_t index = 0;
     for(auto& w : widgets())
     {
-        if(w->input_size().x.unit() == Length::Auto)
-            w->set_raw_size({ autosized_widget_size, m_container.size().y });
-        w->set_raw_position({ m_container.position().x + current_position, m_container.position().y });
-        current_position += w->size().x + m_spacing;
+        if(vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
+            w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) }));
+        w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position,
+            vec2f_cross_coord_by_orientation(m_container.position()) }));
+        current_position += vec2f_main_coord_by_orientation(w->size()) + m_spacing;
         index++;
     }
+
+    /*for(auto& w : widgets())
+    {
+        std::cout << w->input_size().x << "," << w->input_size().y << " @ " << w->input_position().x << "," << w->input_position().y << " ----> ";
+        std::cout << w->size().x << "," << w->size().y << " @ " << w->position().x << "," << w->position().y << std::endl;
+    }*/
 }
 
 void BasicLayout::run()

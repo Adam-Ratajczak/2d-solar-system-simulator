@@ -62,7 +62,7 @@ void Widget::draw(sf::RenderWindow& window) const
 {
     sf::RectangleShape outline(size());
     outline.setPosition(position());
-    outline.setOutlineThickness(-1);
+    outline.setOutlineThickness(1);
     outline.setOutlineColor(sf::Color::Red);
     outline.setFillColor(sf::Color::Transparent);
     window.draw(outline);

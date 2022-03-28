@@ -46,7 +46,7 @@ GUI::GUI(World& world, Root& root)
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
     container->set_position({ 100.0_px, 10.0_px });
-    container->set_size({ 500.0_px, 200.0_px });
+    container->set_size({ 500.0_px, 400.0_px });
     {
         auto& layout = container->set_layout<VerticalBoxLayout>();
         layout.set_spacing(10);
@@ -164,6 +164,7 @@ GUI::GUI(World& world, Root& root)
             };
         }
         auto main_color_container = container->add_widget<Container>();
+        main_color_container->set_size({ Length::Auto, 100.0_px });
         auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
         main_color_layout.set_spacing(10);
         {
@@ -255,40 +256,41 @@ GUI::GUI(World& world, Root& root)
             m_name_textbox->set_content("Planet");
         }
         auto submit_container = container->add_widget<Container>();
+        submit_container->set_size({ Length::Auto, 72.0_px });
         {
-            submit_container->set_layout<HorizontalBoxLayout>();
+            auto& layout = submit_container->set_layout<HorizontalBoxLayout>();
+            m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
+            m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
+            m_coords_button->on_click = [this]()
             {
-                m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
-                m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
-                m_coords_button->on_click = [this]()
-                {
-                    std::cout << "TEST" << std::endl;
-                    m_simulation_view->start_coords_measure();
-                };
+                //std::cout << "TEST" << std::endl;
+                m_simulation_view->start_coords_measure();
+            };
 
-                m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
-                m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
-                m_add_object_button->on_click = [&world, this]()
-                {
-                    double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
-                    double radius = std::stod(m_radius_textbox->get_content()) * 1000;
+            submit_container->add_widget<Widget>(); // spacer
 
-                    double theta = m_direction_slider->get_value();
-                    double velocity = std::stod(m_velocity_textbox->get_content());
-                    Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
+            m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
+            m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
+            m_add_object_button->on_click = [&world, this]()
+            {
+                double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
+                double radius = std::stod(m_radius_textbox->get_content()) * 1000;
 
-                    sf::Color color(
-                        m_color_r_slider->get_value(),
-                        m_color_g_slider->get_value(),
-                        m_color_b_slider->get_value());
+                double theta = m_direction_slider->get_value();
+                double velocity = std::stod(m_velocity_textbox->get_content());
+                Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
-                    std::string name = m_name_textbox->get_content();
+                sf::Color color(
+                    m_color_r_slider->get_value(),
+                    m_color_g_slider->get_value(),
+                    m_color_b_slider->get_value());
 
-                    Object planet(world, mass, radius, m_new_object_pos, vel, color, name, 1000);
-                    // FIXME: This (object_list) should be probably private.
-                    world.object_list.push_back(planet);
-                };
-            }
+                std::string name = m_name_textbox->get_content();
+
+                Object planet(world, mass, radius, m_new_object_pos, vel, color, name, 1000);
+                // FIXME: This (object_list) should be probably private.
+                world.object_list.push_back(planet);
+            };
         }
     }
 

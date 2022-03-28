@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <ostream>
 class Length
 {
 public:
@@ -23,9 +24,11 @@ public:
     constexpr Unit unit() const { return m_unit; }
     constexpr float value() const { return m_value; }
 
-    constexpr Length operator-() const { return {-m_value, m_unit}; }
+    constexpr Length operator-() const { return { -m_value, m_unit }; }
 
 private:
+    friend std::ostream& operator<<(std::ostream& out, Length const& l) { return out << l.m_value << "U" << (int)l.unit(); }
+
     Unit m_unit = Auto;
     float m_value = 0;
 };
@@ -60,7 +63,7 @@ public:
     constexpr float deg() const { return (m_unit == Deg) ? m_value : m_value / 360 * 2 * M_PI; }
     constexpr float rad() const { return (m_unit == Rad) ? m_value : m_value / (2 * M_PI) * 360; }
 
-    constexpr Angle operator-() const { return {-m_value, m_unit}; }
+    constexpr Angle operator-() const { return { -m_value, m_unit }; }
 
 private:
     Unit m_unit = Rad;
