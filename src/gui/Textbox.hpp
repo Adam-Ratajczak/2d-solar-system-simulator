@@ -25,4 +25,5 @@ public:
     void set_limit(unsigned limit) { m_limit = limit; }
 
     std::string get_content() const { return m_content; }
+    void set_content(std::string content){ m_content = content; }
 };
