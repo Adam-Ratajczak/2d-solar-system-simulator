@@ -17,6 +17,8 @@ public:
     Layout(Container& c)
     : m_container(c) {}
 
+    virtual ~Layout() = default;
+
     virtual void run() = 0;
 
     void set_multipliers(std::initializer_list<float> list);
