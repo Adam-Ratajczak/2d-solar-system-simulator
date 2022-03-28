@@ -14,16 +14,21 @@ class Object
 protected:
     double m_density;
     sf::Color m_color;
+    // FIXME: What is m_tres?
     unsigned m_tres;
     std::list<std::pair<Vector2, Vector2>> m_trail;
     double m_radius;
     Vector2 attraction(const Object&);
 
+    // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?
     double m_ap = 0, m_pe = std::numeric_limits<double>::max(), m_orbit;
     double m_ap_vel = 0, m_pe_vel = 0;
+    World& m_world;
 
 public:
-    Object(double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres);
+    // FIXME: Too much arguments!!!
+    // FIXME: what is "tres"?
+    Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres);
     Vector2 m_pos;
     Vector2 m_vel;
     std::string m_name;

@@ -1,12 +1,14 @@
 #include "World.hpp"
 
-void prepare_solar(World& world){
+void prepare_solar(World& world)
+{
     // Sun
+    // FIXME: Add that nice template like Container::add_widget :^)
     world.add_object(
-        Object(1.98892e30, 695700 * 1000, 
-        Vector2(0, 0), 
-        Vector2(0, 0), 
-        sf::Color::Yellow, "Sun", 1000));
+        Object(world, 1.98892e30, 695700 * 1000,
+            Vector2(0, 0),
+            Vector2(0, 0),
+            sf::Color::Yellow, "Sun", 1000));
 
     auto& sun = world.get_object("Sun");
 
@@ -19,5 +21,4 @@ void prepare_solar(World& world){
     sun.add_object(5.6836e26, 58232 * 1000, 9.539 * AU, 289.4523_deg, -9680, sf::Color(207, 186, 178), "Saturn", 12500);
     sun.add_object(8.6810e25, 25362 * 1000, 19.18 * AU, 276.7999_deg, -6800, sf::Color(0, 174, 199), "Uranus", 35000);
     sun.add_object(1.024e26, 24622 * 1000, 30.06 * AU, 282.7192_deg, -5430, sf::Color(0, 111, 255), "Neptune", 70000);
-    
 }

@@ -13,14 +13,8 @@
 #include <string>
 #include <utility>
 
-Object::Object(
-    double mass,
-    double radius,
-    Vector2 pos,
-    Vector2 vel,
-    sf::Color color,
-    std::string name,
-    unsigned tres)
+Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres)
+: m_world(world)
 {
 
     m_mass = mass;
@@ -33,7 +27,7 @@ Object::Object(
     m_tres = tres;
 
     m_trail.push_back({ m_pos, m_vel });
-    World::object_count++;
+    world.object_count++;
 }
 
 Vector2 Object::attraction(const Object& other)
@@ -63,7 +57,8 @@ bool con = 1;
 
 void Object::update()
 {
-    if(World::reverse && m_trail.size() > 1 && con)
+    // FIXME: what is "con"? windows console?
+    if(m_world.reverse && m_trail.size() > 1 && con)
     {
         this->m_pos = m_trail.back().first;
         this->m_vel = -m_trail.back().second;
@@ -71,10 +66,10 @@ void Object::update()
         return;
     }
 
-    if(World::reverse)
+    if(m_world.reverse)
         con = 0;
 
-    if(!World::reverse && m_trail.size() > 1 && !con)
+    if(!m_world.reverse && m_trail.size() > 1 && !con)
     {
         this->m_pos = m_trail.back().first;
         this->m_vel = -m_trail.back().second;
@@ -82,11 +77,11 @@ void Object::update()
         return;
     }
 
-    if(!World::reverse)
+    if(!m_world.reverse)
         con = 1;
 
     Vector2 temp_vel;
-    for(auto& object : World::object_list)
+    for(auto& object : m_world.object_list)
     {
         if(this != &object)
         {
@@ -94,7 +89,7 @@ void Object::update()
 
             if(distance < this->m_radius + object.m_radius)
             {
-                if(!World::collisions)
+                if(!m_world.collisions)
                     break;
 
                 // std::cout << this->m_name << " - " << object.m_name << "\n";
@@ -123,7 +118,7 @@ void Object::update()
                 double new_area = this->m_mass / this->m_density + M_PI * this->m_radius * this->m_radius / this->m_density;
                 this->m_radius = std::sqrt(new_area / M_PI);
 
-                World::object_list.remove(object);
+                m_world.object_list.remove(object);
                 break;
             }
             else
@@ -181,7 +176,7 @@ void Object::draw(SimulationView const& view)
     label.setOrigin(bounds.width / 2, bounds.height / 2);
 
     target.draw(label);
-    double distance_from_object = get_distance(this->m_pos, World::most_massive_object->m_pos);
+    double distance_from_object = get_distance(this->m_pos, m_world.most_massive_object->m_pos);
 
     if(m_ap < distance_from_object)
     {
@@ -241,10 +236,10 @@ void Object::draw(SimulationView const& view)
         vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 2));
         target.draw(vel);
 
-        if(this == World::most_massive_object)
+        if(this == m_world.most_massive_object)
             return;
 
-        sf::Text dist("Distance from the " + World::most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
+        sf::Text dist("Distance from the " + m_world.most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
         ;
         dist.setFillColor(sf::Color::White);
         bounds = dist.getLocalBounds();
@@ -279,11 +274,12 @@ void Object::draw(SimulationView const& view)
 
 void Object::add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres)
 {
+    // FIXME: add_object to... object? maybe add_object_relative_to?
     Vector2 pos(std::cos(theta.rad()) * distance, std::sin(theta.rad()) * distance);
     pos += this->m_pos;
 
     Vector2 vel(std::cos(theta.rad() - M_PI / 2) * velocity, std::sin(theta.rad() - M_PI / 2) * velocity);
     vel += this->m_vel;
 
-    World::object_list.push_back(Object(mass, radius, pos, vel, color, name, tres));
+    m_world.object_list.push_back(Object(m_world, mass, radius, pos, vel, color, name, tres));
 }

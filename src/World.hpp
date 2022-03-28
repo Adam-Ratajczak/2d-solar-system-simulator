@@ -16,11 +16,12 @@ class World
 public:
     World();
 
-    static Object* most_massive_object;
+    Object* most_massive_object = nullptr;
     Date date;
-    static unsigned object_count;
-    static bool collisions, dragging, reverse;
-    static std::list<Object> object_list;
+    unsigned object_count = 0;
+    bool collisions = true;
+    bool reverse = false;
+    std::list<Object> object_list;
 
     // FIXME: Make it a signed float and private.
     unsigned speed = 1;

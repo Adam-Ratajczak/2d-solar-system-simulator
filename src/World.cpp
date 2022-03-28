@@ -11,10 +11,6 @@
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
-bool World::dragging = 0, World::reverse = false;
-Object* World::most_massive_object = nullptr;
-std::list<Object> World::object_list;
-
 World::World()
 : date(1990.3) {}
 

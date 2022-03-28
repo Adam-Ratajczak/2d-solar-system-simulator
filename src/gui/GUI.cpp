@@ -273,7 +273,7 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
     m_add_object_button->set_position({ 10.0_px, 190.0_px });
     m_add_object_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
     m_add_object_button->set_visible(false);
-    m_add_object_button->on_click = [this]()
+    m_add_object_button->on_click = [&world, this]()
     {
         double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
         double radius = std::stod(m_radius_textbox->get_content()) * 1000;
@@ -289,9 +289,9 @@ GUI::GUI(World& world, sf::RenderWindow& wnd)
 
         std::string name = m_name_textbox->get_content();
 
-        Object planet(mass, radius, m_coords, vel, color, name, 1000);
-
-        World::object_list.push_back(planet);
+        Object planet(world, mass, radius, m_coords, vel, color, name, 1000);
+        // FIXME: This (object_list) should be probably private.
+        world.object_list.push_back(planet);
     };
 }
 

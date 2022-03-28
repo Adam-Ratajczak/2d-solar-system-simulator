@@ -7,9 +7,6 @@
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
-unsigned World::object_count = 0;
-bool World::collisions = true;
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "2D Solar System Simulator");
