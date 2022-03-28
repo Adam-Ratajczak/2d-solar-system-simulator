@@ -57,7 +57,7 @@ private:
     float m_spacing;
 };
 
-// Just assigns expected_size to size.
+// Just assigns input_size to size.
 class BasicLayout : public Layout
 {
 public:
@@ -86,12 +86,6 @@ public:
     virtual void handle_event(sf::Event& event) override;
     virtual void update_and_draw(sf::RenderWindow& window) override;
 
-    enum class LayoutMode
-    {
-        None,           // No layouting is done at all.
-        VerticalBox,    
-    };
-
     template<class T, class... Args> requires(std::is_base_of_v<Layout, T> && requires(Container& c, Args&&... args) { T(c, args...); })
     T& set_layout(Args&&... args)
     {
@@ -102,7 +96,7 @@ public:
     }
 
     void clear_layout() { m_layout = nullptr; }
-    std::unique_ptr<Layout>& get_layout(){return m_layout;}
+    std::unique_ptr<Layout>& get_layout() {return m_layout;}
 
 protected:
     virtual void relayout() override;

@@ -30,34 +30,66 @@ void VerticalBoxLayout::run()
 
 void HorizontalBoxLayout::run()
 {
-    size_t index = 0, total_size = 0;
-    float size = (m_container.size().x - (m_spacing * (widgets().size() - 1))) / widgets().size();
+    // 1. Compute widget size (in main axis) if it has fixed size
     for(auto& w : widgets())
     {
-        w->set_raw_position({m_container.position().x + total_size + m_spacing * index, m_container.position().y});
-        w->set_raw_size({size * m_multipliers[index], m_container.size().y});
-        total_size += size * m_multipliers[index];
+        float size = 0;
+        switch(w->input_size().x.unit())
+        {
+            case Length::Px:
+            case Length::PxOtherSide:
+                std::cout << "test" << std::endl;
+                size = w->input_size().x.value();
+                break;
+            case Length::Auto:
+                size = 0;
+                break;
+        }
+        w->set_raw_size({size, m_container.size().y});
+    }
+
+    // 2. Compute size available for auto-sized widgets
+    float available_size_for_autosized_widgets = m_container.size().x;
+    size_t autosized_widget_count = 0;
+    for(auto& w : widgets())
+    {
+        if(w->input_size().x.unit() == Length::Auto)
+            autosized_widget_count++;
+        else
+            available_size_for_autosized_widgets -= w->size().x + m_spacing;
+    }
+
+    // 3. Set autosized widgets' size + arrange widgets
+    float autosized_widget_size = (available_size_for_autosized_widgets - (m_spacing * (autosized_widget_count - 1))) / autosized_widget_count;
+    float current_position = 0;
+    size_t index = 0;
+    for(auto& w : widgets())
+    {
+        if(w->input_size().x.unit() == Length::Auto)
+            w->set_raw_size({autosized_widget_size, m_container.size().y});
+        w->set_raw_position({m_container.position().x + current_position, m_container.position().y});
+        current_position += w->size().x + m_spacing;
         index++;
     }
 }
 
 void BasicLayout::run()
 {
-    auto resolve_position = [&](double container_size, double widget_size, Length const& expected_position) -> float {
-        switch(expected_position.unit())
+    auto resolve_position = [&](double container_size, double widget_size, Length const& input_position) -> float {
+        switch(input_position.unit())
         {
-            case Length::Px: return expected_position.value();
-            case Length::PxOtherSide: return container_size - widget_size - expected_position.value();
+            case Length::Px: return input_position.value();
+            case Length::PxOtherSide: return container_size - widget_size - input_position.value();
             default: return 0;
         }
     };
 
     for(auto& w : widgets())
     {
-        auto expected_position = w->expected_position();
-        w->set_raw_size({w->expected_size().x.value(), w->expected_size().y.value()});
-        auto x = resolve_position(m_container.size().x, w->size().x, expected_position.x);
-        auto y = resolve_position(m_container.size().y, w->size().y, expected_position.y);
+        auto input_position = w->input_position();
+        w->set_raw_size({w->input_size().x.value(), w->input_size().y.value()});
+        auto x = resolve_position(m_container.size().x, w->size().x, input_position.x);
+        auto y = resolve_position(m_container.size().y, w->size().y, input_position.y);
         w->set_raw_position({x + m_container.position().x, y + m_container.position().y});
     }
 }

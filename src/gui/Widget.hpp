@@ -36,14 +36,14 @@ public:
 
     void set_size(LengthVector l)
     {
-        m_expected_size = l;
+        m_input_size = l;
         set_needs_relayout();
     }
 
     sf::Vector2f position() const { return m_pos; }
     sf::Vector2f size() const { return m_size; }
-    LengthVector expected_position() const { return m_expected_pos; }
-    LengthVector expected_size() const { return m_expected_size; }
+    LengthVector input_position() const { return m_expected_pos; }
+    LengthVector input_size() const { return m_input_size; }
 
     // FIXME: These should be private somehow.
     void relayout_if_needed();
@@ -65,7 +65,7 @@ protected:
 private:
     Container* m_parent = nullptr;
     sf::Vector2f m_pos, m_size;
-    LengthVector m_expected_pos, m_expected_size;
+    LengthVector m_expected_pos, m_input_size;
     bool m_hover = false;
     bool m_needs_relayout = true;
     bool m_visible = true;
