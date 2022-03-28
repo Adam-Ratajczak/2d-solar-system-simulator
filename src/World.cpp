@@ -61,14 +61,10 @@ void World::get_events(sf::Event& event)
     }
     else if(event.type == sf::Event::MouseWheelScrolled)
     {
-        if(event.mouseWheelScroll.delta <= -1)
-        {
+        if(event.mouseWheelScroll.delta > 0)
             view.apply_zoom(1.1);
-        }
-        else if(event.mouseWheelScroll.delta >= 1)
-        {
+        else
             view.apply_zoom(1 / 1.1);
-        }
     }
     else if(event.type == sf::Event::MouseMoved)
     {
