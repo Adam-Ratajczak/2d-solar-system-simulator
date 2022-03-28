@@ -3,6 +3,7 @@
 #include "Container.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
+#include "ToggleButton.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -30,8 +31,8 @@ GUI::GUI(World& world)
 
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
-    container->set_position({100.0_px, 10.0_px});
-    container->set_size({800.0_px, 200.0_px});
+    container->set_position({ 100.0_px, 10.0_px });
+    container->set_size({ 800.0_px, 200.0_px });
     auto& layout = container->set_layout<VerticalBoxLayout>();
     layout.set_spacing(10);
 
@@ -67,7 +68,7 @@ GUI::GUI(World& world)
     mass_unit_textfield->set_content(" kg ");
     mass_unit_textfield->set_alignment(Textfield::Align::CENTER);
 
-    mass_layout.set_multipliers({5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9});
+    mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
 
     auto radius_container = container->add_widget<Container>();
     auto& radius_layout = radius_container->set_layout<HorizontalBoxLayout>();
@@ -123,13 +124,13 @@ GUI::GUI(World& world)
 
     m_direction_slider = direction_container->add_widget<Slider>(0, 360, 1);
     m_direction_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-    m_direction_slider->set_position({50.0_px, 100.0_px});
-    m_direction_slider->set_size({200.0_px, 15.0_px});
+    m_direction_slider->set_position({ 50.0_px, 100.0_px });
+    m_direction_slider->set_size({ 200.0_px, 15.0_px });
 
     auto direction_unit_textfield = direction_container->add_widget<Textfield>();
     direction_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
     direction_unit_textfield->set_font_size(20);
-    direction_unit_textfield->set_content(std::to_string((int)m_direction_slider->get_value()) +  " [deg] ");
+    direction_unit_textfield->set_content(std::to_string((int)m_direction_slider->get_value()) + " [deg] ");
     direction_unit_textfield->set_alignment(Textfield::Align::CENTER);
 
     auto main_color_container = container->add_widget<Container>();
@@ -154,8 +155,8 @@ GUI::GUI(World& world)
 
     m_color_r_slider = color_r_container->add_widget<Slider>(0, 255, 1);
     m_color_r_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-    m_color_r_slider->set_position({50.0_px, 100.0_px});
-    m_color_r_slider->set_size({200.0_px, 15.0_px});
+    m_color_r_slider->set_position({ 50.0_px, 100.0_px });
+    m_color_r_slider->set_size({ 200.0_px, 15.0_px });
 
     auto color_r_value_textfield = color_r_container->add_widget<Textfield>();
     color_r_value_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
@@ -175,8 +176,8 @@ GUI::GUI(World& world)
 
     m_color_g_slider = color_g_container->add_widget<Slider>(0, 255, 1);
     m_color_g_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-    m_color_g_slider->set_position({50.0_px, 100.0_px});
-    m_color_g_slider->set_size({200.0_px, 15.0_px});
+    m_color_g_slider->set_position({ 50.0_px, 100.0_px });
+    m_color_g_slider->set_size({ 200.0_px, 15.0_px });
 
     auto color_g_value_textfield = color_g_container->add_widget<Textfield>();
     color_g_value_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
@@ -196,8 +197,8 @@ GUI::GUI(World& world)
 
     m_color_b_slider = color_b_container->add_widget<Slider>(0, 255, 1);
     m_color_b_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-    m_color_b_slider->set_position({50.0_px, 100.0_px});
-    m_color_b_slider->set_size({200.0_px, 15.0_px});
+    m_color_b_slider->set_position({ 50.0_px, 100.0_px });
+    m_color_b_slider->set_size({ 200.0_px, 15.0_px });
 
     auto color_b_value_textfield = color_b_container->add_widget<Textfield>();
     color_b_value_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
@@ -205,21 +206,23 @@ GUI::GUI(World& world)
     color_b_value_textfield->set_content(std::to_string((int)m_color_b_slider->get_value()));
     color_b_value_textfield->set_alignment(Textfield::Align::CENTER);
 
-    layout.set_multipliers({1, 1, 1, 1, 3});
-    
-    m_create_button = add_widget<Button>(load_image("../assets/createButton.png"));
-    m_create_button->set_position({10.0_px, 10.0_px});
-    m_create_button->set_size({72.0_px, 72.0_px}); // TODO: Preferred size
-    m_create_button->on_change = [container = container.get()](bool state) {
+    layout.set_multipliers({ 1, 1, 1, 1, 3 });
+
+    m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
+    m_create_button->set_position({ 10.0_px, 10.0_px });
+    m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+    m_create_button->on_change = [container = container.get()](bool state)
+    {
         container->set_visible(state);
     };
     m_create_button->set_active(false);
-    
+
     auto sizes = m_window.getSize();
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
-    m_home_button->set_position({10.0_px_o, 10.0_px_o});
-    m_home_button->set_size({72.0_px, 72.0_px}); // TODO: Preferred size
-    m_home_button->on_change = [&world](bool state) {
+    m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
+    m_home_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+    m_home_button->on_click = [&world]()
+    {
         world.view.set_offset(sf::Vector2f(0, 0));
         world.view.set_zoom(1);
     };
