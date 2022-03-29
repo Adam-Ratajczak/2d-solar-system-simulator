@@ -9,70 +9,79 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <cctype>
 #include <iostream>
 
-void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color)
-{
+void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_bg_color = bg_color;
     m_fg_color = fg_color;
     m_text_color = text_color;
 }
 
-
-void Textbox::set_content(std::string content){
-    m_content = content;
+void Textbox::set_content(sf::String content) {
+    m_content = std::move(content);
+    m_cursor = m_content.getSize();
     m_has_decimal = false;
 
-    for(auto& c : m_content){
-        if(c == '.')
-            m_has_decimal = true;
-    }
+    if (m_content.find(".") != sf::String::InvalidPos)
+        m_has_decimal = true;
 }
 
-void Textbox::handle_event(Event& event)
-{
+void Textbox::handle_event(Event& event) {
     auto pos = sf::Mouse::getPosition();
-    if(event.type() == sf::Event::TextEntered)
-    {
-        if(is_focused())
-        {
-            if(event.event().text.unicode == '\b')
-            {
-                if(m_type == NUMBER && *(m_content.end() - 1) == '.')
-                    m_has_decimal = false;
-
-                m_content = m_content.substr(0, m_content.size() - 1);
-
-                if(m_content.size() == 0 && m_type == NUMBER)
-                    m_content = "0";
+    if (event.type() == sf::Event::TextEntered) {
+        if (is_focused()) {
+            auto codepoint = event.event().text.unicode;
+            if (codepoint == '\b') {
+                if (m_cursor != 0) {
+                    m_content.erase(m_cursor - 1);
+                    m_cursor--;
+                }
             }
-            else if(event.event().text.unicode < 128 && event.event().text.unicode >= 32 && m_type == TEXT)
-            {
-                if(m_content.size() < m_limit)
-                    m_content += static_cast<char>(event.event().text.unicode);
-            }else if(((event.event().text.unicode <= '9' && event.event().text.unicode >= '0') || event.event().text.unicode == '.') && m_type == NUMBER){
-                if(event.event().text.unicode == '.' && m_has_decimal)
-                    return;
-                
-                if(m_content == "0")
+            else if (codepoint == 0x7f) {
+                if (m_cursor != m_content.getSize())
+                    m_content.erase(m_cursor);
+            }
+            else if (can_insert_character(codepoint)) {
+                if (m_content == "0" && m_type == NUMBER)
                     m_content = "";
-                
-                if(m_content.size() < m_limit)
-                    m_content += static_cast<char>(event.event().text.unicode);
+                m_content.insert(m_cursor, codepoint);
+                m_cursor++;
+            }
+
+            if (m_content.isEmpty() && m_type == NUMBER)
+                m_content = "0";
+
+            event.set_handled();
+        }
+    }
+    else if (event.type() == sf::Event::KeyPressed) {
+        if (is_focused()) {
+            // FIXME: Focus check should be handled at Widget level.
+            std::cout << m_cursor << std::endl;
+            switch (event.event().key.code) {
+            case sf::Keyboard::Left:
+                if (m_cursor > 0)
+                    m_cursor--;
+                break;
+            case sf::Keyboard::Right:
+                if (m_cursor < m_content.getSize())
+                    m_cursor++;
+                break;
+            default:
+                break;
             }
             event.set_handled();
         }
     }
 }
 
-void Textbox::draw(sf::RenderWindow& window) const
-{
+void Textbox::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
     rect.setPosition(position());
     rect.setFillColor(m_bg_color);
 
-    if(is_focused())
-    {
+    if (is_focused()) {
         rect.setOutlineColor(m_fg_color);
         rect.setOutlineThickness(3);
     }
@@ -84,4 +93,22 @@ void Textbox::draw(sf::RenderWindow& window) const
     text.setPosition(sf::Vector2f(position().x + 2, position().y + 2));
 
     window.draw(text);
+
+    if (is_focused()) {
+        sf::RectangleShape cursor(sf::Vector2f(2, 30));
+        auto position = text.findCharacterPos(m_cursor);
+        cursor.setPosition({ position.x, position.y + size().y / 2 - 15 });
+        cursor.setFillColor(sf::Color::Black);
+        window.draw(cursor);
+    }
+}
+
+bool Textbox::can_insert_character(uint32_t ch) const {
+    switch (m_type) {
+    case TEXT:
+        return isprint(ch);
+    case NUMBER:
+        return isdigit(ch) || (ch == '.' && !m_has_decimal);
+    }
+    return false;
 }

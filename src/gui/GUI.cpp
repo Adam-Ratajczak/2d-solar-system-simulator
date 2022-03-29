@@ -289,11 +289,11 @@ GUI::GUI(World& world, Application& application)
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_add_object_button->on_click = [&world, this]()
             {
-                double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
-                double radius = std::stod(m_radius_textbox->get_content()) * 1000;
+                double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+                double radius = std::stod(m_radius_textbox->get_content().toAnsiString()) * 1000;
 
                 double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
-                double velocity = std::stod(m_velocity_textbox->get_content());
+                double velocity = std::stod(m_velocity_textbox->get_content().toAnsiString());
                 Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
                 sf::Color color(
@@ -342,11 +342,11 @@ void GUI::relayout()
 void GUI::draw(sf::RenderWindow& window) const
 {
     if(m_simulation_view->m_measured){
-        double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
-        double radius = std::stod(m_radius_textbox->get_content()) * 1000;
+        double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+        double radius = std::stod(m_radius_textbox->get_content().toAnsiString()) * 1000;
 
         double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
-        double velocity = std::stod(m_velocity_textbox->get_content());
+        double velocity = std::stod(m_velocity_textbox->get_content().toAnsiString());
         Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
         sf::Color color(
