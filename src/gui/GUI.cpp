@@ -28,8 +28,8 @@ static sf::Image load_image(std::string path)
 
 sf::Font GUI::font;
 
-GUI::GUI(World& world, Root& root)
-: Container(root), m_world(world)
+GUI::GUI(World& world, Application& application)
+: Container(application), m_world(world)
 {
     font.loadFromFile("../assets/Pulang.ttf");
     set_layout<BasicLayout>();

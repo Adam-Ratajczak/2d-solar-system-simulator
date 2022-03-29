@@ -112,8 +112,8 @@ public:
     std::unique_ptr<Layout>& get_layout() { return m_layout; }
 
 protected:
-    explicit Container(Root& root)
-    : Widget(root) {}
+    explicit Container(Application& application)
+    : Widget(application) {}
 
     virtual void relayout() override;
     WidgetList m_widgets;

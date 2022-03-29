@@ -5,7 +5,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 class Container;
-class Root;
+class Application;
 
 struct LengthVector
 {
@@ -87,8 +87,8 @@ public:
     Container* parent() const { return m_parent; }
 
 protected:
-    explicit Widget(Root& root)
-    : m_root(root) {}
+    explicit Widget(Application& application)
+    : m_application(application) {}
 
     virtual void relayout() {}
     virtual bool is_mouse_over(sf::Vector2i) const;
@@ -101,7 +101,7 @@ private:
     friend Container;
 
     Container* m_parent = nullptr;
-    Root& m_root;
+    Application& m_application;
     sf::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
     bool m_hover = false;

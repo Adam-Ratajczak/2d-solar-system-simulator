@@ -1,7 +1,7 @@
 #include "Vector2.hpp"
 #include "World.hpp"
 #include "gui/GUI.hpp"
-#include "gui/Root.hpp"
+#include "gui/Application.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -14,10 +14,10 @@ int main()
 
     window.setFramerateLimit(60);
 
-    Root root { window };
+    Application application { window };
 
     World world;
-    GUI gui { world, root };
+    GUI gui { world, application };
 
     prepare_solar(world);
 

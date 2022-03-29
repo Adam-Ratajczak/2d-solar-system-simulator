@@ -1,21 +1,21 @@
 #include "Widget.hpp"
 
 #include "Container.hpp"
-#include "Root.hpp"
+#include "Application.hpp"
 
 #include <cassert>
 #include <iostream>
 #include <typeinfo>
 
 Widget::Widget(Container& parent)
-: m_parent(&parent), m_root(parent.m_root)
+: m_parent(&parent), m_application(parent.m_application)
 {
 }
 
 Widget::~Widget()
 {
-    if(m_root.focused_widget() == this)
-        m_root.set_focused_widget(nullptr);
+    if(m_application.focused_widget() == this)
+        m_application.set_focused_widget(nullptr);
 }
 
 bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const
@@ -31,12 +31,12 @@ void Widget::do_handle_event(Event& event)
 
 void Widget::set_focused()
 {
-    m_root.set_focused_widget(this);
+    m_application.set_focused_widget(this);
 }
 
 bool Widget::is_focused() const
 {
-    return m_root.focused_widget() == this;   
+    return m_application.focused_widget() == this;   
 }
 
 void Widget::handle_event(Event& event)
@@ -87,5 +87,5 @@ void Widget::relayout_if_needed()
 
 sf::RenderWindow& Widget::window() const
 {
-    return m_root.window();
+    return m_application.window();
 }

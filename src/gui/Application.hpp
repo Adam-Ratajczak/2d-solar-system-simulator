@@ -2,10 +2,10 @@
 
 #include "Container.hpp"
 
-class Root
+class Application
 {
 public:
-    explicit Root(sf::RenderWindow& wnd)
+    explicit Application(sf::RenderWindow& wnd)
     : m_window(wnd) {}
 
     sf::RenderWindow& window() const { return m_window; }

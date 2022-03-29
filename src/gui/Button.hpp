@@ -2,6 +2,7 @@
 
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <functional>
 
 class Button : public Widget
@@ -16,7 +17,6 @@ public:
 
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
-
 protected:
     virtual void on_click_impl() { if(on_click) on_click(); }
 
