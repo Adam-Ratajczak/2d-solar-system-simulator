@@ -10,6 +10,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Window/Event.hpp>
 #include <iostream>
+#include <sstream>
 
 World::World()
 : date(1990.3) {}
@@ -47,8 +48,18 @@ void World::draw(SimulationView const& view)
     }
 
     // std::cout << date.to_string() << "\n";
+    std::ostringstream oss;
+    oss << date.to_string();
+    if(speed == 0)
+        oss << " (Paused";
+    else
+        oss << " (" << speed << "x";
 
-    sf::Text date_text(date.to_string(), GUI::font, 25);
+    if(reverse)
+        oss << ", Reversed";
+    oss << ")";
+
+    sf::Text date_text(oss.str(), GUI::font, 25);
     date_text.setFillColor(sf::Color::White);
     date_text.setPosition(10, view.window().getSize().y - 35);
     view.window().draw(date_text);
