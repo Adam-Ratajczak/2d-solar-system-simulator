@@ -167,3 +167,11 @@ void Container::relayout()
         return;
     m_layout->run();
 }
+
+void Container::dump(unsigned depth)
+{
+    Widget::dump(depth);
+    ++depth;
+    for(auto& w : m_widgets)
+        w->dump(depth);
+}

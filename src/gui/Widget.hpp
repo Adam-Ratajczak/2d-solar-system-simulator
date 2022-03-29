@@ -85,6 +85,8 @@ public:
 
     sf::RenderWindow& window() const;
     Container* parent() const { return m_parent; }
+   
+    virtual void dump(unsigned depth);
 
 protected:
     explicit Widget(Application& application)

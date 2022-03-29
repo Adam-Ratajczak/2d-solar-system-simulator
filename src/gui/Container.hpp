@@ -111,6 +111,8 @@ public:
     void clear_layout() { m_layout = nullptr; }
     std::unique_ptr<Layout>& get_layout() { return m_layout; }
 
+    virtual void dump(unsigned depth) override;
+
 protected:
     explicit Container(Application& application)
     : Widget(application) {}
