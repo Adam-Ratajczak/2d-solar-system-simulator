@@ -107,7 +107,6 @@ void SimulationView::draw(sf::RenderWindow& window) const
 {
     m_world.draw(*this);
 
-    // FIXME: This should be moved to SimulationView.
     if(m_coord_measure)
     {
         auto sizes = size();
