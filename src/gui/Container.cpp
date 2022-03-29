@@ -158,7 +158,7 @@ void Container::do_handle_event(Event& event)
     }
     // FIXME: Proper stacking contexts
     if(!event.is_handled())
-        Widget::handle_event(event);
+        Widget::do_handle_event(event);
 }
 
 void Container::relayout()
