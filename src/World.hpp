@@ -19,7 +19,7 @@ public:
     Object* most_massive_object = nullptr;
     Date date;
     unsigned object_count = 0;
-    bool collisions = true;
+    bool collisions = false;
     bool reverse = false;
     std::list<Object> object_list;
 
