@@ -18,6 +18,17 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_text_color = text_color;
 }
 
+
+void Textbox::set_content(std::string content){
+    m_content = content;
+    m_has_decimal = false;
+
+    for(auto& c : m_content){
+        if(c == '.')
+            m_has_decimal = true;
+    }
+}
+
 void Textbox::handle_event(Event& event)
 {
     auto pos = sf::Mouse::getPosition();
@@ -27,10 +38,25 @@ void Textbox::handle_event(Event& event)
         {
             if(event.event().text.unicode == '\b')
             {
+                if(m_type == NUMBER && *(m_content.end() - 1) == '.')
+                    m_has_decimal = false;
+
                 m_content = m_content.substr(0, m_content.size() - 1);
+
+                if(m_content.size() == 0)
+                    m_content = "0";
             }
-            else if(event.event().text.unicode < 128 && event.event().text.unicode >= 32)
+            else if(event.event().text.unicode < 128 && event.event().text.unicode >= 32 && m_type == TEXT)
             {
+                if(m_content.size() < m_limit)
+                    m_content += static_cast<char>(event.event().text.unicode);
+            }else if(((event.event().text.unicode <= '9' && event.event().text.unicode >= '0') || event.event().text.unicode == '.') && m_type == NUMBER){
+                if(event.event().text.unicode == '.' && m_has_decimal)
+                    return;
+                
+                if(m_content == "0")
+                    m_content = "";
+                
                 if(m_content.size() < m_limit)
                     m_content += static_cast<char>(event.event().text.unicode);
             }

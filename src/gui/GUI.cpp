@@ -253,6 +253,7 @@ GUI::GUI(World& world, Root& root)
             m_name_textbox = name_container->add_widget<Textbox>();
             m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
             m_name_textbox->set_limit(8);
+            m_name_textbox->set_data_type(Textbox::TEXT);
             m_name_textbox->set_content("Planet");
         }
         auto submit_container = container->add_widget<Container>();
@@ -276,7 +277,7 @@ GUI::GUI(World& world, Root& root)
                 double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
                 double radius = std::stod(m_radius_textbox->get_content()) * 1000;
 
-                double theta = m_direction_slider->get_value();
+                double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
                 double velocity = std::stod(m_velocity_textbox->get_content());
                 Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
@@ -290,6 +291,8 @@ GUI::GUI(World& world, Root& root)
                 Object planet(world, mass, radius, m_new_object_pos, vel, color, name, 1000);
                 // FIXME: This (object_list) should be probably private.
                 world.object_list.push_back(planet);
+
+                m_simulation_view->m_measured = false;
             };
         }
     }
@@ -327,7 +330,7 @@ void GUI::draw(sf::RenderWindow& window) const
         double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
         double radius = std::stod(m_radius_textbox->get_content()) * 1000;
 
-        double theta = m_direction_slider->get_value();
+        double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
         double velocity = std::stod(m_velocity_textbox->get_content());
         Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
