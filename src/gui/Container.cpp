@@ -51,7 +51,7 @@ void BoxLayout::run()
                 size = vec2f_main_coord_by_orientation(w->input_size()).value();
                 break;
             case Length::Percent:
-                std::cout << size << std::endl;
+                // std::cout << size << std::endl;
                 size = vec2f_main_coord_by_orientation(w->input_size()).value() * vec2f_main_coord_by_orientation(m_container.size()) / 100.0;
                 break;
             case Length::Auto:
