@@ -54,12 +54,12 @@ void Widget::handle_event(Event& event) {
 }
 
 void Widget::draw(sf::RenderWindow& window) const {
-    sf::RectangleShape outline(size());
-    outline.setPosition(position());
-    outline.setOutlineThickness(1);
-    outline.setOutlineColor(sf::Color::Red);
-    outline.setFillColor(sf::Color::Transparent);
-    window.draw(outline);
+    // sf::RectangleShape outline(size());
+    // outline.setPosition(position());
+    // outline.setOutlineThickness(1);
+    // outline.setOutlineColor(sf::Color::Red);
+    // outline.setFillColor(sf::Color::Transparent);
+    // window.draw(outline);
 }
 
 void Widget::relayout_and_draw(sf::RenderWindow& window) {
