@@ -54,20 +54,20 @@ public:
 
     constexpr Angle() = default;
 
-    constexpr Angle(Unit unit)
-    : m_unit(unit) {}
-
     constexpr Angle(float v, Unit unit)
-    : m_value(v), m_unit(unit) {}
+    : m_value_in_radians(unit == Deg ? v / 180 * M_PI : v) {}
 
-    constexpr float deg() const { return (m_unit == Deg) ? m_value : m_value / 360 * 2 * M_PI; }
-    constexpr float rad() const { return (m_unit == Rad) ? m_value : m_value / (2 * M_PI) * 360; }
+    constexpr float deg() const { return m_value_in_radians * 180 / M_PI; }
+    constexpr float rad() const { return m_value_in_radians; }
 
-    constexpr Angle operator-() const { return { -m_value, m_unit }; }
-
+    constexpr Angle operator-() const
+    {
+        Angle new_angle;
+        new_angle.m_value_in_radians = -m_value_in_radians;
+        return new_angle;
+    }
 private:
-    Unit m_unit = Rad;
-    float m_value = 0;
+    float m_value_in_radians = 0;
 };
 
 constexpr Angle operator""_deg(long double v)
