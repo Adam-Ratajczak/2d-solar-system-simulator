@@ -3,6 +3,7 @@
 #include "../Constants.hpp"
 #include "../Vector2.hpp"
 #include "Widget.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <functional>
 
 class Object;
@@ -40,6 +41,8 @@ private:
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
     virtual void update() override;
+
+    void draw_grid(sf::RenderWindow&) const;
 
     Vector2 m_offset;
     World& m_world;
