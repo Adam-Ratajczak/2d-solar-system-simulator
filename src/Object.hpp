@@ -24,6 +24,8 @@ protected:
     double m_ap = 0, m_pe = std::numeric_limits<double>::max(), m_orbit;
     double m_ap_vel = 0, m_pe_vel = 0;
     World& m_world;
+    sf::VertexArray m_trail_vertexbuffer;
+    void m_draw_trail();
 
 public:
     // FIXME: Too much arguments!!!

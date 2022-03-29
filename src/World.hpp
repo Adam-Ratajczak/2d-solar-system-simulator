@@ -4,6 +4,7 @@
 #include "Object.hpp"
 #include "Vector2.hpp"
 #include "gui/Date.hpp"
+#include "gui/SimulationView.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -22,6 +23,7 @@ public:
     bool collisions = false;
     bool reverse = false;
     std::list<Object> object_list;
+    SimulationView *m_simulation_view;
 
     // FIXME: Make it a signed float and private.
     unsigned speed = 1;

@@ -4,8 +4,11 @@
 #include "GUI.hpp"
 #include <cmath>
 
-void SimulationView::handle_event(Event& event) {
-    if (event.type() == sf::Event::MouseButtonPressed) {
+void SimulationView::handle_event(Event& event)
+{
+    m_changed = false;
+    if(event.type() == sf::Event::MouseButtonPressed)
+    {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             auto world_click_pos = screen_to_world({ static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) });
@@ -43,6 +46,7 @@ void SimulationView::handle_event(Event& event) {
             apply_zoom(1.1);
         else
             apply_zoom(1 / 1.1);
+        m_changed = true;
     }
     else if (event.type() == sf::Event::MouseMoved) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
@@ -85,6 +89,7 @@ void SimulationView::handle_event(Event& event) {
             }
         }
     }
+    m_changed = m_dragging;
 }
 
 void SimulationView::draw_grid(sf::RenderWindow& window) const {

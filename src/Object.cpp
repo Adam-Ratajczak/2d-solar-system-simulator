@@ -6,6 +6,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
@@ -14,7 +15,7 @@
 #include <utility>
 
 Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres)
-: m_world(world)
+: m_world(world), m_trail_vertexbuffer((sf::LinesStrip))
 {
 
     m_mass = mass;
@@ -140,20 +141,36 @@ void Object::update()
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
 
+void Object::m_draw_trail(){
+    auto& view = *m_world.m_simulation_view;
+    auto color = m_color;
+    color.a = 128;
+    if(view.m_changed){
+        m_trail_vertexbuffer.resize(m_trail.size());
+        
+        unsigned i = 0;
+        for(auto& l : m_trail){
+            m_trail_vertexbuffer[i].position = view.world_to_screen(l.first);
+            m_trail_vertexbuffer[i].color = color;
+        }
+    }else{
+        if(m_trail_vertexbuffer.getVertexCount() < m_trail.size())
+            m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
+        else{
+            for(unsigned i = 1; i < m_trail.size(); i++)
+                m_trail_vertexbuffer[i - 1] = m_trail_vertexbuffer[i];
+            m_trail_vertexbuffer[m_trail.size() - 1] = sf::Vertex(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
+        }
+    }
+}
+
 void Object::draw(SimulationView const& view)
 {
-    sf::VertexArray trail(sf::LinesStrip, m_trail.size());
+    auto& target = view.window();
+    m_draw_trail();
 
-    unsigned i = 0;
-
-    for(auto& l : m_trail)
-    {
-        trail[i].color = m_color;
-        trail[i].color.a = 128;
-
-        trail[i].position = view.world_to_screen(l.first);
-        i++;
-    }
+    if(m_trail.size() > 2)
+        target.draw(m_trail_vertexbuffer);
 
     sf::CircleShape object_circle(m_radius * view.scale(), 100);
     object_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
@@ -161,10 +178,7 @@ void Object::draw(SimulationView const& view)
     object_circle.setFillColor(m_color);
     object_circle.setPosition(view.world_to_screen(m_pos));
 
-    auto& target = view.window();
 
-    if(m_trail.size() > 2)
-        target.draw(trail);
     target.draw(object_circle);
 
     auto pos = object_circle.getPosition();

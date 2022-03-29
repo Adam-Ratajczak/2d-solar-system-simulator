@@ -43,6 +43,8 @@ GUI::GUI(World& world, Application& application)
         m_new_object_pos = pos;
     };
 
+    m_world.m_simulation_view = m_simulation_view.get();
+
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
     container->set_position({ 100.0_px, 10.0_px });

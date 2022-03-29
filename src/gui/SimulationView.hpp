@@ -35,7 +35,7 @@ public:
     std::function<void(sf::Vector2f pos)> on_coord_measure;
 
     void start_coords_measure() { m_coord_measure = true; }
-    bool m_measured = false;
+    bool m_measured = false, m_changed = false;
 
 private:
     virtual void handle_event(Event&) override;

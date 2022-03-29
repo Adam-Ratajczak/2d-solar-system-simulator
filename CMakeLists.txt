@@ -3,7 +3,7 @@ project(out)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
@@ -13,6 +13,7 @@ add_executable(
     src/SolarSystem.cpp
     src/World.cpp
     src/main.cpp
+    src/Trail.cpp
     src/gui/Button.cpp
     src/gui/Container.cpp
     src/gui/GUI.cpp
