@@ -26,6 +26,7 @@ void SimulationView::handle_event(Event& event)
             if(m_coord_measure)
             {
                 m_coord_measure = false;
+                m_measured = true;
                 if(on_coord_measure)
                 {
                     on_coord_measure(m_prev_pos);

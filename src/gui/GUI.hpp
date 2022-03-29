@@ -22,6 +22,7 @@ public:
     virtual void draw(sf::RenderWindow& window) const override;
 
 private:
+    World& m_world;
     virtual void relayout() override;
 
     std::shared_ptr<ToggleButton> m_create_button;

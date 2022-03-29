@@ -29,7 +29,7 @@ static sf::Image load_image(std::string path)
 sf::Font GUI::font;
 
 GUI::GUI(World& world, Root& root)
-: Container(root)
+: Container(root), m_world(world)
 {
     font.loadFromFile("../assets/Pulang.ttf");
     set_layout<BasicLayout>();
@@ -323,24 +323,31 @@ void GUI::relayout()
 
 void GUI::draw(sf::RenderWindow& window) const
 {
-    // if(m_add_object_button->is_visible()){
-    //     double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
-    //     double radius = std::stod(m_radius_textbox->get_content()) * 1000;
+    if(m_simulation_view->m_measured){
+        double mass = std::stod(m_mass_textbox->get_content()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content()));
+        double radius = std::stod(m_radius_textbox->get_content()) * 1000;
 
-    //     double theta = m_direction_slider->get_value();
-    //     double velocity = std::stod(m_velocity_textbox->get_content());
-    //     Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
+        double theta = m_direction_slider->get_value();
+        double velocity = std::stod(m_velocity_textbox->get_content());
+        Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
-    //     sf::Color color(
-    //         m_color_r_slider->get_value(),
-    //         m_color_g_slider->get_value(),
-    //         m_color_b_slider->get_value()
-    //     );
+        sf::Color color(
+            m_color_r_slider->get_value(),
+            m_color_g_slider->get_value(),
+            m_color_b_slider->get_value()
+        );
 
-    //     std::string name = m_name_textbox->get_content();
+        std::string name = m_name_textbox->get_content();
 
-    //     Object planet(mass, radius, m_coords, vel, color, name, 1000);
-    // }
+        Object planet(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000);
+
+        for(unsigned i = 0; i < 1000; i++)
+            planet.update();
+        
+        planet.m_pos = m_new_object_pos;
+        
+        planet.draw(*m_simulation_view);
+    }
 }
 
 void GUI::handle_event(Event& event)
