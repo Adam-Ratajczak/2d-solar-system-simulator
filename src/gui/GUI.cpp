@@ -194,6 +194,11 @@ GUI::GUI(World& world, Application& application)
                 color_r_value_textfield->set_font_size(20);
                 color_r_value_textfield->set_content(std::to_string((int)m_color_r_slider->get_value()));
                 color_r_value_textfield->set_alignment(Textfield::Align::Center);
+
+                m_color_r_slider->on_change = [color_r_value_textfield](double value)
+                {
+                    color_r_value_textfield->set_content(std::to_string((int)value));
+                };
             }
             auto color_g_container = main_color_container->add_widget<Container>();
             {
@@ -215,6 +220,11 @@ GUI::GUI(World& world, Application& application)
                 color_g_value_textfield->set_font_size(20);
                 color_g_value_textfield->set_content(std::to_string((int)m_color_g_slider->get_value()));
                 color_g_value_textfield->set_alignment(Textfield::Align::Center);
+
+                m_color_g_slider->on_change = [color_g_value_textfield](double value)
+                {
+                    color_g_value_textfield->set_content(std::to_string((int)value));
+                };
             }
             auto color_b_container = main_color_container->add_widget<Container>();
             {
@@ -236,6 +246,11 @@ GUI::GUI(World& world, Application& application)
                 color_b_value_textfield->set_font_size(20);
                 color_b_value_textfield->set_content(std::to_string((int)m_color_b_slider->get_value()));
                 color_b_value_textfield->set_alignment(Textfield::Align::Center);
+
+                m_color_b_slider->on_change = [color_b_value_textfield](double value)
+                {
+                    color_b_value_textfield->set_content(std::to_string((int)value));
+                };
             }
         }
         auto name_container = container->add_widget<Container>();
