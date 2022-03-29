@@ -252,7 +252,7 @@ GUI::GUI(World& world, Root& root)
 
             m_name_textbox = name_container->add_widget<Textbox>();
             m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-            m_name_textbox->set_limit(8);
+            m_name_textbox->set_limit(20);
             m_name_textbox->set_data_type(Textbox::TEXT);
             m_name_textbox->set_content("Planet");
         }

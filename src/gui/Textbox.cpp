@@ -43,7 +43,7 @@ void Textbox::handle_event(Event& event)
 
                 m_content = m_content.substr(0, m_content.size() - 1);
 
-                if(m_content.size() == 0)
+                if(m_content.size() == 0 && m_type == NUMBER)
                     m_content = "0";
             }
             else if(event.event().text.unicode < 128 && event.event().text.unicode >= 32 && m_type == TEXT)
