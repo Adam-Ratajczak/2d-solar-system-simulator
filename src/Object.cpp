@@ -145,14 +145,11 @@ void Object::m_draw_trail(){
     auto& view = *m_world.m_simulation_view;
     auto color = m_color;
     color.a = 128;
-    if(view.m_changed){
-        m_trail_vertexbuffer.resize(m_trail.size());
+    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale()){
+        m_trail_vertexbuffer.clear();
         
-        unsigned i = 0;
-        for(auto& l : m_trail){
-            m_trail_vertexbuffer[i].position = view.world_to_screen(l.first);
-            m_trail_vertexbuffer[i].color = color;
-        }
+        for(auto& l : m_trail)
+            m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(l.first), color));
     }else{
         if(m_trail_vertexbuffer.getVertexCount() < m_trail.size())
             m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
@@ -162,6 +159,9 @@ void Object::m_draw_trail(){
             m_trail_vertexbuffer[m_trail.size() - 1] = sf::Vertex(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
         }
     }
+
+    m_prev_offset = view.offset();
+    m_prev_zoom = view.scale();
 }
 
 void Object::draw(SimulationView const& view)

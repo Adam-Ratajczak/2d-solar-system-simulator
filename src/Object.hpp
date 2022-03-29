@@ -26,6 +26,8 @@ protected:
     World& m_world;
     sf::VertexArray m_trail_vertexbuffer;
     void m_draw_trail();
+    Vector2 m_prev_offset;
+    float m_prev_zoom;
 
 public:
     // FIXME: Too much arguments!!!
