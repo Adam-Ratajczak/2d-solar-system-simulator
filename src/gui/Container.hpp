@@ -95,8 +95,9 @@ public:
         return widget;
     }
 
+    virtual void do_update() override;
     virtual void do_handle_event(Event&) override;
-    virtual void update_and_draw(sf::RenderWindow& window) override;
+    virtual void relayout_and_draw(sf::RenderWindow& window) override;
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Layout, T>&& requires(Container& c, Args&&... args) { T(c, args...); })

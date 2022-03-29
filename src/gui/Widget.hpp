@@ -40,6 +40,7 @@ public:
     bool is_hover() const { return m_hover; }
 
     virtual void do_handle_event(Event& event);
+    virtual void do_update();
     virtual void draw(sf::RenderWindow& window) const;
 
     void set_raw_position(sf::Vector2f p)
@@ -70,7 +71,7 @@ public:
 
     // FIXME: These should be private somehow.
     void relayout_if_needed();
-    virtual void update_and_draw(sf::RenderWindow&);
+    virtual void relayout_and_draw(sf::RenderWindow&);
 
     void set_visible(bool visible)
     {

@@ -134,13 +134,13 @@ void BasicLayout::run()
     }
 }
 
-void Container::update_and_draw(sf::RenderWindow& window)
+void Container::relayout_and_draw(sf::RenderWindow& window)
 {
-    Widget::update_and_draw(window);
+    Widget::relayout_and_draw(window);
     for(auto const& w : m_widgets)
     {
         if(w->is_visible())
-            w->update_and_draw(window);
+            w->relayout_and_draw(window);
     }
 }
 
@@ -159,6 +159,13 @@ void Container::do_handle_event(Event& event)
     // FIXME: Proper stacking contexts
     if(!event.is_handled())
         Widget::do_handle_event(event);
+}
+
+void Container::do_update()
+{
+    Widget::do_update();
+    for(auto const& w : m_widgets)
+        w->do_update();
 }
 
 void Container::relayout()

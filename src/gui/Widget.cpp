@@ -26,6 +26,10 @@ void Widget::do_handle_event(Event& event) {
     handle_event(event);
 }
 
+void Widget::do_update() {
+    update();
+}
+
 void Widget::set_focused() {
     m_application.set_focused_widget(this);
 }
@@ -58,8 +62,7 @@ void Widget::draw(sf::RenderWindow& window) const {
     window.draw(outline);
 }
 
-void Widget::update_and_draw(sf::RenderWindow& window) {
-    update();
+void Widget::relayout_and_draw(sf::RenderWindow& window) {
     relayout_if_needed();
     Widget::draw(window);
     this->draw(window);
