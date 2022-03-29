@@ -65,7 +65,7 @@ void SimulationView::handle_event(Event& event)
     {
         m_dragging = false;
     }
-    else if(event.type() == sf::Event::KeyReleased)
+    else if(event.type() == sf::Event::KeyPressed)
     {
         // FIXME: This is too complex.
         if(event.event().key.code == sf::Keyboard::Right)
