@@ -38,9 +38,9 @@ Vector2 Object::attraction(const Object& other)
     Vector2 dist = this->m_pos - other.m_pos;
 
     double force = G * (this->m_mass * other.m_mass) / (distance * distance);
-    double theta = std::atan2(dist.y, dist.x);
 
-    return Vector2(std::cos(theta) * force, std::sin(theta) * force);
+    Vector2 normalized_dist = dist.normalized();
+    return Vector2(normalized_dist.x * force, normalized_dist.y * force);
 }
 
 bool Object::hover(SimulationView& view, Vector2 mouse_pos)
