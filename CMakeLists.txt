@@ -32,10 +32,11 @@ target_link_libraries(
     sfml-graphics
     sfml-window
 )
-add_compile_options(out -Werror=non-virtual-dtor)
+target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_compile_options(out -fsanitize=undefined,address)
+    target_compile_options(out PUBLIC -fsanitize=undefined,address)
+    target_link_options(out PUBLIC -fsanitize=undefined,address)
 else()
-    add_compile_options(out -O3)
+    target_compile_options(out PUBLIC -O3)
 endif()
