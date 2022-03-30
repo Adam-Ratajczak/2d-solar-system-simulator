@@ -284,13 +284,13 @@ void GUI::draw(sf::RenderWindow& window) const {
                 m_planet_to_create->update();
             m_planet_to_create->m_pos = m_new_object_pos;
             m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
-        }
 
+            if(m_prev_planet != nullptr)
+                delete m_prev_planet;
+            m_prev_planet = new Object(*m_planet_to_create);
+        }
         m_planet_to_create->draw(*m_simulation_view);
 
-        if(m_prev_planet != nullptr)
-            delete m_prev_planet;
-        m_prev_planet = new Object(*m_planet_to_create);
         delete m_planet_to_create;
     }
 }
