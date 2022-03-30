@@ -46,9 +46,10 @@ private:
     std::shared_ptr<Slider> m_color_b_slider;
 
     std::shared_ptr<SimulationView> m_simulation_view;
+    mutable std::unique_ptr<Object> m_last_object;
 
     sf::Vector2f m_new_object_pos;
 
     void m_create_object_from_params_gui(std::shared_ptr<Container> container);
-    Object m_create_object_from_params() const;
+    std::unique_ptr<Object> m_create_object_from_params() const;
 };

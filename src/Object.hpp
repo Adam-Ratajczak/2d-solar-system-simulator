@@ -49,5 +49,10 @@ public:
 
 inline bool operator==(const Object& a, const Object& b)
 {
-    return a.m_name == b.m_name && a.m_mass == b.m_mass && a.m_radius == b.m_radius && a.m_color == b.m_color;
+    return a.m_name == b.m_name && a.m_mass == b.m_mass && a.m_radius == b.m_radius && a.m_color == b.m_color && a.m_pos == b.m_pos && a.m_vel == b.m_vel;
+}
+
+inline bool operator!=(const Object& a, const Object& b)
+{
+    return !(a == b);
 }

@@ -1,4 +1,5 @@
 #include "GUI.hpp"
+#include <memory>
 
 void GUI::m_create_object_from_params_gui(std::shared_ptr<Container> container) {
     m_radius_control = container->add_widget<ValueSlider>(0, 500000);
@@ -121,7 +122,7 @@ void GUI::m_create_object_from_params_gui(std::shared_ptr<Container> container) 
     }
 }
 
-Object GUI::m_create_object_from_params() const {
+std::unique_ptr<Object> GUI::m_create_object_from_params() const {
     double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
     double radius = m_radius_control->value() * 1000;
 
@@ -136,5 +137,5 @@ Object GUI::m_create_object_from_params() const {
 
     std::string name = m_name_textbox->get_content();
 
-    return Object(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000);
+    return std::make_unique<Object>((Object(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000)));
 }

@@ -27,6 +27,7 @@ static sf::Image load_image(std::string path) {
     image.loadFromFile(path);
     return image;
 }
+bool m_simulate = false;
 
 GUI::GUI(World& world, Application& application)
     : Container(application)
@@ -112,7 +113,7 @@ GUI::GUI(World& world, Application& application)
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_add_object_button->on_click = [&world, this]() {
                 // FIXME: This (object_list) should be probably private.
-                world.object_list.push_back(m_create_object_from_params());
+                world.object_list.push_back(*m_create_object_from_params());
 
                 m_simulation_view->m_measured = false;
             };
@@ -132,9 +133,14 @@ GUI::GUI(World& world, Application& application)
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
     m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_create_button->on_change = [container = container.get(), m_creative_mode_button = m_creative_mode_button.get()](bool state) {
+    m_create_button->on_change = [container = container.get(), 
+    m_creative_mode_button = m_creative_mode_button.get(), 
+    m_simulate = &m_simulate](bool state) {
         container->set_visible(state);
         m_creative_mode_button->set_visible(state);
+
+        if(*m_simulate)
+            *m_simulate = state;
     };
     m_create_button->set_active(false);
     m_create_button->set_tooltip_text("Create new object");
@@ -155,30 +161,23 @@ void GUI::relayout() {
 
     Container::relayout();
 }
-Object* m_planet_to_create = nullptr;
-Object* m_prev_planet = nullptr;
-bool m_simulate = false;
 
 void GUI::draw(sf::RenderWindow& window) const {
     if (m_simulation_view->m_measured)
         m_simulate = true;
 
     if (m_simulate) {
-        m_planet_to_create = new Object(m_create_object_from_params());
+        auto m_planet_to_create = m_create_object_from_params();
 
-        if (m_prev_planet == nullptr || *m_planet_to_create == *m_prev_planet) {
+        if (m_last_object.get() == nullptr || *m_planet_to_create != *m_last_object) {
             for (unsigned i = 0; i < 1000; i++)
                 m_planet_to_create->update();
             m_planet_to_create->m_pos = m_new_object_pos;
             m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
-
-            if (m_prev_planet != nullptr)
-                delete m_prev_planet;
-            m_prev_planet = new Object(*m_planet_to_create);
+            
+            m_last_object = std::move(m_planet_to_create);
         }
-        m_planet_to_create->draw(*m_simulation_view);
-
-        delete m_planet_to_create;
+        m_last_object->draw(*m_simulation_view);
     }
 }
 

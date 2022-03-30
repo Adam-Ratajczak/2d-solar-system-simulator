@@ -112,6 +112,7 @@ void Object::update()
 
     if(m_trail.size() > m_tres)
         m_trail.pop_front();
+    m_trail.cal_trail(*m_world.m_simulation_view, m_color);
 
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
