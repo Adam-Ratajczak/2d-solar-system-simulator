@@ -46,7 +46,6 @@ public:
     virtual void run() override;
 
 private:
-
     Orientation m_orientation;
     float m_spacing = 0;
 };
@@ -86,6 +85,12 @@ public:
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
         return widget;
+    }
+
+    void add_created_widget(std::shared_ptr<Widget> widget) {
+        m_widgets.push_back(std::move(widget));
+        if (m_layout)
+            m_layout->m_multipliers.push_back(1);
     }
 
     virtual void do_update() override;
