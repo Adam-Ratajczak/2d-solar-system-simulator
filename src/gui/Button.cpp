@@ -27,13 +27,11 @@ void Button::draw(sf::RenderWindow& window) const
 {
     sf::CircleShape cs_bg(0.5);
     cs_bg.setScale(size());
-    cs_bg.setPosition(position());
     cs_bg.setFillColor(color_for_state());
     window.draw(cs_bg);
 
     sf::Sprite sprite;
     sprite.setTexture(m_texture);
-    sprite.setPosition(position());
 
     auto tex_size = sprite.getTexture()->getSize();
     sprite.setScale(size().x / tex_size.x, size().y / tex_size.y);

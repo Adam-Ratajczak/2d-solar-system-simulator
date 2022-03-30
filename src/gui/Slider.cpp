@@ -92,7 +92,7 @@ float Slider::calculate_knob_size() const
 void Slider::draw(sf::RenderWindow& window) const
 {
     sf::RectangleShape slider({ size().x, 5.f });
-    slider.setPosition(position().x, position().y + size().y / 2 - 2.5f);
+    slider.setPosition(0, size().y / 2 - 2.5f);
     slider.setFillColor(m_bg_color);
     window.draw(slider);
 
@@ -101,9 +101,9 @@ void Slider::draw(sf::RenderWindow& window) const
     sf::RectangleShape bound;
     bound.setSize(sf::Vector2f(2, 10));
     bound.setFillColor(m_bg_color);
-    bound.setPosition(position().x, position().y + size().y / 2 - 5);
+    bound.setPosition(0, size().y / 2 - 5);
     window.draw(bound);
-    bound.setPosition(position().x + size().x - 2, position().y + size().y / 2 - 5);
+    bound.setPosition(size().x - 2, size().y / 2 - 5);
     window.draw(bound);
 
     sf::RectangleShape slider_value;
@@ -111,7 +111,7 @@ void Slider::draw(sf::RenderWindow& window) const
     slider_value.setSize(sf::Vector2f(knob_size_x, 20.f));
     slider_value.setFillColor(m_fg_color);
 
-    slider_value.setPosition(position().x + (m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, position().y + size().y / 2 - 10.f);
+    slider_value.setPosition((m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, size().y / 2 - 10.f);
     window.draw(slider_value);
     // std::cout << "XD\n"
 }

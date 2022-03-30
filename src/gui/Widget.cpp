@@ -64,6 +64,15 @@ void Widget::draw(sf::RenderWindow& window) const {
 
 void Widget::relayout_and_draw(sf::RenderWindow& window) {
     relayout_if_needed();
+
+    sf::View clip_view{sf::FloatRect{{}, size()}};
+    auto window_size = window.getSize();
+    clip_view.setViewport(sf::FloatRect{
+        position().x / window_size.x, position().y / window_size.y,
+        size().x / window_size.x, size().y / window_size.y
+    });
+    window.setView(clip_view);
+
     Widget::draw(window);
     this->draw(window);
 }

@@ -78,7 +78,6 @@ void Textbox::handle_event(Event& event) {
 
 void Textbox::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
-    rect.setPosition(position());
     rect.setFillColor(m_bg_color);
 
     if (is_focused()) {
@@ -90,7 +89,7 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     sf::Text text(m_content, GUI::font, size().y - 4);
     text.setFillColor(m_text_color);
-    text.setPosition(sf::Vector2f(position().x + 2, position().y + 2));
+    text.setPosition(2, 2);
 
     window.draw(text);
 

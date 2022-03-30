@@ -11,7 +11,6 @@ void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, s
 
 void Textfield::draw(sf::RenderWindow& window) const{
     sf::RectangleShape rect(size());
-    rect.setPosition(position());
     rect.setFillColor(m_bg_color);
     /*rect.setOutlineColor(m_fg_color);
     rect.setOutlineThickness(3);*/
@@ -27,13 +26,13 @@ void Textfield::draw(sf::RenderWindow& window) const{
 
     switch (m_alignment) {
         case Align::CenterLeft:
-            text.setPosition(sf::Vector2f(position().x + 2, position().y + 2 + y_center_factor ));
+            text.setPosition(sf::Vector2f(2, 2 + y_center_factor ));
         break;
         case Align::Center:
-            text.setPosition(sf::Vector2f(position().x + size().x / 2 - bounds.width / 2, position().y + y_center_factor));
+            text.setPosition(sf::Vector2f(size().x / 2 - bounds.width / 2, y_center_factor));
         break;
         case Align::CenterRight:
-            text.setPosition(sf::Vector2f(position().x + size().x - bounds.width - 2, position().y + y_center_factor));
+            text.setPosition(sf::Vector2f(size().x - bounds.width - 2, y_center_factor));
         break;
     }
 
