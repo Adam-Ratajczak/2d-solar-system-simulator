@@ -19,14 +19,14 @@
 #include <iostream>
 #include <string>
 
+sf::Font GUI::font;
+
 static sf::Image load_image(std::string path) {
     // TODO: Error handling
     sf::Image image;
     image.loadFromFile(path);
     return image;
 }
-
-sf::Font GUI::font;
 
 GUI::GUI(World& world, Application& application)
     : Container(application)
@@ -93,111 +93,7 @@ GUI::GUI(World& world, Application& application)
         }
 
         m_create_object_from_params_gui(container);
-        
-        main_color_container->set_size({ Length::Auto, 100.0_px });
-        auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
-        main_color_layout.set_spacing(10);
-        {
-            auto color_label_textfield = main_color_container->add_widget<Textfield>();
-            color_label_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            color_label_textfield->set_font_size(20);
-            color_label_textfield->set_content("COLOR");
-            color_label_textfield->set_alignment(Textfield::Align::Center);
 
-            auto color_r_container = main_color_container->add_widget<Container>();
-            {
-                auto& color_r_layout = color_r_container->set_layout<HorizontalBoxLayout>();
-                color_r_layout.set_spacing(10);
-
-                auto color_r_textfield = color_r_container->add_widget<Textfield>();
-                color_r_textfield->set_size({ 150.0_px, Length::Auto });
-                color_r_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                color_r_textfield->set_font_size(20);
-                color_r_textfield->set_content("Red: ");
-                color_r_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-                m_color_r_slider = color_r_container->add_widget<Slider>(0, 255, 1);
-                m_color_r_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-
-                auto color_r_value_textfield = color_r_container->add_widget<Textfield>();
-                color_r_value_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                color_r_value_textfield->set_font_size(20);
-                color_r_value_textfield->set_content(std::to_string((int)m_color_r_slider->get_value()));
-                color_r_value_textfield->set_alignment(Textfield::Align::Center);
-
-                m_color_r_slider->on_change = [color_r_value_textfield](double value) {
-                    color_r_value_textfield->set_content(std::to_string((int)value));
-                };
-            }
-            auto color_g_container = main_color_container->add_widget<Container>();
-            {
-                auto& color_g_layout = color_g_container->set_layout<HorizontalBoxLayout>();
-                color_g_layout.set_spacing(10);
-
-                auto color_g_textfield = color_g_container->add_widget<Textfield>();
-                color_g_textfield->set_size({ 150.0_px, Length::Auto });
-                color_g_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                color_g_textfield->set_font_size(20);
-                color_g_textfield->set_content("Green: ");
-                color_g_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-                m_color_g_slider = color_g_container->add_widget<Slider>(0, 255, 1);
-                m_color_g_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-
-                auto color_g_value_textfield = color_g_container->add_widget<Textfield>();
-                color_g_value_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                color_g_value_textfield->set_font_size(20);
-                color_g_value_textfield->set_content(std::to_string((int)m_color_g_slider->get_value()));
-                color_g_value_textfield->set_alignment(Textfield::Align::Center);
-
-                m_color_g_slider->on_change = [color_g_value_textfield](double value) {
-                    color_g_value_textfield->set_content(std::to_string((int)value));
-                };
-            }
-            auto color_b_container = main_color_container->add_widget<Container>();
-            {
-                auto& color_b_layout = color_b_container->set_layout<HorizontalBoxLayout>();
-                color_b_layout.set_spacing(10);
-
-                auto color_b_textfield = color_b_container->add_widget<Textfield>();
-                color_b_textfield->set_size({ 150.0_px, Length::Auto });
-                color_b_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                color_b_textfield->set_font_size(20);
-                color_b_textfield->set_content("Blue: ");
-                color_b_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-                m_color_b_slider = color_b_container->add_widget<Slider>(0, 255, 1);
-                m_color_b_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-
-                auto color_b_value_textfield = color_b_container->add_widget<Textfield>();
-                color_b_value_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                color_b_value_textfield->set_font_size(20);
-                color_b_value_textfield->set_content(std::to_string((int)m_color_b_slider->get_value()));
-                color_b_value_textfield->set_alignment(Textfield::Align::Center);
-
-                m_color_b_slider->on_change = [color_b_value_textfield](double value) {
-                    color_b_value_textfield->set_content(std::to_string((int)value));
-                };
-            }
-        }
-        auto name_container = container->add_widget<Container>();
-        {
-            auto& name_layout = name_container->set_layout<HorizontalBoxLayout>();
-            name_layout.set_spacing(10);
-
-            auto name_textfield = name_container->add_widget<Textfield>();
-            name_textfield->set_size({ 150.0_px, Length::Auto });
-            name_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            name_textfield->set_font_size(20);
-            name_textfield->set_content("Name: ");
-            name_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-            m_name_textbox = name_container->add_widget<Textbox>();
-            m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-            m_name_textbox->set_limit(20);
-            m_name_textbox->set_data_type(Textbox::TEXT);
-            m_name_textbox->set_content("Planet");
-        }
         auto submit_container = container->add_widget<Container>();
         submit_container->set_size({ Length::Auto, 72.0_px });
         {
@@ -264,19 +160,19 @@ Object* m_prev_planet = nullptr;
 bool m_simulate = false;
 
 void GUI::draw(sf::RenderWindow& window) const {
-    if(m_simulation_view->m_measured)
+    if (m_simulation_view->m_measured)
         m_simulate = true;
-    
+
     if (m_simulate) {
         m_planet_to_create = new Object(m_create_object_from_params());
 
-        if(m_prev_planet == nullptr || *m_planet_to_create == *m_prev_planet){
+        if (m_prev_planet == nullptr || *m_planet_to_create == *m_prev_planet) {
             for (unsigned i = 0; i < 1000; i++)
                 m_planet_to_create->update();
             m_planet_to_create->m_pos = m_new_object_pos;
             m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
 
-            if(m_prev_planet != nullptr)
+            if (m_prev_planet != nullptr)
                 delete m_prev_planet;
             m_prev_planet = new Object(*m_planet_to_create);
         }
