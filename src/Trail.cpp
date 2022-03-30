@@ -1,4 +1,5 @@
 #include "Trail.hpp"
+#include "Object.hpp"
 #include "Vector2.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -18,7 +19,7 @@ void Trail::pop_front(){
 void Trail::m_cal_trail(SimulationView const& view, const sf::Color& m_color){
     auto color = m_color;
     color.a = 128;
-    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale()){
+    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale() || m_refresh){
         m_trail_vertexbuffer.clear();
         
         for(auto& l : m_trail)
@@ -35,6 +36,8 @@ void Trail::m_cal_trail(SimulationView const& view, const sf::Color& m_color){
 
     m_prev_offset = view.offset();
     m_prev_zoom = view.scale();
+
+    m_refresh = false;
 }
 
 void Trail::draw(SimulationView const& view, sf::Color color){
@@ -44,13 +47,15 @@ void Trail::draw(SimulationView const& view, sf::Color color){
     target.draw(m_trail_vertexbuffer);
 }
 
-void Trail::reverse_path(bool reverse, Vector2& pos, Vector2& vel){
+bool Trail::reverse_path(bool reverse, Object* obj){    
     if(reverse && m_trail.size() > 1 && m_reverse_con)
     {
-        pos = m_trail.back().first;
-        vel = -m_trail.back().second;
+        obj->m_pos = m_trail.back().first;
+        obj->m_vel = -m_trail.back().second;
         m_trail.pop_back();
-        return;
+
+        m_refresh = true;
+        return 1;
     }
 
     if(reverse)
@@ -58,13 +63,17 @@ void Trail::reverse_path(bool reverse, Vector2& pos, Vector2& vel){
 
     if(!reverse && m_trail.size() > 1 && !m_reverse_con)
     {
-        pos = m_trail.back().first;
-        vel = -m_trail.back().second;
+        obj->m_pos = m_trail.back().first;
+        obj->m_vel = -m_trail.back().second;
         m_trail.pop_back();
-        return;
+        
+        m_refresh = true;
+        return 1;
     }
 
     if(!reverse)
         m_reverse_con = 1;
+    
+    return 0;
 }
 

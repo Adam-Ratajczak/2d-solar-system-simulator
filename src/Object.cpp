@@ -51,11 +51,10 @@ bool Object::hover(SimulationView& view, Vector2 mouse_pos)
     return dst < 20 / view.scale();
 }
 
-bool con = 1;
-
 void Object::update()
 {
-    m_trail.reverse_path(m_world.reverse, this->m_pos, this->m_vel);
+    if(m_trail.reverse_path(m_world.reverse, this))
+        return;
 
     Vector2 temp_vel;
     for(auto& object : m_world.object_list)
