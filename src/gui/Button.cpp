@@ -11,6 +11,7 @@
 Button::Button(Container& c, sf::Image img)
     : Widget(c) {
     m_texture.loadFromImage(img);
+    m_texture.setSmooth(true);
 }
 
 void Button::handle_event(Event& event) {
