@@ -23,6 +23,7 @@ add_executable(
     src/gui/Textbox.cpp
     src/gui/Textfield.cpp
     src/gui/ToggleButton.cpp
+    src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
 )
 target_link_libraries(

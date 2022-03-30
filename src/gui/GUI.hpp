@@ -7,6 +7,7 @@
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include "ToggleButton.hpp"
+#include "ValueSlider.hpp"
 #include "Widget.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -29,10 +30,11 @@ private:
     std::shared_ptr<Button> m_coords_button;
     std::shared_ptr<Button> m_add_object_button;
 
+    // FIXME: Port this all to ValueSlider
     std::shared_ptr<Textbox> m_mass_textbox;
     std::shared_ptr<Textbox> m_mass_exponent_textbox;
-    std::shared_ptr<Textbox> m_velocity_textbox;
-    std::shared_ptr<Textbox> m_radius_textbox;
+    std::shared_ptr<ValueSlider> m_radius_control;
+    std::shared_ptr<ValueSlider> m_velocity_control;
     std::shared_ptr<Textbox> m_name_textbox;
 
     std::shared_ptr<Slider> m_direction_slider;

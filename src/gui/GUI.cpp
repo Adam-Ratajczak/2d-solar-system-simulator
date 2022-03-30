@@ -91,29 +91,14 @@ GUI::GUI(World& world, Application& application)
             mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
         }
 
-        auto radius_container = container->add_widget<Container>();
-        {
-            auto& radius_layout = radius_container->set_layout<HorizontalBoxLayout>();
-            radius_layout.set_spacing(10);
+        m_radius_control = container->add_widget<ValueSlider>(0, 500000);
+        m_radius_control->set_name("Radius");
+        m_radius_control->set_unit("km");
 
-            auto radius_textfield = radius_container->add_widget<Textfield>();
-            radius_textfield->set_size({ 150.0_px, Length::Auto });
-            radius_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            radius_textfield->set_font_size(20);
-            radius_textfield->set_content("Radius: ");
-            radius_textfield->set_alignment(Textfield::Align::CenterLeft);
+        m_velocity_control = container->add_widget<ValueSlider>(0, 500000);
+        m_velocity_control->set_name("Velocity");
+        m_velocity_control->set_unit("m/s");
 
-            m_radius_textbox = radius_container->add_widget<Textbox>();
-            m_radius_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-            m_radius_textbox->set_limit(8);
-            m_radius_textbox->set_content("1.0");
-
-            auto radius_unit_textfield = radius_container->add_widget<Textfield>();
-            radius_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            radius_unit_textfield->set_font_size(20);
-            radius_unit_textfield->set_content(" km ");
-            radius_unit_textfield->set_alignment(Textfield::Align::Center);
-        }
         auto velocity_container = container->add_widget<Container>();
         {
             auto& velocity_layout = velocity_container->set_layout<HorizontalBoxLayout>();
@@ -125,11 +110,6 @@ GUI::GUI(World& world, Application& application)
             velocity_textfield->set_font_size(20);
             velocity_textfield->set_content("Velocity: ");
             velocity_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-            m_velocity_textbox = velocity_container->add_widget<Textbox>();
-            m_velocity_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-            m_velocity_textbox->set_limit(8);
-            m_velocity_textbox->set_content("1.0");
 
             auto velocity_unit_textfield = velocity_container->add_widget<Textfield>();
             velocity_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
@@ -285,10 +265,10 @@ GUI::GUI(World& world, Application& application)
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_add_object_button->on_click = [&world, this]() {
                 double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
-                double radius = std::stod(m_radius_textbox->get_content().toAnsiString()) * 1000;
+                double radius = m_radius_control->value() * 1000;
 
                 double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
-                double velocity = std::stod(m_velocity_textbox->get_content().toAnsiString());
+                double velocity = m_velocity_control->value();
                 Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
                 sf::Color color(
@@ -337,10 +317,10 @@ void GUI::relayout() {
 void GUI::draw(sf::RenderWindow& window) const {
     if (m_simulation_view->m_measured) {
         double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
-        double radius = std::stod(m_radius_textbox->get_content().toAnsiString()) * 1000;
+        double radius = m_radius_control->value() * 1000;
 
         double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
-        double velocity = std::stod(m_velocity_textbox->get_content().toAnsiString());
+        double velocity = m_velocity_control->value();
         Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
         sf::Color color(
