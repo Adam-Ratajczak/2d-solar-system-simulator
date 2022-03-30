@@ -14,6 +14,7 @@ add_executable(
     src/World.cpp
     src/main.cpp
     src/Trail.cpp
+    src/gui/CreateObjectGUI.cpp
     src/gui/Button.cpp
     src/gui/Container.cpp
     src/gui/GUI.cpp

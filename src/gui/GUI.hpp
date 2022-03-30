@@ -9,8 +9,10 @@
 #include "ToggleButton.hpp"
 #include "ValueSlider.hpp"
 #include "Widget.hpp"
+#include "../Object.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 #include <random>
 
 class GUI : public Container {
@@ -26,6 +28,7 @@ private:
     virtual void relayout() override;
 
     std::shared_ptr<ToggleButton> m_create_button;
+    std::shared_ptr<ToggleButton> m_creative_mode_button;
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;
     std::shared_ptr<Button> m_add_object_button;
@@ -47,4 +50,7 @@ private:
     std::shared_ptr<SimulationView> m_simulation_view;
 
     sf::Vector2f m_new_object_pos;
+
+    void m_create_object_from_params_gui(std::shared_ptr<Container> container);
+    Object m_create_object_from_params() const;
 };

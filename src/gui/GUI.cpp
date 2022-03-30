@@ -99,49 +99,8 @@ GUI::GUI(World& world, Application& application)
         m_velocity_control->set_name("Velocity");
         m_velocity_control->set_unit("m/s");
 
-        auto velocity_container = container->add_widget<Container>();
-        {
-            auto& velocity_layout = velocity_container->set_layout<HorizontalBoxLayout>();
-            velocity_layout.set_spacing(10);
-
-            auto velocity_textfield = velocity_container->add_widget<Textfield>();
-            velocity_textfield->set_size({ 150.0_px, Length::Auto });
-            velocity_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            velocity_textfield->set_font_size(20);
-            velocity_textfield->set_content("Velocity: ");
-            velocity_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-            auto velocity_unit_textfield = velocity_container->add_widget<Textfield>();
-            velocity_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            velocity_unit_textfield->set_font_size(20);
-            velocity_unit_textfield->set_content(" m / s ");
-            velocity_unit_textfield->set_alignment(Textfield::Align::Center);
-        }
-        auto direction_container = container->add_widget<Container>();
-        {
-            auto& direction_layout = direction_container->set_layout<HorizontalBoxLayout>();
-            direction_layout.set_spacing(10);
-
-            auto direction_textfield = direction_container->add_widget<Textfield>();
-            direction_textfield->set_size({ 150.0_px, Length::Auto });
-            direction_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            direction_textfield->set_font_size(20);
-            direction_textfield->set_content("Direction: ");
-            direction_textfield->set_alignment(Textfield::Align::CenterLeft);
-
-            m_direction_slider = direction_container->add_widget<Slider>(0, 360, 1);
-            m_direction_slider->set_display_attributes(sf::Color(200, 200, 200), sf::Color(255, 255, 255));
-
-            auto direction_unit_textfield = direction_container->add_widget<Textfield>();
-            direction_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            direction_unit_textfield->set_font_size(20);
-            direction_unit_textfield->set_content(std::to_string((int)m_direction_slider->get_value()) + " [deg]");
-            direction_unit_textfield->set_alignment(Textfield::Align::Center);
-
-            m_direction_slider->on_change = [direction_unit_textfield](double value) {
-                direction_unit_textfield->set_content(std::to_string((int)value) + " [deg]");
-            };
-        }
+        m_create_object_from_params_gui(container);
+        
         auto main_color_container = container->add_widget<Container>();
         main_color_container->set_size({ Length::Auto, 100.0_px });
         auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
@@ -264,23 +223,8 @@ GUI::GUI(World& world, Application& application)
             m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_add_object_button->on_click = [&world, this]() {
-                double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
-                double radius = m_radius_control->value() * 1000;
-
-                double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
-                double velocity = m_velocity_control->value();
-                Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
-
-                sf::Color color(
-                    m_color_r_slider->get_value(),
-                    m_color_g_slider->get_value(),
-                    m_color_b_slider->get_value());
-
-                std::string name = m_name_textbox->get_content();
-
-                Object planet(world, mass, radius, m_new_object_pos, vel, color, name, 1000);
                 // FIXME: This (object_list) should be probably private.
-                world.object_list.push_back(planet);
+                world.object_list.push_back(m_create_object_from_params());
 
                 m_simulation_view->m_measured = false;
             };
@@ -288,11 +232,21 @@ GUI::GUI(World& world, Application& application)
         }
     }
 
+    m_creative_mode_button = add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
+    m_creative_mode_button->set_position({ 10.0_px, 100.0_px });
+    m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+    m_creative_mode_button->on_change = [](bool state) {
+        std::cout << state << "\n";
+    };
+    m_creative_mode_button->set_active(false);
+    m_creative_mode_button->set_tooltip_text("Toggle mode");
+
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
     m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_create_button->on_change = [container = container.get(), m_coords_button = m_coords_button.get()](bool state) {
+    m_create_button->on_change = [container = container.get(), m_creative_mode_button = m_creative_mode_button.get()](bool state) {
         container->set_visible(state);
+        m_creative_mode_button->set_visible(state);
     };
     m_create_button->set_active(false);
     m_create_button->set_tooltip_text("Create new object");
@@ -316,21 +270,8 @@ void GUI::relayout() {
 
 void GUI::draw(sf::RenderWindow& window) const {
     if (m_simulation_view->m_measured) {
-        double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
-        double radius = m_radius_control->value() * 1000;
 
-        double theta = m_direction_slider->get_value() / 360 * 2 * M_PI;
-        double velocity = m_velocity_control->value();
-        Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
-
-        sf::Color color(
-            m_color_r_slider->get_value(),
-            m_color_g_slider->get_value(),
-            m_color_b_slider->get_value());
-
-        std::string name = m_name_textbox->get_content();
-
-        Object planet(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000);
+        auto planet = m_create_object_from_params();
 
         for (unsigned i = 0; i < 1000; i++)
             planet.update();
