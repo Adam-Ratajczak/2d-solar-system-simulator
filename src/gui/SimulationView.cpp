@@ -114,8 +114,8 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     float spacing = AU / zoom_rounded_to_power / 10;
     constexpr int major_gridline_interval = 4;
     sf::Vector2f start_coords = screen_to_world({ 0, 0 });
-    start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval);
-    start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval);
+    start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
+    start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
     sf::Vector2f end_coords = screen_to_world({ size().x, size().y });
 
     sf::Color const major_grid_line_color { 60, 60, 60 };
