@@ -1,5 +1,6 @@
 #pragma once
 
+#include "NotifyUser.hpp"
 #include "Widget.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -31,8 +32,10 @@ public:
     void set_limit(unsigned limit) { m_limit = limit; }
 
     sf::String get_content() const { return m_content; }
-    void set_content(sf::String content);
+    void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_data_type(Type type) { m_type = type; }
+
+    std::function<void(std::string)> on_change;
 
 private:
     bool can_insert_character(uint32_t) const;

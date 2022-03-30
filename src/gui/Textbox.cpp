@@ -1,6 +1,7 @@
 #include "Textbox.hpp"
 #include "../World.hpp"
 #include "GUI.hpp"
+#include "NotifyUser.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -18,13 +19,15 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_text_color = text_color;
 }
 
-void Textbox::set_content(sf::String content) {
+void Textbox::set_content(sf::String content, NotifyUser notify_user) {
     m_content = std::move(content);
     m_cursor = m_content.getSize();
     m_has_decimal = false;
 
     if (m_content.find(".") != sf::String::InvalidPos)
         m_has_decimal = true;
+    if (on_change && notify_user == NotifyUser::Yes)
+        on_change(m_content);
 }
 
 void Textbox::handle_event(Event& event) {
@@ -36,21 +39,28 @@ void Textbox::handle_event(Event& event) {
                 if (m_cursor != 0) {
                     m_content.erase(m_cursor - 1);
                     m_cursor--;
+                    if (on_change)
+                        on_change(m_content);
                 }
             }
             else if (codepoint == 0x7f) {
-                if (m_cursor != m_content.getSize())
+                if (m_cursor != m_content.getSize()) {
                     m_content.erase(m_cursor);
+                    if (on_change)
+                        on_change(m_content);
+                }
             }
             else if (can_insert_character(codepoint)) {
                 if (m_content == "0" && m_type == NUMBER)
-                    m_content = "";
+                    set_content("");
                 m_content.insert(m_cursor, codepoint);
+                if (on_change)
+                    on_change(m_content);
                 m_cursor++;
             }
 
             if (m_content.isEmpty() && m_type == NUMBER)
-                m_content = "0";
+                set_content("0");
 
             event.set_handled();
         }
