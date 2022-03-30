@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../Object.hpp"
 #include "Button.hpp"
+#include "ColorPicker.hpp"
 #include "Container.hpp"
 #include "SimulationView.hpp"
 #include "Slider.hpp"
@@ -9,7 +11,6 @@
 #include "ToggleButton.hpp"
 #include "ValueSlider.hpp"
 #include "Widget.hpp"
-#include "../Object.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
@@ -41,9 +42,7 @@ private:
     std::shared_ptr<ValueSlider> m_direction_control;
     std::shared_ptr<Textbox> m_name_textbox;
 
-    std::shared_ptr<Slider> m_color_r_slider;
-    std::shared_ptr<Slider> m_color_g_slider;
-    std::shared_ptr<Slider> m_color_b_slider;
+    std::shared_ptr<ColorPicker> m_color_control;
 
     std::shared_ptr<SimulationView> m_simulation_view;
     mutable std::unique_ptr<Object> m_last_object;

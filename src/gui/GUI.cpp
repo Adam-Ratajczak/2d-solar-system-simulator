@@ -48,7 +48,7 @@ GUI::GUI(World& world, Application& application)
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
     container->set_position({ 100.0_px, 10.0_px });
-    container->set_size({ 500.0_px, 400.0_px });
+    container->set_size({ 500.0_px, 500.0_px });
     {
         auto& layout = container->set_layout<VerticalBoxLayout>();
         layout.set_spacing(10);

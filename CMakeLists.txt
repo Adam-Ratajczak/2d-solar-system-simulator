@@ -10,12 +10,13 @@ add_executable(
     out
     src/Object.cpp
     src/SolarSystem.cpp
+    src/Trail.cpp
     src/World.cpp
     src/main.cpp
-    src/Trail.cpp
-    src/gui/CreateObjectGUI.cpp
     src/gui/Button.cpp
+    src/gui/ColorPicker.cpp
     src/gui/Container.cpp
+    src/gui/CreateObjectGUI.cpp
     src/gui/GUI.cpp
     src/gui/Application.cpp
     src/gui/SimulationView.cpp
