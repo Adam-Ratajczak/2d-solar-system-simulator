@@ -132,9 +132,14 @@ GUI::GUI(World& world, Application& application)
             m_toggle_orbit_direction_button->on_change = [](bool state) {
             };
                 
-            m_creative_mode_button->on_change = [params_gui, orbit_gui, this](bool state) {
+            m_creative_mode_button->on_change = [params_gui, orbit_gui, submit_container, this](bool state) {
                 params_gui->set_visible(!state);
                 orbit_gui->set_visible(state);
+                m_toggle_orbit_direction_button->set_visible(state);
+                // FIXME: (HACK) We need to invalidate layout of direct parent of
+                //        the widget and this is the only way. We should make
+                //        relayout requests propagate properly.
+                submit_container->set_visible(true);
                 m_automatic_orbit_calculation = state;
             };
             m_toggle_orbit_direction_button->set_active(false);
