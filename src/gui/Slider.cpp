@@ -59,7 +59,14 @@ void Slider::handle_event(Event& event) {
         if (m_dragging) {
             auto mouse_pos_relative_to_slider = sf::Vector2f({ static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) }) - position();
             m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
-            m_val = std::min(std::max(m_min_val, m_val), m_max_val);
+
+            if(m_wraparound)
+            {
+                auto middle = (m_min_val + m_max_val) / 2;
+                m_val = std::remainder(m_val - m_min_val - middle, (m_max_val - m_min_val)) + m_min_val + middle;
+            }
+            else
+                m_val = std::min(std::max(m_min_val, m_val), m_max_val);
 
             // round to step
             m_val /= m_step;

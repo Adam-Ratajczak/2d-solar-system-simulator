@@ -48,6 +48,7 @@ public:
     //       are exponents.
     void set_mode(Mode mode) { m_mode = mode; }
     void set_exponent(double exp) { m_exponent = exp; }
+    void set_wraparound(bool wp) { m_wraparound = wp; }
 
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
@@ -67,4 +68,5 @@ private:
     TextPos m_text_pos;
     Mode m_mode = Mode::Linear;
     double m_exponent = 2;
+    bool m_wraparound = false;
 };
