@@ -37,6 +37,12 @@ public:
         for (auto& it : object_list)
             callback(it);
     }
+
+    // FIXME: This should be in GUI.
+    void set_fps(float fps) { m_fps = fps; }
+
+private:
+    float m_fps = 60;
 };
 
 void prepare_solar(World& world);

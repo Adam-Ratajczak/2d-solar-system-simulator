@@ -21,6 +21,7 @@ int main() {
 
     prepare_solar(world);
 
+    sf::Clock fps_clock;
     while (window.isOpen()) {
         sf::Event event;
 
@@ -38,6 +39,8 @@ int main() {
 
         gui.relayout_and_draw(window);
         // FIXME: GUI object should be part of Application.
+        // FIXME: FPS should be part of GUI, not World!
+        world.set_fps(1.f / fps_clock.restart().asSeconds());
         application.draw(window);
 
         window.display();

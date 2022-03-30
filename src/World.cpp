@@ -59,6 +59,11 @@ void World::draw(SimulationView const& view)
         oss << ", Reversed";
     oss << ")";
 
+    sf::Text fps_text(std::to_string(m_fps), GUI::font, 25);
+    fps_text.setFillColor(sf::Color::White);
+    fps_text.setPosition(10, view.window().getSize().y - 65);
+    view.window().draw(fps_text);
+
     sf::Text date_text(oss.str(), GUI::font, 25);
     date_text.setFillColor(sf::Color::White);
     date_text.setPosition(10, view.window().getSize().y - 35);
