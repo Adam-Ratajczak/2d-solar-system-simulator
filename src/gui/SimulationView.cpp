@@ -4,12 +4,12 @@
 #include "GUI.hpp"
 #include <cmath>
 
-void SimulationView::start_focus_measure() { 
-    if(m_focused_object != nullptr){
+void SimulationView::start_focus_measure() {
+    if (m_focused_object != nullptr) {
         m_focused_object->m_focused = false;
         m_focused_object = nullptr;
     }
-    m_focus_measure = true; 
+    m_focus_measure = true;
 }
 
 void SimulationView::handle_event(Event& event) {
@@ -38,14 +38,15 @@ void SimulationView::handle_event(Event& event) {
                 if (on_coord_measure) {
                     on_coord_measure(m_prev_pos);
                 }
-            }else if (m_focus_measure && m_focused_object != nullptr) {
+            }
+            else if (m_focus_measure && m_focused_object != nullptr) {
                 m_focus_measure = false;
                 m_measured = true;
                 if (on_focus_measure) {
                     on_focus_measure(m_focused_object);
-                    m_focused_object->m_focused = false;
-                    m_focused_object = nullptr;
                 }
+                m_focused_object->m_focused = false;
+                m_focused_object = nullptr;
             }
             event.set_handled();
         }
@@ -81,7 +82,7 @@ void SimulationView::handle_event(Event& event) {
     else if (event.type() == sf::Event::KeyPressed) {
         // FIXME: This is too complex.
         if (event.event().key.code == sf::Keyboard::Right) {
-            if (m_world.speed == 0 && m_world.reverse){
+            if (m_world.speed == 0 && m_world.reverse) {
                 m_world.speed = 1;
                 m_world.reverse = false;
                 return;
@@ -93,7 +94,7 @@ void SimulationView::handle_event(Event& event) {
                 m_world.speed /= 2;
         }
         else if (event.event().key.code == sf::Keyboard::Left) {
-            if (m_world.speed == 0 && !m_world.reverse){
+            if (m_world.speed == 0 && !m_world.reverse) {
                 m_world.speed = 1;
                 m_world.reverse = true;
                 return;
@@ -171,7 +172,8 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[2] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), 0 }, sf::Color::Red };
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Red };
         window.draw(lines);
-    }else if (m_focus_measure) {
+    }
+    else if (m_focus_measure) {
         auto sizes = size();
         sf::VertexArray lines(sf::Lines, 4);
         lines[0] = sf::Vertex { { 0, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Green };
