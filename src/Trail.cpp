@@ -19,7 +19,7 @@ void Trail::pop_front(){
 void Trail::m_cal_trail(SimulationView const& view, const sf::Color& m_color){
     auto color = m_color;
     color.a = 128;
-    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale() || m_refresh){
+    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale() || m_prev_window_size != view.window().getSize() || m_refresh){
         m_trail_vertexbuffer.clear();
         
         for(auto& l : m_trail)
@@ -36,6 +36,7 @@ void Trail::m_cal_trail(SimulationView const& view, const sf::Color& m_color){
 
     m_prev_offset = view.offset();
     m_prev_zoom = view.scale();
+    m_prev_window_size = view.window().getSize();
 
     m_refresh = false;
 }

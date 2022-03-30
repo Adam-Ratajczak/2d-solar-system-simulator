@@ -7,7 +7,7 @@
 class Trail{
     std::list<std::pair<Vector2, Vector2>> m_trail;
     sf::VertexArray m_trail_vertexbuffer;
-    Vector2 m_prev_offset;
+    Vector2 m_prev_offset, m_prev_window_size;
     double m_prev_zoom;
     bool m_reverse_con = true, m_refresh = true;
 
