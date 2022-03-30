@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Trail.hpp"
 #include "Vector2.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
@@ -16,15 +17,14 @@ protected:
     sf::Color m_color;
     // FIXME: What is m_tres?
     unsigned m_tres;
-    std::list<std::pair<Vector2, Vector2>> m_trail;
     double m_radius;
+    Trail m_trail;
     Vector2 attraction(const Object&);
 
     // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?
     double m_ap = 0, m_pe = std::numeric_limits<double>::max(), m_orbit;
     double m_ap_vel = 0, m_pe_vel = 0;
     World& m_world;
-    sf::VertexArray m_trail_vertexbuffer;
     void m_draw_trail();
     Vector2 m_prev_offset;
     float m_prev_zoom;

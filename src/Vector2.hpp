@@ -31,6 +31,14 @@ public:
         return sf::Vector2f(x, y);
     }
 
+    operator sf::Vector2u(){
+        return sf::Vector2u(x, y);
+    }
+
+    operator sf::Vector2i(){
+        return sf::Vector2i(x, y);
+    }
+
     double distance_to(Vector2 const& other) const
     {
         double dx = x - other.x;

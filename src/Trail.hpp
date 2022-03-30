@@ -3,21 +3,21 @@
 #include "Vector2.hpp"
 #include "gui/SimulationView.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <list>
 class Trail{
-    Vector2* m_arr = nullptr;
-    unsigned m_size;
-    unsigned m_index;
+    std::list<std::pair<Vector2, Vector2>> m_trail;
+    sf::VertexArray m_trail_vertexbuffer;
+    void m_cal_trail(SimulationView const& view, const sf::Color& m_color);
+    Vector2 m_prev_offset;
+    double m_prev_zoom;
+    bool m_reverse_con = false;
 public:
-    Trail(unsigned size, Vector2 pos, Vector2 vel);
-    void push(Vector2 pos, Vector2 vel);
-    void pop();
-    void draw(SimulationView const& view, sf::Color color) const;
+    Trail();
+    void push_back(Vector2 pos, Vector2 vel);
+    void pop_front();
+    void draw(SimulationView const& view, sf::Color color);
 
-    Vector2 pos(unsigned index) const { return m_arr[index * 2]; }
-    Vector2 val(unsigned index) const { return m_arr[index * 2 + 1]; }
-    std::pair<Vector2, Vector2> back() const {return {m_arr[m_index * 2], m_arr[m_index * 2 + 1]};}
-    unsigned size() const{return m_size;}
-    Trail& operator=(Trail& other);
-
-    ~Trail();
+    void reverse_path(bool reverse, Vector2& pos, Vector2& vel);
+    
+    unsigned size() const{return m_trail.size();}
 };

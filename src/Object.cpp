@@ -12,10 +12,11 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <utility>
 
 Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres)
-: m_world(world), m_trail_vertexbuffer((sf::LinesStrip))
+: m_world(world)
 {
 
     m_mass = mass;
@@ -27,7 +28,7 @@ Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 ve
     m_density = m_mass / (M_PI * radius * radius);
     m_tres = tres;
 
-    m_trail.push_back({ m_pos, m_vel });
+    m_trail.push_back(m_pos, m_vel);
     world.object_count++;
 }
 
@@ -50,36 +51,11 @@ bool Object::hover(SimulationView& view, Vector2 mouse_pos)
     return dst < 20 / view.scale();
 }
 
-void Object::calculate_propieties()
-{
-}
-
 bool con = 1;
 
 void Object::update()
 {
-    // FIXME: what is "con"? windows console?
-    if(m_world.reverse && m_trail.size() > 1 && con)
-    {
-        this->m_pos = m_trail.back().first;
-        this->m_vel = -m_trail.back().second;
-        m_trail.pop_back();
-        return;
-    }
-
-    if(m_world.reverse)
-        con = 0;
-
-    if(!m_world.reverse && m_trail.size() > 1 && !con)
-    {
-        this->m_pos = m_trail.back().first;
-        this->m_vel = -m_trail.back().second;
-        m_trail.pop_back();
-        return;
-    }
-
-    if(!m_world.reverse)
-        con = 1;
+    m_trail.reverse_path(m_world.reverse, this->m_pos, this->m_vel);
 
     Vector2 temp_vel;
     for(auto& object : m_world.object_list)
@@ -133,7 +109,7 @@ void Object::update()
     m_pos += m_vel * TIMESTAMP;
 
     // if(m_pos != m_trail.back())
-    m_trail.push_back({ m_pos, m_vel });
+    m_trail.push_back(m_pos, m_vel);
 
     if(m_trail.size() > m_tres)
         m_trail.pop_front();
@@ -141,36 +117,11 @@ void Object::update()
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
 
-void Object::m_draw_trail(){
-    auto& view = *m_world.m_simulation_view;
-    auto color = m_color;
-    color.a = 128;
-    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale()){
-        m_trail_vertexbuffer.clear();
-        
-        for(auto& l : m_trail)
-            m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(l.first), color));
-    }else{
-        if(m_trail_vertexbuffer.getVertexCount() < m_trail.size())
-            m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
-        else{
-            for(unsigned i = 1; i < m_trail.size(); i++)
-                m_trail_vertexbuffer[i - 1] = m_trail_vertexbuffer[i];
-            m_trail_vertexbuffer[m_trail.size() - 1] = sf::Vertex(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
-        }
-    }
-
-    m_prev_offset = view.offset();
-    m_prev_zoom = view.scale();
-}
-
 void Object::draw(SimulationView const& view)
 {
     auto& target = view.window();
-    m_draw_trail();
 
-    if(m_trail.size() > 2)
-        target.draw(m_trail_vertexbuffer);
+    m_trail.draw(view, m_color);
 
     sf::CircleShape object_circle(m_radius * view.scale(), 100);
     object_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
