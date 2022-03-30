@@ -103,11 +103,10 @@ GUI::GUI(World& world, Application& application)
             m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
             m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_coords_button->on_click = [this]() {
-                // std::cout << "TEST" << std::endl;
-                if(!m_mode)
-                    m_simulation_view->start_coords_measure();
-                else
+                if (m_automatic_orbit_calculation)
                     m_simulation_view->start_focus_measure();
+                else
+                    m_simulation_view->start_coords_measure();
             };
             m_coords_button->set_tooltip_text("Set position");
 
@@ -119,13 +118,14 @@ GUI::GUI(World& world, Application& application)
             m_toggle_orbit_direction_button = submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
             m_toggle_orbit_direction_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
             m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
-            m_toggle_orbit_direction_button->on_change = [](bool state)mutable{
+            m_toggle_orbit_direction_button->on_change = [](bool state) {
                 
             };
             m_toggle_orbit_direction_button->set_active(false);
             m_toggle_orbit_direction_button->set_visible(false);
 
             submit_container->add_widget<Widget>(); // spacer
+
             m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_add_object_button->on_click = [&world, this]() {

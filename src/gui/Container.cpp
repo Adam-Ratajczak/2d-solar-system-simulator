@@ -34,7 +34,7 @@ void BoxLayout::run() {
 
     // 1. Compute widget size (in main axis) if it has fixed size
     for (auto& w : widgets()) {
-        if(!w->is_visible())
+        if (!w->is_visible())
             continue;
 
         float size = 0;
@@ -59,7 +59,7 @@ void BoxLayout::run() {
     float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(m_container.size());
     size_t autosized_widget_count = 0;
     for (auto& w : widgets()) {
-        if(!w->is_visible())
+        if (!w->is_visible())
             continue;
         if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
             autosized_widget_count++;
@@ -72,7 +72,7 @@ void BoxLayout::run() {
     float current_position = 0;
     size_t index = 0;
     for (auto& w : widgets()) {
-        if(!w->is_visible())
+        if (!w->is_visible())
             continue;
         if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
             w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) }));
@@ -135,11 +135,12 @@ void Container::relayout_and_draw(sf::RenderWindow& window) {
 void Container::do_handle_event(Event& event) {
     for (auto it = m_widgets.rbegin(); it != m_widgets.rend(); it++) {
         auto& widget = *it;
-        if (widget->is_visible()) {
-            widget->do_handle_event(event);
-            if (event.is_handled())
-                break;
-        }
+        if (!widget->is_visible() || !widget->is_enabled())
+            continue;
+
+        widget->do_handle_event(event);
+        if (event.is_handled())
+            break;
     }
     // FIXME: Proper stacking contexts
     if (!event.is_handled())

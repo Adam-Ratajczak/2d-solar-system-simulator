@@ -56,8 +56,8 @@ private:
     mutable std::unique_ptr<Object> m_last_object;
 
     sf::Vector2f m_new_object_pos;
-    Object* m_focused;
-    bool m_mode = false;
+    Object* m_focused = nullptr;
+    bool m_automatic_orbit_calculation = false;
 
     void m_create_object_from_params_gui(std::shared_ptr<Container> container, bool visible);
     void m_create_object_from_orbit_gui(std::shared_ptr<Container> container, bool visible);

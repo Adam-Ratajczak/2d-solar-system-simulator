@@ -79,6 +79,10 @@ public:
 
     bool is_visible() const { return m_visible; }
 
+    void set_enabled(bool enabled) { m_enabled = enabled; }
+    bool is_enabled() const { return m_enabled; }
+    bool are_all_parents_enabled() const;
+
     void set_focused();
     bool is_focused() const;
 
@@ -113,4 +117,5 @@ private:
     bool m_hover = false;
     bool m_needs_relayout = true;
     bool m_visible = true;
+    bool m_enabled = true;
 };

@@ -23,7 +23,7 @@ bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const {
 
 void Widget::update() {
     if (!m_tooltip_text.empty()) {
-        //std::cout << this << ": " << m_tooltip_counter << std::endl;
+        // std::cout << this << ": " << m_tooltip_counter << std::endl;
         if (m_tooltip_counter > 0)
             m_tooltip_counter--;
         if (m_hover) {
@@ -35,7 +35,7 @@ void Widget::update() {
             }
         }
         else if (m_tooltip_counter == 0) {
-            //std::cout << "TEST " << this << " " << m_tooltip << std::endl;
+            // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
             m_application.remove_tooltip(m_tooltip);
             m_tooltip = nullptr;
             m_tooltip_counter = -1;
@@ -59,6 +59,10 @@ void Widget::set_focused() {
 
 bool Widget::is_focused() const {
     return m_application.focused_widget() == this;
+}
+
+bool Widget::are_all_parents_enabled() const {
+    return is_enabled() && (m_parent ? m_parent->is_enabled() : true);
 }
 
 void Widget::handle_event(Event& event) {
@@ -112,7 +116,7 @@ void Widget::relayout_if_needed() {
     if (!m_needs_relayout)
         return;
     // std::cout << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
-    if(this->m_visible)
+    if (this->m_visible)
         this->relayout();
     m_needs_relayout = false;
 }

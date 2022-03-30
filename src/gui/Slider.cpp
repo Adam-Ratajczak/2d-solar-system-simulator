@@ -86,14 +86,14 @@ float Slider::calculate_knob_size() const {
 void Slider::draw(sf::RenderWindow& window) const {
     sf::RectangleShape slider({ size().x, 5.f });
     slider.setPosition(0, size().y / 2 - 2.5f);
-    slider.setFillColor(m_bg_color);
+    slider.setFillColor(are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0));
     window.draw(slider);
 
     // std::cout << slider.getPosition().x << " " << slider.getPosition().y << "\n";
 
     sf::RectangleShape bound;
     bound.setSize(sf::Vector2f(2, 10));
-    bound.setFillColor(m_bg_color);
+    bound.setFillColor(are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0));
     bound.setPosition(0, size().y / 2 - 5);
     window.draw(bound);
     bound.setPosition(size().x - 2, size().y / 2 - 5);
@@ -102,7 +102,7 @@ void Slider::draw(sf::RenderWindow& window) const {
     sf::RectangleShape slider_value;
     auto knob_size_x = calculate_knob_size();
     slider_value.setSize(sf::Vector2f(knob_size_x, 20.f));
-    slider_value.setFillColor(m_fg_color);
+    slider_value.setFillColor(are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(70, 70, 70, 0));
 
     slider_value.setPosition((value_clamped_to_min_max() - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, size().y / 2 - 10.f);
     window.draw(slider_value);

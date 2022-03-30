@@ -88,10 +88,10 @@ void Textbox::handle_event(Event& event) {
 
 void Textbox::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
-    rect.setFillColor(m_bg_color);
+    rect.setFillColor(are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0));
 
     if (is_focused()) {
-        rect.setOutlineColor(m_fg_color);
+        rect.setOutlineColor(are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0));
         rect.setOutlineThickness(3);
     }
 
