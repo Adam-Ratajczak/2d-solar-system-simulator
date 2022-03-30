@@ -62,6 +62,62 @@ void GUI::m_create_object_from_params_gui(std::shared_ptr<Container> container, 
     m_direction_control->set_visible(visible);
 }
 
+void GUI::m_create_object_from_orbit_gui(std::shared_ptr<Container> container, bool visible){
+    semi_major_axis_container = container->add_widget<Container>();
+    auto& semi_major_axis_layout = semi_major_axis_container->set_layout<HorizontalBoxLayout>();
+    semi_major_axis_layout.set_spacing(10);
+    {
+        auto semi_major_axis_textfield = semi_major_axis_container->add_widget<Textfield>();
+        semi_major_axis_textfield->set_size({ 150.0_px, Length::Auto });
+        semi_major_axis_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+        semi_major_axis_textfield->set_font_size(20);
+        semi_major_axis_textfield->set_content("Semi major axis magnitude: ");
+        semi_major_axis_textfield->set_alignment(Textfield::Align::CenterLeft);
+
+        m_semi_major_axis_textbox = semi_major_axis_container->add_widget<Textbox>();
+        m_semi_major_axis_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+        m_semi_major_axis_textbox->set_limit(20);
+        m_semi_major_axis_textbox->set_data_type(Textbox::NUMBER);
+        m_semi_major_axis_textbox->set_content("0");
+
+        auto semi_major_axis_unit_textfield = semi_major_axis_container->add_widget<Textfield>();
+        semi_major_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
+        semi_major_axis_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+        semi_major_axis_unit_textfield->set_font_size(20);
+        semi_major_axis_unit_textfield->set_content("km");
+        semi_major_axis_unit_textfield->set_alignment(Textfield::Align::CenterRight);
+    }
+    semi_major_axis_container->set_visible(visible);
+    semi_major_axis_layout.set_multipliers({1.5, 1, 0.5});
+
+    semi_minor_axis_container = container->add_widget<Container>();
+    auto& semi_minor_axis_layout = semi_minor_axis_container->set_layout<HorizontalBoxLayout>();
+    semi_minor_axis_layout.set_spacing(10);
+    {
+        auto semi_minor_axis_textfield = semi_minor_axis_container->add_widget<Textfield>();
+        semi_minor_axis_textfield->set_size({ 150.0_px, Length::Auto });
+        semi_minor_axis_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+        semi_minor_axis_textfield->set_font_size(20);
+        semi_minor_axis_textfield->set_content("Semi minor axis magnitude: ");
+        semi_minor_axis_textfield->set_alignment(Textfield::Align::CenterLeft);
+
+        m_semi_minor_axis_textbox = semi_minor_axis_container->add_widget<Textbox>();
+        m_semi_minor_axis_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+        m_semi_minor_axis_textbox->set_limit(20);
+        m_semi_minor_axis_textbox->set_data_type(Textbox::NUMBER);
+        m_semi_minor_axis_textbox->set_content("0");
+
+        auto semi_minor_axis_unit_textfield = semi_minor_axis_container->add_widget<Textfield>();
+        semi_minor_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
+        semi_minor_axis_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+        semi_minor_axis_unit_textfield->set_font_size(20);
+        semi_minor_axis_unit_textfield->set_content("km");
+        semi_minor_axis_unit_textfield->set_alignment(Textfield::Align::CenterRight);
+    }
+    semi_minor_axis_container->set_visible(visible);
+    semi_minor_axis_layout.set_multipliers({1.5, 1, 0.5});
+}
+
 std::unique_ptr<Object> GUI::m_create_object_from_params() const {
     double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
     double radius = m_radius_control->value() * 1000;

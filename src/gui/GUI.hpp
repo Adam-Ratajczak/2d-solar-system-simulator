@@ -41,8 +41,13 @@ private:
     std::shared_ptr<ValueSlider> m_velocity_control;
     std::shared_ptr<ValueSlider> m_direction_control;
     std::shared_ptr<Textbox> m_name_textbox;
+    std::shared_ptr<Textbox> m_semi_major_axis_textbox;
+    std::shared_ptr<Textbox> m_semi_minor_axis_textbox;
 
     std::shared_ptr<ColorPicker> m_color_control;
+
+    std::shared_ptr<Container> semi_major_axis_container;
+    std::shared_ptr<Container> semi_minor_axis_container;
 
     std::shared_ptr<SimulationView> m_simulation_view;
     mutable std::unique_ptr<Object> m_last_object;
@@ -52,6 +57,7 @@ private:
     bool m_mode = false;
 
     void m_create_object_from_params_gui(std::shared_ptr<Container> container, bool visible);
+    void m_create_object_from_orbit_gui(std::shared_ptr<Container> container, bool visible);
     void m_create_object_gui(std::shared_ptr<Container> container);
     std::unique_ptr<Object> m_create_object_from_params() const;
 };

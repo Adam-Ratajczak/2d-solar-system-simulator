@@ -54,6 +54,9 @@ void SimulationView::handle_event(Event& event) {
                 m_focused_object->m_focused = false;
                 m_focused_object = nullptr;
             }
+
+            m_coord_measure = false;
+            m_focus_measure = false;
         }
     }
     else if (event.type() == sf::Event::MouseWheelScrolled) {
