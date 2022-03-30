@@ -18,7 +18,6 @@
 Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres)
 : m_world(world), m_trail(tres)
 {
-
     m_mass = mass;
     m_radius = radius;
     m_pos = pos;
@@ -34,11 +33,8 @@ Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 ve
 
 Vector2 Object::attraction(const Object& other)
 {
-    double distance = get_distance(this->m_pos, other.m_pos);
     Vector2 dist = this->m_pos - other.m_pos;
-
-    double force = G * (this->m_mass * other.m_mass) / (distance * distance);
-
+    double force = G * (this->m_mass * other.m_mass) / (dist.x * dist.x + dist.y * dist.y);
     Vector2 normalized_dist = dist.normalized();
     return Vector2(normalized_dist.x * force, normalized_dist.y * force);
 }
