@@ -6,43 +6,55 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <iostream>
 
-Trail::Trail() : m_trail_vertexbuffer(sf::LinesStrip){}
+Trail::Trail(size_t max_trail_size)
+    : m_max_trail_size(max_trail_size)
+    , m_trail_vertexbuffer(sf::Lines, m_max_trail_size * 2) { }
 
-void Trail::push_back(Vector2 pos, Vector2 vel){
-    m_trail.push_back({pos, vel});
+void Trail::push_back(Vector2 pos, Vector2 vel) {
+    m_trail.push_back({ pos, vel });
 }
 
-void Trail::push_front(Vector2 pos, Vector2 vel){
-    m_trail.push_front({pos, vel});
+void Trail::push_front(Vector2 pos, Vector2 vel) {
+    m_trail.push_front({ pos, vel });
 }
 
-void Trail::pop_front(){
+void Trail::pop_front() {
     m_trail.pop_front();
 }
 
-void Trail::cal_trail(SimulationView const& view, const sf::Color& m_color){
+void Trail::update_trail(SimulationView const& view, const sf::Color& m_color) {
     auto color = m_color;
     color.a = 128;
 
-    if(m_trail_vertexbuffer.getVertexCount() < m_trail.size())
-        m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
-    else{
-        for(unsigned i = 1; i < m_trail.size(); i++)
-            m_trail_vertexbuffer[i - 1] = m_trail_vertexbuffer[i];
-        m_trail_vertexbuffer[m_trail.size() - 1] = sf::Vertex(sf::Vertex(view.world_to_screen(m_trail.back().first), color));
-    }
+    // FIXME: This assumes that max trail size doesn't change.
+    m_trail_vertexbuffer[m_append_index] = sf::Vertex(view.world_to_screen((--(--(m_trail.end())))->pos), color);
+    m_trail_vertexbuffer[m_append_index + 1] = sf::Vertex(view.world_to_screen(m_trail.back().pos), color);
+    m_append_index += 2;
+    if (m_append_index >= m_trail_vertexbuffer.getVertexCount() - 1)
+        m_append_index = 0;
 }
 
-void Trail::draw(SimulationView const& view, sf::Color m_color){
+void Trail::draw(SimulationView const& view, sf::Color m_color) {
     auto& target = view.window();
     auto color = m_color;
     color.a = 128;
-    
-    if(m_prev_offset != view.offset() || m_prev_zoom != view.scale() || m_prev_window_size != view.window().getSize() || m_refresh){
+
+    // FIXME: Maybe add a way to invalidate trail from the outside
+    if (m_prev_offset != view.offset() || m_prev_zoom != view.scale() || m_prev_window_size != view.window().getSize() || m_refresh) {
+        // Fully recalculate trail (very heavy for long trails)
+        size_t index = 0;
+
+        // FIXME: VERY HACKY FIX THIS ASAP
+        m_append_index = 0;
         m_trail_vertexbuffer.clear();
-        
-        for(auto& l : m_trail)
-            m_trail_vertexbuffer.append(sf::Vertex(view.world_to_screen(l.first), color));
+        m_trail_vertexbuffer.resize(m_max_trail_size * 2);
+        for (auto it = m_trail.begin(); it != --m_trail.end();) {
+            if (index + 1 >= m_trail_vertexbuffer.getVertexCount())
+                break;
+            auto previous_it = it++;
+            m_trail_vertexbuffer[index++] = sf::Vertex(view.world_to_screen(previous_it->pos), color);
+            m_trail_vertexbuffer[index++] = sf::Vertex(view.world_to_screen(it->pos), color);
+        }
     }
 
     target.draw(m_trail_vertexbuffer);
@@ -54,33 +66,30 @@ void Trail::draw(SimulationView const& view, sf::Color m_color){
     m_refresh = false;
 }
 
-bool Trail::reverse_path(bool reverse, Object* obj){    
-    if(reverse && m_trail.size() > 0 && m_reverse_con)
-    {
-        obj->m_pos = m_trail.back().first;
-        obj->m_vel = -m_trail.back().second;
+bool Trail::reverse_path(bool reverse, Object* obj) {
+    if (reverse && m_trail.size() > 0 && m_reverse_con) {
+        obj->m_pos = m_trail.back().pos;
+        obj->m_vel = -m_trail.back().vel;
         m_trail.pop_back();
 
         m_refresh = true;
         return 1;
     }
 
-    if(reverse)
+    if (reverse)
         m_reverse_con = 0;
 
-    if(!reverse && m_trail.size() > 0 && !m_reverse_con)
-    {
-        obj->m_pos = m_trail.back().first;
-        obj->m_vel = -m_trail.back().second;
+    if (!reverse && m_trail.size() > 0 && !m_reverse_con) {
+        obj->m_pos = m_trail.back().pos;
+        obj->m_vel = -m_trail.back().vel;
         m_trail.pop_back();
-        
+
         m_refresh = true;
         return 1;
     }
 
-    if(!reverse)
+    if (!reverse)
         m_reverse_con = 1;
-    
+
     return 0;
 }
-

@@ -16,7 +16,7 @@
 #include <utility>
 
 Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres)
-: m_world(world)
+: m_world(world), m_trail(tres)
 {
 
     m_mass = mass;
@@ -112,7 +112,7 @@ void Object::update()
 
     if(m_trail.size() > m_tres)
         m_trail.pop_front();
-    m_trail.cal_trail(*m_world.m_simulation_view, m_color);
+    m_trail.update_trail(*m_world.m_simulation_view, m_color);
 
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
