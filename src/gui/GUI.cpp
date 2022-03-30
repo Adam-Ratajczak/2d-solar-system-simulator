@@ -99,6 +99,7 @@ GUI::GUI(World& world, Application& application)
         submit_container->set_size({ Length::Auto, 72.0_px });
         {
             auto& layout = submit_container->set_layout<HorizontalBoxLayout>();
+            layout.set_spacing(10);
             m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
             m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_coords_button->on_click = [this]() {
@@ -106,6 +107,15 @@ GUI::GUI(World& world, Application& application)
                 m_simulation_view->start_coords_measure();
             };
             m_coords_button->set_tooltip_text("Set position");
+
+            m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
+            m_creative_mode_button->set_position({ 10.0_px, 100.0_px });
+            m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+            m_creative_mode_button->on_change = [](bool state) {
+                std::cout << state << "\n";
+            };
+            m_creative_mode_button->set_active(false);
+            m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
             submit_container->add_widget<Widget>(); // spacer
 
@@ -121,25 +131,16 @@ GUI::GUI(World& world, Application& application)
         }
     }
 
-    m_creative_mode_button = add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
-    m_creative_mode_button->set_position({ 10.0_px, 100.0_px });
-    m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_creative_mode_button->on_change = [](bool state) {
-        std::cout << state << "\n";
-    };
-    m_creative_mode_button->set_active(false);
-    m_creative_mode_button->set_tooltip_text("Toggle mode");
-
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
     m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_create_button->on_change = [container = container.get(), 
-    m_creative_mode_button = m_creative_mode_button.get(), 
-    m_simulate = &m_simulate](bool state) {
+    m_create_button->on_change = [container = container.get(),
+                                     m_creative_mode_button = m_creative_mode_button.get(),
+                                     m_simulate = &m_simulate](bool state) {
         container->set_visible(state);
         m_creative_mode_button->set_visible(state);
 
-        if(*m_simulate)
+        if (*m_simulate)
             *m_simulate = state;
     };
     m_create_button->set_active(false);
@@ -174,7 +175,7 @@ void GUI::draw(sf::RenderWindow& window) const {
                 m_planet_to_create->update();
             m_planet_to_create->m_pos = m_new_object_pos;
             m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
-            
+
             m_last_object = std::move(m_planet_to_create);
         }
         m_last_object->draw(*m_simulation_view);
