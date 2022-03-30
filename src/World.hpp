@@ -12,8 +12,7 @@
 #include <list>
 #include <string>
 
-class World
-{
+class World {
 public:
     World();
 
@@ -23,7 +22,7 @@ public:
     bool collisions = false;
     bool reverse = false;
     std::list<Object> object_list;
-    SimulationView *m_simulation_view;
+    SimulationView* m_simulation_view {};
 
     // FIXME: Make it a signed float and private.
     unsigned speed = 1;
@@ -34,9 +33,8 @@ public:
     Object& get_object(const std::string name);
 
     template<class C>
-    void for_each_object(C callback)
-    {
-        for(auto& it : object_list)
+    void for_each_object(C callback) {
+        for (auto& it : object_list)
             callback(it);
     }
 };
