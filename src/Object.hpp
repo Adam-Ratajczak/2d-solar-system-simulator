@@ -14,10 +14,8 @@ class Object
 {
 protected:
     double m_density;
-    sf::Color m_color;
     // FIXME: What is m_tres?
     unsigned m_tres;
-    double m_radius;
     Trail m_trail;
     Vector2 attraction(const Object&);
 
@@ -38,8 +36,11 @@ public:
     std::string m_name;
     bool m_focused = 0;
     double m_mass;
+    sf::Color m_color;
+    double m_radius;
 
     void update();
+    Trail& trail(){return m_trail;}
     void draw(SimulationView const&);
     bool hover(SimulationView& view, Vector2 mouse_pos);
     void calculate_propieties();
@@ -48,5 +49,5 @@ public:
 
 inline bool operator==(const Object& a, const Object& b)
 {
-    return &a == &b;
+    return a.m_name == b.m_name && a.m_mass == b.m_mass && a.m_radius == b.m_radius && a.m_color == b.m_color;
 }

@@ -12,6 +12,10 @@ void Trail::push_back(Vector2 pos, Vector2 vel){
     m_trail.push_back({pos, vel});
 }
 
+void Trail::push_front(Vector2 pos, Vector2 vel){
+    m_trail.push_front({pos, vel});
+}
+
 void Trail::pop_front(){
     m_trail.pop_front();
 }

@@ -15,6 +15,7 @@ class Trail{
 public:
     Trail();
     void push_back(Vector2 pos, Vector2 vel);
+    void push_front(Vector2 pos, Vector2 vel);
     void pop_front();
     void draw(SimulationView const& view, sf::Color color);
 

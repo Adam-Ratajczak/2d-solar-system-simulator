@@ -3,6 +3,7 @@
 #include "../World.hpp"
 #include "Button.hpp"
 #include "Container.hpp"
+#include "SimulationView.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include "ToggleButton.hpp"
@@ -267,18 +268,30 @@ void GUI::relayout() {
 
     Container::relayout();
 }
+Object* m_planet_to_create = nullptr;
+Object* m_prev_planet = nullptr;
+bool m_simulate = false;
 
 void GUI::draw(sf::RenderWindow& window) const {
-    if (m_simulation_view->m_measured) {
+    if(m_simulation_view->m_measured)
+        m_simulate = true;
+    
+    if (m_simulate) {
+        m_planet_to_create = new Object(m_create_object_from_params());
 
-        auto planet = m_create_object_from_params();
+        if(m_prev_planet == nullptr || *m_planet_to_create == *m_prev_planet){
+            for (unsigned i = 0; i < 1000; i++)
+                m_planet_to_create->update();
+            m_planet_to_create->m_pos = m_new_object_pos;
+            m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
+        }
 
-        for (unsigned i = 0; i < 1000; i++)
-            planet.update();
+        m_planet_to_create->draw(*m_simulation_view);
 
-        planet.m_pos = m_new_object_pos;
-
-        planet.draw(*m_simulation_view);
+        if(m_prev_planet != nullptr)
+            delete m_prev_planet;
+        m_prev_planet = new Object(*m_planet_to_create);
+        delete m_planet_to_create;
     }
 }
 
