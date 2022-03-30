@@ -30,16 +30,19 @@ private:
 
     std::shared_ptr<ToggleButton> m_create_button;
     std::shared_ptr<ToggleButton> m_creative_mode_button;
+    std::shared_ptr<ToggleButton> m_toggle_orbit_direction_button;
+    
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;
     std::shared_ptr<Button> m_add_object_button;
 
     // FIXME: Port this all to ValueSlider
-    std::shared_ptr<Textbox> m_mass_textbox;
-    std::shared_ptr<Textbox> m_mass_exponent_textbox;
     std::shared_ptr<ValueSlider> m_radius_control;
     std::shared_ptr<ValueSlider> m_velocity_control;
     std::shared_ptr<ValueSlider> m_direction_control;
+
+    std::shared_ptr<Textbox> m_mass_textbox;
+    std::shared_ptr<Textbox> m_mass_exponent_textbox;
     std::shared_ptr<Textbox> m_name_textbox;
     std::shared_ptr<Textbox> m_semi_major_axis_textbox;
     std::shared_ptr<Textbox> m_semi_minor_axis_textbox;

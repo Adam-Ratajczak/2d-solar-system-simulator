@@ -110,23 +110,21 @@ GUI::GUI(World& world, Application& application)
                     m_simulation_view->start_focus_measure();
             };
             m_coords_button->set_tooltip_text("Set position");
+
             m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
-            m_creative_mode_button->set_position({ 10.0_px, 100.0_px });
             m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-            m_creative_mode_button->on_change = [](bool state) {
-                std::cout << state << "\n";
-            };
-            m_creative_mode_button->set_active(false);
             m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
-            m_creative_mode_button->on_change = [this, layout](bool state)mutable{
-                this->m_velocity_control->set_visible(!state);
-                this->m_direction_control->set_visible(!state);
-                this->semi_major_axis_container->set_visible(state);
-                this->semi_minor_axis_container->set_visible(state);
+            m_creative_mode_button->set_active(false);
+
+            m_toggle_orbit_direction_button = submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
+            m_toggle_orbit_direction_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+            m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
+            m_toggle_orbit_direction_button->on_change = [](bool state)mutable{
                 
-                this->m_mode = state;
-                layout.run();
             };
+            m_toggle_orbit_direction_button->set_active(false);
+            m_toggle_orbit_direction_button->set_visible(false);
+
             submit_container->add_widget<Widget>(); // spacer
             m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
@@ -136,6 +134,18 @@ GUI::GUI(World& world, Application& application)
                 m_simulation_view->m_measured = false;
             };
             m_add_object_button->set_tooltip_text("Add object");
+
+            m_creative_mode_button->on_change = [this, layout](bool state)mutable{
+                this->m_velocity_control->set_visible(!state);
+                this->m_direction_control->set_visible(!state);
+                this->semi_major_axis_container->set_visible(state);
+                this->semi_minor_axis_container->set_visible(state);
+
+                this->m_toggle_orbit_direction_button->set_visible(state);
+                
+                this->m_mode = state;
+                layout.run();
+            };
         }
     }
 
