@@ -28,12 +28,7 @@ double Slider::get_value() const {
 }
 
 void Slider::set_value(double val, NotifyUser notify_user) {
-    if (val < m_min_val)
-        m_val = m_min_val;
-    else if (val > m_max_val)
-        m_val = m_max_val;
-    else
-        m_val = val;
+    m_val = val;
 
     if (on_change && notify_user == NotifyUser::Yes)
         on_change(get_value());
@@ -102,7 +97,12 @@ void Slider::draw(sf::RenderWindow& window) const {
     slider_value.setSize(sf::Vector2f(knob_size_x, 20.f));
     slider_value.setFillColor(m_fg_color);
 
-    slider_value.setPosition((m_val - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, size().y / 2 - 10.f);
+    slider_value.setPosition((value_clamped_to_min_max() - m_min_val) / (m_max_val - m_min_val) * size().x - knob_size_x / 2, size().y / 2 - 10.f);
     window.draw(slider_value);
     // std::cout << "XD\n"
+}
+
+double Slider::value_clamped_to_min_max() const
+{
+    return std::min(std::max(get_value(), m_min_val), m_max_val);
 }

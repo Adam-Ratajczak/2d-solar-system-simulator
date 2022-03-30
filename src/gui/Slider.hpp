@@ -60,6 +60,8 @@ public:
     std::function<void(double)> on_change;
 
 private:
+    double value_clamped_to_min_max() const;
+
     float calculate_knob_size() const;
 
     TextPos m_text_pos;
