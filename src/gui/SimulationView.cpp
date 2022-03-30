@@ -61,30 +61,28 @@ void SimulationView::handle_event(Event& event) {
     else if (event.type() == sf::Event::KeyPressed) {
         // FIXME: This is too complex.
         if (event.event().key.code == sf::Keyboard::Right) {
+            if (m_world.speed == 0 && m_world.reverse){
+                m_world.speed = 1;
+                m_world.reverse = false;
+                return;
+            }
+
             if (!m_world.reverse)
                 m_world.speed *= 2;
             else
                 m_world.speed /= 2;
-
-            if (m_world.speed == 0 && m_world.reverse)
-                m_world.reverse = false;
-            else if (m_world.speed == 0) {
-                m_world.speed = 1;
-                m_world.for_each_object([](Object& p) { p.m_vel = -p.m_vel; });
-            }
         }
         else if (event.event().key.code == sf::Keyboard::Left) {
+            if (m_world.speed == 0 && !m_world.reverse){
+                m_world.speed = 1;
+                m_world.reverse = true;
+                return;
+            }
+
             if (!m_world.reverse)
                 m_world.speed /= 2;
             else
                 m_world.speed *= 2;
-
-            if (m_world.speed == 0 && !m_world.reverse)
-                m_world.reverse = true;
-            else if (m_world.speed == 0) {
-                m_world.speed = 1;
-                m_world.for_each_object([](Object& p) { p.m_vel = -p.m_vel; });
-            }
         }
     }
     m_changed = m_dragging;

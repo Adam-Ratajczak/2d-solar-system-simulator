@@ -30,7 +30,7 @@ void Widget::update() {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
                 m_tooltip = &m_application.add_tooltip(std::make_unique<Tooltip>(m_tooltip_text, this, position()));
-                std::cout << m_tooltip << std::endl;
+                // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
         }
