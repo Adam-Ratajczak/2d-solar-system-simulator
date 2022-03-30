@@ -3,7 +3,6 @@ project(out)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
@@ -33,3 +32,9 @@ target_link_libraries(
     sfml-window
 )
 add_compile_options(out -Werror=non-virtual-dtor)
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(out -fsanitize=undefined,address)
+else()
+    add_compile_options(out -O3)
+endif()
