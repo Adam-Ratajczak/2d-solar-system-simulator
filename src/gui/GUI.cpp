@@ -61,8 +61,19 @@ GUI::GUI(World& world, Application& application)
     {
         m_create_object_gui(container);
 
-        m_create_object_from_params_gui(container, true);
-        m_create_object_from_orbit_gui(container, false);
+        auto mode_specific_options_container = container->add_widget<Container>();
+        mode_specific_options_container->set_size({ Length::Auto, 100.0_px });
+        mode_specific_options_container->set_layout<BasicLayout>();
+
+        auto params_gui = m_create_object_from_params_gui(mode_specific_options_container);
+        params_gui->set_size({{100, Length::Percent}, {100, Length::Percent}});
+        params_gui->set_visible(true);
+        mode_specific_options_container->add_created_widget(params_gui);
+
+        auto orbit_gui = m_create_object_from_orbit_gui(mode_specific_options_container);
+        orbit_gui->set_size({{100, Length::Percent}, {100, Length::Percent}});
+        orbit_gui->set_visible(false);
+        mode_specific_options_container->add_created_widget(orbit_gui);
 
         auto main_color_container = container->add_widget<Container>();
         main_color_container->set_size({ Length::Auto, 150.0_px });
@@ -119,7 +130,12 @@ GUI::GUI(World& world, Application& application)
             m_toggle_orbit_direction_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
             m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
             m_toggle_orbit_direction_button->on_change = [](bool state) {
+            };
                 
+            m_creative_mode_button->on_change = [params_gui, orbit_gui, this](bool state) {
+                params_gui->set_visible(!state);
+                orbit_gui->set_visible(state);
+                m_automatic_orbit_calculation = state;
             };
             m_toggle_orbit_direction_button->set_active(false);
             m_toggle_orbit_direction_button->set_visible(false);
@@ -134,18 +150,6 @@ GUI::GUI(World& world, Application& application)
                 m_simulation_view->m_measured = false;
             };
             m_add_object_button->set_tooltip_text("Add object");
-
-            m_creative_mode_button->on_change = [this, layout](bool state)mutable{
-                this->m_velocity_control->set_visible(!state);
-                this->m_direction_control->set_visible(!state);
-                this->semi_major_axis_container->set_visible(state);
-                this->semi_minor_axis_container->set_visible(state);
-
-                this->m_toggle_orbit_direction_button->set_visible(state);
-                
-                this->m_mode = state;
-                layout.run();
-            };
         }
     }
 
@@ -154,12 +158,14 @@ GUI::GUI(World& world, Application& application)
     m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
     m_create_button->on_change = [container = container.get(),
                                      m_creative_mode_button = m_creative_mode_button.get(),
-                                     m_simulate = &m_simulate](bool state) {
+                                     this](bool state) {
         container->set_visible(state);
-        m_creative_mode_button->set_visible(state);
 
-        if (*m_simulate)
-            *m_simulate = state;
+        relayout_and_draw(window());
+        dump(0);
+
+        if (m_simulate)
+            m_simulate = state;
     };
     m_create_button->set_active(false);
     m_create_button->set_tooltip_text("Create new object");

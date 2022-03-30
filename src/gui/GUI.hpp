@@ -59,8 +59,8 @@ private:
     Object* m_focused = nullptr;
     bool m_automatic_orbit_calculation = false;
 
-    void m_create_object_from_params_gui(std::shared_ptr<Container> container, bool visible);
-    void m_create_object_from_orbit_gui(std::shared_ptr<Container> container, bool visible);
+    std::shared_ptr<Container> m_create_object_from_params_gui(std::shared_ptr<Container> parent);
+    std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
     void m_create_object_gui(std::shared_ptr<Container> container);
     std::unique_ptr<Object> m_create_object_from_params() const;
 };

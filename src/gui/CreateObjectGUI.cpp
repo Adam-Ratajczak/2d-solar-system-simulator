@@ -3,13 +3,13 @@
 
 #include <iostream>
 
-void GUI::m_create_object_gui(std::shared_ptr<Container> container){
+void GUI::m_create_object_gui(std::shared_ptr<Container> container) {
     m_radius_control = container->add_widget<ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
 
     auto mass_container = container->add_widget<Container>();
-        {
+    {
         auto& mass_layout = mass_container->set_layout<HorizontalBoxLayout>();
         mass_layout.set_spacing(10);
 
@@ -33,7 +33,7 @@ void GUI::m_create_object_gui(std::shared_ptr<Container> container){
             mass_exponent_textfield->set_font_size(20);
             mass_exponent_textfield->set_content(" * 10 ^ ");
             mass_exponent_textfield->set_alignment(Textfield::Align::CenterLeft);
-            
+
             m_mass_exponent_textbox = mass_value_container->add_widget<Textbox>();
             m_mass_exponent_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
             m_mass_exponent_textbox->set_limit(2);
@@ -49,20 +49,25 @@ void GUI::m_create_object_gui(std::shared_ptr<Container> container){
     }
 }
 
-void GUI::m_create_object_from_params_gui(std::shared_ptr<Container> container, bool visible) {
+std::shared_ptr<Container> GUI::m_create_object_from_params_gui(std::shared_ptr<Container> parent) {
+    auto container = std::make_shared<Container>(*parent);
+    container->set_layout<VerticalBoxLayout>();
+
     m_velocity_control = container->add_widget<ValueSlider>(0, 500000);
     m_velocity_control->set_name("Velocity");
     m_velocity_control->set_unit("m/s");
-    m_velocity_control->set_visible(visible);
 
     m_direction_control = container->add_widget<ValueSlider>(0, 360, 0.1);
     m_direction_control->set_name("Direction");
     m_direction_control->set_unit("[deg]");
     m_direction_control->slider().set_wraparound(true);
-    m_direction_control->set_visible(visible);
+    return container;
 }
 
-void GUI::m_create_object_from_orbit_gui(std::shared_ptr<Container> container, bool visible){
+std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<Container> parent) {
+    auto container = std::make_shared<Container>(*parent);
+    container->set_layout<VerticalBoxLayout>();
+
     semi_major_axis_container = container->add_widget<Container>();
     auto& semi_major_axis_layout = semi_major_axis_container->set_layout<HorizontalBoxLayout>();
     semi_major_axis_layout.set_spacing(10);
@@ -87,8 +92,7 @@ void GUI::m_create_object_from_orbit_gui(std::shared_ptr<Container> container, b
         semi_major_axis_unit_textfield->set_content("km");
         semi_major_axis_unit_textfield->set_alignment(Textfield::Align::CenterRight);
     }
-    semi_major_axis_container->set_visible(visible);
-    semi_major_axis_layout.set_multipliers({1.5, 1, 0.5});
+    semi_major_axis_layout.set_multipliers({ 1.5, 1, 0.5 });
 
     semi_minor_axis_container = container->add_widget<Container>();
     auto& semi_minor_axis_layout = semi_minor_axis_container->set_layout<HorizontalBoxLayout>();
@@ -114,8 +118,8 @@ void GUI::m_create_object_from_orbit_gui(std::shared_ptr<Container> container, b
         semi_minor_axis_unit_textfield->set_content("km");
         semi_minor_axis_unit_textfield->set_alignment(Textfield::Align::CenterRight);
     }
-    semi_minor_axis_container->set_visible(visible);
-    semi_minor_axis_layout.set_multipliers({1.5, 1, 0.5});
+    semi_minor_axis_layout.set_multipliers({ 1.5, 1, 0.5 });
+    return container;
 }
 
 std::unique_ptr<Object> GUI::m_create_object_from_params() const {
