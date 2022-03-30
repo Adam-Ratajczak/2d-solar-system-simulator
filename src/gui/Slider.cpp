@@ -1,5 +1,6 @@
 #include "Slider.hpp"
 #include "../Vector2.hpp"
+#include "NotifyUser.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -26,7 +27,7 @@ double Slider::get_value() const {
     return 0;
 }
 
-void Slider::set_value(double val) {
+void Slider::set_value(double val, NotifyUser notify_user) {
     if (val < m_min_val)
         m_val = m_min_val;
     else if (val > m_max_val)
@@ -34,7 +35,7 @@ void Slider::set_value(double val) {
     else
         m_val = val;
 
-    if (on_change)
+    if (on_change && notify_user == NotifyUser::Yes)
         on_change(get_value());
 }
 

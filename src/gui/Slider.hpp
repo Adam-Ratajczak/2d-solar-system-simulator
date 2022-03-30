@@ -1,5 +1,6 @@
 #pragma once
 
+#include "NotifyUser.hpp"
 #include "Widget.hpp"
 
 #include <SFML/Graphics/CircleShape.hpp>
@@ -41,7 +42,7 @@ public:
     Slider(Container&, double min_val, double max_val, double step = 1);
     double get_value() const;
     double get_raw_value() const { return m_val; }
-    void set_value(const double val);
+    void set_value(double val, NotifyUser = NotifyUser::Yes);
 
     // NOTE: Mode affects only returned value and display, e.g min/max values
     //       are exponents.
@@ -53,6 +54,8 @@ public:
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color);
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
+
+    double step() const { return m_step; }
 
     std::function<void(double)> on_change;
 
