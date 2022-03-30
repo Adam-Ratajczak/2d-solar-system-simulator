@@ -67,7 +67,10 @@ void Widget::handle_event(Event& event) {
         bool previous_hover = m_hover;
         m_hover = is_mouse_over(mouse_pos);
         if (previous_hover != m_hover) {
-            m_tooltip_counter = 120;
+            if (m_tooltip)
+                m_tooltip_counter = 30;
+            else
+                m_tooltip_counter = 90;
             event.set_seen();
         }
     }
@@ -82,12 +85,13 @@ void Widget::handle_event(Event& event) {
 }
 
 void Widget::draw(sf::RenderWindow& window) const {
-    // sf::RectangleShape outline(size());
-    // outline.setPosition(position());
-    // outline.setOutlineThickness(1);
-    // outline.setOutlineColor(sf::Color::Red);
-    // outline.setFillColor(sf::Color::Transparent);
-    // window.draw(outline);
+    /*
+    sf::RectangleShape outline(size());
+    outline.setOutlineThickness(-1);
+    outline.setOutlineColor(sf::Color::Red);
+    outline.setFillColor(sf::Color::Transparent);
+    window.draw(outline);
+    */
 }
 
 void Widget::relayout_and_draw(sf::RenderWindow& window) {
@@ -100,8 +104,8 @@ void Widget::relayout_and_draw(sf::RenderWindow& window) {
         size().x / window_size.x, size().y / window_size.y });
     window.setView(clip_view);
 
-    Widget::draw(window);
     this->draw(window);
+    Widget::draw(window);
 }
 
 void Widget::relayout_if_needed() {
