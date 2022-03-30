@@ -32,7 +32,7 @@ ColorPicker::ColorPicker(Container& c)
             label->set_size({ 20.0_px, Length::Auto });
             auto slider = container->add_widget<Slider>(0, 255);
             auto value_textfield = container->add_widget<Textfield>();
-            value_textfield->set_size({ 20.0_px, Length::Auto });
+            value_textfield->set_size({ 30.0_px, Length::Auto });
             slider->on_change = [this, value_textfield](double slider_value) {
                 value_textfield->set_content(std::to_string((int)slider_value));
                 m_color_picker_display->set_color(value());
