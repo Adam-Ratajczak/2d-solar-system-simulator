@@ -32,8 +32,11 @@ public:
     };
 
     std::function<void(sf::Vector2f pos)> on_coord_measure;
+    std::function<void(Object* focused)> on_focus_measure;
 
     void start_coords_measure() { m_coord_measure = true; }
+    void start_focus_measure();
+
     bool m_measured = false, m_changed = false;
 
 private:
@@ -51,5 +54,5 @@ private:
     sf::Vector2f m_prev_mouse_pos;
     Vector2 m_prev_pos;
     bool m_dragging = false;
-    bool m_coord_measure = false;
+    bool m_coord_measure = false, m_focus_measure = false;
 };

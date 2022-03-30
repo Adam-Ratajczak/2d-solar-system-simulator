@@ -43,93 +43,102 @@ GUI::GUI(World& world, Application& application)
         m_new_object_pos = pos;
     };
 
+    m_simulation_view->on_focus_measure = [&](Object* focusing) {
+        // TODO: Add widget enabled state and use it instead.
+        m_add_object_button->set_visible(true);
+        m_focused = focusing;
+        std::cout << m_focused << "\n";
+    };
+
     m_world.m_simulation_view = m_simulation_view.get();
 
     auto container = add_widget<Container>();
     // TODO: Shrink-to-fit
     container->set_position({ 100.0_px, 10.0_px });
     container->set_size({ 500.0_px, 500.0_px });
+    auto& layout = container->set_layout<VerticalBoxLayout>();
+    layout.set_spacing(10);
     {
-        auto& layout = container->set_layout<VerticalBoxLayout>();
-        layout.set_spacing(10);
+        m_create_object_gui(container);
 
-        auto mass_container = container->add_widget<Container>();
+        m_create_object_from_params_gui(container, true);
+
+        auto main_color_container = container->add_widget<Container>();
+        main_color_container->set_size({ Length::Auto, 150.0_px });
+        auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
+        main_color_layout.set_spacing(10);
         {
-            auto& mass_layout = mass_container->set_layout<HorizontalBoxLayout>();
-            mass_layout.set_spacing(10);
+            auto color_label_textfield = main_color_container->add_widget<Textfield>();
+            color_label_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+            color_label_textfield->set_font_size(20);
+            color_label_textfield->set_content("COLOR");
+            color_label_textfield->set_alignment(Textfield::Align::Center);
 
-            auto mass_textfield = mass_container->add_widget<Textfield>();
-            mass_textfield->set_size({ 150.0_px, Length::Auto });
-            mass_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            mass_textfield->set_font_size(20);
-            mass_textfield->set_content("Mass: ");
-            mass_textfield->set_alignment(Textfield::Align::CenterLeft);
+            m_color_control = main_color_container->add_widget<ColorPicker>();
+            m_color_control->set_size({ Length::Auto, 100.0_px });
+        }
+        auto name_container = container->add_widget<Container>();
+        auto& name_layout = name_container->set_layout<HorizontalBoxLayout>();
+        name_layout.set_spacing(10);
+        {
+            auto name_textfield = name_container->add_widget<Textfield>();
+            name_textfield->set_size({ 150.0_px, Length::Auto });
+            name_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+            name_textfield->set_font_size(20);
+            name_textfield->set_content("Name: ");
+            name_textfield->set_alignment(Textfield::Align::CenterLeft);
 
-            m_mass_textbox = mass_container->add_widget<Textbox>();
-            m_mass_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-            m_mass_textbox->set_limit(6);
-            m_mass_textbox->set_content("1.0");
-
-            auto mass_value_container = mass_container->add_widget<Container>();
-            mass_value_container->set_layout<HorizontalBoxLayout>();
+            m_name_textbox = name_container->add_widget<Textbox>();
+            m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+            m_name_textbox->set_limit(20);
+            m_name_textbox->set_data_type(Textbox::TEXT);
+            m_name_textbox->set_content("Planet");
+        }
+            auto submit_container = container->add_widget<Container>();
+            submit_container->set_size({ Length::Auto, 72.0_px });
+            auto& submit_layout = submit_container->set_layout<HorizontalBoxLayout>();
+            submit_layout.set_spacing(10);
             {
-                auto mass_exponent_textfield = mass_value_container->add_widget<Textfield>();
-                mass_exponent_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                mass_exponent_textfield->set_font_size(20);
-                mass_exponent_textfield->set_content(" * 10 ^ ");
-                mass_exponent_textfield->set_alignment(Textfield::Align::CenterLeft);
+                m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
+                m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
+                m_coords_button->on_click = [this]() {
+                    // std::cout << "TEST" << std::endl;
+                    if(!m_mode)
+                        m_simulation_view->start_coords_measure();
+                    else
+                        m_simulation_view->start_focus_measure();
+                };
+                m_coords_button->set_tooltip_text("Set position");
 
-                m_mass_exponent_textbox = mass_value_container->add_widget<Textbox>();
-                m_mass_exponent_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-                m_mass_exponent_textbox->set_limit(2);
-                m_mass_exponent_textbox->set_content("1");
+                m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
+                m_creative_mode_button->set_position({ 10.0_px, 100.0_px });
+                m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
+                m_creative_mode_button->on_change = [](bool state) {
+                    std::cout << state << "\n";
+                };
+                m_creative_mode_button->set_active(false);
+                m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
+                m_creative_mode_button->on_change = [this, layout](bool state)mutable{
+                    this->m_velocity_control->set_visible(!state);
+                    this->m_direction_control->set_visible(!state);
+                    this->m_mode = state;
 
-                auto mass_unit_textfield = mass_value_container->add_widget<Textfield>();
-                mass_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-                mass_unit_textfield->set_font_size(20);
-                mass_unit_textfield->set_content(" kg ");
-                mass_unit_textfield->set_alignment(Textfield::Align::Center);
+                    layout.run();
+                };
+
+                submit_container->add_widget<Widget>(); // spacer
+
+                m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
+                m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
+                m_add_object_button->on_click = [&world, this]() {
+                    // FIXME: This (object_list) should be probably private.
+                    world.object_list.push_back(*m_create_object_from_params());
+
+                    m_simulation_view->m_measured = false;
+                };
+                m_add_object_button->set_tooltip_text("Add object");
             }
-            mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
         }
-
-        m_create_object_from_params_gui(container);
-
-        auto submit_container = container->add_widget<Container>();
-        submit_container->set_size({ Length::Auto, 72.0_px });
-        {
-            auto& layout = submit_container->set_layout<HorizontalBoxLayout>();
-            layout.set_spacing(10);
-            m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
-            m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
-            m_coords_button->on_click = [this]() {
-                // std::cout << "TEST" << std::endl;
-                m_simulation_view->start_coords_measure();
-            };
-            m_coords_button->set_tooltip_text("Set position");
-
-            m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
-            m_creative_mode_button->set_position({ 10.0_px, 100.0_px });
-            m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-            m_creative_mode_button->on_change = [](bool state) {
-                std::cout << state << "\n";
-            };
-            m_creative_mode_button->set_active(false);
-            m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
-
-            submit_container->add_widget<Widget>(); // spacer
-
-            m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
-            m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
-            m_add_object_button->on_click = [&world, this]() {
-                // FIXME: This (object_list) should be probably private.
-                world.object_list.push_back(*m_create_object_from_params());
-
-                m_simulation_view->m_measured = false;
-            };
-            m_add_object_button->set_tooltip_text("Add object");
-        }
-    }
 
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });

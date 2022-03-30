@@ -34,6 +34,9 @@ void BoxLayout::run() {
 
     // 1. Compute widget size (in main axis) if it has fixed size
     for (auto& w : widgets()) {
+        if(!w->is_visible())
+            continue;
+
         float size = 0;
         switch (vec2f_main_coord_by_orientation(w->input_size()).unit()) {
         case Length::Px:
@@ -56,6 +59,8 @@ void BoxLayout::run() {
     float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(m_container.size());
     size_t autosized_widget_count = 0;
     for (auto& w : widgets()) {
+        if(!w->is_visible())
+            continue;
         if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
             autosized_widget_count++;
         else
@@ -67,6 +72,8 @@ void BoxLayout::run() {
     float current_position = 0;
     size_t index = 0;
     for (auto& w : widgets()) {
+        if(!w->is_visible())
+            continue;
         if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
             w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) }));
         w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position,

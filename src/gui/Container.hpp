@@ -43,9 +43,9 @@ public:
         , m_orientation(o) { }
 
     void set_spacing(float s) { m_spacing = s; }
+    virtual void run() override;
 
 private:
-    virtual void run() override;
 
     Orientation m_orientation;
     float m_spacing = 0;
