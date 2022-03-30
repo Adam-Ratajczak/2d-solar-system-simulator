@@ -7,7 +7,9 @@
 
 class Textbox : public Widget {
     sf::String m_content;
-    sf::Color m_bg_color, m_fg_color, m_text_color;
+    sf::Color m_bg_color = sf::Color(255, 255, 255);
+    sf::Color m_fg_color = sf::Color(200, 200, 200);
+    sf::Color m_text_color = sf::Color(150, 150, 150);
     unsigned m_limit = 16;
     bool m_has_decimal = false;
     unsigned m_cursor = 0;

@@ -19,7 +19,9 @@ class Slider : public Widget {
 
     bool m_dragging = false;
 
-    sf::Color m_bg_color, m_fg_color, m_text_color;
+    sf::Color m_bg_color = sf::Color(200, 200, 200);
+    sf::Color m_fg_color = sf::Color::White;
+    sf::Color m_text_color = sf::Color::White;
     unsigned m_text_size;
     std::string m_string;
 
