@@ -9,11 +9,11 @@
 class Object;
 class World;
 
-class SimulationView : public Widget
-{
+class SimulationView : public Widget {
 public:
     explicit SimulationView(Container& c, World& world)
-    : Widget(c), m_world(world) {}
+        : Widget(c)
+        , m_world(world) { }
 
     static constexpr double SCALE = 1000 / AU;
 
@@ -26,8 +26,7 @@ public:
     Vector2 world_to_screen(Vector2 v) const { return (v - m_offset) * scale() + Vector2(window().getSize() / 2u); }
     Vector2 screen_to_world(Vector2 v) const { return (v - Vector2(window().getSize() / 2u)) / scale() + m_offset; }
 
-    void reset()
-    {
+    void reset() {
         m_offset = Vector2 {};
         m_zoom = 1;
     };

@@ -18,8 +18,7 @@
 #include <iostream>
 #include <string>
 
-static sf::Image load_image(std::string path)
-{
+static sf::Image load_image(std::string path) {
     // TODO: Error handling
     sf::Image image;
     image.loadFromFile(path);
@@ -29,15 +28,14 @@ static sf::Image load_image(std::string path)
 sf::Font GUI::font;
 
 GUI::GUI(World& world, Application& application)
-: Container(application), m_world(world)
-{
+    : Container(application)
+    , m_world(world) {
     font.loadFromFile("../assets/Pulang.ttf");
     set_layout<BasicLayout>();
 
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
-    m_simulation_view->on_coord_measure = [&](sf::Vector2f pos)
-    {
+    m_simulation_view->on_coord_measure = [&](sf::Vector2f pos) {
         // TODO: Add widget enabled state and use it instead.
         m_add_object_button->set_visible(true);
         m_new_object_pos = pos;
@@ -160,8 +158,7 @@ GUI::GUI(World& world, Application& application)
             direction_unit_textfield->set_content(std::to_string((int)m_direction_slider->get_value()) + " [deg]");
             direction_unit_textfield->set_alignment(Textfield::Align::Center);
 
-            m_direction_slider->on_change = [direction_unit_textfield](double value)
-            {
+            m_direction_slider->on_change = [direction_unit_textfield](double value) {
                 direction_unit_textfield->set_content(std::to_string((int)value) + " [deg]");
             };
         }
@@ -197,8 +194,7 @@ GUI::GUI(World& world, Application& application)
                 color_r_value_textfield->set_content(std::to_string((int)m_color_r_slider->get_value()));
                 color_r_value_textfield->set_alignment(Textfield::Align::Center);
 
-                m_color_r_slider->on_change = [color_r_value_textfield](double value)
-                {
+                m_color_r_slider->on_change = [color_r_value_textfield](double value) {
                     color_r_value_textfield->set_content(std::to_string((int)value));
                 };
             }
@@ -223,8 +219,7 @@ GUI::GUI(World& world, Application& application)
                 color_g_value_textfield->set_content(std::to_string((int)m_color_g_slider->get_value()));
                 color_g_value_textfield->set_alignment(Textfield::Align::Center);
 
-                m_color_g_slider->on_change = [color_g_value_textfield](double value)
-                {
+                m_color_g_slider->on_change = [color_g_value_textfield](double value) {
                     color_g_value_textfield->set_content(std::to_string((int)value));
                 };
             }
@@ -249,8 +244,7 @@ GUI::GUI(World& world, Application& application)
                 color_b_value_textfield->set_content(std::to_string((int)m_color_b_slider->get_value()));
                 color_b_value_textfield->set_alignment(Textfield::Align::Center);
 
-                m_color_b_slider->on_change = [color_b_value_textfield](double value)
-                {
+                m_color_b_slider->on_change = [color_b_value_textfield](double value) {
                     color_b_value_textfield->set_content(std::to_string((int)value));
                 };
             }
@@ -279,18 +273,17 @@ GUI::GUI(World& world, Application& application)
             auto& layout = submit_container->set_layout<HorizontalBoxLayout>();
             m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
             m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
-            m_coords_button->on_click = [this]()
-            {
-                //std::cout << "TEST" << std::endl;
+            m_coords_button->on_click = [this]() {
+                // std::cout << "TEST" << std::endl;
                 m_simulation_view->start_coords_measure();
             };
+            m_coords_button->set_tooltip_text("Set position");
 
             submit_container->add_widget<Widget>(); // spacer
 
             m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
             m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
-            m_add_object_button->on_click = [&world, this]()
-            {
+            m_add_object_button->on_click = [&world, this]() {
                 double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
                 double radius = std::stod(m_radius_textbox->get_content().toAnsiString()) * 1000;
 
@@ -311,39 +304,38 @@ GUI::GUI(World& world, Application& application)
 
                 m_simulation_view->m_measured = false;
             };
+            m_add_object_button->set_tooltip_text("Add object");
         }
     }
 
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
     m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_create_button->on_change = [container = container.get(), m_coords_button = m_coords_button.get()](bool state)
-    {
+    m_create_button->on_change = [container = container.get(), m_coords_button = m_coords_button.get()](bool state) {
         container->set_visible(state);
     };
     m_create_button->set_active(false);
+    m_create_button->set_tooltip_text("Create new object");
 
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
     m_home_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
-    m_home_button->on_click = [this]()
-    {
+    m_home_button->on_click = [this]() {
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
         m_simulation_view->set_zoom(1);
     };
+    m_home_button->set_tooltip_text("Reset coordinates");
 }
 
-void GUI::relayout()
-{
+void GUI::relayout() {
     // TODO: Don't do this in every tick.
     set_raw_size(sf::Vector2f(window().getSize()));
 
     Container::relayout();
 }
 
-void GUI::draw(sf::RenderWindow& window) const
-{
-    if(m_simulation_view->m_measured){
+void GUI::draw(sf::RenderWindow& window) const {
+    if (m_simulation_view->m_measured) {
         double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
         double radius = std::stod(m_radius_textbox->get_content().toAnsiString()) * 1000;
 
@@ -354,26 +346,23 @@ void GUI::draw(sf::RenderWindow& window) const
         sf::Color color(
             m_color_r_slider->get_value(),
             m_color_g_slider->get_value(),
-            m_color_b_slider->get_value()
-        );
+            m_color_b_slider->get_value());
 
         std::string name = m_name_textbox->get_content();
 
         Object planet(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000);
 
-        for(unsigned i = 0; i < 1000; i++)
+        for (unsigned i = 0; i < 1000; i++)
             planet.update();
-        
+
         planet.m_pos = m_new_object_pos;
-        
+
         planet.draw(*m_simulation_view);
     }
 }
 
-void GUI::handle_event(Event& event)
-{
-    if(event.type() == sf::Event::Closed)
-    {
+void GUI::handle_event(Event& event) {
+    if (event.type() == sf::Event::Closed) {
         window().close();
         event.set_handled();
     }

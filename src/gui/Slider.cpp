@@ -9,66 +9,58 @@
 #include <iostream>
 
 Slider::Slider(Container& c, double min_val, double max_val, double step)
-: Widget(c), m_min_val(min_val), m_max_val(max_val), m_step(step), m_val((min_val + max_val) / 2)
-{
+    : Widget(c)
+    , m_min_val(min_val)
+    , m_max_val(max_val)
+    , m_step(step)
+    , m_val((min_val + max_val) / 2) {
 }
 
-double Slider::get_value() const
-{
-    switch(m_mode)
-    {
-        case Mode::Linear:
-            return m_val;
-        case Mode::Exponential:
-            return std::pow(m_exponent, m_val);
+double Slider::get_value() const {
+    switch (m_mode) {
+    case Mode::Linear:
+        return m_val;
+    case Mode::Exponential:
+        return std::pow(m_exponent, m_val);
     }
     return 0;
 }
 
-void Slider::set_value(double val)
-{
-    if(val < m_min_val)
+void Slider::set_value(double val) {
+    if (val < m_min_val)
         m_val = m_min_val;
-    else if(val > m_max_val)
+    else if (val > m_max_val)
         m_val = m_max_val;
     else
         m_val = val;
 
-    if(on_change)
+    if (on_change)
         on_change(get_value());
 }
 
-void Slider::set_display_attributes(sf::Color bg_color, sf::Color fg_color)
-{
+void Slider::set_display_attributes(sf::Color bg_color, sf::Color fg_color) {
     m_bg_color = bg_color;
     m_fg_color = fg_color;
 }
 
-void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos text_pos)
-{
+void Slider::set_text_attributes(unsigned text_size, std::string string, TextPos text_pos) {
     m_text_size = text_size;
     m_string = string;
     m_text_pos = text_pos;
 }
 
-void Slider::handle_event(Event& event)
-{
-    if(event.type() == sf::Event::MouseButtonPressed)
-    {
-        if(is_mouse_over({ event.event().mouseButton.x, event.event().mouseButton.y }))
-        {
+void Slider::handle_event(Event& event) {
+    if (event.type() == sf::Event::MouseButtonPressed) {
+        if (is_mouse_over({ event.event().mouseButton.x, event.event().mouseButton.y })) {
             m_dragging = true;
             event.set_handled();
         }
     }
-    else if(event.type() == sf::Event::MouseButtonReleased)
-    {
+    else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
     }
-    else if(sf::Event::MouseMoved)
-    {
-        if(m_dragging)
-        {
+    else if (sf::Event::MouseMoved) {
+        if (m_dragging) {
             auto mouse_pos_relative_to_slider = sf::Vector2f({ static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) }) - position();
             m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
             m_val = std::min(std::max(m_min_val, m_val), m_max_val);
@@ -78,19 +70,17 @@ void Slider::handle_event(Event& event)
             m_val = std::round(m_val);
             m_val *= m_step;
 
-            if(on_change)
+            if (on_change)
                 on_change(get_value());
         }
     }
 }
 
-float Slider::calculate_knob_size() const
-{
+float Slider::calculate_knob_size() const {
     return std::max(4.0, size().x / (m_max_val - m_min_val) * m_step);
 }
 
-void Slider::draw(sf::RenderWindow& window) const
-{
+void Slider::draw(sf::RenderWindow& window) const {
     sf::RectangleShape slider({ size().x, 5.f });
     slider.setPosition(0, size().y / 2 - 2.5f);
     slider.setFillColor(m_bg_color);

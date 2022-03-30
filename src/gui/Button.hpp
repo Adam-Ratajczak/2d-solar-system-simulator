@@ -5,8 +5,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <functional>
 
-class Button : public Widget
-{
+class Button : public Widget {
     sf::Texture m_texture;
     bool m_active = false;
 
@@ -17,8 +16,12 @@ public:
 
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
+
 protected:
-    virtual void on_click_impl() { if(on_click) on_click(); }
+    virtual void on_click_impl() {
+        if (on_click)
+            on_click();
+    }
 
 private:
     virtual sf::Color color_for_state() const;

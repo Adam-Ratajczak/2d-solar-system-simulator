@@ -21,12 +21,35 @@ bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const {
     return sf::Rect<float>(m_pos, m_size).contains(mouse_pos.x, mouse_pos.y);
 }
 
+void Widget::update() {
+    if (!m_tooltip_text.empty()) {
+        //std::cout << this << ": " << m_tooltip_counter << std::endl;
+        if (m_tooltip_counter > 0)
+            m_tooltip_counter--;
+        if (m_hover) {
+            if (m_tooltip_counter == 0 && !m_tooltip) {
+                // TODO: Use mouse position;
+                m_tooltip = &m_application.add_tooltip(std::make_unique<Tooltip>(m_tooltip_text, this, position()));
+                std::cout << m_tooltip << std::endl;
+                m_tooltip_counter = -1;
+            }
+        }
+        else if (m_tooltip_counter == 0) {
+            //std::cout << "TEST " << this << " " << m_tooltip << std::endl;
+            m_application.remove_tooltip(m_tooltip);
+            m_tooltip = nullptr;
+            m_tooltip_counter = -1;
+        }
+    }
+}
+
 void Widget::do_handle_event(Event& event) {
     Widget::handle_event(event);
     handle_event(event);
 }
 
 void Widget::do_update() {
+    Widget::update();
     update();
 }
 
@@ -41,7 +64,12 @@ bool Widget::is_focused() const {
 void Widget::handle_event(Event& event) {
     if (event.type() == sf::Event::MouseMoved) {
         sf::Vector2i mouse_pos { event.event().mouseMove.x, event.event().mouseMove.y };
+        bool previous_hover = m_hover;
         m_hover = is_mouse_over(mouse_pos);
+        if (previous_hover != m_hover) {
+            m_tooltip_counter = 120;
+            event.set_seen();
+        }
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
         if (m_hover) {
@@ -65,12 +93,11 @@ void Widget::draw(sf::RenderWindow& window) const {
 void Widget::relayout_and_draw(sf::RenderWindow& window) {
     relayout_if_needed();
 
-    sf::View clip_view{sf::FloatRect{{}, size()}};
+    sf::View clip_view { sf::FloatRect { {}, size() } };
     auto window_size = window.getSize();
-    clip_view.setViewport(sf::FloatRect{
+    clip_view.setViewport(sf::FloatRect {
         position().x / window_size.x, position().y / window_size.y,
-        size().x / window_size.x, size().y / window_size.y
-    });
+        size().x / window_size.x, size().y / window_size.y });
     window.setView(clip_view);
 
     Widget::draw(window);

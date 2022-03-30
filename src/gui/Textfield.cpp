@@ -3,13 +3,13 @@
 #include "GUI.hpp"
 #include <SFML/System/Vector2.hpp>
 
-void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
+void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_bg_color = bg_color;
     m_fg_color = fg_color;
     m_text_color = text_color;
 }
 
-void Textfield::draw(sf::RenderWindow& window) const{
+void Textfield::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
     rect.setFillColor(m_bg_color);
     /*rect.setOutlineColor(m_fg_color);
@@ -25,14 +25,14 @@ void Textfield::draw(sf::RenderWindow& window) const{
     auto y_center_factor = size().y / 2 - bounds.height / 2 - 5;
 
     switch (m_alignment) {
-        case Align::CenterLeft:
-            text.setPosition(sf::Vector2f(2, 2 + y_center_factor ));
+    case Align::CenterLeft:
+        text.setPosition(sf::Vector2f(2, 2 + y_center_factor));
         break;
-        case Align::Center:
-            text.setPosition(sf::Vector2f(size().x / 2 - bounds.width / 2, y_center_factor));
+    case Align::Center:
+        text.setPosition(sf::Vector2f(size().x / 2 - bounds.width / 2, y_center_factor));
         break;
-        case Align::CenterRight:
-            text.setPosition(sf::Vector2f(size().x - bounds.width - 2, y_center_factor));
+    case Align::CenterRight:
+        text.setPosition(sf::Vector2f(size().x - bounds.width - 2, y_center_factor));
         break;
     }
 

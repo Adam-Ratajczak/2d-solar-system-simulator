@@ -2,11 +2,9 @@
 
 #include <cmath>
 #include <ostream>
-class Length
-{
+class Length {
 public:
-    enum Unit
-    {
+    enum Unit {
         Auto,
         Px,
         PxOtherSide,
@@ -16,10 +14,11 @@ public:
     constexpr Length() = default;
 
     constexpr Length(Unit unit)
-    : m_unit(unit) {}
+        : m_unit(unit) { }
 
     constexpr Length(float v, Unit unit)
-    : m_value(v), m_unit(unit) {}
+        : m_value(v)
+        , m_unit(unit) { }
 
     constexpr Unit unit() const { return m_unit; }
     constexpr float value() const { return m_value; }
@@ -33,21 +32,17 @@ private:
     float m_value = 0;
 };
 
-constexpr Length operator""_px(long double v)
-{
+constexpr Length operator""_px(long double v) {
     return Length(v, Length::Px);
 }
 
-constexpr Length operator""_px_o(long double v)
-{
+constexpr Length operator""_px_o(long double v) {
     return Length(v, Length::PxOtherSide);
 }
 
-class Angle
-{
+class Angle {
 public:
-    enum Unit
-    {
+    enum Unit {
         Rad,
         Deg
     };
@@ -55,27 +50,25 @@ public:
     constexpr Angle() = default;
 
     constexpr Angle(float v, Unit unit)
-    : m_value_in_radians(unit == Deg ? v / 180 * M_PI : v) {}
+        : m_value_in_radians(unit == Deg ? v / 180 * M_PI : v) { }
 
     constexpr float deg() const { return m_value_in_radians * 180 / M_PI; }
     constexpr float rad() const { return m_value_in_radians; }
 
-    constexpr Angle operator-() const
-    {
+    constexpr Angle operator-() const {
         Angle new_angle;
         new_angle.m_value_in_radians = -m_value_in_radians;
         return new_angle;
     }
+
 private:
     float m_value_in_radians = 0;
 };
 
-constexpr Angle operator""_deg(long double v)
-{
+constexpr Angle operator""_deg(long double v) {
     return Angle(v, Angle::Deg);
 }
 
-constexpr Angle operator""_rad(long double v)
-{
+constexpr Angle operator""_rad(long double v) {
     return Angle(v, Angle::Rad);
 }

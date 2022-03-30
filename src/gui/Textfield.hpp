@@ -2,9 +2,9 @@
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
 
-class Textfield : public Widget{
+class Textfield : public Widget {
 public:
-    enum class Align{
+    enum class Align {
         CenterLeft,
         Center,
         CenterRight
@@ -18,7 +18,7 @@ private:
 
 public:
     explicit Textfield(Container& c)
-    : Widget(c) {}
+        : Widget(c) { }
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color);
     virtual void draw(sf::RenderWindow& window) const override;
@@ -30,5 +30,5 @@ public:
     void set_font_size(unsigned font_size) { m_font_size = font_size; }
 
     Align get_alignment() const { return m_alignment; };
-    void set_alignment(Align alignment){ m_alignment = alignment; };
+    void set_alignment(Align alignment) { m_alignment = alignment; };
 };

@@ -1,18 +1,33 @@
 #pragma once
 
 #include "Container.hpp"
+#include "Tooltip.hpp"
 
-class Application
-{
+#include <iostream>
+#include <list>
+
+class Application {
 public:
     explicit Application(sf::RenderWindow& wnd)
-    : m_window(wnd) {}
+        : m_window(wnd) { }
 
     sf::RenderWindow& window() const { return m_window; }
     Widget* focused_widget() const { return m_focused_widget; }
     void set_focused_widget(Widget* w);
 
+    Tooltip& add_tooltip(std::unique_ptr<Tooltip> t) {
+        //std::cout << t->owner << " ADDED TOOLTIP" << std::endl;
+        auto t_ptr = t.get();
+        m_tooltips.push_back(std::move(t));
+        return *t_ptr;
+    }
+    void remove_tooltip(Tooltip* t);
+
+    void draw(sf::RenderWindow& wnd) const;
+
 private:
-    sf::RenderWindow& m_window;    
+    sf::RenderWindow& m_window;
     Widget* m_focused_widget {};
+
+    std::list<std::unique_ptr<Tooltip>> m_tooltips;
 };

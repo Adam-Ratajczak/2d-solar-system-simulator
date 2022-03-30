@@ -11,11 +11,10 @@ class Container;
 
 using WidgetList = std::vector<std::shared_ptr<Widget>>;
 
-class Layout
-{
+class Layout {
 public:
     Layout(Container& c)
-    : m_container(c) {}
+        : m_container(c) { }
 
     virtual ~Layout() = default;
 
@@ -31,18 +30,17 @@ protected:
     WidgetList& widgets();
 };
 
-enum class Orientation
-{
+enum class Orientation {
     Horizontal,
     Vertical
 };
 
 /// Widgets are resized to fill up the entire space (in the vertical axis)
-class BoxLayout : public Layout
-{
+class BoxLayout : public Layout {
 public:
     BoxLayout(Container& c, Orientation o)
-    : Layout(c), m_orientation(o) {}
+        : Layout(c)
+        , m_orientation(o) { }
 
     void set_spacing(float s) { m_spacing = s; }
 
@@ -53,44 +51,39 @@ private:
     float m_spacing = 0;
 };
 
-class VerticalBoxLayout : public BoxLayout
-{
+class VerticalBoxLayout : public BoxLayout {
 public:
     VerticalBoxLayout(Container& c)
-    : BoxLayout(c, Orientation::Vertical) {}
+        : BoxLayout(c, Orientation::Vertical) { }
 };
 
-class HorizontalBoxLayout : public BoxLayout
-{
+class HorizontalBoxLayout : public BoxLayout {
 public:
     HorizontalBoxLayout(Container& c)
-    : BoxLayout(c, Orientation::Horizontal) {}
+        : BoxLayout(c, Orientation::Horizontal) { }
 };
 
 // Just assigns input_size to size.
-class BasicLayout : public Layout
-{
+class BasicLayout : public Layout {
 public:
     BasicLayout(Container& c)
-    : Layout(c) {}
+        : Layout(c) { }
 
 private:
     virtual void run() override;
 };
 
-class Container : public Widget
-{
+class Container : public Widget {
 public:
     explicit Container(Container& parent)
-    : Widget(parent) {}
+        : Widget(parent) { }
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Widget, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
-        std::shared_ptr<T> add_widget(Args&&... args)
-    {
+        std::shared_ptr<T> add_widget(Args&&... args) {
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         m_widgets.push_back(widget);
-        if(m_layout)
+        if (m_layout)
             m_layout->m_multipliers.push_back(1);
         return widget;
     }
@@ -101,8 +94,7 @@ public:
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Layout, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
-        T& set_layout(Args&&... args)
-    {
+        T& set_layout(Args&&... args) {
         auto layout = std::make_unique<T>(*this, std::forward<Args>(args)...);
         auto layout_ptr = layout.get();
         m_layout = std::move(layout);
@@ -116,7 +108,7 @@ public:
 
 protected:
     explicit Container(Application& application)
-    : Widget(application) {}
+        : Widget(application) { }
 
     virtual void relayout() override;
     WidgetList m_widgets;

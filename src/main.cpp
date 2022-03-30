@@ -37,6 +37,8 @@ int main() {
         window.clear();
 
         gui.relayout_and_draw(window);
+        // FIXME: GUI object should be part of Application.
+        application.draw(window);
 
         window.display();
     }

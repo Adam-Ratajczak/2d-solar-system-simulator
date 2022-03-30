@@ -12,8 +12,7 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 
-class GUI : public Container
-{
+class GUI : public Container {
 public:
     explicit GUI(World& world, Application& application);
     static sf::Font font;

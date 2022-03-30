@@ -58,7 +58,7 @@ void Textbox::handle_event(Event& event) {
     else if (event.type() == sf::Event::KeyPressed) {
         if (is_focused()) {
             // FIXME: Focus check should be handled at Widget level.
-            //std::cout << m_cursor << std::endl;
+            // std::cout << m_cursor << std::endl;
             switch (event.event().key.code) {
             case sf::Keyboard::Left:
                 if (m_cursor > 0)

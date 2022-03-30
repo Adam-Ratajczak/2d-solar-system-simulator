@@ -4,34 +4,37 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-class Container;
 class Application;
+class Container;
+class Tooltip;
 
-struct LengthVector
-{
+struct LengthVector {
     Length x;
     Length y;
 };
 
-class Event
-{
+class Event {
 public:
     Event(sf::Event const& event)
-    : m_event(event) {}
+        : m_event(event) { }
 
     sf::Event event() const { return m_event; }
+
+    // FIXME: idk the names
     bool is_handled() const { return m_handled; }
     void set_handled() { m_handled = true; }
+    bool is_seen() const { return m_seen; }
+    void set_seen() { m_seen = true; }
 
     sf::Event::EventType type() const { return m_event.type; }
 
 private:
     sf::Event m_event;
     bool m_handled = false;
+    bool m_seen = false;
 };
 
-class Widget
-{
+class Widget {
 public:
     explicit Widget(Container& parent);
 
@@ -43,23 +46,19 @@ public:
     virtual void do_update();
     virtual void draw(sf::RenderWindow& window) const;
 
-    void set_raw_position(sf::Vector2f p)
-    {
+    void set_raw_position(sf::Vector2f p) {
         m_pos = p;
     }
-    void set_raw_size(sf::Vector2f s)
-    {
+    void set_raw_size(sf::Vector2f s) {
         m_size = s;
     }
 
-    void set_position(LengthVector l)
-    {
+    void set_position(LengthVector l) {
         m_expected_pos = l;
         set_needs_relayout();
     }
 
-    void set_size(LengthVector l)
-    {
+    void set_size(LengthVector l) {
         m_input_size = l;
         set_needs_relayout();
     }
@@ -73,8 +72,7 @@ public:
     void relayout_if_needed();
     virtual void relayout_and_draw(sf::RenderWindow&);
 
-    void set_visible(bool visible)
-    {
+    void set_visible(bool visible) {
         m_visible = visible;
         set_needs_relayout();
     }
@@ -86,16 +84,18 @@ public:
 
     sf::RenderWindow& window() const;
     Container* parent() const { return m_parent; }
-   
+
+    void set_tooltip_text(std::string t) { m_tooltip_text = std::move(t); }
+
     virtual void dump(unsigned depth);
 
 protected:
     explicit Widget(Application& application)
-    : m_application(application) {}
+        : m_application(application) { }
 
-    virtual void relayout() {}
+    virtual void relayout() { }
     virtual bool is_mouse_over(sf::Vector2i) const;
-    virtual void update() {}
+    virtual void update();
     virtual void handle_event(Event&);
 
     void set_needs_relayout() { m_needs_relayout = true; }
@@ -107,6 +107,9 @@ private:
     Application& m_application;
     sf::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
+    Tooltip* m_tooltip = nullptr;
+    int m_tooltip_counter = -1;
+    std::string m_tooltip_text;
     bool m_hover = false;
     bool m_needs_relayout = true;
     bool m_visible = true;

@@ -2,9 +2,9 @@
 
 #include "Widget.hpp"
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
@@ -30,7 +30,10 @@ public:
     };
 
     enum class TextPos {
-        TOP, RIGHT, BOTTOM, LEFT
+        TOP,
+        RIGHT,
+        BOTTOM,
+        LEFT
     };
 
     Slider(Container&, double min_val, double max_val, double step = 1);
