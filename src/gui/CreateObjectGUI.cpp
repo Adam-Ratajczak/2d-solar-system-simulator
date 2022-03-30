@@ -12,6 +12,7 @@ void GUI::m_create_object_from_params_gui(std::shared_ptr<Container> container) 
     m_direction_control = container->add_widget<ValueSlider>(0, 360, 0.1);
     m_direction_control->set_name("Direction");
     m_direction_control->set_unit("[deg]");
+    m_direction_control->slider().set_wraparound(true);
 }
 
 Object GUI::m_create_object_from_params() const {

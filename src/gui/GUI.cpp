@@ -94,7 +94,6 @@ GUI::GUI(World& world, Application& application)
 
         m_create_object_from_params_gui(container);
         
-        auto main_color_container = container->add_widget<Container>();
         main_color_container->set_size({ Length::Auto, 100.0_px });
         auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
         main_color_layout.set_spacing(10);
