@@ -92,14 +92,6 @@ GUI::GUI(World& world, Application& application)
             mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
         }
 
-        m_radius_control = container->add_widget<ValueSlider>(0, 500000);
-        m_radius_control->set_name("Radius");
-        m_radius_control->set_unit("km");
-
-        m_velocity_control = container->add_widget<ValueSlider>(0, 500000);
-        m_velocity_control->set_name("Velocity");
-        m_velocity_control->set_unit("m/s");
-
         m_create_object_from_params_gui(container);
         
         auto main_color_container = container->add_widget<Container>();

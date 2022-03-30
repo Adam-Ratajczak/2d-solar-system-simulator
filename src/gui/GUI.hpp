@@ -38,10 +38,8 @@ private:
     std::shared_ptr<Textbox> m_mass_exponent_textbox;
     std::shared_ptr<ValueSlider> m_radius_control;
     std::shared_ptr<ValueSlider> m_velocity_control;
+    std::shared_ptr<ValueSlider> m_direction_control;
     std::shared_ptr<Textbox> m_name_textbox;
-
-    std::shared_ptr<Slider> m_direction_slider;
-    std::shared_ptr<Textfield> direction_unit_textfield;
 
     std::shared_ptr<Slider> m_color_r_slider;
     std::shared_ptr<Slider> m_color_g_slider;
