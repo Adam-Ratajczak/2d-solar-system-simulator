@@ -15,6 +15,8 @@ public:
 
     double value() const;
 
+    Slider& slider() { return *m_slider; }
+
     std::function<void(double)> on_change;
 
 private:
