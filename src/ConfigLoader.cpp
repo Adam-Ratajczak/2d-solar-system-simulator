@@ -70,6 +70,7 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world)
         std::cout << "Some of the values are invalid, but C++ exceptions doesn't say which." << std::endl;
         return {};
     }
+    return {};
 }
 
 std::optional<std::pair<std::string, std::string>> ConfigLoader::parse_key_value_pair(std::istream& in)
