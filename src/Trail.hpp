@@ -11,7 +11,7 @@ class Trail {
     };
     std::list<TrailEntry> m_trail;
     Vector2 m_prev_offset, m_prev_window_size;
-    double m_prev_zoom;
+    double m_prev_zoom {};
     bool m_reverse_con = true, m_refresh = true;
     size_t m_append_index = 0;
     size_t m_max_trail_size = 0;
