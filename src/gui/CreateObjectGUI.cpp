@@ -51,7 +51,7 @@ void GUI::m_create_object_gui(std::shared_ptr<Container> container) {
 
 std::shared_ptr<Container> GUI::m_create_object_from_params_gui(std::shared_ptr<Container> parent) {
     auto container = std::make_shared<Container>(*parent);
-    container->set_layout<VerticalBoxLayout>();
+    container->set_layout<VerticalBoxLayout>().set_spacing(5);
 
     m_velocity_control = container->add_widget<ValueSlider>(0, 500000);
     m_velocity_control->set_name("Velocity");
@@ -66,7 +66,7 @@ std::shared_ptr<Container> GUI::m_create_object_from_params_gui(std::shared_ptr<
 
 std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<Container> parent) {
     auto container = std::make_shared<Container>(*parent);
-    container->set_layout<VerticalBoxLayout>();
+    container->set_layout<VerticalBoxLayout>().set_spacing(5);
 
     semi_major_axis_container = container->add_widget<Container>();
     auto& semi_major_axis_layout = semi_major_axis_container->set_layout<HorizontalBoxLayout>();
