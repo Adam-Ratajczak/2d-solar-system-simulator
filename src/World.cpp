@@ -35,6 +35,11 @@ void World::update()
 
         for(auto& p : object_list)
         {
+            p.update_forces();
+        }
+
+        for(auto& p : object_list)
+        {
             p.update();
         }
     }

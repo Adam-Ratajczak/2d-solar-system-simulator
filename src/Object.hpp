@@ -23,6 +23,7 @@ protected:
     World& m_world;
     void m_draw_trail();
     Vector2 m_prev_offset;
+    Vector2 m_force;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
 
@@ -38,6 +39,7 @@ public:
     sf::Color m_color;
     double m_radius;
 
+    void update_forces();
     void update();
     Trail& trail(){return m_trail;}
     void draw(SimulationView const&);

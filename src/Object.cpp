@@ -45,11 +45,11 @@ bool Object::hover(SimulationView& view, Vector2 mouse_pos) {
     return dst < 20 / view.scale();
 }
 
-void Object::update() {
+void Object::update_forces() {
     if (m_trail.reverse_path(m_world.reverse, this))
         return;
 
-    Vector2 temp_vel;
+    m_force = Vector2();
     for (auto& object : m_world.object_list) {
         if (this != &object) {
             if (m_world.collisions) {
@@ -85,11 +85,13 @@ void Object::update() {
                     break;
                 }
             }
-            temp_vel -= attraction(object);
+            m_force -= attraction(object);
         }
     }
-    m_vel += temp_vel / this->m_mass * TIMESTAMP;
+}
 
+void Object::update() {
+    m_vel += m_force / this->m_mass * TIMESTAMP;
     m_pos += m_vel * TIMESTAMP;
 
     // if(m_pos != m_trail.back())
