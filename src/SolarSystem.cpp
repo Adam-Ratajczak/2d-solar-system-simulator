@@ -1,14 +1,21 @@
 #include "World.hpp"
 
+#include "ConfigLoader.hpp"
+
+#include <fstream>
+
 void prepare_solar(World& world)
 {
     // Sun
     // FIXME: Add that nice template like Container::add_widget :^)
-    world.add_object(
+    /*world.add_object(
         Object(world, 1.98892e30, 695700 * 1000,
             Vector2(0, 0),
             Vector2(0, 0),
-            sf::Color::Yellow, "Sun", 1000));
+            sf::Color::Yellow, "Sun", 1000));*/
+    std::ifstream config_file("../solar.essa");
+    ConfigLoader loader(config_file);
+    loader.load(world);
 
     auto& sun = world.get_object("Sun");
 
