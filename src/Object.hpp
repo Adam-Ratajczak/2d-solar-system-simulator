@@ -45,7 +45,8 @@ public:
     void draw(SimulationView const&);
     bool hover(SimulationView& view, Vector2 mouse_pos);
     void calculate_propieties();
-    void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name);
+    Object object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation);
+    void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation = 0.0_rad);
 };
 
 inline bool operator==(const Object& a, const Object& b)

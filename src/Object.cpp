@@ -217,7 +217,7 @@ void Object::draw(SimulationView const& view) {
         pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));
         target.draw(pe_vel);
 
-        sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / (3600 * 24 * 365.25)) + " years", GUI::font, 15);
+        sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / 365.25) + " years", GUI::font, 15);
         orbital_period.setFillColor(sf::Color::White);
         bounds = orbital_period.getLocalBounds();
         orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
@@ -226,28 +226,22 @@ void Object::draw(SimulationView const& view) {
         sf::Text orbit_eccencrity("Eccencrity: " + std::to_string(eccencrity), GUI::font, 15);
         orbital_period.setFillColor(sf::Color::White);
         bounds = orbital_period.getLocalBounds();
-        orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
-        target.draw(orbital_period);
+        orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 9));
+        target.draw(orbit_eccencrity);
     }
 }
 
-void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name){
+Object Object::object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation){
     double GM = G * this->m_mass;
     double a = (apogee + perigee) / 2;
     double b = std::sqrt(apogee * perigee);
 
     double T = 2 * M_PI * std::sqrt((a*a*a) / GM);
     Vector2 pos(std::cos(theta.rad()) * a, std::sin(theta.rad()) * b);
+    pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
-
-    double velocity = std::sqrt(GM / ((a + b) / 2));
-    Vector2 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
-    vel += this->m_vel;
-
-    if(direction)
-        vel = -vel;
     
-    Object result(m_world, mass, radius * 1000, pos, vel, color, name, T / (3600 * 24));
+    Object result(m_world, mass, radius * 1000, pos, Vector2(0, 0), color, name, T / (3600 * 24));
     result.m_ap = apogee;
     result.m_pe = perigee;
 
@@ -258,8 +252,21 @@ void Object::add_object_relative_to(double mass, double radius, double apogee, d
 
     result.m_ap_vel = std::sqrt(2 * GM / apogee - velocity_constant);
     result.m_pe_vel = std::sqrt(2 * GM / perigee - velocity_constant);
+    double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
 
-    m_world.object_list.push_back(result);
+    Vector2 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
+
+    if(direction)
+        vel = -vel;
+    
+    vel += this->m_vel;
+    result.m_vel = vel;
+
+    return result;
 }
 
 // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
+
+void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation){
+    m_world.object_list.push_back(object_relative_to(mass, radius, apogee, perigee, direction, theta, color, name, rotation));
+}
