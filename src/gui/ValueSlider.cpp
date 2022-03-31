@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 static std::string serialize_value(double value, double step) {
     std::ostringstream oss;
@@ -43,4 +44,9 @@ ValueSlider::ValueSlider(Container& parent, double min, double max, double step)
 
 double ValueSlider::value() const {
     return m_slider->get_value();
+}
+
+void ValueSlider::set_value(double value){
+    m_slider->set_value(value);
+    m_textbox->set_content(std::to_string(value));
 }

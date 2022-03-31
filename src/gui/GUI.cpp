@@ -126,15 +126,17 @@ GUI::GUI(World& world, Application& application)
             m_toggle_unit_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_toggle_unit_button->on_change = [this](bool state){
                 this->m_units = state;
+                auto vel = this->m_velocity_control->value();
                 if(state){
                     this->m_velocity_control->set_unit("km/h");
+                    this->m_velocity_control->set_value(vel * (1000.f / 60));
                 }else{
                     this->m_velocity_control->set_unit("m/s");
+                    this->m_velocity_control->set_value(vel * (60.f / 1000));
                 }
             };
             m_toggle_unit_button->set_active(false);
             m_toggle_unit_button->set_tooltip_text("Toggle units");
-
 
             m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
             m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size

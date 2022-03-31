@@ -14,6 +14,7 @@ public:
     void set_unit(std::string unit) { m_unit_textfield->set_content(std::move(unit)); }
 
     double value() const;
+    void set_value(double value);
 
     Slider& slider() { return *m_slider; }
 
