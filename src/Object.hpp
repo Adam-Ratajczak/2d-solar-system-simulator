@@ -26,6 +26,7 @@ protected:
     void m_draw_trail();
     Vector2 m_prev_offset;
     float m_prev_zoom;
+    double m_orbit_len, eccencrity;
 
 public:
     // FIXME: Too much arguments!!!
@@ -44,7 +45,7 @@ public:
     void draw(SimulationView const&);
     bool hover(SimulationView& view, Vector2 mouse_pos);
     void calculate_propieties();
-    void add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres);
+    void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name);
 };
 
 inline bool operator==(const Object& a, const Object& b)

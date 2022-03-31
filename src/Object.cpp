@@ -214,16 +214,51 @@ void Object::draw(SimulationView const& view) {
         bounds = pe_vel.getLocalBounds();
         pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));
         target.draw(pe_vel);
+
+        sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / (3600 * 24)) + " days", GUI::font, 15);
+        orbital_period.setFillColor(sf::Color::White);
+        bounds = orbital_period.getLocalBounds();
+        orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
+        target.draw(orbital_period);
+
+        sf::Text orbit_eccencrity("Eccencrity: " + std::to_string(eccencrity), GUI::font, 15);
+        orbital_period.setFillColor(sf::Color::White);
+        bounds = orbital_period.getLocalBounds();
+        orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
+        target.draw(orbital_period);
     }
 }
 
-void Object::add_object(double mass, double radius, double distance, Angle theta, double velocity, sf::Color color, std::string name, unsigned tres) {
-    // FIXME: add_object to... object? maybe add_object_relative_to?
-    Vector2 pos(std::cos(theta.rad()) * distance, std::sin(theta.rad()) * distance);
+void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name){
+    double GM = G * this->m_mass;
+    double a = (apogee + perigee) / 2;
+    double b = std::sqrt(apogee * perigee);
+
+    double T = 2 * M_PI * std::sqrt((a*a*a) / GM);
+    Vector2 pos(std::cos(theta.rad()) * a, std::sin(theta.rad()) * b);
     pos += this->m_pos;
 
-    Vector2 vel(std::cos(theta.rad() - M_PI / 2) * velocity, std::sin(theta.rad() - M_PI / 2) * velocity);
+    double velocity = std::sqrt(GM / ((a + b) / 2));
+    Vector2 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
     vel += this->m_vel;
 
-    m_world.object_list.push_back(Object(m_world, mass, radius, pos, vel, color, name, tres));
+    if(direction)
+        vel = -vel;
+    
+    Object result(m_world, mass, radius * 1000, pos, vel, color, name, 10000);
+    result.m_ap = apogee;
+    result.m_pe = perigee;
+    result.m_orbit_len = T;
+
+    result.eccencrity = std::sqrt(1 - (b*b) / (a*a));
+    // std::cout << result.eccencrity << "\n";
+
+    double velocity_constant = (2 * GM) / (apogee + perigee);
+
+    result.m_ap_vel = std::sqrt(2 * GM / apogee - velocity_constant);
+    result.m_pe_vel = std::sqrt(2 * GM / perigee - velocity_constant);
+
+    m_world.object_list.push_back(result);
 }
+
+// formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
