@@ -42,3 +42,8 @@ sf::Color Button::color_for_state() const {
         base_color += sf::Color { 50, 50, 50 };
     return base_color;
 }
+
+LengthVector Button::initial_size() const {
+    // TODO: Stop special-casing!
+    return { 72.0_px, 72.0_px };
+}

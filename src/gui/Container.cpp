@@ -124,11 +124,19 @@ void BasicLayout::run() {
     }
 }
 
-void Container::relayout_and_draw(sf::RenderWindow& window) {
-    Widget::relayout_and_draw(window);
+void Container::do_relayout() {
+    Widget::do_relayout();
     for (auto const& w : m_widgets) {
         if (w->is_visible())
-            w->relayout_and_draw(window);
+            w->do_relayout();
+    }
+}
+
+void Container::do_draw(sf::RenderWindow& window) const {
+    Widget::do_draw(window);
+    for (auto const& w : m_widgets) {
+        if (w->is_visible())
+            w->do_draw(window);
     }
 }
 
@@ -154,6 +162,14 @@ void Container::do_update() {
 }
 
 void Container::relayout() {
+    //std::cout << "TEST " << typeid(*this).name() << std::endl;
+
+    for (auto& w : m_widgets) {
+        if (w->m_input_size == LengthVector{}) {
+            w->m_input_size = w->initial_size();
+            //std::cout << this << " " << typeid(*this).name() << " set initial size" << std::endl;
+        }
+    }
     if (!m_layout)
         return;
     m_layout->run();

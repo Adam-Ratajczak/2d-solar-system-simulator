@@ -14,34 +14,28 @@ int main() {
 
     window.setFramerateLimit(60);
 
-    Application application { window };
-
     World world;
-    GUI gui { world, application };
+
+    Application application { window };
+    GUI& gui = application.set_main_widget<GUI>(world);
 
     prepare_solar(world);
 
     sf::Clock fps_clock;
     while (window.isOpen()) {
-        sf::Event event;
-
-        while (window.pollEvent(event)) {
-            Event gui_event(event);
-            gui.do_handle_event(gui_event);
-        }
+        application.handle_events();
 
         world.update();
+        // FIXME: This should be done by Application.
         gui.do_update();
 
-        // FIXME: View should be set by GUI.
+        // FIXME: View should be set by Application.
         window.setView(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
         window.clear();
 
-        gui.relayout_and_draw(window);
-        // FIXME: GUI object should be part of Application.
         // FIXME: FPS should be part of GUI, not World!
         world.set_fps(1.f / fps_clock.restart().asSeconds());
-        application.draw(window);
+        application.draw();
 
         window.display();
     }

@@ -18,7 +18,7 @@
 
 class GUI : public Container {
 public:
-    explicit GUI(World& world, Application& application);
+    explicit GUI(Application& application, World& world);
     static sf::Font font;
 
     virtual void handle_event(Event&) override;

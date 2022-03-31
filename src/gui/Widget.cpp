@@ -98,9 +98,7 @@ void Widget::draw(sf::RenderWindow& window) const {
     */
 }
 
-void Widget::relayout_and_draw(sf::RenderWindow& window) {
-    relayout_if_needed();
-
+void Widget::do_draw(sf::RenderWindow& window) const {
     sf::View clip_view { sf::FloatRect { {}, size() } };
     auto window_size = window.getSize();
     clip_view.setViewport(sf::FloatRect {
@@ -112,13 +110,14 @@ void Widget::relayout_and_draw(sf::RenderWindow& window) {
     Widget::draw(window);
 }
 
-void Widget::relayout_if_needed() {
-    if (!m_needs_relayout)
-        return;
-    // std::cout << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
+void Widget::do_relayout() {
     if (this->m_visible)
         this->relayout();
-    m_needs_relayout = false;
+    //std::cout << "do_relayout "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
+}
+
+void Widget::set_needs_relayout() {
+    m_application.set_needs_relayout();
 }
 
 sf::RenderWindow& Widget::window() const {

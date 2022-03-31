@@ -29,7 +29,7 @@ static sf::Image load_image(std::string path) {
 }
 bool m_simulate = false;
 
-GUI::GUI(World& world, Application& application)
+GUI::GUI(Application& application, World& world)
     : Container(application)
     , m_world(world) {
     font.loadFromFile("../assets/Pulang.ttf");
@@ -112,7 +112,6 @@ GUI::GUI(World& world, Application& application)
         submit_layout.set_spacing(10);
         {
             m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
-            m_coords_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_coords_button->on_click = [this]() {
                 if (m_automatic_orbit_calculation)
                     m_simulation_view->start_focus_measure();
@@ -122,7 +121,6 @@ GUI::GUI(World& world, Application& application)
             m_coords_button->set_tooltip_text("Set position");
 
             m_toggle_unit_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
-            m_toggle_unit_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_toggle_unit_button->on_change = [this](bool state){
                 this->m_units = state;
                 auto vel = this->m_velocity_control->value();
@@ -138,12 +136,10 @@ GUI::GUI(World& world, Application& application)
             m_toggle_unit_button->set_tooltip_text("Toggle units");
 
             m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
-            m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
             m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
             m_creative_mode_button->set_active(false);
 
             m_toggle_orbit_direction_button = submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
-            m_toggle_orbit_direction_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
             m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
             m_toggle_orbit_direction_button->on_change = [](bool state) {
             };
@@ -164,7 +160,6 @@ GUI::GUI(World& world, Application& application)
             submit_container->add_widget<Widget>(); // spacer
 
             m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
-            m_add_object_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
             m_add_object_button->on_click = [&world, this]() {
                 // FIXME: This (object_list) should be probably private.
                 world.object_list.push_back(*m_create_object_from_params());
@@ -176,14 +171,10 @@ GUI::GUI(World& world, Application& application)
 
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
-    m_create_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
     m_create_button->on_change = [container = container.get(),
                                      m_creative_mode_button = m_creative_mode_button.get(),
                                      this](bool state) {
         container->set_visible(state);
-
-        relayout_and_draw(window());
-        dump(0);
 
         if (m_simulate)
             m_simulate = state;
@@ -193,7 +184,6 @@ GUI::GUI(World& world, Application& application)
 
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
-    m_home_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
     m_home_button->on_click = [this]() {
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
         m_simulation_view->set_zoom(1);

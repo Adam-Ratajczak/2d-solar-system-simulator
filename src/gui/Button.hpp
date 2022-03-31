@@ -24,5 +24,6 @@ protected:
     }
 
 private:
+    virtual LengthVector initial_size() const override;
     virtual sf::Color color_for_state() const;
 };

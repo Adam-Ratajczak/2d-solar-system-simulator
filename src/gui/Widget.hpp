@@ -13,6 +13,11 @@ struct LengthVector {
     Length y;
 };
 
+constexpr bool operator==(LengthVector const& a, LengthVector const& b)
+{
+    return a.x == b.x && a.y == b.y;
+}
+
 class Event {
 public:
     Event(sf::Event const& event)
@@ -69,8 +74,8 @@ public:
     LengthVector input_size() const { return m_input_size; }
 
     // FIXME: These should be private somehow.
-    void relayout_if_needed();
-    virtual void relayout_and_draw(sf::RenderWindow&);
+    virtual void do_relayout();
+    virtual void do_draw(sf::RenderWindow&) const;
 
     void set_visible(bool visible) {
         m_visible = visible;
@@ -102,10 +107,12 @@ protected:
     virtual void update();
     virtual void handle_event(Event&);
 
-    void set_needs_relayout() { m_needs_relayout = true; }
+    void set_needs_relayout();
 
 private:
     friend Container;
+
+    virtual LengthVector initial_size() const { return LengthVector{}; }
 
     Container* m_parent = nullptr;
     Application& m_application;
@@ -115,7 +122,6 @@ private:
     int m_tooltip_counter = -1;
     std::string m_tooltip_text;
     bool m_hover = false;
-    bool m_needs_relayout = true;
     bool m_visible = true;
     bool m_enabled = true;
 };
