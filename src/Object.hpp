@@ -14,8 +14,6 @@ class Object
 {
 protected:
     double m_density;
-    // FIXME: What is m_tres?
-    unsigned m_tres;
     Trail m_trail;
     Vector2 attraction(const Object&);
 
@@ -31,7 +29,7 @@ protected:
 public:
     // FIXME: Too much arguments!!!
     // FIXME: what is "tres"?
-    Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres);
+    Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned period);
     Vector2 m_pos;
     Vector2 m_vel;
     std::string m_name;

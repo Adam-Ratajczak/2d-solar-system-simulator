@@ -15,9 +15,9 @@
 #include <string>
 #include <utility>
 
-Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned tres)
+Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
-    , m_trail(tres) {
+    , m_trail(period) {
     m_mass = mass;
     m_radius = radius;
     m_pos = pos;
@@ -25,7 +25,7 @@ Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 ve
     m_color = color;
     m_name = name;
     m_density = m_mass / (M_PI * radius * radius);
-    m_tres = tres;
+    m_orbit_len = period;
 
     m_trail.push_back(m_pos, m_vel);
     world.object_count++;
@@ -95,7 +95,7 @@ void Object::update() {
     // if(m_pos != m_trail.back())
     m_trail.push_back(m_pos, m_vel);
 
-    if (m_trail.size() > m_tres)
+    if (m_trail.size() > m_orbit_len)
         m_trail.pop_front();
     m_trail.update_trail(*m_world.m_simulation_view, m_color);
 
@@ -215,7 +215,7 @@ void Object::draw(SimulationView const& view) {
         pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));
         target.draw(pe_vel);
 
-        sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / (3600 * 24)) + " days", GUI::font, 15);
+        sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / (3600 * 24 * 365.25)) + " years", GUI::font, 15);
         orbital_period.setFillColor(sf::Color::White);
         bounds = orbital_period.getLocalBounds();
         orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
@@ -245,10 +245,9 @@ void Object::add_object_relative_to(double mass, double radius, double apogee, d
     if(direction)
         vel = -vel;
     
-    Object result(m_world, mass, radius * 1000, pos, vel, color, name, 10000);
+    Object result(m_world, mass, radius * 1000, pos, vel, color, name, T / (3600 * 24));
     result.m_ap = apogee;
     result.m_pe = perigee;
-    result.m_orbit_len = T;
 
     result.eccencrity = std::sqrt(1 - (b*b) / (a*a));
     // std::cout << result.eccencrity << "\n";
