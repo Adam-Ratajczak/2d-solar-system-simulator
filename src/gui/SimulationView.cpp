@@ -122,14 +122,14 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     sf::VertexArray lines(sf::Lines);
     int index = 0;
     for (float x = start_coords.x; x < end_coords.x; x += spacing) {
-        auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
+        auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
         lines.append(sf::Vertex { { static_cast<float>(world_to_screen({ x, 0 }).x), 0 }, color });
         lines.append(sf::Vertex { { static_cast<float>(world_to_screen({ x, 0 }).x), size().y }, color });
         index++;
     }
     index = 0;
     for (float y = start_coords.y; y < end_coords.y; y += spacing) {
-        auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
+        auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
         lines.append(sf::Vertex { { 0, static_cast<float>(world_to_screen({ 0, y }).y) }, color });
         lines.append(sf::Vertex { { size().x, static_cast<float>(world_to_screen({ 0, y }).y) }, color });
         index++;
