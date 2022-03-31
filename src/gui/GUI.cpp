@@ -65,15 +65,15 @@ GUI::GUI(Application& application, World& world)
         mode_specific_options_container->set_size({ Length::Auto, 100.0_px });
         mode_specific_options_container->set_layout<BasicLayout>();
 
-        auto params_gui = m_create_object_from_params_gui(mode_specific_options_container);
-        params_gui->set_size({{100, Length::Percent}, {100, Length::Percent}});
-        params_gui->set_visible(true);
-        mode_specific_options_container->add_created_widget(params_gui);
+        m_create_object_from_params_container = m_create_object_from_params_gui(mode_specific_options_container);
+        m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+        m_create_object_from_params_container->set_visible(true);
+        mode_specific_options_container->add_created_widget(m_create_object_from_params_container);
 
-        auto orbit_gui = m_create_object_from_orbit_gui(mode_specific_options_container);
-        orbit_gui->set_size({{100, Length::Percent}, {100, Length::Percent}});
-        orbit_gui->set_visible(false);
-        mode_specific_options_container->add_created_widget(orbit_gui);
+        m_create_object_from_orbit_container = m_create_object_from_orbit_gui(mode_specific_options_container);
+        m_create_object_from_orbit_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+        m_create_object_from_orbit_container->set_visible(false);
+        mode_specific_options_container->add_created_widget(m_create_object_from_orbit_container);
 
         auto main_color_container = container->add_widget<Container>();
         main_color_container->set_size({ Length::Auto, 150.0_px });
@@ -106,12 +106,12 @@ GUI::GUI(Application& application, World& world)
             m_name_textbox->set_data_type(Textbox::TEXT);
             m_name_textbox->set_content("Planet");
         }
-        auto submit_container = container->add_widget<Container>();
-        submit_container->set_size({ Length::Auto, 72.0_px });
-        auto& submit_layout = submit_container->set_layout<HorizontalBoxLayout>();
+        m_submit_container = container->add_widget<Container>();
+        m_submit_container->set_size({ Length::Auto, 72.0_px });
+        auto& submit_layout = m_submit_container->set_layout<HorizontalBoxLayout>();
         submit_layout.set_spacing(10);
         {
-            m_coords_button = submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
+            m_coords_button = m_submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
             m_coords_button->on_click = [this]() {
                 if (m_automatic_orbit_calculation)
                     m_simulation_view->start_focus_measure();
@@ -120,14 +120,15 @@ GUI::GUI(Application& application, World& world)
             };
             m_coords_button->set_tooltip_text("Set position");
 
-            m_toggle_unit_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
-            m_toggle_unit_button->on_change = [this](bool state){
+            m_toggle_unit_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
+            m_toggle_unit_button->on_change = [this](bool state) {
                 this->m_units = state;
                 auto vel = this->m_velocity_control->value();
-                if(state){
+                if (state) {
                     this->m_velocity_control->set_unit("km/h");
                     this->m_velocity_control->set_value(vel * 3.6);
-                }else{
+                }
+                else {
                     this->m_velocity_control->set_unit("m/s");
                     this->m_velocity_control->set_value(vel * (1.f / 3.6));
                 }
@@ -135,31 +136,31 @@ GUI::GUI(Application& application, World& world)
             m_toggle_unit_button->set_active(false);
             m_toggle_unit_button->set_tooltip_text("Toggle units");
 
-            m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
+            m_creative_mode_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
             m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
             m_creative_mode_button->set_active(false);
 
-            m_toggle_orbit_direction_button = submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
+            m_toggle_orbit_direction_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
             m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
             m_toggle_orbit_direction_button->on_change = [](bool state) {
             };
-                
-            m_creative_mode_button->on_change = [params_gui, orbit_gui, submit_container, this](bool state) {
-                params_gui->set_visible(!state);
-                orbit_gui->set_visible(state);
+
+            m_creative_mode_button->on_change = [this](bool state) {
+                m_create_object_from_params_container->set_visible(!state);
+                m_create_object_from_orbit_container->set_visible(state);
                 m_toggle_orbit_direction_button->set_visible(state);
                 // FIXME: (HACK) We need to invalidate layout of direct parent of
                 //        the widget and this is the only way. We should make
                 //        relayout requests propagate properly.
-                submit_container->set_visible(true);
+                m_submit_container->set_visible(true);
                 m_automatic_orbit_calculation = state;
             };
             m_toggle_orbit_direction_button->set_active(false);
             m_toggle_orbit_direction_button->set_visible(false);
 
-            submit_container->add_widget<Widget>(); // spacer
+            m_submit_container->add_widget<Widget>(); // spacer
 
-            m_add_object_button = submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
+            m_add_object_button = m_submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
             m_add_object_button->on_click = [&world, this]() {
                 // FIXME: This (object_list) should be probably private.
                 world.object_list.push_back(*m_create_object_from_params());
@@ -206,8 +207,11 @@ void GUI::draw(sf::RenderWindow& window) const {
         auto m_planet_to_create = m_create_object_from_params();
 
         if (m_last_object.get() == nullptr || *m_planet_to_create != *m_last_object) {
-            for (unsigned i = 0; i < 1000; i++)
+            for (unsigned i = 0; i < 1000; i++) {
+                // NOTE: We don't apply other planet's movement for now.
+                m_planet_to_create->update_forces();
                 m_planet_to_create->update();
+            }
             m_planet_to_create->m_pos = m_new_object_pos;
             m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
 

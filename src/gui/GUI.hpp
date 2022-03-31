@@ -53,9 +53,13 @@ private:
     std::shared_ptr<Container> semi_major_axis_container;
     std::shared_ptr<Container> semi_minor_axis_container;
 
+    std::shared_ptr<Container> m_create_object_from_params_container;
+    std::shared_ptr<Container> m_create_object_from_orbit_container;
+
+    std::shared_ptr<Container> m_submit_container;
+
     std::shared_ptr<SimulationView> m_simulation_view;
     mutable std::unique_ptr<Object> m_last_object;
-
     sf::Vector2f m_new_object_pos;
     Object* m_focused = nullptr;
     bool m_automatic_orbit_calculation = false, m_units = false;
