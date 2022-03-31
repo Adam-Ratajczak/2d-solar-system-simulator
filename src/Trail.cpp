@@ -45,7 +45,6 @@ void Trail::draw(SimulationView const& view, sf::Color m_color) {
         size_t index = 0;
 
         // FIXME: VERY HACKY FIX THIS ASAP
-        m_append_index = 0;
         m_trail_vertexbuffer.clear();
         m_trail_vertexbuffer.resize(m_max_trail_size * 2);
         for (auto it = m_trail.begin(); it != --m_trail.end();) {
@@ -55,6 +54,7 @@ void Trail::draw(SimulationView const& view, sf::Color m_color) {
             m_trail_vertexbuffer[index++] = sf::Vertex(view.world_to_screen(previous_it->pos), color);
             m_trail_vertexbuffer[index++] = sf::Vertex(view.world_to_screen(it->pos), color);
         }
+        m_append_index = index;
     }
 
     target.draw(m_trail_vertexbuffer);
