@@ -175,7 +175,7 @@ void Object::draw(SimulationView const& view) {
         radius.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 1));
         target.draw(radius);
 
-        sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " km / s", GUI::font, 15);
+        sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " m / s", GUI::font, 15);
         vel.setFillColor(sf::Color::White);
         bounds = vel.getLocalBounds();
         vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 2));
@@ -197,7 +197,7 @@ void Object::draw(SimulationView const& view) {
         ap.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 4));
         target.draw(ap);
 
-        sf::Text ap_vel("Velocity at apogee: " + std::to_string((int)m_ap_vel) + " km / s", GUI::font, 15);
+        sf::Text ap_vel("Velocity at apogee: " + std::to_string((int)m_ap_vel) + " m / s", GUI::font, 15);
         ap_vel.setFillColor(sf::Color::White);
         bounds = ap_vel.getLocalBounds();
         ap_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 5));
@@ -209,7 +209,7 @@ void Object::draw(SimulationView const& view) {
         pe.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 6));
         target.draw(pe);
 
-        sf::Text pe_vel("Velocity at perigee: " + std::to_string((int)m_pe_vel) + " km / s", GUI::font, 15);
+        sf::Text pe_vel("Velocity at perigee: " + std::to_string((int)m_pe_vel) + " m / s", GUI::font, 15);
         pe_vel.setFillColor(sf::Color::White);
         bounds = pe_vel.getLocalBounds();
         pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));

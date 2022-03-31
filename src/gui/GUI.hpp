@@ -31,6 +31,7 @@ private:
     std::shared_ptr<ToggleButton> m_create_button;
     std::shared_ptr<ToggleButton> m_creative_mode_button;
     std::shared_ptr<ToggleButton> m_toggle_orbit_direction_button;
+    std::shared_ptr<ToggleButton> m_toggle_unit_button;
     
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;
@@ -57,7 +58,7 @@ private:
 
     sf::Vector2f m_new_object_pos;
     Object* m_focused = nullptr;
-    bool m_automatic_orbit_calculation = false;
+    bool m_automatic_orbit_calculation = false, m_units = false;
 
     std::shared_ptr<Container> m_create_object_from_params_gui(std::shared_ptr<Container> parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);

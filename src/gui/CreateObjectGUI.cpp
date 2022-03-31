@@ -127,7 +127,7 @@ std::unique_ptr<Object> GUI::m_create_object_from_params() const {
     double radius = m_radius_control->value() * 1000;
 
     double theta = m_direction_control->value() / 360 * 2 * M_PI;
-    double velocity = m_velocity_control->value();
+    double velocity = m_velocity_control->value() * (1000.f / 60) * m_units;
     Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
     sf::Color color = m_color_control->value();

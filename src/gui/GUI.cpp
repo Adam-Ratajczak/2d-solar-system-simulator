@@ -121,6 +121,21 @@ GUI::GUI(World& world, Application& application)
             };
             m_coords_button->set_tooltip_text("Set position");
 
+            m_toggle_unit_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
+            m_toggle_unit_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
+            m_toggle_unit_button->set_size({ 72.0_px, Length::Auto }); // TODO: Preferred size
+            m_toggle_unit_button->on_change = [this](bool state){
+                this->m_units = state;
+                if(state){
+                    this->m_velocity_control->set_unit("km/h");
+                }else{
+                    this->m_velocity_control->set_unit("m/s");
+                }
+            };
+            m_toggle_unit_button->set_active(false);
+            m_toggle_unit_button->set_tooltip_text("Toggle units");
+
+
             m_creative_mode_button = submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
             m_creative_mode_button->set_size({ 72.0_px, 72.0_px }); // TODO: Preferred size
             m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
