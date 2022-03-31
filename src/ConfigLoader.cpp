@@ -26,8 +26,8 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world)
     std::istringstream line_stream(line);
 
     std::string keyword;
-    if(!(line_stream >> keyword) || keyword != "planet") {
-        std::cout << "Expected 'planet'" << std::endl;
+    if(!(line_stream >> keyword)) {
+        std::cout << "Expected keyword ('planet')" << std::endl;
         return {};
     }
 
@@ -50,16 +50,20 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world)
     // FIXME: It would be better with TRY().
     try
     {
-        // FIXME: This has no overflow checking etc...
-        return std::make_unique<Object>(world,
-            read_double_property("mass", 1),
-            read_double_property("radius", 1000),
-            Vector2{ read_double_property("posx"), read_double_property("posy") },
-            Vector2{ read_double_property("velx"), read_double_property("vely") },
-            sf::Color{ (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
-            properties["name"],
-            read_double_property("trail_length", 1000)
-        );
+        if(keyword == "planet") {
+            // FIXME: This has no overflow checking etc...
+            return std::make_unique<Object>(world,
+                read_double_property("mass", 1),
+                read_double_property("radius", 1000),
+                Vector2{ read_double_property("posx"), read_double_property("posy") },
+                Vector2{ read_double_property("velx"), read_double_property("vely") },
+                sf::Color{ (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
+                properties["name"],
+                read_double_property("trail_length", 1000)
+            );
+        } else {
+            std::cout << "Invalid keyword: " << keyword << ". Must be 'planet'" << std::endl;
+        }
     }
     catch(...)
     {
