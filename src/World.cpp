@@ -13,54 +13,43 @@
 #include <sstream>
 
 World::World()
-: date(1990.3) {}
+    : date(1990.3) { }
 
-void World::add_object(const Object& object)
-{
-    object_list.push_back(object);
+void World::add_object(std::unique_ptr<Object> object) {
+    if (!m_most_massive_object || m_most_massive_object->m_mass < object->m_mass)
+        m_most_massive_object = object.get();
 
-    if(most_massive_object == nullptr || most_massive_object->m_mass < object_list.back().m_mass)
-        most_massive_object = &object_list.back();
-    // std::cout << most_massive_object->m_name << "\n";
+    m_object_list.push_back(std::move(object));
 }
 
-void World::update()
-{
-    for(unsigned i = 0; i < speed; i++)
-    {
-        if(!reverse)
+void World::update() {
+    for (unsigned i = 0; i < speed; i++) {
+        if (!reverse)
             date.day_count++;
         else
             date.day_count--;
 
-        for(auto& p : object_list)
-        {
-            p.update_forces();
-        }
+        for (auto& p : m_object_list)
+            p->update_forces();
 
-        for(auto& p : object_list)
-        {
-            p.update();
-        }
+        for (auto& p : m_object_list)
+            p->update();
     }
 }
 
-void World::draw(SimulationView const& view)
-{
-    for(auto& p : object_list)
-    {
-        p.draw(view);
-    }
+void World::draw(SimulationView const& view) {
+    for (auto& p : m_object_list)
+        p->draw(view);
 
     // std::cout << date.to_string() << "\n";
     std::ostringstream oss;
     oss << date.to_string();
-    if(speed == 0)
+    if (speed == 0)
         oss << " (Paused";
     else
         oss << " (" << speed << "x";
 
-    if(reverse)
+    if (reverse)
         oss << ", Reversed";
     oss << ")";
 
@@ -75,12 +64,10 @@ void World::draw(SimulationView const& view)
     view.window().draw(date_text);
 }
 
-Object& World::get_object(const std::string name)
-{
-    for(auto& object : object_list)
-    {
-        if(object.m_name == name)
-            return object;
+Object* World::get_object_by_name(std::string const& name) {
+    for (auto& obj : m_object_list) {
+        if (obj->m_name == name)
+            return obj.get();
     }
-    return object_list.back();
+    return nullptr;
 }

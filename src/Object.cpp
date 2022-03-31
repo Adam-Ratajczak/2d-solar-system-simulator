@@ -28,7 +28,6 @@ Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 ve
     m_orbit_len = period;
 
     m_trail.push_back(m_pos, m_vel);
-    world.object_count++;
 }
 
 Vector2 Object::attraction(const Object& other) {
@@ -50,9 +49,10 @@ void Object::update_forces() {
         return;
 
     m_force = Vector2();
-    for (auto& object : m_world.object_list) {
+    m_world.for_each_object([&](Object& object) {
         if (this != &object) {
             if (m_world.collisions) {
+                // TODO: This should be in separate function
                 double distance = get_distance(this->m_pos, object.m_pos);
 
                 if (distance < this->m_radius + object.m_radius) {
@@ -81,13 +81,12 @@ void Object::update_forces() {
                     double new_area = this->m_mass / this->m_density + M_PI * this->m_radius * this->m_radius / this->m_density;
                     this->m_radius = std::sqrt(new_area / M_PI);
 
-                    m_world.object_list.remove(object);
-                    break;
+                    // TODO: Remove object
                 }
             }
             m_force -= attraction(object);
         }
-    }
+    });
 }
 
 void Object::update() {
@@ -101,6 +100,20 @@ void Object::update() {
         m_trail.pop_front();
     m_trail.update_trail(*m_world.m_simulation_view, m_color);
 
+    auto most_massive_object = m_world.most_massive_object();
+    if (most_massive_object == this)
+        return;
+
+    double distance_from_object = get_distance(this->m_pos, most_massive_object->m_pos);
+    if (m_ap < distance_from_object) {
+        m_ap = distance_from_object;
+        m_ap_vel = m_vel.magnitude();
+    }
+
+    if (m_pe > distance_from_object) {
+        m_pe = distance_from_object;
+        m_pe_vel = m_vel.magnitude();
+    }
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
 
@@ -126,17 +139,6 @@ void Object::draw(SimulationView const& view) {
     label.setOrigin(bounds.width / 2, bounds.height / 2);
 
     target.draw(label);
-    double distance_from_object = get_distance(this->m_pos, m_world.most_massive_object->m_pos);
-
-    if (m_ap < distance_from_object) {
-        m_ap = distance_from_object;
-        m_ap_vel = m_vel.magnitude();
-    }
-
-    if (m_pe > distance_from_object) {
-        m_pe = distance_from_object;
-        m_pe_vel = m_vel.magnitude();
-    }
 
     // pos = view.screen_to_world(sf::Mouse::getPosition());
     // double av = (m_ap + m_pe / 2), d = get_distance(pos, World::most_massive_object->m_pos);
@@ -183,11 +185,13 @@ void Object::draw(SimulationView const& view) {
         vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 2));
         target.draw(vel);
 
-        if (this == m_world.most_massive_object)
+        auto most_massive_object = m_world.most_massive_object();
+
+        if (this == most_massive_object)
             return;
 
-        sf::Text dist("Distance from the " + m_world.most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
-        ;
+        double distance_from_object = get_distance(this->m_pos, most_massive_object->m_pos);
+        sf::Text dist("Distance from the " + most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
         dist.setFillColor(sf::Color::White);
         bounds = dist.getLocalBounds();
         dist.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 3));
@@ -231,42 +235,41 @@ void Object::draw(SimulationView const& view) {
     }
 }
 
-Object Object::object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation){
+std::unique_ptr<Object> Object::create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation) {
+    // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     double GM = G * this->m_mass;
     double a = (apogee + perigee) / 2;
     double b = std::sqrt(apogee * perigee);
 
-    double T = 2 * M_PI * std::sqrt((a*a*a) / GM);
+    double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     Vector2 pos(std::cos(theta.rad()) * a, std::sin(theta.rad()) * b);
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
-    
-    Object result(m_world, mass, radius * 1000, pos, Vector2(0, 0), color, name, T / (3600 * 24));
-    result.m_ap = apogee;
-    result.m_pe = perigee;
 
-    result.eccencrity = std::sqrt(1 - (b*b) / (a*a));
+    auto result = std::make_unique<Object>(m_world, mass, radius * 1000, pos, Vector2(0, 0), color, name, T / (3600 * 24));
+    result->m_ap = apogee;
+    result->m_pe = perigee;
+
+    result->eccencrity = std::sqrt(1 - (b * b) / (a * a));
     // std::cout << result.eccencrity << "\n";
 
     double velocity_constant = (2 * GM) / (apogee + perigee);
 
-    result.m_ap_vel = std::sqrt(2 * GM / apogee - velocity_constant);
-    result.m_pe_vel = std::sqrt(2 * GM / perigee - velocity_constant);
+    result->m_ap_vel = std::sqrt(2 * GM / apogee - velocity_constant);
+    result->m_pe_vel = std::sqrt(2 * GM / perigee - velocity_constant);
     double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
 
     Vector2 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
 
-    if(direction)
+    if (direction)
         vel = -vel;
-    
+
     vel += this->m_vel;
-    result.m_vel = vel;
+    result->m_vel = vel;
 
     return result;
 }
 
-// formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
-
-void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation){
-    m_world.object_list.push_back(object_relative_to(mass, radius, apogee, perigee, direction, theta, color, name, rotation));
+void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation) {
+    m_world.add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, color, name, rotation));
 }

@@ -163,7 +163,7 @@ GUI::GUI(Application& application, World& world)
             m_add_object_button = m_submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
             m_add_object_button->on_click = [&world, this]() {
                 // FIXME: This (object_list) should be probably private.
-                world.object_list.push_back(*m_create_object_from_params());
+                world.add_object(m_create_object_from_params());
                 m_simulation_view->m_measured = false;
             };
             m_add_object_button->set_tooltip_text("Add object");

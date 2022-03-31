@@ -13,7 +13,7 @@ void ConfigLoader::load(World& world)
         if(!planet)
             break;
         // FIXME: World should store pointers to Objects.
-        world.add_object(*planet);
+        world.add_object(std::move(planet));
     }
 }
 

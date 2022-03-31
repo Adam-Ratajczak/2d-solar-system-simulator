@@ -31,6 +31,12 @@ public:
     // FIXME: Too much arguments!!!
     // FIXME: what is "tres"?
     Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned period);
+
+    Object(Object const& other) = delete;
+    Object& operator=(Object const& other) = delete;
+    Object(Object&& other) = delete;
+    Object& operator=(Object&& other) = delete;
+
     Vector2 m_pos;
     Vector2 m_vel;
     std::string m_name;
@@ -45,7 +51,7 @@ public:
     void draw(SimulationView const&);
     bool hover(SimulationView& view, Vector2 mouse_pos);
     void calculate_propieties();
-    Object object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation);
+    std::unique_ptr<Object> create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation = 0.0_rad);
 };
 

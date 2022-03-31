@@ -137,5 +137,5 @@ std::unique_ptr<Object> GUI::m_create_object_from_params() const {
 
     std::string name = m_name_textbox->get_content();
 
-    return std::make_unique<Object>((Object(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000)));
+    return std::make_unique<Object>(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000);
 }

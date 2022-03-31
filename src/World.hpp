@@ -16,12 +16,9 @@ class World {
 public:
     World();
 
-    Object* most_massive_object = nullptr;
     Date date;
-    unsigned object_count = 0;
     bool collisions = false;
     bool reverse = false;
-    std::list<Object> object_list;
     SimulationView* m_simulation_view {};
 
     // FIXME: Make it a signed float and private.
@@ -29,13 +26,15 @@ public:
 
     void update();
     void draw(SimulationView const& view);
-    void add_object(const Object& object);
-    Object& get_object(const std::string name);
+    void add_object(std::unique_ptr<Object>);
+    Object* get_object_by_name(std::string const& name);
+
+    Object* most_massive_object() { return m_most_massive_object; }
 
     template<class C>
     void for_each_object(C callback) {
-        for (auto& it : object_list)
-            callback(it);
+        for (auto& it : m_object_list)
+            callback(*it);
     }
 
     // FIXME: This should be in GUI.
@@ -43,6 +42,9 @@ public:
 
 private:
     float m_fps = 60;
+
+    Object* m_most_massive_object = nullptr;
+    std::list<std::unique_ptr<Object>> m_object_list;
 };
 
 void prepare_solar(World& world);
