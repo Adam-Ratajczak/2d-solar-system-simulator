@@ -40,7 +40,7 @@ void World::update(int steps) {
     }
 }
 
-void World::draw(SimulationView const& view) {
+void World::draw(SimulationView const& view) const {
     for (auto& p : m_object_list)
         p->draw(view);
 }
@@ -51,4 +51,11 @@ Object* World::get_object_by_name(std::string const& name) {
             return obj.get();
     }
     return nullptr;
+}
+
+void World::clone_for_forward_simulation(World& new_world) const {
+    new_world = World();
+    new_world.m_simulation_view = m_simulation_view;
+    for (auto& object : m_object_list)
+        new_world.add_object(object->clone_for_forward_simulation(new_world));
 }

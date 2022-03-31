@@ -7,6 +7,9 @@ void GUI::m_create_object_gui(std::shared_ptr<Container> container) {
     m_radius_control = container->add_widget<ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
+    m_radius_control->on_change = [this](auto) {
+        m_forward_simulation_is_valid = false;
+    };
 
     auto mass_container = container->add_widget<Container>();
     {
@@ -24,6 +27,9 @@ void GUI::m_create_object_gui(std::shared_ptr<Container> container) {
         m_mass_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
         m_mass_textbox->set_limit(6);
         m_mass_textbox->set_content("1.0");
+        m_mass_textbox->on_change = [this](auto) {
+            m_forward_simulation_is_valid = false;
+        };
 
         auto mass_value_container = mass_container->add_widget<Container>();
         mass_value_container->set_layout<HorizontalBoxLayout>();
@@ -38,6 +44,9 @@ void GUI::m_create_object_gui(std::shared_ptr<Container> container) {
             m_mass_exponent_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
             m_mass_exponent_textbox->set_limit(2);
             m_mass_exponent_textbox->set_content("1");
+            m_mass_exponent_textbox->on_change = [this](auto) {
+                m_forward_simulation_is_valid = false;
+            };
 
             auto mass_unit_textfield = mass_value_container->add_widget<Textfield>();
             mass_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
@@ -56,11 +65,17 @@ std::shared_ptr<Container> GUI::m_create_object_from_params_gui(std::shared_ptr<
     m_velocity_control = container->add_widget<ValueSlider>(0, 500000);
     m_velocity_control->set_name("Velocity");
     m_velocity_control->set_unit("m/s");
+    m_velocity_control->on_change = [this](double) {
+        m_forward_simulation_is_valid = false;
+    };
 
     m_direction_control = container->add_widget<ValueSlider>(0, 360, 0.1);
     m_direction_control->set_name("Direction");
     m_direction_control->set_unit("[deg]");
     m_direction_control->slider().set_wraparound(true);
+    m_direction_control->on_change = [this](double) {
+        m_forward_simulation_is_valid = false;
+    };
     return container;
 }
 
@@ -68,6 +83,8 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
     auto container = std::make_shared<Container>(*parent);
     container->set_layout<VerticalBoxLayout>().set_spacing(5);
 
+    // FIXME: This should use ValueSlider.
+    // FIXME: Add on_change callback to invalidate forward simulation.
     semi_major_axis_container = container->add_widget<Container>();
     auto& semi_major_axis_layout = semi_major_axis_container->set_layout<HorizontalBoxLayout>();
     semi_major_axis_layout.set_spacing(10);
@@ -128,7 +145,7 @@ std::unique_ptr<Object> GUI::m_create_object_from_params() const {
 
     double theta = m_direction_control->value() / 360 * 2 * M_PI;
     double velocity = m_velocity_control->value();
-    if(m_units)
+    if (m_units)
         velocity /= 3.6;
     Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 

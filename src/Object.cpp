@@ -133,7 +133,7 @@ void Object::draw(SimulationView const& view) {
     auto pos = object_circle.getPosition();
 
     sf::Text label(m_name, GUI::font, 15);
-    label.setFillColor(sf::Color::White);
+    label.setFillColor(m_is_forward_simulated ? sf::Color::Red : sf::Color::White);
     label.setPosition(pos);
     auto bounds = label.getLocalBounds();
     label.setOrigin(bounds.width / 2, bounds.height / 2);
@@ -272,4 +272,18 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, double ra
 
 void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation) {
     m_world.add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, color, name, rotation));
+}
+
+std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) const {
+    auto brightened_color = [](sf::Color const& color) {
+        return sf::Color {
+            (uint8_t)std::min(255, color.r + 60),
+            (uint8_t)std::min(255, color.g + 60),
+            (uint8_t)std::min(255, color.b + 60),
+            255
+        };
+    };
+    auto object = std::make_unique<Object>(new_world, m_mass, m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 1000);
+    object->m_is_forward_simulated = true;
+    return object;
 }

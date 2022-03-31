@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Object.hpp"
+#include "../World.hpp"
 #include "Button.hpp"
 #include "ColorPicker.hpp"
 #include "Container.hpp"
@@ -29,12 +30,13 @@ public:
 private:
     World& m_world;
     virtual void relayout() override;
+    virtual void update() override;
 
     std::shared_ptr<ToggleButton> m_create_button;
     std::shared_ptr<ToggleButton> m_creative_mode_button;
     std::shared_ptr<ToggleButton> m_toggle_orbit_direction_button;
     std::shared_ptr<ToggleButton> m_toggle_unit_button;
-    
+
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;
     std::shared_ptr<Button> m_add_object_button;
@@ -61,8 +63,6 @@ private:
     std::shared_ptr<Container> m_submit_container;
 
     std::shared_ptr<SimulationView> m_simulation_view;
-    mutable std::unique_ptr<Object> m_last_object;
-    sf::Vector2f m_new_object_pos;
     Object* m_focused = nullptr;
     bool m_automatic_orbit_calculation = false, m_units = false;
 
@@ -70,4 +70,10 @@ private:
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
     void m_create_object_gui(std::shared_ptr<Container> container);
     std::unique_ptr<Object> m_create_object_from_params() const;
+
+    World m_forward_simulated_world;
+    bool m_forward_simulation_is_valid = true;
+    std::unique_ptr<Object> m_new_object;
+    Vector2 m_new_object_pos;
+    void recalculate_forward_simulation();
 };

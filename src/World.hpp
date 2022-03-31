@@ -4,7 +4,6 @@
 #include "Object.hpp"
 #include "Vector2.hpp"
 #include "gui/Date.hpp"
-#include "gui/SimulationView.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -12,21 +11,23 @@
 #include <list>
 #include <string>
 
+class SimulationView;
+
 class World {
 public:
     World();
 
     World(World const& other) = delete;
     World& operator=(World const& other) = delete;
-    World(World&& other) = delete;
-    World& operator=(World&& other) = delete;
+    World(World&& other) = default;
+    World& operator=(World&& other) = default;
 
     Date date;
     bool collisions = false;
     SimulationView* m_simulation_view {};
 
     void update(int steps);
-    void draw(SimulationView const& view);
+    void draw(SimulationView const& view) const;
     void add_object(std::unique_ptr<Object>);
     Object* get_object_by_name(std::string const& name);
 
@@ -37,6 +38,8 @@ public:
         for (auto& it : m_object_list)
             callback(*it);
     }
+
+    void clone_for_forward_simulation(World& new_world) const;
 
 private:
     Object* m_most_massive_object = nullptr;

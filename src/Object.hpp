@@ -10,15 +10,14 @@
 #include <list>
 #include <string>
 
-class Object
-{
+class Object {
 protected:
     double m_density;
     Trail m_trail;
     Vector2 attraction(const Object&);
 
     // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?
-    double m_ap = 0, m_pe = std::numeric_limits<double>::max(), m_orbit;
+    double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
     World& m_world;
     void m_draw_trail();
@@ -26,6 +25,8 @@ protected:
     Vector2 m_force;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
+
+    bool m_is_forward_simulated = false;
 
 public:
     // FIXME: Too much arguments!!!
@@ -47,20 +48,12 @@ public:
 
     void update_forces(bool reverse);
     void update();
-    Trail& trail(){return m_trail;}
+    Trail& trail() { return m_trail; }
     void draw(SimulationView const&);
     bool hover(SimulationView& view, Vector2 mouse_pos);
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation = 0.0_rad);
+
+    std::unique_ptr<Object> clone_for_forward_simulation(World& new_world) const;
 };
-
-inline bool operator==(const Object& a, const Object& b)
-{
-    return a.m_name == b.m_name && a.m_mass == b.m_mass && a.m_radius == b.m_radius && a.m_color == b.m_color && a.m_pos == b.m_pos && a.m_vel == b.m_vel;
-}
-
-inline bool operator!=(const Object& a, const Object& b)
-{
-    return !(a == b);
-}

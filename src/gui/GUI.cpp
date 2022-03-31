@@ -27,7 +27,6 @@ static sf::Image load_image(std::string path) {
     image.loadFromFile(path);
     return image;
 }
-bool m_simulate = false;
 
 GUI::GUI(Application& application, World& world)
     : Container(application)
@@ -40,6 +39,7 @@ GUI::GUI(Application& application, World& world)
     m_simulation_view->on_coord_measure = [&](sf::Vector2f pos) {
         // TODO: Add widget enabled state and use it instead.
         m_add_object_button->set_visible(true);
+        m_forward_simulation_is_valid = false;
         m_new_object_pos = pos;
     };
 
@@ -149,10 +149,6 @@ GUI::GUI(Application& application, World& world)
                 m_create_object_from_params_container->set_visible(!state);
                 m_create_object_from_orbit_container->set_visible(state);
                 m_toggle_orbit_direction_button->set_visible(state);
-                // FIXME: (HACK) We need to invalidate layout of direct parent of
-                //        the widget and this is the only way. We should make
-                //        relayout requests propagate properly.
-                m_submit_container->set_visible(true);
                 m_automatic_orbit_calculation = state;
             };
             m_toggle_orbit_direction_button->set_active(false);
@@ -172,13 +168,12 @@ GUI::GUI(Application& application, World& world)
 
     m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
     m_create_button->set_position({ 10.0_px, 10.0_px });
-    m_create_button->on_change = [container = container.get(),
-                                     m_creative_mode_button = m_creative_mode_button.get(),
-                                     this](bool state) {
+    m_create_button->on_change = [container = container.get(), this](bool state) {
         container->set_visible(state);
-
-        if (m_simulate)
-            m_simulate = state;
+        if (!state) {
+            m_new_object = nullptr;
+            m_forward_simulation_is_valid = true;
+        }
     };
     m_create_button->set_active(false);
     m_create_button->set_tooltip_text("Create new object");
@@ -192,33 +187,41 @@ GUI::GUI(Application& application, World& world)
     m_home_button->set_tooltip_text("Reset coordinates");
 }
 
-void GUI::relayout() {
-    // TODO: Don't do this in every tick.
-    set_raw_size(sf::Vector2f(window().getSize()));
+void GUI::recalculate_forward_simulation() {
+    auto new_object = m_create_object_from_params();
 
+    m_world.clone_for_forward_simulation(m_forward_simulated_world);
+    auto forward_simulated_new_object = new_object.get();
+
+    // We need trail of the forward simulated object but
+    // the object itself will be drawn at current position.
+    m_new_object = new_object->clone_for_forward_simulation(m_forward_simulated_world);
+    m_forward_simulated_world.add_object(std::move(new_object));
+
+    m_forward_simulated_world.update(500);
+
+    // FIXME: bruh trail invalidation
+    forward_simulated_new_object->trail().push_front(m_new_object->m_pos, m_new_object->m_vel);
+    forward_simulated_new_object->trail().update_trail(*m_simulation_view, forward_simulated_new_object->m_color);
+
+    m_forward_simulation_is_valid = true;
+}
+
+void GUI::relayout() {
+    set_raw_size(sf::Vector2f(window().getSize()));
     Container::relayout();
 }
 
+void GUI::update() {
+    // FIXME: We should do this on every tick or just stop the main simulation.
+    if (!m_forward_simulation_is_valid)
+        recalculate_forward_simulation();
+}
+
 void GUI::draw(sf::RenderWindow& window) const {
-    if (m_simulation_view->m_measured)
-        m_simulate = true;
-
-    if (m_simulate) {
-        auto m_planet_to_create = m_create_object_from_params();
-
-        if (m_last_object.get() == nullptr || *m_planet_to_create != *m_last_object) {
-            for (unsigned i = 0; i < 1000; i++) {
-                // FIXME: Apply other planet's movement for now.
-                // FIXME: Don't use magic constant ("false")
-                m_planet_to_create->update_forces(false);
-                m_planet_to_create->update();
-            }
-            m_planet_to_create->m_pos = m_new_object_pos;
-            m_planet_to_create->trail().push_front(m_planet_to_create->m_pos, m_planet_to_create->m_vel);
-
-            m_last_object = std::move(m_planet_to_create);
-        }
-        m_last_object->draw(*m_simulation_view);
+    if (m_new_object) {
+        m_forward_simulated_world.draw(*m_simulation_view);
+        m_new_object->draw(*m_simulation_view);
     }
 }
 
