@@ -36,9 +36,8 @@ target_link_libraries(
 target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    # target_compile_options(out PUBLIC -fsanitize=undefined,address)
-    # target_link_options(out PUBLIC -fsanitize=undefined,address)
-    target_compile_options(out PUBLIC -O3)
+    target_compile_options(out PUBLIC -fsanitize=undefined,address)
+    target_link_options(out PUBLIC -fsanitize=undefined,address)
 
 else()
     target_compile_options(out PUBLIC -O3)
