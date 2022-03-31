@@ -25,7 +25,6 @@ int main() {
     while (window.isOpen()) {
         application.handle_events();
 
-        world.update();
         // FIXME: This should be done by Application.
         gui.do_update();
 
@@ -34,7 +33,7 @@ int main() {
         window.clear();
 
         // FIXME: FPS should be part of GUI, not World!
-        world.set_fps(1.f / fps_clock.restart().asSeconds());
+        gui.simulation_view().set_fps(1.f / fps_clock.restart().asSeconds());
         application.draw();
 
         window.display();

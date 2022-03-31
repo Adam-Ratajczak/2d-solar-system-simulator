@@ -24,6 +24,8 @@ public:
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
+    SimulationView& simulation_view() const { return *m_simulation_view; }
+
 private:
     World& m_world;
     virtual void relayout() override;

@@ -44,8 +44,8 @@ bool Object::hover(SimulationView& view, Vector2 mouse_pos) {
     return dst < 20 / view.scale();
 }
 
-void Object::update_forces() {
-    if (m_trail.reverse_path(m_world.reverse, this))
+void Object::update_forces(bool reverse) {
+    if (m_trail.reverse_path(reverse, this))
         return;
 
     m_force = Vector2();

@@ -37,7 +37,11 @@ public:
     void start_coords_measure() { m_coord_measure = true; }
     void start_focus_measure();
 
+    // TODO: This should be private
     bool m_measured = false, m_changed = false;
+
+    // FIXME: This should be in GUI.
+    void set_fps(float fps) { m_fps = fps; }
 
 private:
     virtual void handle_event(Event&) override;
@@ -55,4 +59,9 @@ private:
     Vector2 m_prev_pos;
     bool m_dragging = false;
     bool m_coord_measure = false, m_focus_measure = false;
+
+    // FIXME: This doesn't quite match here (and also World). Maybe
+    //        add some Simulation class.
+    int m_speed = 1;
+    float m_fps = 60;
 };

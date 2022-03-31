@@ -45,7 +45,7 @@ public:
     sf::Color m_color;
     double m_radius;
 
-    void update_forces();
+    void update_forces(bool reverse);
     void update();
     Trail& trail(){return m_trail;}
     void draw(SimulationView const&);

@@ -3,6 +3,7 @@
 #include "../World.hpp"
 #include "GUI.hpp"
 #include <cmath>
+#include <sstream>
 
 void SimulationView::start_focus_measure() {
     if (m_focused_object != nullptr) {
@@ -80,30 +81,26 @@ void SimulationView::handle_event(Event& event) {
         m_dragging = false;
     }
     else if (event.type() == sf::Event::KeyPressed) {
-        // FIXME: This is too complex.
+        // FIXME: This is too complex and doesn't even work for all cases.
         if (event.event().key.code == sf::Keyboard::Right) {
-            if (m_world.speed == 0 && m_world.reverse) {
-                m_world.speed = 1;
-                m_world.reverse = false;
-                return;
+            if (m_speed > 0)
+                m_speed *= 2;
+            else {
+                if (m_speed == 0)
+                    m_speed = 1;
+                else
+                    m_speed /= 2;
             }
-
-            if (!m_world.reverse)
-                m_world.speed *= 2;
-            else
-                m_world.speed /= 2;
         }
         else if (event.event().key.code == sf::Keyboard::Left) {
-            if (m_world.speed == 0 && !m_world.reverse) {
-                m_world.speed = 1;
-                m_world.reverse = true;
-                return;
+            if (m_speed < 0)
+                m_speed *= 2;
+            else {
+                if (m_speed == 0)
+                    m_speed = -1;
+                else
+                    m_speed /= 2;
             }
-
-            if (!m_world.reverse)
-                m_world.speed /= 2;
-            else
-                m_world.speed *= 2;
         }
     }
     m_changed = m_dragging;
@@ -182,9 +179,36 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Green };
         window.draw(lines);
     }
+
+    std::ostringstream oss;
+    oss << m_world.date.to_string();
+    if (m_speed == 0)
+        oss << " (Paused";
+    else
+        oss << " (" << std::abs(m_speed) << "x";
+
+    if (m_speed < 0)
+        oss << ", Reversed";
+    oss << ")";
+
+    sf::Text fps_text("FPS: " + std::to_string(m_fps), GUI::font, 25);
+    fps_text.setFillColor(sf::Color::White);
+    fps_text.setPosition(10, window.getSize().y - 65);
+    window.draw(fps_text);
+
+    sf::Text date_text(oss.str(), GUI::font, 25);
+    date_text.setFillColor(sf::Color::White);
+    date_text.setPosition(10, window.getSize().y - 35);
+    window.draw(date_text);
 }
 
 void SimulationView::update() {
+    // FIXME: This doesn't quite match here like speed (The same
+    //        comment about Simulation object)
+    // FIXME: m_reverse should be implied from m_speed sign
+    if (m_speed != 0)
+        m_world.update(m_speed);
+
     // Handle focus
     if (m_focused_object)
         set_offset(m_focused_object->m_pos);

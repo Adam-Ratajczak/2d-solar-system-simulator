@@ -208,8 +208,9 @@ void GUI::draw(sf::RenderWindow& window) const {
 
         if (m_last_object.get() == nullptr || *m_planet_to_create != *m_last_object) {
             for (unsigned i = 0; i < 1000; i++) {
-                // NOTE: We don't apply other planet's movement for now.
-                m_planet_to_create->update_forces();
+                // FIXME: Apply other planet's movement for now.
+                // FIXME: Don't use magic constant ("false")
+                m_planet_to_create->update_forces(false);
                 m_planet_to_create->update();
             }
             m_planet_to_create->m_pos = m_new_object_pos;
