@@ -205,9 +205,8 @@ void SimulationView::draw(sf::RenderWindow& window) const {
 void SimulationView::update() {
     // FIXME: This doesn't quite match here like speed (The same
     //        comment about Simulation object)
-    // FIXME: m_reverse should be implied from m_speed sign
     if (m_speed != 0)
-        m_world.update(m_speed);
+        m_world.update(m_speed * 10);
 
     // Handle focus
     if (m_focused_object)
