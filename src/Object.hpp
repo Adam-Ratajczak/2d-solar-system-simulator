@@ -22,7 +22,7 @@ protected:
     World& m_world;
     void m_draw_trail();
     Vector2 m_prev_offset;
-    Vector2 m_force;
+    Vector2 m_attraction_factor;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
 

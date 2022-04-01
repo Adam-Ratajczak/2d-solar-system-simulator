@@ -32,7 +32,7 @@ Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 ve
 
 Vector2 Object::attraction(const Object& other) {
     Vector2 dist = this->m_pos - other.m_pos;
-    double force = G * (this->m_mass * other.m_mass) / (dist.x * dist.x + dist.y * dist.y);
+    double force = other.m_mass / (dist.x * dist.x + dist.y * dist.y);
     Vector2 normalized_dist = dist.normalized();
     return Vector2(normalized_dist.x * force, normalized_dist.y * force);
 }
@@ -48,7 +48,7 @@ void Object::update_forces(bool reverse) {
     if (m_trail.reverse_path(reverse, this))
         return;
 
-    m_force = Vector2();
+    m_attraction_factor = Vector2();
     m_world.for_each_object([&](Object& object) {
         if (this != &object) {
             if (m_world.collisions) {
@@ -84,13 +84,13 @@ void Object::update_forces(bool reverse) {
                     // TODO: Remove object
                 }
             }
-            m_force -= attraction(object);
+            m_attraction_factor -= attraction(object);
         }
     });
 }
 
 void Object::update() {
-    m_vel += m_force / this->m_mass * TIMESTAMP;
+    m_vel += G * m_attraction_factor * TIMESTAMP;
     m_pos += m_vel * TIMESTAMP;
 
     // if(m_pos != m_trail.back())
