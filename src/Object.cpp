@@ -50,42 +50,9 @@ void Object::update_forces(bool reverse) {
 
     m_attraction_factor = Vector2();
     m_world.for_each_object([&](Object& object) {
-        if (this != &object) {
-            if (m_world.collisions) {
-                // TODO: This should be in separate function
-                double distance = get_distance(this->m_pos, object.m_pos);
-
-                if (distance < this->m_radius + object.m_radius) {
-                    // std::cout << this->m_name << " - " << object.m_name << "\n";
-
-                    double log10m1 = std::log10(this->m_mass), log10m2 = std::log10(object.m_mass);
-
-                    if (this->m_mass < object.m_mass) {
-                        this->m_name = object.m_name;
-                        this->m_trail = object.m_trail;
-                    }
-
-                    double final_mass = this->m_mass + object.m_mass, f1 = log10m1 / (log10m1 + log10m2), f2 = log10m2 / (log10m1 + log10m2);
-                    this->m_color.r = this->m_color.r * f1 + object.m_color.r * f2;
-                    this->m_color.g = this->m_color.g * f1 + object.m_color.g * f2;
-                    this->m_color.b = this->m_color.b * f1 + object.m_color.b * f2;
-                    this->m_color.a = this->m_color.a * f1 + object.m_color.a * f2;
-
-                    f1 = this->m_mass / final_mass;
-                    f2 = object.m_mass / final_mass;
-
-                    this->m_vel = this->m_vel * f1 + object.m_vel * f2;
-                    this->m_density = this->m_density * f1 + object.m_density * f2;
-                    this->m_mass = final_mass;
-
-                    double new_area = this->m_mass / this->m_density + M_PI * this->m_radius * this->m_radius / this->m_density;
-                    this->m_radius = std::sqrt(new_area / M_PI);
-
-                    // TODO: Remove object
-                }
-            }
+        // TODO: Collisions
+        if (this != &object)
             m_attraction_factor -= attraction(object);
-        }
     });
 }
 
