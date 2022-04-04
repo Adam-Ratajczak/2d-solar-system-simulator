@@ -60,6 +60,12 @@ GUI::GUI(Application& application, World& world)
             if (!state) {
                 m_new_object = nullptr;
                 m_forward_simulation_is_valid = true;
+                m_simulation_view->set_speed(m_saved_speed);
+            }
+            else {
+                // TODO: Don't allow to resume simulation.
+                m_saved_speed = m_simulation_view->speed();
+                m_simulation_view->set_speed(0);
             }
         };
 
