@@ -84,6 +84,7 @@ public:
         m_widgets.push_back(widget);
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
+        set_needs_relayout();
         return widget;
     }
 
@@ -91,6 +92,7 @@ public:
         m_widgets.push_back(std::move(widget));
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
+        set_needs_relayout();
     }
 
     virtual void do_update() override;

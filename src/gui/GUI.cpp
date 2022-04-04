@@ -52,131 +52,133 @@ GUI::GUI(Application& application, World& world)
 
     m_world.m_simulation_view = m_simulation_view.get();
 
-    auto container = add_widget<Container>();
-    // TODO: Shrink-to-fit
-    container->set_position({ 100.0_px, 10.0_px });
-    container->set_size({ 500.0_px, 500.0_px });
-    auto& layout = container->set_layout<VerticalBoxLayout>();
-    layout.set_spacing(10);
+    auto menu = add_widget<SettingsMenu>();
+    menu->set_position({ 10.0_px, 10.0_px });
     {
-        m_create_object_gui(container);
+        auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
+        create_menu.on_toggle = [this](bool state) {
+            if (!state) {
+                m_new_object = nullptr;
+                m_forward_simulation_is_valid = true;
+            }
+        };
 
-        auto mode_specific_options_container = container->add_widget<Container>();
-        mode_specific_options_container->set_size({ Length::Auto, 100.0_px });
-        mode_specific_options_container->set_layout<BasicLayout>();
-
-        m_create_object_from_params_container = m_create_object_from_params_gui(mode_specific_options_container);
-        m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
-        m_create_object_from_params_container->set_visible(true);
-        mode_specific_options_container->add_created_widget(m_create_object_from_params_container);
-
-        m_create_object_from_orbit_container = m_create_object_from_orbit_gui(mode_specific_options_container);
-        m_create_object_from_orbit_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
-        m_create_object_from_orbit_container->set_visible(false);
-        mode_specific_options_container->add_created_widget(m_create_object_from_orbit_container);
-
-        auto main_color_container = container->add_widget<Container>();
-        main_color_container->set_size({ Length::Auto, 150.0_px });
-        auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
-        main_color_layout.set_spacing(10);
+        // TODO: Shrink-to-fit
+        create_menu.settings_container->set_size({ 500.0_px, 500.0_px });
+        auto& layout = create_menu.settings_container->set_layout<VerticalBoxLayout>();
+        layout.set_spacing(10);
         {
-            auto color_label_textfield = main_color_container->add_widget<Textfield>();
-            color_label_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            color_label_textfield->set_font_size(20);
-            color_label_textfield->set_content("COLOR");
-            color_label_textfield->set_alignment(Textfield::Align::Center);
+            m_create_object_gui(*create_menu.settings_container);
 
-            m_color_control = main_color_container->add_widget<ColorPicker>();
-            m_color_control->set_size({ Length::Auto, 100.0_px });
-        }
-        auto name_container = container->add_widget<Container>();
-        auto& name_layout = name_container->set_layout<HorizontalBoxLayout>();
-        name_layout.set_spacing(10);
-        {
-            auto name_textfield = name_container->add_widget<Textfield>();
-            name_textfield->set_size({ 150.0_px, Length::Auto });
-            name_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
-            name_textfield->set_font_size(20);
-            name_textfield->set_content("Name: ");
-            name_textfield->set_alignment(Textfield::Align::CenterLeft);
+            auto mode_specific_options_container = create_menu.settings_container->add_widget<Container>();
+            mode_specific_options_container->set_size({ Length::Auto, 100.0_px });
+            mode_specific_options_container->set_layout<BasicLayout>();
 
-            m_name_textbox = name_container->add_widget<Textbox>();
-            m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
-            m_name_textbox->set_limit(20);
-            m_name_textbox->set_data_type(Textbox::TEXT);
-            m_name_textbox->set_content("Planet");
-        }
-        m_submit_container = container->add_widget<Container>();
-        m_submit_container->set_size({ Length::Auto, 72.0_px });
-        auto& submit_layout = m_submit_container->set_layout<HorizontalBoxLayout>();
-        submit_layout.set_spacing(10);
-        {
-            m_coords_button = m_submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
-            m_coords_button->on_click = [this]() {
-                if (m_automatic_orbit_calculation)
-                    m_simulation_view->start_focus_measure();
-                else
-                    m_simulation_view->start_coords_measure();
-            };
-            m_coords_button->set_tooltip_text("Set position");
+            m_create_object_from_params_container = m_create_object_from_params_gui(mode_specific_options_container);
+            m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+            m_create_object_from_params_container->set_visible(true);
+            mode_specific_options_container->add_created_widget(m_create_object_from_params_container);
 
-            m_toggle_unit_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
-            m_toggle_unit_button->on_change = [this](bool state) {
-                this->m_units = state;
-                auto vel = this->m_velocity_control->value();
-                if (state) {
-                    this->m_velocity_control->set_unit("km/h");
-                    this->m_velocity_control->set_value(vel * 3.6);
-                }
-                else {
-                    this->m_velocity_control->set_unit("m/s");
-                    this->m_velocity_control->set_value(vel * (1.f / 3.6));
-                }
-            };
-            m_toggle_unit_button->set_active(false);
-            m_toggle_unit_button->set_tooltip_text("Toggle units");
+            m_create_object_from_orbit_container = m_create_object_from_orbit_gui(mode_specific_options_container);
+            m_create_object_from_orbit_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+            m_create_object_from_orbit_container->set_visible(false);
+            mode_specific_options_container->add_created_widget(m_create_object_from_orbit_container);
 
-            m_creative_mode_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
-            m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
-            m_creative_mode_button->set_active(false);
+            auto main_color_container = create_menu.settings_container->add_widget<Container>();
+            main_color_container->set_size({ Length::Auto, 150.0_px });
+            auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
+            main_color_layout.set_spacing(10);
+            {
+                auto color_label_textfield = main_color_container->add_widget<Textfield>();
+                color_label_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+                color_label_textfield->set_font_size(20);
+                color_label_textfield->set_content("COLOR");
+                color_label_textfield->set_alignment(Textfield::Align::Center);
 
-            m_toggle_orbit_direction_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
-            m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
-            m_toggle_orbit_direction_button->on_change = [](bool state) {
-            };
+                m_color_control = main_color_container->add_widget<ColorPicker>();
+                m_color_control->set_size({ Length::Auto, 100.0_px });
+            }
+            auto name_container = create_menu.settings_container->add_widget<Container>();
+            auto& name_layout = name_container->set_layout<HorizontalBoxLayout>();
+            name_layout.set_spacing(10);
+            {
+                auto name_textfield = name_container->add_widget<Textfield>();
+                name_textfield->set_size({ 150.0_px, Length::Auto });
+                name_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
+                name_textfield->set_font_size(20);
+                name_textfield->set_content("Name: ");
+                name_textfield->set_alignment(Textfield::Align::CenterLeft);
 
-            m_creative_mode_button->on_change = [this](bool state) {
-                m_create_object_from_params_container->set_visible(!state);
-                m_create_object_from_orbit_container->set_visible(state);
-                m_toggle_orbit_direction_button->set_visible(state);
-                m_automatic_orbit_calculation = state;
-            };
-            m_toggle_orbit_direction_button->set_active(false);
-            m_toggle_orbit_direction_button->set_visible(false);
+                m_name_textbox = name_container->add_widget<Textbox>();
+                m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
+                m_name_textbox->set_limit(20);
+                m_name_textbox->set_data_type(Textbox::TEXT);
+                m_name_textbox->set_content("Planet");
+            }
+            m_submit_container = create_menu.settings_container->add_widget<Container>();
+            m_submit_container->set_size({ Length::Auto, 72.0_px });
+            auto& submit_layout = m_submit_container->set_layout<HorizontalBoxLayout>();
+            submit_layout.set_spacing(10);
+            {
+                m_coords_button = m_submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
+                m_coords_button->on_click = [this]() {
+                    if (m_automatic_orbit_calculation)
+                        m_simulation_view->start_focus_measure();
+                    else
+                        m_simulation_view->start_coords_measure();
+                };
+                m_coords_button->set_tooltip_text("Set position");
 
-            m_submit_container->add_widget<Widget>(); // spacer
+                m_toggle_unit_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
+                m_toggle_unit_button->on_change = [this](bool state) {
+                    this->m_units = state;
+                    auto vel = this->m_velocity_control->value();
+                    if (state) {
+                        this->m_velocity_control->set_unit("km/h");
+                        this->m_velocity_control->set_value(vel * 3.6);
+                    }
+                    else {
+                        this->m_velocity_control->set_unit("m/s");
+                        this->m_velocity_control->set_value(vel * (1.f / 3.6));
+                    }
+                };
+                m_toggle_unit_button->set_active(false);
+                m_toggle_unit_button->set_tooltip_text("Toggle units");
 
-            m_add_object_button = m_submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
-            m_add_object_button->on_click = [&world, this]() {
-                // FIXME: This (object_list) should be probably private.
-                world.add_object(m_create_object_from_params());
-                m_simulation_view->m_measured = false;
-            };
-            m_add_object_button->set_tooltip_text("Add object");
+                m_creative_mode_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
+                m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
+                m_creative_mode_button->set_active(false);
+
+                m_toggle_orbit_direction_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
+                m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
+                m_toggle_orbit_direction_button->on_change = [](bool state) {
+                };
+
+                m_creative_mode_button->on_change = [this](bool state) {
+                    m_create_object_from_params_container->set_visible(!state);
+                    m_create_object_from_orbit_container->set_visible(state);
+                    m_toggle_orbit_direction_button->set_visible(state);
+                    m_automatic_orbit_calculation = state;
+                };
+                m_toggle_orbit_direction_button->set_active(false);
+                m_toggle_orbit_direction_button->set_visible(false);
+
+                m_submit_container->add_widget<Widget>(); // spacer
+
+                m_add_object_button = m_submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
+                m_add_object_button->on_click = [&world, this]() {
+                    // FIXME: This (object_list) should be probably private.
+                    world.add_object(m_create_object_from_params());
+                    m_simulation_view->m_measured = false;
+                };
+                m_add_object_button->set_tooltip_text("Add object");
+            }
         }
     }
-
-    m_create_button = add_widget<ToggleButton>(load_image("../assets/createButton.png"));
-    m_create_button->set_position({ 10.0_px, 10.0_px });
-    m_create_button->on_change = [container = container.get(), this](bool state) {
-        container->set_visible(state);
-        if (!state) {
-            m_new_object = nullptr;
-            m_forward_simulation_is_valid = true;
-        }
-    };
-    m_create_button->set_active(false);
-    m_create_button->set_tooltip_text("Create new object");
+    {
+        auto& test2 = menu->add_entry(load_image("../assets/homeButton.png"), "test");
+        test2.settings_container->add_widget<Textfield>()->set_content("test");
+    }
 
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });

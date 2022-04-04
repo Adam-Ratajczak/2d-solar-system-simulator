@@ -20,6 +20,7 @@ add_executable(
     src/gui/CreateObjectGUI.cpp
     src/gui/GUI.cpp
     src/gui/Application.cpp
+    src/gui/SettingsMenu.cpp
     src/gui/SimulationView.cpp
     src/gui/Slider.cpp
     src/gui/Textbox.cpp

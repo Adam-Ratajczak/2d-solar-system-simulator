@@ -3,15 +3,15 @@
 
 #include <iostream>
 
-void GUI::m_create_object_gui(std::shared_ptr<Container> container) {
-    m_radius_control = container->add_widget<ValueSlider>(0, 500000);
+void GUI::m_create_object_gui(Container& container) {
+    m_radius_control = container.add_widget<ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
     m_radius_control->on_change = [this](auto) {
         m_forward_simulation_is_valid = false;
     };
 
-    auto mass_container = container->add_widget<Container>();
+    auto mass_container = container.add_widget<Container>();
     {
         auto& mass_layout = mass_container->set_layout<HorizontalBoxLayout>();
         mass_layout.set_spacing(10);

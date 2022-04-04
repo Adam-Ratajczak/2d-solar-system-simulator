@@ -5,6 +5,7 @@
 #include "Button.hpp"
 #include "ColorPicker.hpp"
 #include "Container.hpp"
+#include "SettingsMenu.hpp"
 #include "SimulationView.hpp"
 #include "Slider.hpp"
 #include "Textbox.hpp"
@@ -32,7 +33,6 @@ private:
     virtual void relayout() override;
     virtual void update() override;
 
-    std::shared_ptr<ToggleButton> m_create_button;
     std::shared_ptr<ToggleButton> m_creative_mode_button;
     std::shared_ptr<ToggleButton> m_toggle_orbit_direction_button;
     std::shared_ptr<ToggleButton> m_toggle_unit_button;
@@ -41,11 +41,11 @@ private:
     std::shared_ptr<Button> m_coords_button;
     std::shared_ptr<Button> m_add_object_button;
 
-    // FIXME: Port this all to ValueSlider
     std::shared_ptr<ValueSlider> m_radius_control;
     std::shared_ptr<ValueSlider> m_velocity_control;
     std::shared_ptr<ValueSlider> m_direction_control;
 
+    // FIXME: Port this all to ValueSlider
     std::shared_ptr<Textbox> m_mass_textbox;
     std::shared_ptr<Textbox> m_mass_exponent_textbox;
     std::shared_ptr<Textbox> m_name_textbox;
@@ -68,7 +68,7 @@ private:
 
     std::shared_ptr<Container> m_create_object_from_params_gui(std::shared_ptr<Container> parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
-    void m_create_object_gui(std::shared_ptr<Container> container);
+    void m_create_object_gui(Container& container);
     std::unique_ptr<Object> m_create_object_from_params() const;
 
     World m_forward_simulated_world;
