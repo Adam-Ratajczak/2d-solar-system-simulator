@@ -34,8 +34,11 @@ ValueSlider::ValueSlider(Container& parent, double min, double max, double step)
     m_textbox->set_data_type(Textbox::NUMBER);
     m_textbox->set_content(serialize_value(m_slider->get_value(), m_slider->step()));
     m_textbox->on_change = [this](std::string const& value) {
+        if(value.empty())
+            m_slider->set_value(0);
         try {
-            m_slider->set_value(std::stod(value), NotifyUser::No);
+            // Notify user so that they get on_change().
+            m_slider->set_value(std::stod(value));
         } catch (...) { ; }
     };
     m_unit_textfield = add_widget<Textfield>();
