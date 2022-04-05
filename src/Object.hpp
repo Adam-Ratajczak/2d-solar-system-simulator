@@ -25,6 +25,7 @@ protected:
     Vector3 m_attraction_factor;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
+    double m_gravity_factor {};
 
     bool m_is_forward_simulated = false;
 
@@ -42,7 +43,6 @@ public:
     Vector3 m_vel;
     std::string m_name;
     bool m_focused = 0;
-    double m_mass;
     sf::Color m_color;
     double m_radius;
 
@@ -56,4 +56,7 @@ public:
     void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation = 0.0_rad);
 
     std::unique_ptr<Object> clone_for_forward_simulation(World& new_world) const;
+
+    double mass() const { return m_gravity_factor / G; }
+    double gravity_factor() const { return m_gravity_factor; }
 };

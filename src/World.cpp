@@ -17,7 +17,7 @@ World::World()
     : date(1990.3) { }
 
 void World::add_object(std::unique_ptr<Object> object) {
-    if (!m_most_massive_object || m_most_massive_object->m_mass < object->m_mass)
+    if (!m_most_massive_object || m_most_massive_object->gravity_factor() < object->gravity_factor())
         m_most_massive_object = object.get();
 
     m_object_list.push_back(std::move(object));

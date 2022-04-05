@@ -17,14 +17,14 @@
 
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
+    // FIXME: Very hacky fix for trail.
     , m_trail(period * 2) {
-    m_mass = mass;
+    m_gravity_factor = mass * G;
     m_radius = radius;
     m_pos = pos;
     m_vel = vel;
     m_color = color;
     m_name = name;
-    m_density = m_mass / (M_PI * radius * radius);
     m_orbit_len = period;
 
     m_trail.push_back(m_pos, m_vel);
@@ -32,7 +32,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
 
 Vector3 Object::attraction(const Object& other) {
     Vector3 dist = this->m_pos - other.m_pos;
-    double force = other.m_mass / (dist.x * dist.x + dist.y * dist.y);
+    double force = other.m_gravity_factor / (dist.x * dist.x + dist.y * dist.y);
     Vector3 normalized_dist = dist.normalized();
     return normalized_dist * force;
 }
@@ -54,7 +54,7 @@ void Object::update_forces(bool reverse) {
 }
 
 void Object::update() {
-    m_vel += G * m_attraction_factor * m_world.simulation_seconds_per_tick();
+    m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
     // if(m_pos != m_trail.back())
@@ -105,8 +105,8 @@ void Object::draw(SimulationView const& view) {
     target.draw(label);
 
     if (this->m_focused) {
-        unsigned exponent = std::log10(m_mass);
-        sf::Text mass("Mass: " + std::to_string(m_mass / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", GUI::font, 15);
+        unsigned exponent = std::log10(this->mass());
+        sf::Text mass("Mass: " + std::to_string(this->mass() / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", GUI::font, 15);
         mass.setFillColor(sf::Color::White);
         auto bounds = mass.getLocalBounds();
         mass.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 0));
@@ -176,7 +176,7 @@ void Object::draw(SimulationView const& view) {
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
-    double GM = G * this->m_mass;
+    double GM = m_gravity_factor;
     double a = (apogee + perigee) / 2;
     double b = std::sqrt(apogee * perigee);
 
@@ -222,7 +222,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
             255
         };
     };
-    auto object = std::make_unique<Object>(new_world, m_mass, m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 1000);
+    auto object = std::make_unique<Object>(new_world, mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 1000);
     object->m_is_forward_simulated = true;
     return object;
 }
