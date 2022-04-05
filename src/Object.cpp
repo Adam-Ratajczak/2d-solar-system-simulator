@@ -17,7 +17,7 @@
 
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
-    , m_trail(period) {
+    , m_trail(period * 2) {
     m_mass = mass;
     m_radius = radius;
     m_pos = pos;
@@ -106,31 +106,6 @@ void Object::draw(SimulationView const& view) {
     label.setOrigin(bounds.width / 2, bounds.height / 2);
 
     target.draw(label);
-
-    // pos = view.screen_to_world(sf::Mouse::getPosition());
-    // double av = (m_ap + m_pe / 2), d = get_distance(pos, World::most_massive_object->m_pos);
-
-    // if(std::fabs(d - av) <= 2e10){
-    //     auto closest = m_trail.front();
-    //     double closest_distance = get_distance(closest.first, World::most_massive_object->m_pos);
-
-    //     for(auto& t : m_trail){
-    //         double dist = get_distance(t.first, World::most_massive_object->m_pos);
-
-    //         if(dist < closest_distance){
-    //             closest = t;
-    //             closest_distance = dist;
-    //         }
-    //     }
-
-    //     // std::cout << view.world_to_screen(closest.first) << "\n";
-
-    //     sf::CircleShape circle(3);
-    //     circle.setFillColor(m_color);
-    //     circle.setOrigin(sf::Vector3f(3, 3));
-    //     circle.setPosition(view.world_to_screen(closest.first));
-    //     target.draw(circle);
-    // }
 
     if (this->m_focused) {
         unsigned exponent = std::log10(m_mass);
