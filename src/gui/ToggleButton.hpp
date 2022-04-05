@@ -10,9 +10,11 @@ public:
     bool is_active() const { return m_active; }
 
     void set_active(bool active, NotifyUser notify_user = NotifyUser::Yes) {
-        m_active = active;
-        if (notify_user == NotifyUser::Yes && on_change)
-            on_change(active);
+        if (m_active != active) {
+            m_active = active;
+            if (notify_user == NotifyUser::Yes && on_change)
+                on_change(active);
+        }
     }
 
     std::function<void(bool)> on_change;
