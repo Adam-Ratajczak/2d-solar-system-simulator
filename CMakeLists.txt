@@ -14,6 +14,9 @@ add_executable(
     src/Trail.cpp
     src/World.cpp
     src/main.cpp
+    src/glwrapper/Sphere.cpp
+    src/glwrapper/Triangle.cpp
+    src/glwrapper/VertexBuffer.cpp
     src/gui/Button.cpp
     src/gui/ColorPicker.cpp
     src/gui/Container.cpp
@@ -35,6 +38,7 @@ target_link_libraries(
     sfml-window
 )
 target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
+target_link_options(out PUBLIC -lGLEW -lGLU -lglfw -lGL)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_compile_options(out PUBLIC -fsanitize=undefined,address)
