@@ -24,15 +24,15 @@ SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, std::st
         for (auto& entry : m_entries) {
             if (entry.button == button) {
                 entry.settings_container->set_visible(state);
-                entry.button->set_active(state, NotifyUser::No);
                 if (entry.on_toggle)
                     entry.on_toggle(state);
+                entry.button->set_active(state, NotifyUser::No);
             }
             else {
                 entry.settings_container->set_visible(false);
-                entry.button->set_active(false, NotifyUser::No);
-                if (entry.on_toggle)
+                if (entry.button->is_active() && entry.on_toggle)
                     entry.on_toggle(false);
+                entry.button->set_active(false, NotifyUser::No);
             }
         }
     };
