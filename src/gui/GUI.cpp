@@ -148,12 +148,10 @@ GUI::GUI(Application& application, World& world)
                         this->m_velocity_control->set_value(vel * (1.f / 3.6));
                     }
                 };
-                m_toggle_unit_button->set_active(false);
                 m_toggle_unit_button->set_tooltip_text("Toggle units");
 
                 m_creative_mode_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
                 m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
-                m_creative_mode_button->set_active(false);
 
                 m_toggle_orbit_direction_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
                 m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
@@ -166,7 +164,6 @@ GUI::GUI(Application& application, World& world)
                     m_toggle_orbit_direction_button->set_visible(state);
                     m_automatic_orbit_calculation = state;
                 };
-                m_toggle_orbit_direction_button->set_active(false);
                 m_toggle_orbit_direction_button->set_visible(false);
 
                 m_submit_container->add_widget<Widget>(); // spacer
