@@ -51,17 +51,14 @@ void Textbox::handle_event(Event& event) {
                 }
             }
             else if (can_insert_character(codepoint)) {
-                if (m_content == "0" && m_type == NUMBER)
-                    set_content("");
                 m_content.insert(m_cursor, codepoint);
                 if (on_change)
                     on_change(m_content);
                 m_cursor++;
             }
 
-            if (m_content.isEmpty() && m_type == NUMBER)
-                set_content("0");
-
+            if (m_cursor > m_content.getSize())
+                m_cursor = m_content.getSize();
             event.set_handled();
         }
     }
@@ -84,6 +81,7 @@ void Textbox::handle_event(Event& event) {
             event.set_handled();
         }
     }
+    std::cout << m_content.toAnsiString() << " :@" << m_cursor << std::endl;
 }
 
 void Textbox::draw(sf::RenderWindow& window) const {
