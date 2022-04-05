@@ -206,7 +206,7 @@ void SimulationView::update() {
     // FIXME: This doesn't quite match here like speed (The same
     //        comment about Simulation object)
     if (m_speed != 0)
-        m_world.update(m_speed * 10);
+        m_world.update(m_speed * m_iterations);
 
     // Handle focus
     if (m_focused_object)

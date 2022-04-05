@@ -182,8 +182,8 @@ GUI::GUI(Application& application, World& world)
         }
     }
     {
-        auto& test2 = menu->add_entry(load_image("../assets/homeButton.png"), "test");
-        test2.settings_container->add_widget<Textfield>()->set_content("test");
+        auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
+        create_simulation_settings_gui(*settings.settings_container);
     }
 
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
@@ -193,6 +193,25 @@ GUI::GUI(Application& application, World& world)
         m_simulation_view->set_zoom(1);
     };
     m_home_button->set_tooltip_text("Reset coordinates");
+}
+
+void GUI::create_simulation_settings_gui(Container& container) {
+
+    container.set_size({ 500.0_px, 500.0_px });
+    container.set_layout<VerticalBoxLayout>().set_spacing(10);
+    auto label = container.add_widget<Textfield>();
+    label->set_content("Simulation Settings");
+    label->set_size({Length::Auto, 30.0_px});
+
+    auto iterations_control = container.add_widget<ValueSlider>(1, 1000);
+    iterations_control->set_name("Iterations");
+    iterations_control->set_unit("i/t");
+    iterations_control->set_value(10);
+    iterations_control->set_tooltip_text("Count of simulation ticks per render frame");
+    iterations_control->on_change = [this](double value) {
+        if(value > 0)
+            m_simulation_view->set_iterations(value);
+    };
 }
 
 void GUI::recalculate_forward_simulation() {

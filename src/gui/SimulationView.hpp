@@ -47,6 +47,9 @@ public:
     int speed() const { return m_speed; }
     void set_speed(int speed) { m_speed = speed; }
 
+    int iterations() const { return m_iterations; }
+    void set_iterations(int i) { m_iterations = i; }
+
 private:
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
@@ -63,6 +66,7 @@ private:
     Vector3 m_prev_pos;
     bool m_dragging = false;
     bool m_coord_measure = false, m_focus_measure = false;
+    int m_iterations = 10;
 
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
