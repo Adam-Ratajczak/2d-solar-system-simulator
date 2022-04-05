@@ -40,7 +40,7 @@ target_link_libraries(
 target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
 target_link_options(out PUBLIC -lGLEW -lGLU -lglfw -lGL)
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_options(out PUBLIC -fsanitize=undefined,address)
     target_link_options(out PUBLIC -fsanitize=undefined,address)
 
