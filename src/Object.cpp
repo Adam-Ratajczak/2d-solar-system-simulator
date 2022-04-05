@@ -45,9 +45,6 @@ bool Object::hover(SimulationView& view, Vector3 mouse_pos) {
 }
 
 void Object::update_forces(bool reverse) {
-    if (m_trail.reverse_path(reverse, this))
-        return;
-
     m_attraction_factor = Vector3();
     m_world.for_each_object([&](Object& object) {
         // TODO: Collisions

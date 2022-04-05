@@ -87,7 +87,7 @@ void Textbox::handle_event(Event& event) {
             event.set_handled();
         }
     }
-    std::cout << m_content.toAnsiString() << " :@" << m_cursor << std::endl;
+    // std::cout << m_content.toAnsiString() << " :@" << m_cursor << std::endl;
 }
 
 void Textbox::draw(sf::RenderWindow& window) const {
