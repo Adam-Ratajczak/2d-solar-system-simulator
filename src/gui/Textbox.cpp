@@ -39,6 +39,8 @@ void Textbox::handle_event(Event& event) {
                 if (m_cursor != 0) {
                     m_content.erase(m_cursor - 1);
                     m_cursor--;
+                    if (m_type == NUMBER && m_content.isEmpty())
+                        m_content = "0";
                     if (on_change)
                         on_change(m_content);
                 }
@@ -46,11 +48,15 @@ void Textbox::handle_event(Event& event) {
             else if (codepoint == 0x7f) {
                 if (m_cursor != m_content.getSize()) {
                     m_content.erase(m_cursor);
+                    if (m_type == NUMBER && m_content.isEmpty())
+                        m_content = "0";
                     if (on_change)
                         on_change(m_content);
                 }
             }
             else if (can_insert_character(codepoint)) {
+                if (m_type == NUMBER && m_content == "0")
+                    m_content = "";
                 m_content.insert(m_cursor, codepoint);
                 if (on_change)
                     on_change(m_content);
