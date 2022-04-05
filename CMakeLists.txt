@@ -38,7 +38,7 @@ target_link_libraries(
     sfml-window
 )
 target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
-target_link_options(out PUBLIC -lGLEW -lGLU -lglfw -lGL)
+target_link_options(out PUBLIC -lGLEW -lGLU -lGL)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_options(out PUBLIC -fsanitize=undefined,address)
