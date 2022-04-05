@@ -209,6 +209,16 @@ void GUI::create_simulation_settings_gui(Container& container) {
         if(value > 0)
             m_simulation_view->set_iterations(value);
     };
+
+    auto tick_length_control = container.add_widget<ValueSlider>(60, 60 * 60 * 24, 60);
+    tick_length_control->set_name("Tick Length");
+    tick_length_control->set_unit("s/t");
+    tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
+    tick_length_control->set_tooltip_text("Amount of simulation seconds per simulation tick (Affects accuracy)");
+    tick_length_control->on_change = [this](double value) {
+        if(value > 0)
+            m_world.set_simulation_seconds_per_tick(value);
+    };
 }
 
 void GUI::recalculate_forward_simulation() {

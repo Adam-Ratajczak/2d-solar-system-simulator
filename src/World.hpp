@@ -41,9 +41,13 @@ public:
 
     void clone_for_forward_simulation(World& new_world) const;
 
+    int simulation_seconds_per_tick() const { return m_simulation_seconds_per_tick; }
+    void set_simulation_seconds_per_tick(int s) { m_simulation_seconds_per_tick = s; }
+
 private:
     Object* m_most_massive_object = nullptr;
     std::list<std::unique_ptr<Object>> m_object_list;
+    int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
 };
 
 void prepare_solar(World& world);

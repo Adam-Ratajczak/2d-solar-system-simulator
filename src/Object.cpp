@@ -57,8 +57,8 @@ void Object::update_forces(bool reverse) {
 }
 
 void Object::update() {
-    m_vel += G * m_attraction_factor * TIMESTAMP;
-    m_pos += m_vel * TIMESTAMP;
+    m_vel += G * m_attraction_factor * m_world.simulation_seconds_per_tick();
+    m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
     // if(m_pos != m_trail.back())
     m_trail.push_back(m_pos, m_vel);
