@@ -1,5 +1,5 @@
 #include "Object.hpp"
-#include "Vector2.hpp"
+#include "Vector3.hpp"
 #include "World.hpp"
 #include "gui/GUI.hpp"
 #include "gui/Units.hpp"
@@ -7,7 +7,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 #include <cstring>
@@ -15,7 +15,7 @@
 #include <string>
 #include <utility>
 
-Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned period)
+Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
     , m_trail(period) {
     m_mass = mass;
@@ -30,14 +30,14 @@ Object::Object(World& world, double mass, double radius, Vector2 pos, Vector2 ve
     m_trail.push_back(m_pos, m_vel);
 }
 
-Vector2 Object::attraction(const Object& other) {
-    Vector2 dist = this->m_pos - other.m_pos;
+Vector3 Object::attraction(const Object& other) {
+    Vector3 dist = this->m_pos - other.m_pos;
     double force = other.m_mass / (dist.x * dist.x + dist.y * dist.y);
-    Vector2 normalized_dist = dist.normalized();
-    return Vector2(normalized_dist.x * force, normalized_dist.y * force);
+    Vector3 normalized_dist = dist.normalized();
+    return normalized_dist * force;
 }
 
-bool Object::hover(SimulationView& view, Vector2 mouse_pos) {
+bool Object::hover(SimulationView& view, Vector3 mouse_pos) {
     double dst = mouse_pos.distance_to(m_pos);
     // if(m_name == "Mercury")
     //     std::cout << dst << " <? " << 20 / view.scale() << " s=" << view.scale() << std::endl;
@@ -48,7 +48,7 @@ void Object::update_forces(bool reverse) {
     if (m_trail.reverse_path(reverse, this))
         return;
 
-    m_attraction_factor = Vector2();
+    m_attraction_factor = Vector3();
     m_world.for_each_object([&](Object& object) {
         // TODO: Collisions
         if (this != &object)
@@ -127,7 +127,7 @@ void Object::draw(SimulationView const& view) {
 
     //     sf::CircleShape circle(3);
     //     circle.setFillColor(m_color);
-    //     circle.setOrigin(sf::Vector2f(3, 3));
+    //     circle.setOrigin(sf::Vector3f(3, 3));
     //     circle.setPosition(view.world_to_screen(closest.first));
     //     target.draw(circle);
     // }
@@ -209,11 +209,11 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, double ra
     double b = std::sqrt(apogee * perigee);
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
-    Vector2 pos(std::cos(theta.rad()) * a, std::sin(theta.rad()) * b);
+    Vector3 pos(std::cos(theta.rad()) * a, std::sin(theta.rad()) * b);
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(m_world, mass, radius * 1000, pos, Vector2(0, 0), color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(m_world, mass, radius * 1000, pos, Vector3(0, 0), color, name, T / (3600 * 24));
     result->m_ap = apogee;
     result->m_pe = perigee;
 
@@ -226,7 +226,7 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, double ra
     result->m_pe_vel = std::sqrt(2 * GM / perigee - velocity_constant);
     double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
 
-    Vector2 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
+    Vector3 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
 
     if (direction)
         vel = -vel;

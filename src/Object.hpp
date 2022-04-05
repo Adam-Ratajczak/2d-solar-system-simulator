@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Trail.hpp"
-#include "Vector2.hpp"
+#include "Vector3.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
 #include <SFML/Graphics/Color.hpp>
@@ -14,15 +14,15 @@ class Object {
 protected:
     double m_density;
     Trail m_trail;
-    Vector2 attraction(const Object&);
+    Vector3 attraction(const Object&);
 
     // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
     World& m_world;
     void m_draw_trail();
-    Vector2 m_prev_offset;
-    Vector2 m_attraction_factor;
+    Vector3 m_prev_offset;
+    Vector3 m_attraction_factor;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
 
@@ -31,15 +31,15 @@ protected:
 public:
     // FIXME: Too much arguments!!!
     // FIXME: what is "tres"?
-    Object(World& world, double mass, double radius, Vector2 pos, Vector2 vel, sf::Color color, std::string name, unsigned period);
+    Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
     Object(Object const& other) = delete;
     Object& operator=(Object const& other) = delete;
     Object(Object&& other) = delete;
     Object& operator=(Object&& other) = delete;
 
-    Vector2 m_pos;
-    Vector2 m_vel;
+    Vector3 m_pos;
+    Vector3 m_vel;
     std::string m_name;
     bool m_focused = 0;
     double m_mass;
@@ -50,7 +50,7 @@ public:
     void update();
     Trail& trail() { return m_trail; }
     void draw(SimulationView const&);
-    bool hover(SimulationView& view, Vector2 mouse_pos);
+    bool hover(SimulationView& view, Vector3 mouse_pos);
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation = 0.0_rad);

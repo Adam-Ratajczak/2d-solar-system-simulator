@@ -69,7 +69,7 @@ void SimulationView::handle_event(Event& event) {
         m_changed = true;
     }
     else if (event.type() == sf::Event::MouseMoved) {
-        m_prev_mouse_pos = { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+        m_prev_mouse_pos = { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y)};
         if (m_dragging) {
             const sf::Vector2f newPos = screen_to_world(m_prev_mouse_pos);
             const sf::Vector2f deltaPos = m_prev_pos - newPos;

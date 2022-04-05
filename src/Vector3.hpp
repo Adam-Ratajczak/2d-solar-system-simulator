@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/System/Vector3.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <cmath>
 #include <ostream>
 #include <GL/gl.h>
@@ -17,6 +17,22 @@ public:
         : x(_x)
         , y(_y)
         , z(_z) { }
+    Vector3(double _x, double _y)
+        : x(_x)
+        , y(_y)
+        , z(0) { }
+    Vector3(sf::Vector2f _a)
+        : x(_a.x)
+        , y(_a.y)
+        , z(0) { }
+    Vector3(sf::Vector2u _a)
+        : x(_a.x)
+        , y(_a.y)
+        , z(0) { }
+    Vector3(sf::Vector2i _a)
+        : x(_a.x)
+        , y(_a.y)
+        , z(0) { }
 
     double magnitude() const;
     double angle() const;
@@ -25,7 +41,7 @@ public:
     void set_magnitude(double mag);
     void glDraw() const;
 
-    // Vector3 rotate_vector(double theta) const;
+    Vector3 rotate_vector(double theta) const;
 
     double distance_to(Vector3 const& other) const {
         double dx = x - other.x;
@@ -37,6 +53,10 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Vector3& vec){
         return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+    }
+
+    operator sf::Vector2f(){
+        return sf::Vector2f(x, y);
     }
 };
 
@@ -65,11 +85,11 @@ inline double Vector3::angle() const {
     return (std::atan2(y, x));
 }
 
-// inline Vector3 Vector3::rotate_vector(double theta) const {
-//     double t_cos = std::cos(theta), t_sin = std::sin(theta);
+inline Vector3 Vector3::rotate_vector(double theta) const {
+    double t_cos = std::cos(theta), t_sin = std::sin(theta);
 
-//     return Vector3(x * t_cos - y * t_sin, x * t_sin + y * t_cos);
-// }
+    return Vector3(x * t_cos - y * t_sin, x * t_sin + y * t_cos);
+}
 
 inline void Vector3::limit(double mag) {
     double d = this->magnitude();

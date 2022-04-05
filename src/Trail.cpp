@@ -1,6 +1,6 @@
 #include "Trail.hpp"
 #include "Object.hpp"
-#include "Vector2.hpp"
+#include "Vector3.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -10,11 +10,11 @@ Trail::Trail(size_t max_trail_size)
     : m_max_trail_size(max_trail_size)
     , m_trail_vertexbuffer(sf::Lines, m_max_trail_size * 2) { }
 
-void Trail::push_back(Vector2 pos, Vector2 vel) {
+void Trail::push_back(Vector3 pos, Vector3 vel) {
     m_trail.push_back({ pos, vel });
 }
 
-void Trail::push_front(Vector2 pos, Vector2 vel) {
+void Trail::push_front(Vector3 pos, Vector3 vel) {
     m_trail.push_front({ pos, vel });
 }
 

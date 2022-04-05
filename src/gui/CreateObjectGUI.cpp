@@ -147,7 +147,7 @@ std::unique_ptr<Object> GUI::m_create_object_from_params() const {
     double velocity = m_velocity_control->value();
     if (m_units)
         velocity /= 3.6;
-    Vector2 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
+    Vector3 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
     sf::Color color = m_color_control->value();
     // std::cout << (int)color.r << "," << (int)color.g << "," << (int)color.b << "," << (int)color.a << std::endl;

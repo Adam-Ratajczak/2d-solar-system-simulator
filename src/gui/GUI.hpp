@@ -74,7 +74,7 @@ private:
     World m_forward_simulated_world;
     bool m_forward_simulation_is_valid = true;
     std::unique_ptr<Object> m_new_object;
-    Vector2 m_new_object_pos;
+    Vector3 m_new_object_pos;
     int m_saved_speed = 0;
     void recalculate_forward_simulation();
 };
