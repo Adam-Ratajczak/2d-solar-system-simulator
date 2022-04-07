@@ -1,4 +1,5 @@
 #include "Object.hpp"
+#include "Transform.hpp"
 #include "Vector3.hpp"
 #include "World.hpp"
 #include "gui/GUI.hpp"
@@ -21,7 +22,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     // FIXME: Very hacky fix for trail.
     , m_trail(period * 2) {
     m_gravity_factor = mass * G;
-    m_radius = radius;
+    m_radius = radius * 100;
     m_pos = pos;
     m_vel = vel;
     m_color = color;
@@ -84,111 +85,100 @@ void Object::update() {
 
 void Object::draw(SimulationView const& view) {
 
-    // TODO !!!
-    //std::cout << m_name << view.matrix() * m_pos << std::endl;
+    // FIXME: Hardcoded multiplier
+    auto scaled_pos = m_pos / AU;
+
+    //std::cout << "CORRECT according to opengl: " << m_name << " " << scaled_pos << " -> " << Transform::project(scaled_pos) << std::endl;
+
     glBegin(GL_TRIANGLE_STRIP);
     glColor3f(m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f);
-    glVertex3f(m_pos.x - m_radius * 100, m_pos.y, m_pos.z);
-    glVertex3f(m_pos.x + m_radius * 100, m_pos.y, m_pos.z);
-    glVertex3f(m_pos.x, m_pos.y - m_radius * 100, m_pos.z);
-    glVertex3f(m_pos.x, m_pos.y + m_radius * 100, m_pos.z);
-    glVertex3f(m_pos.x, m_pos.y, m_pos.z - m_radius * 100);
-    glVertex3f(m_pos.x, m_pos.y, m_pos.z + m_radius * 100);
+    glVertex3f(scaled_pos.x - m_radius / AU, scaled_pos.y - m_radius / AU, scaled_pos.z);
+    glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y - m_radius / AU, scaled_pos.z);
+    glVertex3f(scaled_pos.x - m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
+    glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
     glEnd();
-    return;
 
-    // :(
+    // FIXME: This thing should be in a Widget.
+    // TODO: Bring back that.
+    // if (this->m_focused) {
+    //     unsigned exponent = std::log10(this->mass());
+    //     sf::Text mass("Mass: " + std::to_string(this->mass() / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", GUI::font, 15);
+    //     mass.setFillColor(sf::Color::White);
+    //     auto bounds = mass.getLocalBounds();
+    //     mass.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 0));
+    //     target.draw(mass);
 
-    auto& target = view.window();
+    //     sf::Text radius("Radius: " + std::to_string((int)m_radius / 1000) + " km", GUI::font, 15);
+    //     radius.setFillColor(sf::Color::White);
+    //     bounds = radius.getLocalBounds();
+    //     radius.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 1));
+    //     target.draw(radius);
 
-    m_trail.draw(view, m_color);
+    //     sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " m / s", GUI::font, 15);
+    //     vel.setFillColor(sf::Color::White);
+    //     bounds = vel.getLocalBounds();
+    //     vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 2));
+    //     target.draw(vel);
 
-    sf::CircleShape object_circle(m_radius * view.scale(), 100);
-    object_circle.setOrigin(m_radius * view.scale(), m_radius * view.scale());
+    //     auto most_massive_object = m_world.most_massive_object();
 
-    object_circle.setFillColor(m_color);
-    object_circle.setPosition(view.world_to_screen(m_pos));
+    //     if (this == most_massive_object)
+    //         return;
 
-    target.draw(object_circle);
+    //     double distance_from_object = get_distance(this->m_pos, most_massive_object->m_pos);
+    //     sf::Text dist("Distance from the " + most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
+    //     dist.setFillColor(sf::Color::White);
+    //     bounds = dist.getLocalBounds();
+    //     dist.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 3));
+    //     target.draw(dist);
 
-    auto pos = object_circle.getPosition();
+    //     sf::Text ap("Object apogee: " + std::to_string(m_ap / AU) + " AU", GUI::font, 15);
+    //     ap.setFillColor(sf::Color::White);
+    //     bounds = ap.getLocalBounds();
+    //     ap.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 4));
+    //     target.draw(ap);
 
-    sf::Text label(m_name, GUI::font, 15);
-    label.setFillColor(m_is_forward_simulated ? sf::Color::Red : sf::Color::White);
-    label.setPosition(pos);
-    auto bounds = label.getLocalBounds();
-    label.setOrigin(bounds.width / 2, bounds.height / 2);
+    //     sf::Text ap_vel("Velocity at apogee: " + std::to_string((int)m_ap_vel) + " m / s", GUI::font, 15);
+    //     ap_vel.setFillColor(sf::Color::White);
+    //     bounds = ap_vel.getLocalBounds();
+    //     ap_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 5));
+    //     target.draw(ap_vel);
 
-    target.draw(label);
+    //     sf::Text pe("Object perigee: " + std::to_string(m_pe / AU) + " AU", GUI::font, 15);
+    //     pe.setFillColor(sf::Color::White);
+    //     bounds = pe.getLocalBounds();
+    //     pe.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 6));
+    //     target.draw(pe);
 
-    if (this->m_focused) {
-        unsigned exponent = std::log10(this->mass());
-        sf::Text mass("Mass: " + std::to_string(this->mass() / std::pow(10, exponent)) + " * 10 ^ " + std::to_string(exponent) + " kg", GUI::font, 15);
-        mass.setFillColor(sf::Color::White);
-        auto bounds = mass.getLocalBounds();
-        mass.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 0));
-        target.draw(mass);
+    //     sf::Text pe_vel("Velocity at perigee: " + std::to_string((int)m_pe_vel) + " m / s", GUI::font, 15);
+    //     pe_vel.setFillColor(sf::Color::White);
+    //     bounds = pe_vel.getLocalBounds();
+    //     pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));
+    //     target.draw(pe_vel);
 
-        sf::Text radius("Radius: " + std::to_string((int)m_radius / 1000) + " km", GUI::font, 15);
-        radius.setFillColor(sf::Color::White);
-        bounds = radius.getLocalBounds();
-        radius.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 1));
-        target.draw(radius);
+    //     sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / 365.25) + " years", GUI::font, 15);
+    //     orbital_period.setFillColor(sf::Color::White);
+    //     bounds = orbital_period.getLocalBounds();
+    //     orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
+    //     target.draw(orbital_period);
 
-        sf::Text vel("Velocity: " + std::to_string((int)m_vel.magnitude()) + " m / s", GUI::font, 15);
-        vel.setFillColor(sf::Color::White);
-        bounds = vel.getLocalBounds();
-        vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 2));
-        target.draw(vel);
+    //     sf::Text orbit_eccencrity("Eccencrity: " + std::to_string(eccencrity), GUI::font, 15);
+    //     orbital_period.setFillColor(sf::Color::White);
+    //     bounds = orbital_period.getLocalBounds();
+    //     orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 9));
+    //     target.draw(orbit_eccencrity);
+    // }
+}
 
-        auto most_massive_object = m_world.most_massive_object();
+void Object::draw_gui(SimulationView const& view)
+{
+    // FIXME: Hardcoded multiplier
+    auto position = view.world_to_screen(m_pos / AU);
+    //std::cout << m_name << position << std::endl;
 
-        if (this == most_massive_object)
-            return;
-
-        double distance_from_object = get_distance(this->m_pos, most_massive_object->m_pos);
-        sf::Text dist("Distance from the " + most_massive_object->m_name + ": " + std::to_string(distance_from_object / AU) + " AU", GUI::font, 15);
-        dist.setFillColor(sf::Color::White);
-        bounds = dist.getLocalBounds();
-        dist.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 3));
-        target.draw(dist);
-
-        sf::Text ap("Object apogee: " + std::to_string(m_ap / AU) + " AU", GUI::font, 15);
-        ap.setFillColor(sf::Color::White);
-        bounds = ap.getLocalBounds();
-        ap.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 4));
-        target.draw(ap);
-
-        sf::Text ap_vel("Velocity at apogee: " + std::to_string((int)m_ap_vel) + " m / s", GUI::font, 15);
-        ap_vel.setFillColor(sf::Color::White);
-        bounds = ap_vel.getLocalBounds();
-        ap_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 5));
-        target.draw(ap_vel);
-
-        sf::Text pe("Object perigee: " + std::to_string(m_pe / AU) + " AU", GUI::font, 15);
-        pe.setFillColor(sf::Color::White);
-        bounds = pe.getLocalBounds();
-        pe.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 6));
-        target.draw(pe);
-
-        sf::Text pe_vel("Velocity at perigee: " + std::to_string((int)m_pe_vel) + " m / s", GUI::font, 15);
-        pe_vel.setFillColor(sf::Color::White);
-        bounds = pe_vel.getLocalBounds();
-        pe_vel.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 7));
-        target.draw(pe_vel);
-
-        sf::Text orbital_period("Orbital period: " + std::to_string(m_orbit_len / 365.25) + " years", GUI::font, 15);
-        orbital_period.setFillColor(sf::Color::White);
-        bounds = orbital_period.getLocalBounds();
-        orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 8));
-        target.draw(orbital_period);
-
-        sf::Text orbit_eccencrity("Eccencrity: " + std::to_string(eccencrity), GUI::font, 15);
-        orbital_period.setFillColor(sf::Color::White);
-        bounds = orbital_period.getLocalBounds();
-        orbital_period.setPosition(sf::Vector2f(target.getSize().x - bounds.width - 10, 10 + 25 * 9));
-        target.draw(orbit_eccencrity);
-    }
+    sf::Text text(m_name, GUI::font, 15);
+    text.setPosition({static_cast<float>(position.x), static_cast<float>(position.y)});
+    view.window().draw(text);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {

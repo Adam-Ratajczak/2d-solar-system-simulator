@@ -42,9 +42,13 @@ void World::update(int steps) {
 
 void World::draw(SimulationView const& view) const {
 
-    WorldDrawScope scope { view };
+    {
+        WorldDrawScope scope { view };
+        for (auto& p : m_object_list)
+            p->draw(view);
+    }
     for (auto& p : m_object_list)
-        p->draw(view);
+        p->draw_gui(view);
 }
 
 Object* World::get_object_by_name(std::string const& name) {

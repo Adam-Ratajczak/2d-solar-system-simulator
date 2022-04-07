@@ -22,39 +22,33 @@ void SimulationView::handle_event(Event& event) {
     if (event.type() == sf::Event::MouseButtonPressed) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
         if (event.event().mouseButton.button == sf::Mouse::Left) {
-            auto world_click_pos = screen_to_world({ static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) });
-            world_click_pos.z = 0;
-            std::cout << world_click_pos << std::endl;
-            m_prev_pos = world_click_pos;
             m_dragging = true;
-            // clang-format off
-
-            m_world.for_each_object([&](Object& object) {
-                if(object.hover(*this, world_click_pos))
-                {
-                    if(m_focused_object != nullptr)
-                        m_focused_object->m_focused = false;
-                    m_focused_object = &object;
-                    m_focused_object->m_focused = true;
-                }
-            });
-            // clang-format on
-            if (m_coord_measure) {
-                m_coord_measure = false;
-                m_measured = true;
-                if (on_coord_measure) {
-                    on_coord_measure(m_prev_pos);
-                }
-            }
-            else if (m_focus_measure && m_focused_object != nullptr) {
-                m_focus_measure = false;
-                m_measured = true;
-                if (on_focus_measure) {
-                    on_focus_measure(m_focused_object);
-                }
-                m_focused_object->m_focused = false;
-                m_focused_object = nullptr;
-            }
+            // FIXME: This requires more advanced math to work properly.
+            // m_world.for_each_object([&](Object& object) {
+            //     if(object.hover(*this, world_click_pos))
+            //     {
+            //         if(m_focused_object != nullptr)
+            //             m_focused_object->m_focused = false;
+            //         m_focused_object = &object;
+            //         m_focused_object->m_focused = true;
+            //     }
+            // });
+            // if (m_coord_measure) {
+            //     m_coord_measure = false;
+            //     m_measured = true;
+            //     if (on_coord_measure) {
+            //         on_coord_measure(m_prev_pos);
+            //     }
+            // }
+            // else if (m_focus_measure && m_focused_object != nullptr) {
+            //     m_focus_measure = false;
+            //     m_measured = true;
+            //     if (on_focus_measure) {
+            //         on_focus_measure(m_focused_object);
+            //     }
+            //     m_focused_object->m_focused = false;
+            //     m_focused_object = nullptr;
+            // }
             event.set_handled();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
@@ -75,15 +69,15 @@ void SimulationView::handle_event(Event& event) {
         m_changed = true;
     }
     else if (event.type() == sf::Event::MouseMoved) {
-        m_prev_mouse_pos = { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+        sf::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
         if (m_dragging) {
-            auto new_pos = screen_to_world(m_prev_mouse_pos);
-            new_pos.z = 0;
-            auto delta_pos = m_prev_pos - new_pos;
-            set_offset(offset() + delta_pos);
-            m_prev_pos = new_pos;
-            // std::cout << "mouse_pos: " << mouse_pos << " view offset: " << view.offset() << " prev_pos: " << prev_pos << " delta_pos: " << deltaPos << std::endl;
+            auto delta_pos = m_prev_mouse_pos - mouse_pos;
+            // qad from "quick and dirty".
+            // FIXME: Use plane projection or sth better???
+            Vector3 qad_delta { -delta_pos.x, delta_pos.y, 0 };
+            set_offset(offset() + qad_delta * std::sqrt(scale()) / 80);
         }
+        m_prev_mouse_pos = mouse_pos;
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
@@ -120,20 +114,20 @@ void SimulationView::handle_event(Event& event) {
 void SimulationView::draw_grid(sf::RenderWindow& window) const {
     constexpr float zoom_step_exponent = 2;
     auto zoom_rounded_to_power = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom) / std::log2(zoom_step_exponent)));
-    float spacing = AU / zoom_rounded_to_power / 10;
+    float spacing = AU / 10;
     {
         WorldDrawScope scope(*this);
         constexpr int major_gridline_interval = 4;
-        Vector3 start_coords = screen_to_world({ 0, 0 });
-        start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
-        start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
-        Vector3 end_coords = screen_to_world({ size().x, size().y });
+        // Vector3 start_coords = screen_to_world({ 0, 0 });
+        // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
+        // start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
+        // Vector3 end_coords = screen_to_world({ size().x, size().y });
+        Vector3 start_coords = { -1e10, 0, -1e10 };
+        Vector3 end_coords = { 1e10, 0, 1e10 };
 
-        std::cout << "GRID: " << start_coords << "," << end_coords << std::endl;
-        
-        if(start_coords.x > end_coords.x)
+        if (start_coords.x > end_coords.x)
             std::swap(start_coords.x, end_coords.x);
-        if(start_coords.y > end_coords.y)
+        if (start_coords.y > end_coords.y)
             std::swap(start_coords.y, end_coords.y);
 
         sf::Color const major_grid_line_color { 60, 60, 60 };
@@ -170,6 +164,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     }
 
     // guide
+    /*
     sf::Vector2f guide_start { size().x - 200.f, size().y - 30.f };
     sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * scale(), 0);
     sf::VertexArray guide { sf::Lines, 6 };
@@ -187,37 +182,38 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     auto bounds = text.getLocalBounds();
     text.setOrigin({ bounds.width, bounds.height + 10 });
     window.draw(text);
+    */
 }
 
 Matrix4x4d SimulationView::projection_matrix() const {
-    // TODO: Get these factors from window
-    float l = -(int)window().getSize().x;
-    float r = window().getSize().x;
-    float t = -(int)window().getSize().y;
-    float b = window().getSize().y;
-    float n = -10000;
-    float f = 10000;
-    return { { { 2 / (r - l), 0, 0, 0 },
-        { 0, 2 / (t - b), 0, 0 },
-        { 0, 0, -2 / (f - n), 0 },
-        { -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1 } } };
+    double fov = 80;
+    double fd = 1 / std::tan(fov / 2);
+    double aspect = size().x / (double)size().y;
+    double zFar = 100;
+    double zNear = 0.1;
+
+    return { { { fd / aspect, 0, 0, 0 },
+        { 0, fd, 0, 0 },
+        { 0, 0, (zFar + zNear) / (zNear - zFar), -1 },
+        { 0, 0, (2 * zFar * zNear) / (zNear - zFar), 0 } } };
 }
 
 Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
-    matrix = matrix * Transform::translation(m_offset);
     matrix = matrix * Transform::scale({ scale(), scale(), scale() });
-    matrix = matrix * Transform::rotation_around_x(TILT);
+    matrix = matrix * Transform::translation(m_offset);
+    matrix = matrix * Transform::translation({ 0, 0, -5 });
+    //matrix = matrix * Transform::rotation_around_x(-0.7);
     return matrix;
 }
 
 Vector3 SimulationView::screen_to_world(Vector3 v) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    Vector3 clip_space { -(v.x - window().getSize().x / 2.0) * 2 / window().getSize().x, (v.y - window().getSize().y / 2.0) * 2 / window().getSize().y };
+    Vector3 clip_space { -(v.x - size().x / 2.0) * 2 / size().x, (v.y - size().y / 2.0) * 2 / size().y };
     auto view_space = projection_matrix().inverted() * clip_space;
     // We skip world space because we have combined model+view matrix
     auto local_space = modelview_matrix().inverted() * view_space;
-    std::cout << clip_space << " -> " << view_space << " -> " << local_space << std::endl;
+    //std::cout << "S 2 W " << v << " -> " << clip_space << " -> " << view_space << " -> " << local_space << std::endl;
     return local_space;
 }
 
@@ -225,7 +221,9 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // We skip world space because we have combined model+view matrix
     auto view_space = modelview_matrix() * local_space;
     auto clip_space = projection_matrix() * view_space;
-    return { (clip_space.x + 1) / 2 * window().getSize().x, (clip_space.y + 1) / 2 * window().getSize().y, 0 };
+    Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
+    //std::cout << "modelview: " << modelview_matrix() << ":: " << local_space << " -> " << view_space << " -> " << clip_space << "->" << result << std::endl;
+    return result;
 }
 
 void SimulationView::draw(sf::RenderWindow& window) const {
@@ -271,6 +269,16 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     date_text.setFillColor(sf::Color::White);
     date_text.setPosition(10, window.getSize().y - 35);
     window.draw(date_text);
+
+    std::ostringstream debugoss;
+    auto mp = sf::Mouse::getPosition(window);
+    debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
+    debugoss << "s=" << scale() << std::endl;
+    debugoss << "off=" << offset() << std::endl;
+
+    sf::Text debug_text(debugoss.str(), GUI::font, 15);
+    debug_text.setPosition(500, 10);
+    window.draw(debug_text);
 }
 
 void SimulationView::update() {
@@ -291,21 +299,6 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view)
     // simple OpenGL test
     glMatrixMode(GL_PROJECTION);
     view.projection_matrix().gl_load();
-
-    /*
-    float fov = 70;
-    float aspect = 16.f / 9.f; // TODO
-    float zFar = 10000;
-    float zNear = 10;
-
-    float frustum_matrix[] {
-        fov / aspect, 0, 0, 0,
-        0, fov, 0, 0,
-        0, 0, (zFar + zNear) / (zFar - zNear), (2 * zFar * zNear) / (zFar - zNear),
-        0, 0, -1, 0
-    };
-    glLoadMatrixf(frustum_matrix);
-    */
 
     glMatrixMode(GL_MODELVIEW);
     view.modelview_matrix().gl_load();

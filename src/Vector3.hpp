@@ -55,10 +55,6 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Vector3& vec){
         return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
     }
-
-    operator sf::Vector2f(){
-        return sf::Vector2f(x, y);
-    }
 };
 
 inline Vector3 operator+(const Vector3& a, const Vector3& b) { return Vector3(a.x + b.x, a.y + b.y, a.z + b.z); }

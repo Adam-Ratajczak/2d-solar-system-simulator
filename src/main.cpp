@@ -1,6 +1,7 @@
 // keep first!
 #include <GL/glew.h>
 
+#include "Transform.hpp"
 #include "Vector3.hpp"
 #include "World.hpp"
 #include "gui/Application.hpp"
@@ -9,17 +10,8 @@
 #include <iostream>
 
 int main() {
-    Matrix4x4d test1 = Matrix4x4d { .data = {
-                                        { 4, -2, 2, 1 },
-                                        { 2, 4, 3, 1 },
-                                        { 3, 7, 11, 2 },
-                                        { 9, -7, 1, 0 } } };
-    std::cout << test1.determinant() << std::endl;
-    std::cout << test1.adjoint() << std::endl;
-
     glewInit();
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "2D Solar System Simulator", sf::Style::Default, sf::ContextSettings(24, 0, 0));
-
     window.setFramerateLimit(60);
 
     World world;

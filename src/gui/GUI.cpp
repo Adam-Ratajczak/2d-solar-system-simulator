@@ -36,7 +36,7 @@ GUI::GUI(Application& application, World& world)
 
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
-    m_simulation_view->on_coord_measure = [&](sf::Vector2f pos) {
+    m_simulation_view->on_coord_measure = [&](Vector3 pos) {
         // TODO: Add widget enabled state and use it instead.
         m_add_object_button->set_visible(true);
         m_forward_simulation_is_valid = false;

@@ -11,11 +11,11 @@ Trail::Trail(size_t max_trail_size)
     : m_max_trail_size(max_trail_size)
     , m_trail_vertexbuffer(sf::Lines, m_max_trail_size * 2) { }
 
-void Trail::push_back(const Vector3 &pos) {
+void Trail::push_back(const Vector3& pos) {
     m_trail.push_back(pos);
 }
 
-void Trail::push_front(const Vector3 &pos) {
+void Trail::push_front(const Vector3& pos) {
     m_trail.push_front(pos);
 }
 
@@ -28,17 +28,22 @@ void Trail::update_trail(SimulationView const& view, const sf::Color& m_color) {
     color.a = 128;
 
     // FIXME: This assumes that max trail size doesn't change.
+    // TODO: Rewrite to raw OpenGL.
+    /*
     m_trail_vertexbuffer[m_append_index] = sf::Vertex(view.world_to_screen(*(--(--(m_trail.end())))), color);
     m_trail_vertexbuffer[m_append_index + 1] = sf::Vertex(view.world_to_screen(m_trail.back()), color);
     m_append_index += 2;
     if (m_append_index >= m_trail_vertexbuffer.getVertexCount() - 1)
         m_append_index = 0;
+        */
 }
 
-void Trail::m_recalculate(SimulationView const& view, sf::Color m_color){
+void Trail::m_recalculate(SimulationView const& view, sf::Color m_color) {
+    // TODO: Rewrite to raw OpenGL.
+    /*
     auto color = m_color;
-    color.a = 128; 
-    
+    color.a = 128;
+
     // FIXME: Maybe add a way to invalidate trail from the outside
     if (m_prev_offset != view.offset() || m_prev_zoom != view.scale() || m_prev_window_size != view.window().getSize()) {
         size_t index = 0;
@@ -58,13 +63,13 @@ void Trail::m_recalculate(SimulationView const& view, sf::Color m_color){
     m_prev_offset = view.offset();
     m_prev_zoom = view.scale();
     m_prev_window_size = view.window().getSize();
+    */
 }
 
 void Trail::draw(SimulationView const& view, sf::Color m_color) {
     auto& target = view.window();
-    
-    m_recalculate(view, m_color);
-    
-    target.draw(m_trail_vertexbuffer);
 
+    m_recalculate(view, m_color);
+
+    target.draw(m_trail_vertexbuffer);
 }

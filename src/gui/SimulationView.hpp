@@ -16,13 +16,10 @@ public:
         : Widget(c)
         , m_world(world) { }
 
-    static constexpr double SCALE = 1000 / AU;
-    static constexpr float TILT = 3.14 / 180 * 30;
-
     void set_offset(Vector3 o) { m_offset = o; }
     void set_zoom(double d) { m_zoom = d; }
     Vector3 offset() const { return m_offset; }
-    double scale() const { return m_zoom * SCALE; }
+    double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
 
     Vector3 screen_to_world(Vector3 v) const;
@@ -35,7 +32,7 @@ public:
         m_zoom = 1;
     };
 
-    std::function<void(sf::Vector2f pos)> on_coord_measure;
+    std::function<void(Vector3 pos)> on_coord_measure;
     std::function<void(Object* focused)> on_focus_measure;
 
     void start_coords_measure() { m_coord_measure = true; }

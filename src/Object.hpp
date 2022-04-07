@@ -49,7 +49,13 @@ public:
     void update_forces(bool reverse);
     void update();
     Trail& trail() { return m_trail; }
+
+    // Draw the object in world's coordinates.
     void draw(SimulationView const&);
+
+    // Draw the GUI layer of the object (without world transform)
+    void draw_gui(SimulationView const&);
+
     bool hover(SimulationView& view, Vector3 mouse_pos);
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
