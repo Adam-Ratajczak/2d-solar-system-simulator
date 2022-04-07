@@ -159,9 +159,9 @@ requires(Size > 0) inline Matrix<T, Size> Matrix<T, Size>::adjoint() const {
 
 inline Vector3 operator*(Matrix4x4d const& mat, Vector3 const& vec) {
     Vector3 result;
-    // Assume that vec.w would be 1
-    result.x = vec.x * mat.element(0, 0) + vec.y * mat.element(1, 0) + vec.z * mat.element(2, 0) + mat.element(3, 0);
-    result.y = vec.x * mat.element(0, 1) + vec.y * mat.element(1, 1) + vec.z * mat.element(2, 1) + mat.element(3, 1);
-    result.z = vec.x * mat.element(0, 2) + vec.y * mat.element(1, 2) + vec.z * mat.element(2, 2) + mat.element(3, 2);
+    result.x = vec.x * mat.element(0, 0) + vec.y * mat.element(1, 0) + vec.z * mat.element(2, 0) + vec.w * mat.element(3, 0);
+    result.y = vec.x * mat.element(0, 1) + vec.y * mat.element(1, 1) + vec.z * mat.element(2, 1) + vec.w * mat.element(3, 1);
+    result.z = vec.x * mat.element(0, 2) + vec.y * mat.element(1, 2) + vec.z * mat.element(2, 2) + vec.w * mat.element(3, 2);
+    result.w = vec.x * mat.element(0, 3) + vec.y * mat.element(1, 3) + vec.z * mat.element(2, 3) + vec.w * mat.element(3, 3);
     return result;
 }

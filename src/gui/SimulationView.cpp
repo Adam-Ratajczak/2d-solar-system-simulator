@@ -74,8 +74,8 @@ void SimulationView::handle_event(Event& event) {
             auto delta_pos = m_prev_mouse_pos - mouse_pos;
             // qad from "quick and dirty".
             // FIXME: Use plane projection or sth better???
-            Vector3 qad_delta { -delta_pos.x, delta_pos.y, 0 };
-            set_offset(offset() + qad_delta * std::sqrt(scale()) / 80);
+            Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
+            set_offset(offset() + qad_delta / scale() / 80);
         }
         m_prev_mouse_pos = mouse_pos;
     }
@@ -200,10 +200,10 @@ Matrix4x4d SimulationView::projection_matrix() const {
 
 Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
-    matrix = matrix * Transform::scale({ scale(), scale(), scale() });
     matrix = matrix * Transform::translation(m_offset);
+    matrix = matrix * Transform::scale({ scale(), scale(), scale() });
     matrix = matrix * Transform::translation({ 0, 0, -5 });
-    //matrix = matrix * Transform::rotation_around_x(-0.7);
+    // matrix = matrix * Transform::rotation_around_x(-0.7);
     return matrix;
 }
 
@@ -213,7 +213,7 @@ Vector3 SimulationView::screen_to_world(Vector3 v) const {
     auto view_space = projection_matrix().inverted() * clip_space;
     // We skip world space because we have combined model+view matrix
     auto local_space = modelview_matrix().inverted() * view_space;
-    //std::cout << "S 2 W " << v << " -> " << clip_space << " -> " << view_space << " -> " << local_space << std::endl;
+    // std::cout << "S 2 W " << v << " -> " << clip_space << " -> " << view_space << " -> " << local_space << std::endl;
     return local_space;
 }
 
@@ -222,7 +222,7 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     auto view_space = modelview_matrix() * local_space;
     auto clip_space = projection_matrix() * view_space;
     Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
-    //std::cout << "modelview: " << modelview_matrix() << ":: " << local_space << " -> " << view_space << " -> " << clip_space << "->" << result << std::endl;
+    // std::cout << "modelview: " << modelview_matrix() << ":: " << local_space << " -> " << view_space << " -> " << clip_space << "->" << result << std::endl;
     return result;
 }
 
@@ -248,6 +248,13 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Green };
         window.draw(lines);
     }
+    auto sizes = size();
+    sf::VertexArray lines(sf::Lines, 4);
+    lines[0] = sf::Vertex { { 0, size().y / 2 }, sf::Color::Green };
+    lines[1] = sf::Vertex { { sizes.x, size().y / 2 }, sf::Color::Green };
+    lines[2] = sf::Vertex { { size().x / 2, 0 }, sf::Color::Green };
+    lines[3] = sf::Vertex { { size().x / 2, sizes.y }, sf::Color::Green };
+    window.draw(lines);
 
     std::ostringstream oss;
     oss << m_world.date.to_string();
@@ -295,6 +302,8 @@ void SimulationView::update() {
 WorldDrawScope::WorldDrawScope(SimulationView const& view)
     : m_simulation_view(view) {
     view.window().popGLStates();
+
+    glViewport(0, 0, view.size().x, view.size().y);
 
     // simple OpenGL test
     glMatrixMode(GL_PROJECTION);

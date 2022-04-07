@@ -8,6 +8,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector3.hpp>
 #include <SFML/Window/Mouse.hpp>
@@ -88,7 +89,7 @@ void Object::draw(SimulationView const& view) {
     // FIXME: Hardcoded multiplier
     auto scaled_pos = m_pos / AU;
 
-    //std::cout << "CORRECT according to opengl: " << m_name << " " << scaled_pos << " -> " << Transform::project(scaled_pos) << std::endl;
+    // std::cout << "CORRECT according to opengl: " << m_name << " " << scaled_pos << " -> " << Transform::project(scaled_pos) << std::endl;
 
     glBegin(GL_TRIANGLE_STRIP);
     glColor3f(m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f);
@@ -170,15 +171,24 @@ void Object::draw(SimulationView const& view) {
     // }
 }
 
-void Object::draw_gui(SimulationView const& view)
-{
+void Object::draw_gui(SimulationView const& view) {
     // FIXME: Hardcoded multiplier
     auto position = view.world_to_screen(m_pos / AU);
-    //std::cout << m_name << position << std::endl;
+    // std::cout << m_name << position << std::endl;
 
     sf::Text text(m_name, GUI::font, 15);
-    text.setPosition({static_cast<float>(position.x), static_cast<float>(position.y)});
-    view.window().draw(text);
+    text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
+
+    sf::Transform transform(1, 0, 0, 0, 1, 0, 0, 0, 0);
+    // HACK: We must to force internal array to be writable because
+    // SFML is not so nice to give us access to 4-th row and 4-th column.
+    // THIS WHOLE THING IS VERY HACKY AND WOULDN'T BE REQUIRED IF SFML
+    // SUPPORTED 3D PROPERLY
+    float* internal_matrix = const_cast<float*>(transform.getMatrix());
+    internal_matrix[3 * 4 + 3] = 5;
+    text.setScale(5, 5);                                     // to make text not 5x smaller
+    text.move(view.size().x * 2, view.size().y * 2); // because the text scaled 5x to the edge of the screen
+    view.window().draw(text, transform);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {

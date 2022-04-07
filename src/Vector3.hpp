@@ -1,13 +1,13 @@
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
+#include <GL/gl.h>
+#include <SFML/System.hpp>
 #include <cmath>
 #include <ostream>
-#include <GL/gl.h>
 
 class Vector3 {
 public:
-    double x, y, z;
+    double x, y, z, w { 1 };
 
     Vector3()
         : x(0.)
@@ -52,8 +52,8 @@ public:
 
     Vector3 normalized() const;
 
-    friend std::ostream& operator<<(std::ostream& out, const Vector3& vec){
-        return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+    friend std::ostream& operator<<(std::ostream& out, const Vector3& vec) {
+        return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << "," << vec.w << ")";
     }
 };
 
@@ -94,6 +94,6 @@ inline double get_distance(Vector3 a, Vector3 b) {
     return std::sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
 }
 
-inline void Vector3::glDraw() const{
+inline void Vector3::glDraw() const {
     glVertex3f(x, y, z);
 }
