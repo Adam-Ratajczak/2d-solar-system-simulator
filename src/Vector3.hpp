@@ -37,10 +37,10 @@ public:
     double magnitude() const;
     double angle() const;
 
-    void limit(double mag);
-    void set_magnitude(double mag);
     void glDraw() const;
 
+    // Return a vector rotated by theta around (0,1,0) axis.
+    // FIXME: Support arbitrary axis when this is needed.
     Vector3 rotate_vector(double theta) const;
 
     double distance_to(Vector3 const& other) const {
@@ -63,19 +63,17 @@ public:
 
 inline Vector3 operator+(const Vector3& a, const Vector3& b) { return Vector3(a.x + b.x, a.y + b.y, a.z + b.z); }
 inline Vector3 operator-(const Vector3& a, const Vector3& b) { return Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
-inline Vector3 operator*(const Vector3& a, const double b) { return Vector3(a.x * b, a.y * b, a.z * b); }
-inline Vector3 operator*(const double a, const Vector3& b) { return Vector3(a * b.x, a * b.y, a * b.z); }
-inline Vector3 operator/(const Vector3& a, const double b) { return Vector3(a.x / b, a.y / b, a.z / b); }
+inline Vector3 operator*(const Vector3& a, double b) { return Vector3(a.x * b, a.y * b, a.z * b); }
+inline Vector3 operator*(double a, const Vector3& b) { return Vector3(a * b.x, a * b.y, a * b.z); }
+inline Vector3 operator/(const Vector3& a, double b) { return Vector3(a.x / b, a.y / b, a.z / b); }
 inline Vector3 operator-(const Vector3& a) { return Vector3(-a.x, -a.y, -a.z); }
 
 inline Vector3& operator+=(Vector3& a, const Vector3& b) { return a = a + b; }
 inline Vector3& operator-=(Vector3& a, const Vector3& b) { return a = a - b; }
-inline Vector3& operator*=(Vector3& a, const double b) { return a = a * b; }
-inline Vector3& operator/=(Vector3& a, const double b) { return a = a / b; }
+inline Vector3& operator*=(Vector3& a, double b) { return a = a * b; }
+inline Vector3& operator/=(Vector3& a, double b) { return a = a / b; }
 
-inline bool operator==(Vector3& a, Vector3& b) { return a.x == b.x && a.y == b.y; }
-inline bool operator!=(Vector3& a, Vector3& b) { return !(a == b); }
-inline bool operator==(const Vector3& a, const Vector3& b) { return a.x == b.x && a.y == b.y; }
+inline bool operator==(const Vector3& a, const Vector3& b) { return a.x == b.x && a.y == b.y && a.z == b.z; }
 inline bool operator!=(const Vector3& a, const Vector3& b) { return !(a == b); }
 
 inline double Vector3::magnitude() const {
@@ -89,26 +87,7 @@ inline double Vector3::angle() const {
 inline Vector3 Vector3::rotate_vector(double theta) const {
     double t_cos = std::cos(theta), t_sin = std::sin(theta);
 
-    return Vector3(x * t_cos - y * t_sin, x * t_sin + y * t_cos);
-}
-
-inline void Vector3::limit(double mag) {
-    double d = this->magnitude();
-
-    if (d < mag)
-        return;
-
-    double theta = this->angle();
-
-    x = std::cos(theta) * mag;
-    y = std::sin(theta) * mag;
-}
-
-inline void Vector3::set_magnitude(double mag) {
-    double theta = this->angle();
-
-    x = std::cos(theta) * mag;
-    y = std::sin(theta) * mag;
+    return Vector3(x * t_cos - y * t_sin, x * t_sin + y * t_cos, z);
 }
 
 inline Vector3 Vector3::normalized() const {
