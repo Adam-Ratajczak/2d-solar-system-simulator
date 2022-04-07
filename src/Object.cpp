@@ -184,6 +184,7 @@ void Object::draw_gui(SimulationView const& view) {
     // SFML is not so nice to give us access to 4-th row and 4-th column.
     // THIS WHOLE THING IS VERY HACKY AND WOULDN'T BE REQUIRED IF SFML
     // SUPPORTED 3D PROPERLY
+    // And still doesn't work.
     float* internal_matrix = const_cast<float*>(transform.getMatrix());
     internal_matrix[3 * 4 + 3] = 5;
     text.setScale(5, 5);                                     // to make text not 5x smaller
