@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "gui/GUI.hpp"
 #include "gui/Units.hpp"
+#include <GL/gl.h>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -82,6 +83,22 @@ void Object::update() {
 }
 
 void Object::draw(SimulationView const& view) {
+
+    // TODO !!!
+    //std::cout << m_name << view.matrix() * m_pos << std::endl;
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor3f(m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f);
+    glVertex3f(m_pos.x - m_radius * 100, m_pos.y, m_pos.z);
+    glVertex3f(m_pos.x + m_radius * 100, m_pos.y, m_pos.z);
+    glVertex3f(m_pos.x, m_pos.y - m_radius * 100, m_pos.z);
+    glVertex3f(m_pos.x, m_pos.y + m_radius * 100, m_pos.z);
+    glVertex3f(m_pos.x, m_pos.y, m_pos.z - m_radius * 100);
+    glVertex3f(m_pos.x, m_pos.y, m_pos.z + m_radius * 100);
+    glEnd();
+    return;
+
+    // :(
+
     auto& target = view.window();
 
     m_trail.draw(view, m_color);

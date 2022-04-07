@@ -1,7 +1,11 @@
 #include "SimulationView.hpp"
 
+#include "../Transform.hpp"
 #include "../World.hpp"
 #include "GUI.hpp"
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <SFML/System/Vector2.hpp>
 #include <cmath>
 #include <sstream>
 
@@ -19,6 +23,8 @@ void SimulationView::handle_event(Event& event) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             auto world_click_pos = screen_to_world({ static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) });
+            world_click_pos.z = 0;
+            std::cout << world_click_pos << std::endl;
             m_prev_pos = world_click_pos;
             m_dragging = true;
             // clang-format off
@@ -69,11 +75,13 @@ void SimulationView::handle_event(Event& event) {
         m_changed = true;
     }
     else if (event.type() == sf::Event::MouseMoved) {
-        m_prev_mouse_pos = { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y)};
+        m_prev_mouse_pos = { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
         if (m_dragging) {
-            const sf::Vector2f newPos = screen_to_world(m_prev_mouse_pos);
-            const sf::Vector2f deltaPos = m_prev_pos - newPos;
-            set_offset(offset() + deltaPos);
+            auto new_pos = screen_to_world(m_prev_mouse_pos);
+            new_pos.z = 0;
+            auto delta_pos = m_prev_pos - new_pos;
+            set_offset(offset() + delta_pos);
+            m_prev_pos = new_pos;
             // std::cout << "mouse_pos: " << mouse_pos << " view offset: " << view.offset() << " prev_pos: " << prev_pos << " delta_pos: " << deltaPos << std::endl;
         }
     }
@@ -102,7 +110,7 @@ void SimulationView::handle_event(Event& event) {
             //         m_speed /= 2;
             // }
 
-            if(m_speed > 0)
+            if (m_speed > 0)
                 m_speed /= 2;
         }
     }
@@ -113,31 +121,53 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     constexpr float zoom_step_exponent = 2;
     auto zoom_rounded_to_power = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom) / std::log2(zoom_step_exponent)));
     float spacing = AU / zoom_rounded_to_power / 10;
-    constexpr int major_gridline_interval = 4;
-    sf::Vector2f start_coords = screen_to_world({ 0, 0 });
-    start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
-    start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
-    sf::Vector2f end_coords = screen_to_world({ size().x, size().y });
+    {
+        WorldDrawScope scope(*this);
+        constexpr int major_gridline_interval = 4;
+        Vector3 start_coords = screen_to_world({ 0, 0 });
+        start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
+        start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
+        Vector3 end_coords = screen_to_world({ size().x, size().y });
 
-    sf::Color const major_grid_line_color { 60, 60, 60 };
-    sf::Color const grid_line_color { 25, 25, 25 };
+        std::cout << "GRID: " << start_coords << "," << end_coords << std::endl;
+        
+        if(start_coords.x > end_coords.x)
+            std::swap(start_coords.x, end_coords.x);
+        if(start_coords.y > end_coords.y)
+            std::swap(start_coords.y, end_coords.y);
 
-    sf::VertexArray lines(sf::Lines);
-    int index = 0;
-    for (float x = start_coords.x; x < end_coords.x; x += spacing) {
-        auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
-        lines.append(sf::Vertex { { static_cast<float>(world_to_screen({ x, 0 }).x), 0 }, color });
-        lines.append(sf::Vertex { { static_cast<float>(world_to_screen({ x, 0 }).x), size().y }, color });
-        index++;
+        sf::Color const major_grid_line_color { 60, 60, 60 };
+        sf::Color const grid_line_color { 25, 25, 25 };
+
+        // TODO: Create proper API for it.
+        std::vector<sf::Vector3f> vertices;
+        std::vector<sf::Vector3f> colors;
+
+        int index = 0;
+
+        // FIXME: Calculate bounds depending on window size instead of hardcoding them
+        for (float x = start_coords.x; x < end_coords.x; x += spacing) {
+            auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
+            vertices.push_back({ x, -1e15, 0 });
+            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
+            vertices.push_back({ x, 1e15, 0 });
+            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
+            index++;
+        }
+        index = 0;
+        for (float y = start_coords.y; y < end_coords.y; y += spacing) {
+            auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
+            vertices.push_back({ -1e15, y, 0 });
+            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
+            vertices.push_back({ 1e15, y, 0 });
+            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
+            index++;
+        }
+
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+        glColorPointer(3, GL_FLOAT, 0, colors.data());
+        glDrawArrays(GL_LINES, 0, vertices.size());
     }
-    index = 0;
-    for (float y = start_coords.y; y < end_coords.y; y += spacing) {
-        auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
-        lines.append(sf::Vertex { { 0, static_cast<float>(world_to_screen({ 0, y }).y) }, color });
-        lines.append(sf::Vertex { { size().x, static_cast<float>(world_to_screen({ 0, y }).y) }, color });
-        index++;
-    }
-    window.draw(lines);
 
     // guide
     sf::Vector2f guide_start { size().x - 200.f, size().y - 30.f };
@@ -159,9 +189,47 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     window.draw(text);
 }
 
+Matrix4x4d SimulationView::projection_matrix() const {
+    // TODO: Get these factors from window
+    float l = -(int)window().getSize().x;
+    float r = window().getSize().x;
+    float t = -(int)window().getSize().y;
+    float b = window().getSize().y;
+    float n = -10000;
+    float f = 10000;
+    return { { { 2 / (r - l), 0, 0, 0 },
+        { 0, 2 / (t - b), 0, 0 },
+        { 0, 0, -2 / (f - n), 0 },
+        { -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1 } } };
+}
+
+Matrix4x4d SimulationView::modelview_matrix() const {
+    Matrix4x4d matrix = Matrix4x4d::identity();
+    matrix = matrix * Transform::translation(m_offset);
+    matrix = matrix * Transform::scale({ scale(), scale(), scale() });
+    matrix = matrix * Transform::rotation_around_x(TILT);
+    return matrix;
+}
+
+Vector3 SimulationView::screen_to_world(Vector3 v) const {
+    // https://learnopengl.com/Getting-started/Coordinate-Systems
+    Vector3 clip_space { -(v.x - window().getSize().x / 2.0) * 2 / window().getSize().x, (v.y - window().getSize().y / 2.0) * 2 / window().getSize().y };
+    auto view_space = projection_matrix().inverted() * clip_space;
+    // We skip world space because we have combined model+view matrix
+    auto local_space = modelview_matrix().inverted() * view_space;
+    std::cout << clip_space << " -> " << view_space << " -> " << local_space << std::endl;
+    return local_space;
+}
+
+Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
+    // We skip world space because we have combined model+view matrix
+    auto view_space = modelview_matrix() * local_space;
+    auto clip_space = projection_matrix() * view_space;
+    return { (clip_space.x + 1) / 2 * window().getSize().x, (clip_space.y + 1) / 2 * window().getSize().y, 0 };
+}
+
 void SimulationView::draw(sf::RenderWindow& window) const {
     draw_grid(window);
-
     m_world.draw(*this);
 
     if (m_coord_measure) {
@@ -214,4 +282,42 @@ void SimulationView::update() {
     // Handle focus
     if (m_focused_object)
         set_offset(m_focused_object->m_pos);
+}
+
+WorldDrawScope::WorldDrawScope(SimulationView const& view)
+    : m_simulation_view(view) {
+    view.window().popGLStates();
+
+    // simple OpenGL test
+    glMatrixMode(GL_PROJECTION);
+    view.projection_matrix().gl_load();
+
+    /*
+    float fov = 70;
+    float aspect = 16.f / 9.f; // TODO
+    float zFar = 10000;
+    float zNear = 10;
+
+    float frustum_matrix[] {
+        fov / aspect, 0, 0, 0,
+        0, fov, 0, 0,
+        0, 0, (zFar + zNear) / (zFar - zNear), (2 * zFar * zNear) / (zFar - zNear),
+        0, 0, -1, 0
+    };
+    glLoadMatrixf(frustum_matrix);
+    */
+
+    glMatrixMode(GL_MODELVIEW);
+    view.modelview_matrix().gl_load();
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+}
+
+WorldDrawScope::~WorldDrawScope() {
+    glFlush();
+    m_simulation_view.window().pushGLStates();
+    m_simulation_view.window().resetGLStates();
 }

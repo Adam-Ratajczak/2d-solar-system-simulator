@@ -1,9 +1,10 @@
 #pragma once
 
 #include "../Constants.hpp"
+#include "../Matrix.hpp"
 #include "../Vector3.hpp"
 #include "Widget.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics.hpp>
 #include <functional>
 
 class Object;
@@ -16,6 +17,7 @@ public:
         , m_world(world) { }
 
     static constexpr double SCALE = 1000 / AU;
+    static constexpr float TILT = 3.14 / 180 * 30;
 
     void set_offset(Vector3 o) { m_offset = o; }
     void set_zoom(double d) { m_zoom = d; }
@@ -23,11 +25,13 @@ public:
     double scale() const { return m_zoom * SCALE; }
     void apply_zoom(double v) { m_zoom *= v; }
 
-    Vector3 world_to_screen(Vector3 v) const { return (v - m_offset) * scale() + Vector3(window().getSize() / 2u); }
-    Vector3 screen_to_world(Vector3 v) const { return (v - Vector3(window().getSize() / 2u)) / scale() + m_offset; }
+    Vector3 screen_to_world(Vector3 v) const;
+    Vector3 world_to_screen(Vector3 v) const;
+    Matrix4x4d projection_matrix() const;
+    Matrix4x4d modelview_matrix() const;
 
     void reset() {
-        m_offset = Vector3 {};
+        m_offset = Vector3 {0, 0, 0};
         m_zoom = 1;
     };
 
@@ -74,4 +78,17 @@ private:
 
     // FIXME: This should be in GUI.
     float m_fps = 60;
+};
+
+// This class ensures that everything in the scope will be drawn using
+// world transform (that is, in 3D, with depth enabled), Also, it takes
+// care of restoring all OpenGL states so that you can use SFML safely
+// after the scope.
+class WorldDrawScope {
+public:
+    explicit WorldDrawScope(SimulationView const& view);
+    ~WorldDrawScope();
+
+private:
+    SimulationView const& m_simulation_view;
 };

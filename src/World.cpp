@@ -1,14 +1,14 @@
-#include "World.hpp"
+// keep first!
+#include <GL/glew.h>
+
 #include "Object.hpp"
 #include "Vector3.hpp"
+#include "World.hpp"
 #include "gui/Date.hpp"
 #include "gui/GUI.hpp"
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Window/Event.hpp>
+#include "gui/SimulationView.hpp"
+#include <GL/gl.h>
+#include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -41,6 +41,8 @@ void World::update(int steps) {
 }
 
 void World::draw(SimulationView const& view) const {
+
+    WorldDrawScope scope { view };
     for (auto& p : m_object_list)
         p->draw(view);
 }
