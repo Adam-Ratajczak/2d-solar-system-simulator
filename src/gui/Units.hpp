@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <ostream>
+#include "../Constants.hpp"
 class Length {
 public:
     enum Unit {
@@ -72,4 +73,46 @@ constexpr Angle operator""_deg(long double v) {
 
 constexpr Angle operator""_rad(long double v) {
     return Angle(v, Angle::Rad);
+}
+
+class Distance {
+public:
+    enum Unit {
+        Meter,
+        Kilometer,
+        AU
+    };
+
+    constexpr Distance() = default;
+
+    constexpr Distance(Unit unit)
+        : m_unit(unit) { }
+
+    constexpr Distance(float v, Unit unit)
+        : m_value(v)
+        , m_unit(unit) { }
+
+    constexpr Unit unit() const { return m_unit; }
+    constexpr float value() const { return m_value; }
+
+    constexpr Distance operator-() const { return { -m_value, m_unit }; }
+    constexpr bool operator==(Distance const& other) const { return m_unit == other.m_unit && m_value == other.m_value; }
+
+private:
+    friend std::ostream& operator<<(std::ostream& out, Distance const& l) { return out << l.m_value << "U" << (int)l.unit(); }
+
+    Unit m_unit = Meter;
+    float m_value = 0;
+};
+
+constexpr Distance operator""_m(long double v) {
+    return Distance(v, Distance::Meter);
+}
+
+constexpr Distance operator""_km(long double v) {
+    return Distance(v * 1000, Distance::Kilometer);
+}
+
+constexpr Distance operator""_AU(long double v) {
+    return Distance(v * AU, Distance::AU);
 }

@@ -174,28 +174,28 @@ void Object::draw(SimulationView const& view) {
     }
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     double GM = m_gravity_factor;
-    double a = (apogee + perigee) / 2;
-    double b = std::sqrt(apogee * perigee);
+    double a = (apogee.value() + perigee.value()) / 2;
+    double b = std::sqrt(apogee.value() * perigee.value());
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
-    Vector3 pos(std::cos(theta.rad()) * a, std::sin(theta.rad()) * b);
+    Vector3 pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * b, std::sin(alpha.rad()) * a);
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(m_world, mass, radius * 1000, pos, Vector3(0, 0), color, name, T / (3600 * 24));
-    result->m_ap = apogee;
-    result->m_pe = perigee;
+    auto result = std::make_unique<Object>(m_world, mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
+    result->m_ap = apogee.value();
+    result->m_pe = perigee.value();
 
     result->eccencrity = std::sqrt(1 - (b * b) / (a * a));
     // std::cout << result.eccencrity << "\n";
 
-    double velocity_constant = (2 * GM) / (apogee + perigee);
+    double velocity_constant = (2 * GM) / (apogee.value() + perigee.value());
 
-    result->m_ap_vel = std::sqrt(2 * GM / apogee - velocity_constant);
-    result->m_pe_vel = std::sqrt(2 * GM / perigee - velocity_constant);
+    result->m_ap_vel = std::sqrt(2 * GM / apogee.value() - velocity_constant);
+    result->m_pe_vel = std::sqrt(2 * GM / perigee.value() - velocity_constant);
     double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
 
     Vector3 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
@@ -209,8 +209,8 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, double ra
     return result;
 }
 
-void Object::add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation) {
-    m_world.add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, color, name, rotation));
+void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
+    m_world.add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
 }
 
 std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) const {

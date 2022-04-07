@@ -52,8 +52,8 @@ public:
     void draw(SimulationView const&);
     bool hover(SimulationView& view, Vector3 mouse_pos);
     void calculate_propieties();
-    std::unique_ptr<Object> create_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation);
-    void add_object_relative_to(double mass, double radius, double apogee, double perigee, bool direction, Angle theta, sf::Color color, std::string name, Angle rotation = 0.0_rad);
+    std::unique_ptr<Object> create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
+    void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation = 0.0_rad);
 
     std::unique_ptr<Object> clone_for_forward_simulation(World& new_world) const;
 
