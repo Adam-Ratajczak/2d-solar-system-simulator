@@ -114,16 +114,17 @@ void SimulationView::handle_event(Event& event) {
 void SimulationView::draw_grid(sf::RenderWindow& window) const {
     constexpr float zoom_step_exponent = 2;
     auto zoom_rounded_to_power = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom) / std::log2(zoom_step_exponent)));
-    float spacing = AU / 10;
+    float spacing = 1 / zoom_rounded_to_power;
     {
         WorldDrawScope scope(*this);
         constexpr int major_gridline_interval = 4;
+        float bounds = 500 * spacing;
         // Vector3 start_coords = screen_to_world({ 0, 0 });
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
         // start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
         // Vector3 end_coords = screen_to_world({ size().x, size().y });
-        Vector3 start_coords = { -1e10, 0, -1e10 };
-        Vector3 end_coords = { 1e10, 0, 1e10 };
+        Vector3 start_coords = { -bounds, -bounds, 0 };
+        Vector3 end_coords = { bounds, bounds, 0 };
 
         if (start_coords.x > end_coords.x)
             std::swap(start_coords.x, end_coords.x);
@@ -142,18 +143,18 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
         for (float x = start_coords.x; x < end_coords.x; x += spacing) {
             auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
-            vertices.push_back({ x, -1e15, 0 });
+            vertices.push_back({ x, -bounds, 0 });
             colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
-            vertices.push_back({ x, 1e15, 0 });
+            vertices.push_back({ x, bounds, 0 });
             colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
             index++;
         }
         index = 0;
         for (float y = start_coords.y; y < end_coords.y; y += spacing) {
             auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
-            vertices.push_back({ -1e15, y, 0 });
+            vertices.push_back({ -bounds, y, 0 });
             colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
-            vertices.push_back({ 1e15, y, 0 });
+            vertices.push_back({ bounds, y, 0 });
             colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
             index++;
         }
@@ -202,8 +203,8 @@ Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
     matrix = matrix * Transform::scale({ scale(), scale(), scale() });
+    matrix = matrix * Transform::rotation_around_x(0.7);
     matrix = matrix * Transform::translation({ 0, 0, -5 });
-    // matrix = matrix * Transform::rotation_around_x(-0.7);
     return matrix;
 }
 
