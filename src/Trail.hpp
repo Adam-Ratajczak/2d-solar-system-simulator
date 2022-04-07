@@ -5,12 +5,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <list>
 class Trail {
-    struct TrailEntry {
-        Vector3 pos;
-        Vector3 vel;
-    };
-    std::list<TrailEntry> m_trail;
-    Vector3 m_prev_offset, m_prev_window_size, m_prev_mouse_pos;
+    std::list<Vector3> m_trail;
+    Vector3 m_prev_offset, m_prev_window_size;
     double m_prev_zoom {};
     size_t m_append_index = 0;
     size_t m_max_trail_size = 0;
@@ -19,8 +15,8 @@ class Trail {
 
 public:
     Trail(size_t max_trail_size);
-    void push_back(Vector3 pos, Vector3 vel);
-    void push_front(Vector3 pos, Vector3 vel);
+    void push_back(const Vector3 &pos);
+    void push_front(const Vector3 &pos);
     void pop_front();
     void draw(SimulationView const& view, sf::Color color);
     void update_trail(SimulationView const& view, const sf::Color& m_color);

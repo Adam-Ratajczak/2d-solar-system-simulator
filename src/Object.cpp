@@ -27,7 +27,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     m_name = name;
     m_orbit_len = period;
 
-    m_trail.push_back(m_pos, m_vel);
+    m_trail.push_back(m_pos);
 }
 
 Vector3 Object::attraction(const Object& other) {
@@ -58,7 +58,7 @@ void Object::update() {
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
     // if(m_pos != m_trail.back())
-    m_trail.push_back(m_pos, m_vel);
+    m_trail.push_back(m_pos);
 
     if (m_trail.size() > m_orbit_len)
         m_trail.pop_front();
