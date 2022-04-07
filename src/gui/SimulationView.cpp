@@ -312,7 +312,6 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view)
     glMatrixMode(GL_MODELVIEW);
     view.modelview_matrix().gl_load();
 
-    glClear(GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);

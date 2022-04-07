@@ -34,6 +34,7 @@ int main() {
         // FIXME: View should be set by Application.
         window.setView(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
         window.clear();
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         // FIXME: FPS should be part of GUI, not World!
         gui.simulation_view().set_fps(1.f / fps_clock.restart().asSeconds());
