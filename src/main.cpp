@@ -6,6 +6,7 @@
 #include "World.hpp"
 #include "gui/Application.hpp"
 #include "gui/GUI.hpp"
+#include "pyssa/Environment.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -20,6 +21,13 @@ int main() {
     GUI& gui = application.set_main_widget<GUI>(world);
 
     prepare_solar(world);
+
+    // PySSA test
+    PySSA::Environment& env = PySSA::Environment::the();
+    if(!env.run_script("test.py")) {
+        std::cout << "Failed to execute python script :(" << std::endl;
+        return 1;
+    }
 
     // Save clean OpenGL state which we will use for world rendering
     window.pushGLStates();

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
+find_package(PythonLibs 3.5 REQUIRED)
 
 add_executable(
     out
@@ -32,7 +33,9 @@ add_executable(
     src/gui/ToggleButton.cpp
     src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
+    src/pyssa/Environment.cpp
 )
+
 target_link_libraries(
     out
     sfml-graphics
@@ -40,6 +43,9 @@ target_link_libraries(
 )
 target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
 target_link_options(out PUBLIC -lGLEW -lGLU -lGL)
+
+target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(out ${PYTHON_LIBRARIES})
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_options(out PUBLIC -fsanitize=undefined,address)
