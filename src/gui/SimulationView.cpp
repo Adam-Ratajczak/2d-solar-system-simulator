@@ -178,6 +178,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     guide[5] = sf::Vertex({ guide_end + sf::Vector2f(0, 5), guide_color });
     window.draw(guide);
 
+    // FIXME: UB on size_t conversion
     sf::Text text { std::to_string((size_t)(spacing * AU) / 1000) + " km", GUI::font, 15 };
     text.setPosition(guide_start);
     auto bounds = text.getLocalBounds();
@@ -248,13 +249,6 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Green };
         window.draw(lines);
     }
-    auto sizes = size();
-    sf::VertexArray lines(sf::Lines, 4);
-    lines[0] = sf::Vertex { { 0, size().y / 2 }, sf::Color::Green };
-    lines[1] = sf::Vertex { { sizes.x, size().y / 2 }, sf::Color::Green };
-    lines[2] = sf::Vertex { { size().x / 2, 0 }, sf::Color::Green };
-    lines[3] = sf::Vertex { { size().x / 2, sizes.y }, sf::Color::Green };
-    window.draw(lines);
 
     std::ostringstream oss;
     oss << m_world.date.to_string();
