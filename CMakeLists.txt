@@ -34,6 +34,7 @@ add_executable(
     src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
     src/pyssa/Environment.cpp
+    src/pyssa/Object.cpp
 )
 
 target_link_libraries(

@@ -1,7 +1,7 @@
 #include "Environment.hpp"
 
+#include "../World.hpp"
 #include "Object.hpp"
-#include "methodobject.h"
 
 #include <Python.h>
 #include <filesystem>
@@ -10,18 +10,24 @@
 
 namespace PySSA {
 
+static Environment* s_the {};
+
 Environment& Environment::the() {
-    static Environment env;
-    return env;
+    assert(s_the);
+    return *s_the;
 }
 
-Environment::Environment() {
+Environment::Environment(World& world)
+    : m_world(world) {
+    assert(!s_the);
+    s_the = this;
     initialize_environment();
     Py_Initialize();
 }
 
 Environment::~Environment() {
     Py_FinalizeEx();
+    s_the = nullptr;
 }
 
 bool Environment::run_script(std::string const& path) {
@@ -61,7 +67,10 @@ void Environment::initialize_environment() {
             PyModuleDef_HEAD_INIT, "pyssa", NULL, -1, pyssa_methods,
             NULL, NULL, NULL, NULL
         };
-        return PyModule_Create(&pyssa_module);
+        auto module = PyModule_Create(&pyssa_module);
+        PyModule_AddObject(module, "test2", Object::create_string("TEST").leak_object());
+        PyModule_AddObject(module, "world", Environment::the().m_world.wrap().leak_object());
+        return module;
     });
 }
 

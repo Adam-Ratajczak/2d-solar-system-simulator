@@ -7,6 +7,8 @@
 #include "gui/Date.hpp"
 #include "gui/GUI.hpp"
 #include "gui/SimulationView.hpp"
+#include "modsupport.h"
+#include "pyssa/Object.hpp"
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <cassert>
@@ -64,4 +66,24 @@ void World::clone_for_forward_simulation(World& new_world) const {
     new_world.m_simulation_view = m_simulation_view;
     for (auto& object : m_object_list)
         new_world.add_object(object->clone_for_forward_simulation(new_world));
+}
+
+void World::setup_python_bindings(FuncsAdder adder) {
+    std::cout << "setup_python_bindings!!" << std::endl;
+    adder.add_method<&World::python_str>("__str__");
+    adder.add_attribute<&World::python_get_simulation_seconds_per_tick, &World::python_set_simulation_seconds_per_tick>("simulation_seconds_per_tick");
+}
+
+PySSA::Object World::python_str(PySSA::Object const&) {
+    return PySSA::Object::create_string("World with " + std::to_string(m_object_list.size()) + " objects");
+}
+
+PySSA::Object World::python_get_simulation_seconds_per_tick() const
+{
+    return PySSA::Object::create_int(m_simulation_seconds_per_tick);
+}
+
+bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object)
+{
+    return PyArg_ParseTuple(object.python_object(), "i", &m_simulation_seconds_per_tick);
 }

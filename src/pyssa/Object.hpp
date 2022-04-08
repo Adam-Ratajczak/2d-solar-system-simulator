@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
+#include <utility>
 
 namespace PySSA {
 
@@ -29,9 +30,17 @@ public:
         return *this;
     }
 
-    // TODO: Move constructors
+    Object(Object&& other)
+        : m_object(std::exchange(other.m_object, nullptr)) { }
 
-    // Creates a new Object without sharing a reference.
+    Object& operator=(Object&& other) {
+        if (this == &other)
+            return *this;
+        m_object = std::exchange(other.m_object, nullptr);
+        return *this;
+    }
+
+    // Create a new Object without sharing a reference (take ownership).
     static Object take(PyObject* object) {
         Object o;
         o.m_object = object;
@@ -44,22 +53,32 @@ public:
         return o;
     }
 
-    void set_tuple_object(Py_ssize_t i, Object const& object) {
+    static Object create_string(std::string const&);
+    static Object create_int(int);
+
+    void set_tuple_item(Py_ssize_t i, Object const& object) {
         PyTuple_SetItem(m_object, i, object.m_object);
     }
 
-    PyObject* python_object() { return m_object; }
+    // Get access to a Python object without transferring ownership.
+    PyObject* python_object() const { return m_object; }
+
     bool operator!() const { return !m_object; }
+
     void print() const {
         PyObject_Print(m_object, stdout, 0);
         puts("");
     }
 
+    // Stop owning the object. After that, it's the user responsibility
+    // to manage object lifetime.
     PyObject* leak_object() {
         auto object = m_object;
         m_object = nullptr;
         return object;
     }
+
+    void set_attribute(Object const& name, Object const& value);
 
 private:
     Object() = default;

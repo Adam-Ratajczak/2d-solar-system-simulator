@@ -4,16 +4,16 @@
 #include "Object.hpp"
 #include "Vector3.hpp"
 #include "gui/Date.hpp"
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Event.hpp>
+#include "pyssa/WrappedObject.hpp"
+
+#include <SFML/Graphics.hpp>
 #include <cstdint>
 #include <list>
 #include <string>
 
 class SimulationView;
 
-class World {
+class World : public PySSA::WrappedObject<World> {
 public:
     World();
 
@@ -44,10 +44,17 @@ public:
     int simulation_seconds_per_tick() const { return m_simulation_seconds_per_tick; }
     void set_simulation_seconds_per_tick(int s) { m_simulation_seconds_per_tick = s; }
 
+    static void setup_python_bindings(FuncsAdder);
+
 private:
     Object* m_most_massive_object = nullptr;
     std::list<std::unique_ptr<Object>> m_object_list;
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
+
+    // FIXME: (on WrappedObject side) Allow const-qualified members
+    PySSA::Object python_str(PySSA::Object const& args);
+    PySSA::Object python_get_simulation_seconds_per_tick() const;
+    bool python_set_simulation_seconds_per_tick(PySSA::Object const&);
 };
 
 void prepare_solar(World& world);

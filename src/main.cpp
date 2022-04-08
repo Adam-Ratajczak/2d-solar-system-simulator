@@ -23,11 +23,12 @@ int main() {
     prepare_solar(world);
 
     // PySSA test
-    PySSA::Environment& env = PySSA::Environment::the();
-    if(!env.run_script("test.py")) {
+    PySSA::Environment env(world);
+    if (!env.run_script("test.py")) {
         std::cout << "Failed to execute python script :(" << std::endl;
-        return 1;
     }
+    _exit(0);
+    return 0;
 
     // Save clean OpenGL state which we will use for world rendering
     window.pushGLStates();
