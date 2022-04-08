@@ -43,9 +43,18 @@ public:
     }
 
     // Create a new Object without sharing a reference (take ownership).
+    // Use for all Python object that you created and nothing else!
     static Object take(PyObject* object) {
         Object o;
         o.m_object = object;
+        return o;
+    }
+
+    // Create a new Object and share a reference.
+    static Object share(PyObject* object) {
+        Object o;
+        o.m_object = object;
+        Py_INCREF(o.m_object);
         return o;
     }
 
