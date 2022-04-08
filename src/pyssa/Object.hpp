@@ -80,6 +80,8 @@ public:
 
     void set_attribute(Object const& name, Object const& value);
 
+    int as_int() const;
+
 private:
     Object() = default;
 
