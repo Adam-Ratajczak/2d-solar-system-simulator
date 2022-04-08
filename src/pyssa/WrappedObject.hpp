@@ -21,9 +21,9 @@ public:
             T* ptr;
     };
 
-    static PyTypeObject& create_type_object();
+    static PyTypeObject& type_object();
     Object wrap() {
-        auto type = &create_type_object();
+        auto type = &type_object();
         auto object = Object::take(PyObject_New(PyObject, type));
         ((PythonType*)(object.python_object()))->ptr = static_cast<T*>(this);
         return object;
@@ -111,7 +111,7 @@ auto WrappedObject<T>::python_funcs() -> Funcs& {
 }
 
 template<class T>
-PyTypeObject& WrappedObject<T>::create_type_object() {
+PyTypeObject& WrappedObject<T>::type_object() {
     static PyTypeObject type_object = []() {
         auto& funcs = python_funcs();
         auto type = PyTypeObject { PyVarObject_HEAD_INIT(nullptr, 0) };
