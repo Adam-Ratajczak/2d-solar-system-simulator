@@ -89,6 +89,13 @@ public:
         return object;
     }
 
+    // Return an internal Python object, also sharing a reference. Use
+    // when calling Python functions that want to share these values
+    PyObject* share_object() const {
+        Py_INCREF(m_object);
+        return m_object;
+    }
+
     void set_attribute(Object const& name, Object const& value);
 
     int as_int() const;
