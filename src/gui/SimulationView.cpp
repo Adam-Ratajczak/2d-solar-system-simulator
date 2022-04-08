@@ -142,7 +142,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
 
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
         for (float x = start_coords.x; x < end_coords.x; x += spacing) {
-            auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
+            auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
             vertices.push_back({ x, -bounds, 0 });
             colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
             vertices.push_back({ x, bounds, 0 });
@@ -151,7 +151,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
         }
         index = 0;
         for (float y = start_coords.y; y < end_coords.y; y += spacing) {
-            auto color = index % major_gridline_interval == 1 ? major_grid_line_color : grid_line_color;
+            auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
             vertices.push_back({ -bounds, y, 0 });
             colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
             vertices.push_back({ bounds, y, 0 });
