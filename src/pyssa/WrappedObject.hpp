@@ -29,6 +29,11 @@ public:
         return object;
     }
 
+    static T* get(Object const& object)
+    {
+        return ((PythonType*)object.python_object())->ptr;
+    }
+
 private:
     struct Funcs {
         Funcs() = default;
