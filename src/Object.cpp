@@ -5,6 +5,7 @@
 #include "glwrapper/Sphere.hpp"
 #include "gui/GUI.hpp"
 #include "gui/Units.hpp"
+#include "pyssa/Object.hpp"
 #include <GL/gl.h>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -250,4 +251,24 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
     auto object = std::make_unique<Object>(new_world, mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 1000);
     object->m_is_forward_simulated = true;
     return object;
+}
+
+void Object::setup_python_bindings(FuncsAdder adder) {
+    adder.add_method<&Object::python_attraction>("attraction");
+}
+
+PySSA::Object Object::python_attraction(PySSA::Object const& args) {
+    // TODO: C++ API for that
+    PyObject* other_arg = nullptr;
+    if(PyArg_ParseTuple(args.python_object(), "O!", &type_object(), &other_arg) < 0)
+        return {};
+    // FIXME: This could go without incrementing refcount
+    auto other = get(PySSA::Object::share(other_arg));
+
+    auto vector = attraction(*other);
+    auto tuple = PySSA::Object::create_tuple(3);
+    tuple.set_tuple_item(0, PySSA::Object::create_double(vector.x));
+    tuple.set_tuple_item(1, PySSA::Object::create_double(vector.y));
+    tuple.set_tuple_item(2, PySSA::Object::create_double(vector.z));
+    return tuple;
 }

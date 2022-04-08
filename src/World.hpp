@@ -52,7 +52,7 @@ private:
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
 
     // FIXME: (on WrappedObject side) Allow const-qualified members
-    PySSA::Object python_str(PySSA::Object const& args);
+    PySSA::Object python_get_object_by_name(PySSA::Object const& args);
     PySSA::Object python_get_simulation_seconds_per_tick() const;
     bool python_set_simulation_seconds_per_tick(PySSA::Object const&);
 };

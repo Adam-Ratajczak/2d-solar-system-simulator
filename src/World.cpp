@@ -70,12 +70,19 @@ void World::clone_for_forward_simulation(World& new_world) const {
 
 void World::setup_python_bindings(FuncsAdder adder) {
     std::cout << "setup_python_bindings!!" << std::endl;
-    adder.add_method<&World::python_str>("__str__");
+    adder.add_method<&World::python_get_object_by_name>("get_object_by_name");
     adder.add_attribute<&World::python_get_simulation_seconds_per_tick, &World::python_set_simulation_seconds_per_tick>("simulation_seconds_per_tick");
 }
 
-PySSA::Object World::python_str(PySSA::Object const&) {
-    return PySSA::Object::create_string("World with " + std::to_string(m_object_list.size()) + " objects");
+PySSA::Object World::python_get_object_by_name(PySSA::Object const& args) {
+    const char* name_arg;
+    if(PyArg_ParseTuple(args.python_object(), "s", &name_arg) < 0)
+        return {};
+
+    auto object = get_object_by_name(name_arg);
+    if(object)
+        return object->wrap();
+    return PySSA::Object::create_none();
 }
 
 PySSA::Object World::python_get_simulation_seconds_per_tick() const

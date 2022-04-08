@@ -5,13 +5,15 @@
 #include "glwrapper/Sphere.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
+#include "pyssa/Object.hpp"
+#include "pyssa/WrappedObject.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
 #include <list>
 #include <string>
 
-class Object {
+class Object : public PySSA::WrappedObject<Object> {
 protected:
     double m_density;
     Trail m_trail;
@@ -67,4 +69,9 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
+
+    static void setup_python_bindings(FuncsAdder);
+
+private:
+    PySSA::Object python_attraction(PySSA::Object const& args);
 };
