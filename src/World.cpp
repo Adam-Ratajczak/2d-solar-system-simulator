@@ -85,5 +85,6 @@ PySSA::Object World::python_get_simulation_seconds_per_tick() const
 
 bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object)
 {
-    return PyArg_ParseTuple(object.python_object(), "i", &m_simulation_seconds_per_tick);
+    m_simulation_seconds_per_tick = object.as_int();
+    return true;
 }
