@@ -27,8 +27,6 @@ int main() {
     if (!env.run_script("test.py")) {
         std::cout << "Failed to execute python script :(" << std::endl;
     }
-    _exit(0);
-    return 0;
 
     // Save clean OpenGL state which we will use for world rendering
     window.pushGLStates();
