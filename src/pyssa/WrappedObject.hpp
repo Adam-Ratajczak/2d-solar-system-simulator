@@ -58,7 +58,7 @@ protected:
         template<Method method>
         struct MethodWrapper {
             static PyObject* wrapper(PythonType* self, PyObject* args) {
-                return (self->ptr->*method)(Object::take(args)).leak_object();
+                return (self->ptr->*method)(Object::share(args)).leak_object();
             }
         };
 
@@ -72,7 +72,7 @@ protected:
         template<Setter setter>
         struct SetterWrapper {
             static int wrapper(PythonType* self, PyObject* value, void*) {
-                return (self->ptr->*setter)(Object::take(value)) ? 0 : 1;
+                return (self->ptr->*setter)(Object::share(value)) ? 0 : 1;
             }
         };
 
