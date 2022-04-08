@@ -165,25 +165,24 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     }
 
     // guide
-    /*
     sf::Vector2f guide_start { size().x - 200.f, size().y - 30.f };
-    sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * scale(), 0);
+    // HACK: this *100 should be calculated from perspective somehow
+    sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * scale() * 100, 0);
     sf::VertexArray guide { sf::Lines, 6 };
     sf::Color const guide_color { 127, 127, 127 };
     guide[0] = sf::Vertex({ guide_start, guide_color });
     guide[1] = sf::Vertex({ guide_end, guide_color });
-    guide[2] = sf::Vertex({ guide_start - sf::Vector2(0, 5), guide_color });
-    guide[3] = sf::Vertex({ guide_start + sf::Vector2(0, 5), guide_color });
-    guide[4] = sf::Vertex({ guide_end - sf::Vector2(0, 5), guide_color });
-    guide[5] = sf::Vertex({ guide_end + sf::Vector2(0, 5), guide_color });
+    guide[2] = sf::Vertex({ guide_start - sf::Vector2f(0, 5), guide_color });
+    guide[3] = sf::Vertex({ guide_start + sf::Vector2f(0, 5), guide_color });
+    guide[4] = sf::Vertex({ guide_end - sf::Vector2f(0, 5), guide_color });
+    guide[5] = sf::Vertex({ guide_end + sf::Vector2f(0, 5), guide_color });
     window.draw(guide);
 
-    sf::Text text { std::to_string((size_t)spacing / 1000) + " km", GUI::font, 15 };
+    sf::Text text { std::to_string((size_t)(spacing * AU) / 1000) + " km", GUI::font, 15 };
     text.setPosition(guide_start);
     auto bounds = text.getLocalBounds();
     text.setOrigin({ bounds.width, bounds.height + 10 });
     window.draw(text);
-    */
 }
 
 Matrix4x4d SimulationView::projection_matrix() const {
