@@ -64,11 +64,13 @@ public:
         return o;
     }
 
+    static Object create_none();
     static Object create_string(std::string const&);
     static Object create_int(int);
+    static Object create_double(double);
 
     void set_tuple_item(Py_ssize_t i, Object const& object) {
-        PyTuple_SetItem(m_object, i, object.m_object);
+        PyTuple_SetItem(m_object, i, object.share_object());
     }
 
     // Get access to a Python object without transferring ownership.
@@ -99,6 +101,7 @@ public:
     void set_attribute(Object const& name, Object const& value);
 
     int as_int() const;
+    std::string str() const;
 
 private:
     PyObject* m_object {};
