@@ -22,7 +22,8 @@
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
     // FIXME: Very hacky fix for trail.
-    , m_trail(period * 2) {
+    , m_trail(period * 2)
+    , m_sphere(radius / AU, 36, 18) {
     m_gravity_factor = mass * G;
     m_radius = radius * 100;
     m_pos = pos;
@@ -31,6 +32,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     m_name = name;
     m_orbit_len = period;
 
+    m_sphere.set_color(m_color);
     m_trail.push_back(m_pos);
 }
 
@@ -100,9 +102,8 @@ void Object::draw(SimulationView const& view) {
     // glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
     // glEnd();
 
-    Sphere sphere(scaled_pos, m_radius / AU, 18, 9);
-    sphere.set_colors({{m_color, 4}});
-    sphere.draw();
+    m_sphere.set_position(scaled_pos);
+    m_sphere.draw();
 
     // FIXME: This thing should be in a Widget.
     // TODO: Bring back that.
@@ -193,7 +194,7 @@ void Object::draw_gui(SimulationView const& view) {
     // And still doesn't work.
     float* internal_matrix = const_cast<float*>(transform.getMatrix());
     internal_matrix[3 * 4 + 3] = 5;
-    text.setScale(5, 5);                                     // to make text not 5x smaller
+    text.setScale(5, 5);                             // to make text not 5x smaller
     text.move(view.size().x * 2, view.size().y * 2); // because the text scaled 5x to the edge of the screen
     view.window().draw(text, transform);
 }

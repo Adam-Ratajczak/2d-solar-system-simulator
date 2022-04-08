@@ -2,6 +2,7 @@
 
 #include "Trail.hpp"
 #include "Vector3.hpp"
+#include "glwrapper/Sphere.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
 #include <SFML/Graphics/Color.hpp>
@@ -28,6 +29,7 @@ protected:
     double m_gravity_factor {};
 
     bool m_is_forward_simulated = false;
+    Sphere m_sphere;
 
 public:
     // FIXME: Too much arguments!!!
