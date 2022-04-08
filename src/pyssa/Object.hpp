@@ -10,6 +10,8 @@ namespace PySSA {
 
 class Object {
 public:
+    Object() = default;
+
     ~Object() {
         if (m_object)
             Py_DECREF(m_object);
@@ -83,8 +85,6 @@ public:
     int as_int() const;
 
 private:
-    Object() = default;
-
     PyObject* m_object {};
 };
 
