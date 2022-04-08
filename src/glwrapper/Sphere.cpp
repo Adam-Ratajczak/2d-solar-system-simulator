@@ -30,7 +30,7 @@ void Sphere::gen_sphere() {
                 m_radius * std::cos(stack_angle) };
             m_vertices.push_back(Vertex { .position = point_position });
             //std::cout << "   --- " << std::sin(sector_angle) << ";" << std::cos(sector_angle) << " ;; " << std::sin(stack_angle) << ";" << std::cos(stack_angle) << std::endl;
-            std::cout << point_position.x << "," << point_position.y << "," << point_position.z << " @ " << stack_angle << "," << sector_angle << std::endl;
+            //std::cout << point_position.x << "," << point_position.y << "," << point_position.z << " @ " << stack_angle << "," << sector_angle << std::endl;
 
             m_indices.push_back(vertex_index(stack, sector));
             m_indices.push_back(vertex_index(stack, sector + 1));
@@ -42,9 +42,9 @@ void Sphere::gen_sphere() {
         }
     }
 
-    std::cout << "----------------------" << std::endl;
-    for (auto& i : m_indices)
-        std::cout << m_vertices[i].position << std::endl;
+    // std::cout << "----------------------" << std::endl;
+    // for (auto& i : m_indices)
+    //     std::cout << m_vertices[i].position << std::endl;
 }
 
 unsigned Sphere::vertex_index(unsigned stack, unsigned sector) const {
