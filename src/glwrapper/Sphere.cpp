@@ -41,8 +41,7 @@ void Sphere::set_colors(std::initializer_list<std::pair<Color, int>> list){
     }
 }
 
-void Sphere::draw(sf::RenderWindow &window) const{
-    window.popGLStates();
+void Sphere::draw() const{
     for(unsigned i = 0; i < m_stacks; i++){
         for(unsigned j = 0; j < 2 * m_sectors; j++){
         glBegin(GL_QUADS);
@@ -57,5 +56,4 @@ void Sphere::draw(sf::RenderWindow &window) const{
         glEnd();
         }
     }
-    window.pushGLStates();
 }

@@ -26,7 +26,7 @@ public:
 
     void set_colors(std::initializer_list<std::pair<Color, int>> list);
 
-    void draw(sf::RenderWindow& window) const;
+    void draw() const;
     
 private:
     double m_radius;

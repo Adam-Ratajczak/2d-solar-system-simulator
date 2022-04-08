@@ -2,6 +2,7 @@
 #include "Transform.hpp"
 #include "Vector3.hpp"
 #include "World.hpp"
+#include "glwrapper/Sphere.hpp"
 #include "gui/GUI.hpp"
 #include "gui/Units.hpp"
 #include <GL/gl.h>
@@ -91,13 +92,17 @@ void Object::draw(SimulationView const& view) {
 
     // std::cout << "CORRECT according to opengl: " << m_name << " " << scaled_pos << " -> " << Transform::project(scaled_pos) << std::endl;
 
-    glBegin(GL_TRIANGLE_STRIP);
-    glColor3f(m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f);
-    glVertex3f(scaled_pos.x - m_radius / AU, scaled_pos.y - m_radius / AU, scaled_pos.z);
-    glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y - m_radius / AU, scaled_pos.z);
-    glVertex3f(scaled_pos.x - m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
-    glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
-    glEnd();
+    // glBegin(GL_TRIANGLE_STRIP);
+    // glColor3f(m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f);
+    // glVertex3f(scaled_pos.x - m_radius / AU, scaled_pos.y - m_radius / AU, scaled_pos.z);
+    // glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y - m_radius / AU, scaled_pos.z);
+    // glVertex3f(scaled_pos.x - m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
+    // glVertex3f(scaled_pos.x + m_radius / AU, scaled_pos.y + m_radius / AU, scaled_pos.z);
+    // glEnd();
+
+    Sphere sphere(scaled_pos, m_radius / AU, 18, 9);
+    sphere.set_colors({{m_color, 4}});
+    sphere.draw();
 
     // FIXME: This thing should be in a Widget.
     // TODO: Bring back that.
@@ -178,6 +183,7 @@ void Object::draw_gui(SimulationView const& view) {
 
     sf::Text text(m_name, GUI::font, 15);
     text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
+    // text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
 
     sf::Transform transform(1, 0, 0, 0, 1, 0, 0, 0, 0);
     // HACK: We must to force internal array to be writable because
