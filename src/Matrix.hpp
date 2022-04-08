@@ -27,12 +27,10 @@ requires(Size > 0) struct Matrix {
     Matrix<T, Size - 1> minor(size_t row, size_t column) const;
 
     void gl_load() const {
-        float matrix[Size * Size] {};
-        for (size_t i = 0; i < 4; i++) {
-            for (size_t j = 0; j < 4; j++)
-                matrix[i * 4 + j] = element(i, j);
-        }
-        glLoadMatrixf(matrix);
+        glLoadMatrixd((double*)data);
+    }
+    void gl_mult() const {
+        glMultMatrixd((double*)data);
     }
 };
 

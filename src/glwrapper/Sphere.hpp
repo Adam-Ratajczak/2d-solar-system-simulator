@@ -11,29 +11,33 @@
 
 #pragma once
 
+#include "../Vector3.hpp"
+#include "Color.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <initializer_list>
 #include <vector>
-#include "../Vector3.hpp"
-#include "Color.hpp"
 
-class Sphere
-{
+class Sphere {
 public:
     // ctor/dtor
-    Sphere(Vector3 pos, double radius, int sectorCount = 36, int stackCount = 18);
-    ~Sphere() {}
+    Sphere(double radius, int sectorCount = 36, int stackCount = 18);
+    ~Sphere() { }
 
-    void set_colors(std::initializer_list<std::pair<Color, int>> list);
+    void set_color(Color color);
+    void set_position(Vector3 pos) { m_pos = pos; }
 
     void draw() const;
-    
+
 private:
-    double m_radius;
-    unsigned m_sectors, m_stacks;
+    double m_radius {};
+    unsigned m_sectors {};
+    unsigned m_stacks {};
     Vector3 m_pos;
 
     void gen_sphere();
 
+    unsigned vertex_index(unsigned stack, unsigned sector) const;
+
     std::vector<Vertex> m_vertices;
+    std::vector<unsigned> m_indices;
 };
