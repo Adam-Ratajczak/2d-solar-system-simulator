@@ -55,7 +55,7 @@ public:
     Vector3 cross(const Vector3& a) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Vector3& vec) {
-        return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << "," << vec.w << ")";
+        return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << ")";
     }
 };
 
