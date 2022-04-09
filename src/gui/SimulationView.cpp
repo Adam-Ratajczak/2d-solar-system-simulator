@@ -218,18 +218,25 @@ Vector3 SimulationView::screen_to_world(Vector3 v) const {
     auto view_space = projection_matrix().inverted() * clip_space;
     // We skip world space because we have combined model+view matrix
     auto local_space = modelview_matrix().inverted() * view_space;
+
     // std::cout << "S 2 W " << v << " -> " << clip_space << " -> " << view_space << " -> " << local_space << std::endl;
     return local_space;
 }
 
 Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // We skip world space because we have combined model+view matrix
-    auto view_space = local_space;
-    auto clip_space = projection_matrix() * view_space;
-    Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
+    auto modelview = modelview_matrix();
+    auto projection = projection_matrix();
+    Vector3 result;
+    int viewport[] {0, 0, static_cast<int>(size().x), static_cast<int>(size().y)};
+    gluProject(local_space.x, local_space.y, local_space.z, (double*)modelview.data, (double*)projection.data, viewport, &result.x, &result.y, &result.z);
+    // TODO: Figure out why this doesn't work.
+    // auto view_space = modelview_matrix() * local_space;
+    // auto clip_space = projection_matrix() * view_space;
+    // Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
     // result = rotation_matrix() * result;
     // std::cout << "modelview: " << modelview_matrix() << ":: " << local_space << " -> " << view_space << " -> " << clip_space << "->" << result << std::endl;
-    return result;
+    return {result.x, size().y - result.y, result.z};
 }
 
 void SimulationView::draw(sf::RenderWindow& window) const {
