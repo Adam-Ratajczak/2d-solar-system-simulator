@@ -29,8 +29,7 @@ public:
         return object;
     }
 
-    static T* get(Object const& object)
-    {
+    static T* get(Object const& object) {
         return ((PythonType*)object.python_object())->ptr;
     }
 
@@ -83,7 +82,11 @@ protected:
 
         template<Getter getter, Setter setter>
         void add_attribute(const char* attr) const {
-            m_funcs.getters_setters.push_back(PyGetSetDef { .name = attr, .get = (::getter)GetterWrapper<getter>::wrapper, .set = (::setter)SetterWrapper<setter>::wrapper, .closure = nullptr });
+            m_funcs.getters_setters.push_back(PyGetSetDef {
+                .name = attr,
+                .get = (::getter)GetterWrapper<getter>::wrapper,
+                .set = setter != nullptr ? (::setter)SetterWrapper<setter>::wrapper : nullptr,
+                .closure = nullptr });
         }
 
     private:
