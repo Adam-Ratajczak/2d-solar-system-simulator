@@ -68,6 +68,10 @@ void World::clone_for_forward_simulation(World& new_world) const {
         new_world.add_object(object->clone_for_forward_simulation(new_world));
 }
 
+std::ostream& operator<<(std::ostream& out, World const& world) {
+    return out << "World (" << world.m_object_list.size() << " objects)";
+}
+
 void World::setup_python_bindings(TypeSetup adder) {
     std::cout << "setup_python_bindings!!" << std::endl;
     adder.add_method<&World::python_get_object_by_name>("get_object_by_name");

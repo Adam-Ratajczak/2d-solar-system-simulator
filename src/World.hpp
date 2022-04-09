@@ -55,6 +55,8 @@ private:
     PySSA::Object python_get_object_by_name(PySSA::Object const& args);
     PySSA::Object python_get_simulation_seconds_per_tick() const;
     bool python_set_simulation_seconds_per_tick(PySSA::Object const&);
+
+    friend std::ostream& operator<<(std::ostream& out, World const&);
 };
 
 void prepare_solar(World& world);
