@@ -55,8 +55,8 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world)
             return std::make_unique<Object>(world,
                 read_double_property("mass", 1),
                 read_double_property("radius", 1000),
-                Vector3{ read_double_property("posx"), read_double_property("posy") },
-                Vector3{ read_double_property("velx"), read_double_property("vely") },
+                Vector3{ read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },
+                Vector3{ read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
                 sf::Color{ (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                 properties["name"],
                 read_double_property("trail_length", 1000)
