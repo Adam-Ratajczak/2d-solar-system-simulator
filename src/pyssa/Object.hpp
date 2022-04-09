@@ -99,7 +99,11 @@ public:
         return m_object;
     }
 
+    Object get_attribute(Object const& name);
+    Object get_attribute(std::string const& name) { return get_attribute(Object::create_string(name)); }
     void set_attribute(Object const& name, Object const& value);
+    void set_attribute(std::string const& name, Object const& value) { set_attribute(Object::create_string(name), value); }
+
 
     int as_int() const;
     std::string str() const;

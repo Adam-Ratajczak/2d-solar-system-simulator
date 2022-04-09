@@ -27,6 +27,10 @@ Object Object::create_double(double v) {
     return o;
 }
 
+Object Object::get_attribute(Object const& name) {
+    return Object::take(PyObject_GetAttr(m_object, name.m_object));
+}
+
 void Object::set_attribute(Object const& name, Object const& value) {
     PyObject_SetAttr(m_object, name.m_object, value.m_object);
 }
