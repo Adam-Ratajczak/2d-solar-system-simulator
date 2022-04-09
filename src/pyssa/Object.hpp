@@ -104,6 +104,7 @@ public:
     void set_attribute(Object const& name, Object const& value);
     void set_attribute(std::string const& name, Object const& value) { set_attribute(Object::create_string(name), value); }
 
+    Object call(Object const& args, Object const& kwargs = {}) const;
 
     int as_int() const;
     std::string str() const;

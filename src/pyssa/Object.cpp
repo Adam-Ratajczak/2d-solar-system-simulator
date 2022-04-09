@@ -35,6 +35,10 @@ void Object::set_attribute(Object const& name, Object const& value) {
     PyObject_SetAttr(m_object, name.m_object, value.m_object);
 }
 
+Object Object::call(Object const& args, Object const& kwargs) const {
+    return Object::take(PyObject_Call(m_object, args.share_object(), kwargs.share_object()));
+}
+
 int Object::as_int() const {
     return PyLong_AsLong(m_object);
 }
