@@ -35,8 +35,14 @@ public:
     void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_data_type(Type type) { m_type = type; }
 
+    void set_cursor(unsigned);
+
     std::function<void(std::string)> on_change;
 
 private:
     bool can_insert_character(uint32_t) const;
+    sf::Vector2f calculate_cursor_position() const;
+    sf::Text generate_sf_text() const;
+
+    float m_scroll = 0;
 };

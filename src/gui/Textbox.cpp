@@ -30,6 +30,20 @@ void Textbox::set_content(sf::String content, NotifyUser notify_user) {
         on_change(m_content);
 }
 
+void Textbox::set_cursor(unsigned cursor) {
+    auto old_cursor = m_cursor;
+    if (cursor > m_content.getSize())
+        m_cursor = m_content.getSize();
+    else
+        m_cursor = cursor;
+
+    auto new_cursor_position = calculate_cursor_position();
+    if (new_cursor_position.x < 2)
+        m_scroll += 2 - new_cursor_position.x;
+    if (new_cursor_position.x > size().x - 4)
+        m_scroll += size().x - new_cursor_position.x - 4;
+}
+
 void Textbox::handle_event(Event& event) {
     auto pos = sf::Mouse::getPosition();
     if (event.type() == sf::Event::TextEntered) {
@@ -38,7 +52,7 @@ void Textbox::handle_event(Event& event) {
             if (codepoint == '\b') {
                 if (m_cursor != 0) {
                     m_content.erase(m_cursor - 1);
-                    m_cursor--;
+                    set_cursor(m_cursor - 1);
                     if (m_type == NUMBER && m_content.isEmpty())
                         m_content = "0";
                     if (on_change)
@@ -60,11 +74,9 @@ void Textbox::handle_event(Event& event) {
                 m_content.insert(m_cursor, codepoint);
                 if (on_change)
                     on_change(m_content);
-                m_cursor++;
+                set_cursor(m_cursor + 1);
             }
 
-            if (m_cursor > m_content.getSize())
-                m_cursor = m_content.getSize();
             event.set_handled();
         }
     }
@@ -73,22 +85,36 @@ void Textbox::handle_event(Event& event) {
             // FIXME: Focus check should be handled at Widget level.
             // std::cout << m_cursor << std::endl;
             switch (event.event().key.code) {
-            case sf::Keyboard::Left:
+            case sf::Keyboard::Left: {
                 if (m_cursor > 0)
-                    m_cursor--;
+                    set_cursor(m_cursor - 1);
                 event.set_handled();
                 break;
-            case sf::Keyboard::Right:
+            }
+            case sf::Keyboard::Right: {
                 if (m_cursor < m_content.getSize())
-                    m_cursor++;
+                    set_cursor(m_cursor + 1);
                 event.set_handled();
                 break;
+            }
             default:
                 break;
             }
         }
     }
-    // std::cout << m_content.toAnsiString() << " :@" << m_cursor << std::endl;
+}
+
+sf::Text Textbox::generate_sf_text() const {
+    // TODO: Cache the result
+    sf::Text text(m_content, GUI::font, size().y - 4);
+    text.setFillColor(m_text_color);
+    text.setPosition(2, 2);
+    text.move(m_scroll, 0);
+    return text;
+}
+
+sf::Vector2f Textbox::calculate_cursor_position() const {
+    return generate_sf_text().findCharacterPos(m_cursor);
 }
 
 void Textbox::draw(sf::RenderWindow& window) const {
@@ -102,15 +128,12 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     window.draw(rect);
 
-    sf::Text text(m_content, GUI::font, size().y - 4);
-    text.setFillColor(m_text_color);
-    text.setPosition(2, 2);
-
+    auto text = generate_sf_text();
     window.draw(text);
 
     if (is_focused()) {
         sf::RectangleShape cursor(sf::Vector2f(2, 30));
-        auto position = text.findCharacterPos(m_cursor);
+        auto position = calculate_cursor_position();
         cursor.setPosition({ position.x, position.y + size().y / 2 - 15 });
         cursor.setFillColor(sf::Color::Black);
         window.draw(cursor);
