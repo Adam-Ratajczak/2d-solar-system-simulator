@@ -249,10 +249,6 @@ PySSA::Object Object::python_attraction(PySSA::Object const& args) {
     // FIXME: This could go without incrementing refcount
     auto other = get(PySSA::Object::share(other_arg));
 
-    auto vector = attraction(*other);
-    auto tuple = PySSA::Object::create_tuple(3);
-    tuple.set_tuple_item(0, PySSA::Object::create_double(vector.x));
-    tuple.set_tuple_item(1, PySSA::Object::create_double(vector.y));
-    tuple.set_tuple_item(2, PySSA::Object::create_double(vector.z));
-    return tuple;
+    return PySSA::Object::create(attraction(*other));
+}
 }

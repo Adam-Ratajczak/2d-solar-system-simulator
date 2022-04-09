@@ -82,12 +82,12 @@ PySSA::Object World::python_get_object_by_name(PySSA::Object const& args) {
     auto object = get_object_by_name(name_arg);
     if(object)
         return object->wrap();
-    return PySSA::Object::create_none();
+    return PySSA::Object::none();
 }
 
 PySSA::Object World::python_get_simulation_seconds_per_tick() const
 {
-    return PySSA::Object::create_int(m_simulation_seconds_per_tick);
+    return PySSA::Object::create(m_simulation_seconds_per_tick);
 }
 
 bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object)

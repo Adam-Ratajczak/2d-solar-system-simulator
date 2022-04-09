@@ -106,7 +106,7 @@ void Environment::initialize_environment() {
     // TODO: Wrap these in nice C++ APIs.
     PyImport_AppendInittab("pyssa", []() {
         static PyMethodDef pyssa_methods[] = {
-            { "test", [](PyObject*, PyObject*) { return Object::create_tuple(5).leak_object(); }, METH_NOARGS, "Return the number of arguments received by the process." },
+            { "test", [](PyObject*, PyObject*) { return Object::empty_tuple(5).leak_object(); }, METH_NOARGS, "Return the number of arguments received by the process." },
             { NULL, NULL, 0, NULL }
         };
 
@@ -115,7 +115,7 @@ void Environment::initialize_environment() {
             NULL, NULL, NULL, NULL
         };
         auto module = PyModule_Create(&pyssa_module);
-        PyModule_AddObject(module, "test2", Object::create_string("TEST").leak_object());
+        PyModule_AddObject(module, "test2", Object::create("TEST").leak_object());
         PyModule_AddObject(module, "world", Environment::the().m_world.wrap().leak_object());
         return module;
     });

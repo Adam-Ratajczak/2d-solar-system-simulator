@@ -2,29 +2,45 @@
 
 namespace PySSA {
 
-Object Object::create_none() {
+Object Object::none() {
     Object o;
     o.m_object = Py_None;
     Py_INCREF(o.m_object);
     return o;
 }
 
-Object Object::create_string(std::string const& str) {
+Object Object::create(std::string const& str) {
     Object o;
     o.m_object = PyUnicode_FromString(str.c_str());
     return o;
 }
 
-Object Object::create_int(int v) {
+Object Object::create(int v) {
     Object o;
     o.m_object = PyLong_FromLong(v);
     return o;
 }
 
-Object Object::create_double(double v) {
+Object Object::create(double v) {
     Object o;
     o.m_object = PyFloat_FromDouble(v);
     return o;
+}
+
+Object Object::create(Vector3 const& vector) {
+    auto tuple = PySSA::Object::empty_tuple(3);
+    tuple.set_tuple_item(0, PySSA::Object::create(vector.x));
+    tuple.set_tuple_item(1, PySSA::Object::create(vector.y));
+    tuple.set_tuple_item(2, PySSA::Object::create(vector.z));
+    return tuple;
+}
+
+Object Object::create(sf::Color const& color) {
+    auto tuple = PySSA::Object::empty_tuple(3);
+    tuple.set_tuple_item(0, PySSA::Object::create(color.r));
+    tuple.set_tuple_item(1, PySSA::Object::create(color.g));
+    tuple.set_tuple_item(2, PySSA::Object::create(color.b));
+    return tuple;
 }
 
 Object Object::get_attribute(Object const& name) {

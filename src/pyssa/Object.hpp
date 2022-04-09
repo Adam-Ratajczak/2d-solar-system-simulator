@@ -1,6 +1,9 @@
 #pragma once
 
+#include "../Vector3.hpp"
+
 #include <Python.h>
+#include <SFML/Graphics.hpp>
 #include <cstdio>
 #include <iostream>
 #include <string>
@@ -59,24 +62,27 @@ public:
         return o;
     }
 
-    static Object create_tuple(Py_ssize_t size) {
+    static Object empty_tuple(Py_ssize_t size) {
         Object o;
         o.m_object = PyTuple_New(size);
         return o;
     }
 
-    static Object create_none();
-    static Object create_string(std::string const&);
-    static Object create_int(int);
-    static Object create_double(double);
+    static Object none();
+    static Object create(std::string const&);
+    static Object create(int);
+    static Object create(double);
 
     template<class... Args>
     static Object tuple(Args... args) {
-        auto tuple = create_tuple(sizeof...(Args));
+        auto tuple = empty_tuple(sizeof...(Args));
         size_t index = 0;
         (tuple.set_tuple_item(index++, args), ...);
         return tuple;
     }
+
+    static Object create(Vector3 const&);
+    static Object create(sf::Color const&);
 
     void set_tuple_item(Py_ssize_t i, Object const& object) {
         PyTuple_SetItem(m_object, i, object.share_object());
@@ -108,9 +114,9 @@ public:
     }
 
     Object get_attribute(Object const& name);
-    Object get_attribute(std::string const& name) { return get_attribute(Object::create_string(name)); }
+    Object get_attribute(std::string const& name) { return get_attribute(Object::create(name)); }
     void set_attribute(Object const& name, Object const& value);
-    void set_attribute(std::string const& name, Object const& value) { set_attribute(Object::create_string(name), value); }
+    void set_attribute(std::string const& name, Object const& value) { set_attribute(Object::create(name), value); }
 
     Object call(Object const& args, Object const& kwargs = {}) const;
 
