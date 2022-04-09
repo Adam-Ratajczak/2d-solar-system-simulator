@@ -239,6 +239,12 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
 
 void Object::setup_python_bindings(FuncsAdder adder) {
     adder.add_method<&Object::python_attraction>("attraction");
+    adder.add_attribute<&Object::python_get_pos, nullptr>("pos");
+    adder.add_attribute<&Object::python_get_vel, nullptr>("vel");
+    adder.add_attribute<&Object::python_get_name, nullptr>("name");
+    adder.add_attribute<&Object::python_get_focused, nullptr>("focused");
+    adder.add_attribute<&Object::python_get_color, nullptr>("color");
+    adder.add_attribute<&Object::python_get_radius, nullptr>("radius");
 }
 
 PySSA::Object Object::python_attraction(PySSA::Object const& args) {
@@ -251,4 +257,34 @@ PySSA::Object Object::python_attraction(PySSA::Object const& args) {
 
     return PySSA::Object::create(attraction(*other));
 }
+
+PySSA::Object Object::python_get_pos() const
+{
+    return PySSA::Object::create(m_pos);
 }
+
+PySSA::Object Object::python_get_vel() const
+{
+    return PySSA::Object::create(m_vel);
+}
+
+PySSA::Object Object::python_get_name() const
+{
+    return PySSA::Object::create(m_name);
+}
+
+PySSA::Object Object::python_get_focused() const
+{
+    return PySSA::Object::create(m_focused);
+}
+
+PySSA::Object Object::python_get_color() const
+{
+    return PySSA::Object::create(m_color);
+}
+
+PySSA::Object Object::python_get_radius() const
+{
+    return PySSA::Object::create(m_radius);
+}
+

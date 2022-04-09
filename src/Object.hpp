@@ -73,4 +73,11 @@ public:
 
 private:
     PySSA::Object python_attraction(PySSA::Object const& args);
+
+    PySSA::Object python_get_pos() const;
+    PySSA::Object python_get_vel() const;
+    PySSA::Object python_get_name() const;
+    PySSA::Object python_get_focused() const;
+    PySSA::Object python_get_color() const;
+    PySSA::Object python_get_radius() const;
 };
