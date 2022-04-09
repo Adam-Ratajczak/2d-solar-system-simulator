@@ -2,6 +2,7 @@
 #include "../Transform.hpp"
 #include "../gui/SimulationView.hpp"
 #include "Color.hpp"
+#include "Helpers.hpp"
 
 #include <GL/gl.h>
 #include <cmath>
@@ -65,11 +66,7 @@ void Sphere::draw() const {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     Transform::translation(m_pos).gl_mult();
-
-    glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (char*)m_vertices.data() + offsetof(Vertex, position));
-    glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)m_vertices.data() + offsetof(Vertex, color));
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, m_indices.data());
-
+    GL::draw_indexed_vertices(GL_TRIANGLES, m_vertices, m_indices);
     glPopMatrix();
 }
 

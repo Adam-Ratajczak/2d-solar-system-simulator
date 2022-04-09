@@ -1,10 +1,11 @@
 #include "Triangle.hpp"
+
 #include <iostream>
 
-void Triangle::draw(sf::RenderWindow &window) const{
+void Triangle::draw(sf::RenderWindow& window) const {
     window.popGLStates();
-    
-	glBegin(GL_TRIANGLES);
+
+    glBegin(GL_TRIANGLES);
     {
         v1.color.glDraw();
         v1.position.glDraw();
@@ -16,6 +17,6 @@ void Triangle::draw(sf::RenderWindow &window) const{
         v3.position.glDraw();
     }
     glEnd();
-    
+
     window.pushGLStates();
 }

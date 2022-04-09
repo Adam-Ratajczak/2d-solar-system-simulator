@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Color.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
+#include "Vertex.hpp"
+
+#include <SFML/Graphics.hpp>
+
 class Triangle{
     Vertex v1, v2, v3;
 

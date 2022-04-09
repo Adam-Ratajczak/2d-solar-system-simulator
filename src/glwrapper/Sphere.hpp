@@ -9,10 +9,13 @@
 // UPDATED: 2020-05-20
 ///////////////////////////////////////////////////////////////////////////////
 
+// (But heavily modified)
+
 #pragma once
 
 #include "../Vector3.hpp"
 #include "Color.hpp"
+#include "Vertex.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <initializer_list>
 #include <vector>

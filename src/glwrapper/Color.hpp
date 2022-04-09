@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <cstdint>
 
+// FIXME: This doesn't differ from sf::Color in any way. Even has converting function...
 class Color {
 public:
     uint8_t r, g, b, a;
@@ -64,9 +65,4 @@ public:
     void glDraw() const {
         glColor4f((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255);
     }
-};
-
-struct Vertex{
-    Vector3 position;
-    Color color;
 };

@@ -1,11 +1,13 @@
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <vector>
 #include "../Vector3.hpp"
 #include "Color.hpp"
+#include "Vertex.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <vector>
 
-class VertexBuffer{
+// FIXME: Port this to actually use VBO if it would be ever required.
+class VertexBuffer {
 public:
     VertexBuffer() = default;
     VertexBuffer(unsigned vertices);

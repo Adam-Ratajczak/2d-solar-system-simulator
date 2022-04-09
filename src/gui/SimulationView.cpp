@@ -2,10 +2,11 @@
 
 #include "../Transform.hpp"
 #include "../World.hpp"
+#include "../glwrapper/Helpers.hpp"
 #include "GUI.hpp"
+
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <SFML/System/Vector2.hpp>
 #include <cmath>
 #include <sstream>
 
@@ -144,33 +145,26 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
         sf::Color const grid_line_color { 25, 25, 25 };
 
         // TODO: Create proper API for it.
-        std::vector<sf::Vector3f> vertices;
-        std::vector<sf::Vector3f> colors;
+        std::vector<Vertex> vertices;
 
         int index = 0;
 
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
         for (float x = start_coords.x; x < end_coords.x; x += spacing) {
             auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
-            vertices.push_back({ x, -bounds, 0 });
-            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
-            vertices.push_back({ x, bounds, 0 });
-            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
+            vertices.push_back(Vertex { .position = { x, -bounds, 0 }, .color = color });
+            vertices.push_back(Vertex { .position = { x, bounds, 0 }, .color = color });
             index++;
         }
         index = 0;
         for (float y = start_coords.y; y < end_coords.y; y += spacing) {
             auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
-            vertices.push_back({ -bounds, y, 0 });
-            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
-            vertices.push_back({ bounds, y, 0 });
-            colors.push_back({ color.r / 255.f, color.g / 255.f, color.b / 255.f });
+            vertices.push_back(Vertex { .position = { -bounds, y, 0 }, .color = color });
+            vertices.push_back(Vertex { .position = { bounds, y, 0 }, .color = color });
             index++;
         }
 
-        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
-        glColorPointer(3, GL_FLOAT, 0, colors.data());
-        glDrawArrays(GL_LINES, 0, vertices.size());
+        GL::draw_vertices(GL_LINES, vertices);
     }
 
     // guide

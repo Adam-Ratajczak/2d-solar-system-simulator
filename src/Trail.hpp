@@ -5,6 +5,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <list>
 
+// TODO: Strip this class of all display-related things.
 class Trail {
     std::list<Vector3> m_trail;
     Vector3 m_prev_offset, m_prev_window_size;
