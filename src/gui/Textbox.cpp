@@ -76,15 +76,16 @@ void Textbox::handle_event(Event& event) {
             case sf::Keyboard::Left:
                 if (m_cursor > 0)
                     m_cursor--;
+                event.set_handled();
                 break;
             case sf::Keyboard::Right:
                 if (m_cursor < m_content.getSize())
                     m_cursor++;
+                event.set_handled();
                 break;
             default:
                 break;
             }
-            event.set_handled();
         }
     }
     // std::cout << m_content.toAnsiString() << " :@" << m_cursor << std::endl;
