@@ -7,6 +7,7 @@
 #include "gui/GUI.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
+#include "modsupport.h"
 #include "pyssa/Object.hpp"
 #include <GL/gl.h>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -261,6 +262,43 @@ void Object::setup_python_bindings(TypeSetup setup) {
     setup.add_attribute<&Object::python_get_focused, nullptr>("focused");
     setup.add_attribute<&Object::python_get_color, nullptr>("color");
     setup.add_attribute<&Object::python_get_radius, nullptr>("radius");
+}
+
+Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs) {
+    PyObject* world = nullptr;
+    double mass = 0;
+    double radius = 0;
+    Vector3 pos;
+    Vector3 vel;
+    sf::Color color;
+    char const* name = "Planet";
+    unsigned period = 1;
+
+    static char const* keywords[] = {
+        "world",
+        "mass",
+        "radius",
+        "pos",
+        "vel",
+        "color",
+        "name",
+        "period",
+        nullptr
+    };
+
+    if (!PyArg_ParseTupleAndKeywords(args.python_object(), kwargs.python_object(), "O!|$dd(ddd)(ddd)(bbb)su", (char**)keywords,
+            &World::type_object(),
+            &world,
+            &mass,
+            &radius,
+            &pos.x, &pos.y, &pos.z,
+            &vel.x, &vel.y, &vel.z,
+            &color.r, &color.g, &color.b,
+            &name,
+            &period))
+        return {};
+
+    return new Object(*World::get(PySSA::Object::share(world)), mass, radius, pos, vel, color, name, period);
 }
 
 PySSA::Object Object::python_attraction(PySSA::Object const& args) {

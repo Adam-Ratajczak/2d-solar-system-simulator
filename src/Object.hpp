@@ -37,6 +37,8 @@ public:
     // FIXME: Too much arguments!!!
     Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
+    static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
+
     Object(Object const& other) = delete;
     Object& operator=(Object const& other) = delete;
     Object(Object&& other) = delete;
