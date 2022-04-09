@@ -10,7 +10,8 @@ namespace PySSA {
 
 class Object {
 public:
-    Object() = default;
+    Object()
+        : m_object(nullptr) { }
 
     ~Object() {
         if (m_object)
@@ -104,7 +105,7 @@ public:
     std::string str() const;
 
 private:
-    PyObject* m_object {};
+    PyObject* m_object; // Initialized in Object()
 };
 
 }
