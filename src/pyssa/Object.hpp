@@ -25,6 +25,7 @@ public:
     Object& operator=(Object const& other) {
         if (this == &other)
             return *this;
+        Py_XDECREF(m_object);
         m_object = other.m_object;
         Py_XINCREF(m_object);
         return *this;
