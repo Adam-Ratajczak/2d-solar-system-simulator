@@ -25,9 +25,8 @@ void SimulationView::handle_event(Event& event) {
             m_dragging = true;
             // FIXME: This requires more advanced math to work properly.
             m_world.for_each_object([&](Object& object) {
-                if(object.hover(*this, m_prev_mouse_pos))
-                {
-                    if(m_focused_object != nullptr)
+                if (object.hover(*this, m_prev_mouse_pos)) {
+                    if (m_focused_object != nullptr)
                         m_focused_object->m_focused = false;
                     m_focused_object = &object;
                     m_focused_object->m_focused = true;
@@ -77,8 +76,9 @@ void SimulationView::handle_event(Event& event) {
             // qad from "quick and dirty".
             // FIXME: Use plane projection or sth better???
             Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
-            set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80 );
-        }else if(m_rotating){
+            set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80);
+        }
+        else if (m_rotating) {
             auto sizes = window().getSize();
             auto delta_pos = m_prev_mouse_pos - mouse_pos;
             m_rotate_y += delta_pos.x / sizes.x * M_PI;
@@ -218,20 +218,20 @@ Matrix4x4d SimulationView::modelview_matrix() const {
 }
 
 Matrix4x4d SimulationView::rotation_matrix() const {
-    Matrix4x4d x_rot =  { { { 1, 0, 0, 0 },
-                            { 0, std::cos(m_rotate_x), -std::sin(m_rotate_x), 0 },
-                            { 0, std::sin(m_rotate_x), -std::cos(m_rotate_x), 0 },
-                            { 0, 0, 0, 0} } };
+    Matrix4x4d x_rot = { { { 1, 0, 0, 0 },
+        { 0, std::cos(m_rotate_x), -std::sin(m_rotate_x), 0 },
+        { 0, std::sin(m_rotate_x), -std::cos(m_rotate_x), 0 },
+        { 0, 0, 0, 0 } } };
 
-    Matrix4x4d y_rot =  { { { std::cos(m_rotate_y), 0, std::sin(m_rotate_y), 0 },
-                            { 0, 1, 0, 0 },
-                            { -std::sin(m_rotate_y), 0, std::cos(m_rotate_y), 0 },
-                            { 0, 0, 0, 0 } } };
+    Matrix4x4d y_rot = { { { std::cos(m_rotate_y), 0, std::sin(m_rotate_y), 0 },
+        { 0, 1, 0, 0 },
+        { -std::sin(m_rotate_y), 0, std::cos(m_rotate_y), 0 },
+        { 0, 0, 0, 0 } } };
 
-    Matrix4x4d z_rot =  { { { std::cos(m_rotate_z), -std::sin(m_rotate_z), 0, 0 },
-                            { std::sin(m_rotate_z), -std::cos(m_rotate_z), 0, 0 },
-                            { 0, 0, 1, 0 },
-                            { 0, 0, 0, 0} } };
+    Matrix4x4d z_rot = { { { std::cos(m_rotate_z), -std::sin(m_rotate_z), 0, 0 },
+        { std::sin(m_rotate_z), -std::cos(m_rotate_z), 0, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 0, 0 } } };
 
     return x_rot * y_rot * z_rot;
 }
@@ -323,8 +323,18 @@ void SimulationView::update() {
         set_offset(m_focused_object->m_pos);
 }
 
+static size_t s_world_draw_scope_recursion = 0;
+
+void WorldDrawScope::verify() {
+    assert(s_world_draw_scope_recursion > 0);
+}
+
 WorldDrawScope::WorldDrawScope(SimulationView const& view)
     : m_simulation_view(view) {
+    s_world_draw_scope_recursion++;
+    if (s_world_draw_scope_recursion > 1)
+        return;
+
     view.window().popGLStates();
 
     glViewport(0, 0, view.size().x, view.size().y);
@@ -342,6 +352,9 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view)
 }
 
 WorldDrawScope::~WorldDrawScope() {
+    s_world_draw_scope_recursion--;
+    if (s_world_draw_scope_recursion != 0)
+        return;
     glFlush();
     m_simulation_view.window().pushGLStates();
     m_simulation_view.window().resetGLStates();

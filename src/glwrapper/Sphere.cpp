@@ -1,5 +1,6 @@
 #include "Sphere.hpp"
 #include "../Transform.hpp"
+#include "../gui/SimulationView.hpp"
 #include "Color.hpp"
 
 #include <GL/gl.h>
@@ -29,8 +30,8 @@ void Sphere::gen_sphere() {
                 m_radius * std::sin(sector_angle) * std::sin(stack_angle),
                 m_radius * std::cos(stack_angle) };
             m_vertices.push_back(Vertex { .position = point_position });
-            //std::cout << "   --- " << std::sin(sector_angle) << ";" << std::cos(sector_angle) << " ;; " << std::sin(stack_angle) << ";" << std::cos(stack_angle) << std::endl;
-            //std::cout << point_position.x << "," << point_position.y << "," << point_position.z << " @ " << stack_angle << "," << sector_angle << std::endl;
+            // std::cout << "   --- " << std::sin(sector_angle) << ";" << std::cos(sector_angle) << " ;; " << std::sin(stack_angle) << ";" << std::cos(stack_angle) << std::endl;
+            // std::cout << point_position.x << "," << point_position.y << "," << point_position.z << " @ " << stack_angle << "," << sector_angle << std::endl;
 
             m_indices.push_back(vertex_index(stack, sector));
             m_indices.push_back(vertex_index(stack, sector + 1));
@@ -59,19 +60,21 @@ void Sphere::set_color(Color color) {
 }
 
 void Sphere::draw() const {
+    WorldDrawScope::verify();
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     Transform::translation(m_pos).gl_mult();
-    
+
     glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), (char*)m_vertices.data() + offsetof(Vertex, position));
     glColorPointer(3, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)m_vertices.data() + offsetof(Vertex, color));
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, m_indices.data());
-    
+
     glPopMatrix();
 }
 
-void Sphere::change_colours(){
-    for(const auto& i : m_indices){
+void Sphere::change_colours() {
+    for (const auto& i : m_indices) {
         m_vertices[i].color *= (float)i / m_indices.size();
     }
 }

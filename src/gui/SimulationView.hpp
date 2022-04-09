@@ -89,6 +89,8 @@ class WorldDrawScope {
 public:
     explicit WorldDrawScope(SimulationView const& view);
     ~WorldDrawScope();
+ 
+    static void verify();
 
 private:
     SimulationView const& m_simulation_view;
