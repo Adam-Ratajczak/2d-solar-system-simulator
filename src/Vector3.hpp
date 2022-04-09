@@ -51,6 +51,8 @@ public:
     }
 
     Vector3 normalized() const;
+    double dot(const Vector3& a) const;
+    Vector3 cross(const Vector3& a) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Vector3& vec) {
         return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << "," << vec.w << ")";
@@ -90,8 +92,30 @@ inline Vector3 Vector3::normalized() const {
     return Vector3(x, y, z) / magnitude();
 }
 
+inline double Vector3::dot(const Vector3& a) const{
+    return this->x * a.x + this->y * a.y + this->z * a.z;
+}
+
+inline Vector3 Vector3::cross(const Vector3& a) const{
+    Vector3 result;
+    result.x = this->y * a.z - this->z * a.y;
+    result.y = this->z * a.x - this->x * a.z;
+    result.z = this->x * a.y - this->y * a.x;
+
+    return result;
+}
+
 inline double get_distance(Vector3 a, Vector3 b) {
     return std::sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+}
+
+inline double get_distance_to_line(Vector3 a, Vector3 b, Vector3 c) {
+    auto d = (c - b) / get_distance(c, b);
+    auto v = a - b;
+    double t = v.dot(d);
+    auto p = b + t * d;
+
+    return get_distance(p, a);
 }
 
 inline void Vector3::glDraw() const {

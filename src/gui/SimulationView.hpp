@@ -22,7 +22,7 @@ public:
     Vector3 offset() const { return m_offset; }
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
-    void reset_rotation(){ m_rotate_y = 0; m_rotate_z = 0;}
+    void reset_rotation(){ m_rotate_x = 0.7; m_rotate_y = 0; m_rotate_z = 0;}
 
     Vector3 screen_to_world(Vector3 v) const;
     Vector3 world_to_screen(Vector3 v) const;
@@ -64,7 +64,7 @@ private:
     Vector3 m_offset;
     World& m_world;
     double m_zoom = 1;
-    double m_rotate_x = 0, m_rotate_y = 0, m_rotate_z = 0;
+    double m_rotate_x = 0.7, m_rotate_y = 0, m_rotate_z = 0;
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;

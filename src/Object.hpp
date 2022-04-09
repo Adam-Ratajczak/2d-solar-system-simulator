@@ -35,7 +35,6 @@ protected:
 
 public:
     // FIXME: Too much arguments!!!
-    // FIXME: what is "tres"?
     Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
     Object(Object const& other) = delete;
@@ -60,7 +59,7 @@ public:
     // Draw the GUI layer of the object (without world transform)
     void draw_gui(SimulationView const&);
 
-    bool hover(SimulationView& view, Vector3 mouse_pos);
+    bool hover(SimulationView& view, Vector3 mouse_pos) const;
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation = 0.0_rad);

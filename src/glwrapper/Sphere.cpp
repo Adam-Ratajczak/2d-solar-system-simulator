@@ -45,6 +45,8 @@ void Sphere::gen_sphere() {
     // std::cout << "----------------------" << std::endl;
     // for (auto& i : m_indices)
     //     std::cout << m_vertices[i].position << std::endl;
+
+    change_colours();
 }
 
 unsigned Sphere::vertex_index(unsigned stack, unsigned sector) const {
@@ -66,4 +68,10 @@ void Sphere::draw() const {
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, m_indices.data());
     
     glPopMatrix();
+}
+
+void Sphere::change_colours(){
+    for(const auto& i : m_indices){
+        m_vertices[i].color *= (float)i / m_indices.size();
+    }
 }

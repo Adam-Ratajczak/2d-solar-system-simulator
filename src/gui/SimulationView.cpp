@@ -24,31 +24,31 @@ void SimulationView::handle_event(Event& event) {
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             m_dragging = true;
             // FIXME: This requires more advanced math to work properly.
-            // m_world.for_each_object([&](Object& object) {
-            //     if(object.hover(*this, world_click_pos))
-            //     {
-            //         if(m_focused_object != nullptr)
-            //             m_focused_object->m_focused = false;
-            //         m_focused_object = &object;
-            //         m_focused_object->m_focused = true;
-            //     }
-            // });
-            // if (m_coord_measure) {
-            //     m_coord_measure = false;
-            //     m_measured = true;
-            //     if (on_coord_measure) {
-            //         on_coord_measure(m_prev_pos);
-            //     }
-            // }
-            // else if (m_focus_measure && m_focused_object != nullptr) {
-            //     m_focus_measure = false;
-            //     m_measured = true;
-            //     if (on_focus_measure) {
-            //         on_focus_measure(m_focused_object);
-            //     }
-            //     m_focused_object->m_focused = false;
-            //     m_focused_object = nullptr;
-            // }
+            m_world.for_each_object([&](Object& object) {
+                if(object.hover(*this, m_prev_mouse_pos))
+                {
+                    if(m_focused_object != nullptr)
+                        m_focused_object->m_focused = false;
+                    m_focused_object = &object;
+                    m_focused_object->m_focused = true;
+                }
+            });
+            if (m_coord_measure) {
+                m_coord_measure = false;
+                m_measured = true;
+                if (on_coord_measure) {
+                    on_coord_measure(m_prev_pos);
+                }
+            }
+            else if (m_focus_measure && m_focused_object != nullptr) {
+                m_focus_measure = false;
+                m_measured = true;
+                if (on_focus_measure) {
+                    on_focus_measure(m_focused_object);
+                }
+                m_focused_object->m_focused = false;
+                m_focused_object = nullptr;
+            }
             event.set_handled();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
@@ -77,13 +77,13 @@ void SimulationView::handle_event(Event& event) {
             // qad from "quick and dirty".
             // FIXME: Use plane projection or sth better???
             Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
-            set_offset(offset() + Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80 );
+            set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80 );
         }else if(m_rotating){
             auto sizes = window().getSize();
             auto delta_pos = m_prev_mouse_pos - mouse_pos;
-            m_rotate_z += delta_pos.x / sizes.x * M_PI;
-            m_rotate_y += delta_pos.y / sizes.y * M_PI;
-            // std::cout << m_rotate_x << " " << m_rotate_y << "\n";
+            m_rotate_y += delta_pos.x / sizes.x * M_PI;
+            m_rotate_x += delta_pos.y / sizes.y * M_PI;
+            // m_rotate_z = m_rotate_x + M_PI / 2;
         }
         m_prev_mouse_pos = mouse_pos;
     }
@@ -212,7 +212,7 @@ Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
     matrix = matrix * Transform::scale({ scale(), scale(), scale() });
-    matrix = matrix * Transform::rotation_around_x(0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z);
+    matrix = matrix * Transform::rotation_around_x(m_rotate_x) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z);
     matrix = matrix * Transform::translation({ 0, 0, -5 });
     return matrix;
 }

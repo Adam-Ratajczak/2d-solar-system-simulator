@@ -35,6 +35,7 @@ private:
     Vector3 m_pos;
 
     void gen_sphere();
+    void change_colours();
 
     unsigned vertex_index(unsigned stack, unsigned sector) const;
 
