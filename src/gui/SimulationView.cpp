@@ -217,25 +217,6 @@ Matrix4x4d SimulationView::modelview_matrix() const {
     return matrix;
 }
 
-Matrix4x4d SimulationView::rotation_matrix() const {
-    Matrix4x4d x_rot = { { { 1, 0, 0, 0 },
-        { 0, std::cos(m_rotate_x), -std::sin(m_rotate_x), 0 },
-        { 0, std::sin(m_rotate_x), -std::cos(m_rotate_x), 0 },
-        { 0, 0, 0, 0 } } };
-
-    Matrix4x4d y_rot = { { { std::cos(m_rotate_y), 0, std::sin(m_rotate_y), 0 },
-        { 0, 1, 0, 0 },
-        { -std::sin(m_rotate_y), 0, std::cos(m_rotate_y), 0 },
-        { 0, 0, 0, 0 } } };
-
-    Matrix4x4d z_rot = { { { std::cos(m_rotate_z), -std::sin(m_rotate_z), 0, 0 },
-        { std::sin(m_rotate_z), -std::cos(m_rotate_z), 0, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 0, 0 } } };
-
-    return x_rot * y_rot * z_rot;
-}
-
 Vector3 SimulationView::screen_to_world(Vector3 v) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
     // v = rotation_matrix().inverted() * v;
@@ -249,7 +230,7 @@ Vector3 SimulationView::screen_to_world(Vector3 v) const {
 
 Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // We skip world space because we have combined model+view matrix
-    auto view_space = modelview_matrix() * local_space;
+    auto view_space = local_space;
     auto clip_space = projection_matrix() * view_space;
     Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
     // result = rotation_matrix() * result;
