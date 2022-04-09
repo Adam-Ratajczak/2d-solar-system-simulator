@@ -23,6 +23,9 @@ Environment::Environment(World& world)
     s_the = this;
     initialize_environment();
     Py_Initialize();
+
+    m_globals = PyDict_New();
+    m_locals = PyDict_New();
 }
 
 Environment::~Environment() {
@@ -51,6 +54,50 @@ bool Environment::run_script(std::string const& path) {
     Py_SetProgramName(wstring_converter.from_bytes(path).c_str());
     PyRun_SimpleString(script.c_str());
     return true;
+}
+
+Object Environment::eval_string(std::string const& str) {
+    // Try eval first
+    Object code_object = Object::take(Py_CompileString(str.c_str(), "<stdin>", Py_eval_input));
+    if (!code_object) {
+        PyErr_Clear();
+        // If eval doesn't compile, maybe file will work (but result will be None)
+        code_object = Object::take(Py_CompileString(str.c_str(), "<stdin>", Py_file_input));
+        if (!code_object)
+            return {};
+    }
+    return Object::take(PyEval_EvalCode(code_object.leak_object(), m_globals, m_locals));
+}
+
+std::vector<std::string> Environment::generate_exception_message() const {
+    // https://stackoverflow.com/questions/1418015/how-to-get-python-exception-text
+    PyObject* type;
+    PyObject* value;
+    PyObject* traceback;
+    PyErr_Fetch(&type, &value, &traceback);
+    PyErr_NormalizeException(&type, &value, &traceback);
+    PyErr_Clear();
+    auto traceback_mod = Object::take(PyImport_ImportModule("traceback"));
+    if (!traceback_mod)
+        return { "traceback :(" };
+    Object formatted_list;
+    if (!traceback) {
+        auto format_exception_only = traceback_mod.get_attribute("format_exception_only");
+        if (!format_exception_only)
+            return { "format_exception_only :(" };
+        formatted_list = format_exception_only.call(Object::tuple(Object::share(type), Object::share(value)));
+    }
+    else {
+        auto format_exception = traceback_mod.get_attribute("format_exception");
+        if (!format_exception)
+            return { "format_exception_only :(" };
+        formatted_list = format_exception.call(Object::tuple(Object::share(type), Object::share(value), Object::share(traceback)));
+    }
+    std::vector<std::string> result;
+    for (auto& element : formatted_list.as_list()) {
+        result.push_back(element.str());
+    }
+    return result;
 }
 
 void Environment::initialize_environment() {

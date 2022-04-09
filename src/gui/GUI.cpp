@@ -3,6 +3,7 @@
 #include "../World.hpp"
 #include "Button.hpp"
 #include "Container.hpp"
+#include "PythonREPL.hpp"
 #include "SimulationView.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
@@ -183,6 +184,10 @@ GUI::GUI(Application& application, World& world)
         create_simulation_settings_gui(*settings.settings_container);
     }
 
+    auto python_repl = add_widget<PythonREPL>();
+    python_repl->set_position({ 300.0_px, 10.0_px_o });
+    python_repl->set_size({ 700.0_px, 250.0_px });
+
     m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
     m_home_button->on_click = [this]() {
@@ -199,7 +204,7 @@ void GUI::create_simulation_settings_gui(Container& container) {
     container.set_layout<VerticalBoxLayout>().set_spacing(10);
     auto label = container.add_widget<Textfield>();
     label->set_content("Simulation Settings");
-    label->set_size({Length::Auto, 30.0_px});
+    label->set_size({ Length::Auto, 30.0_px });
 
     auto iterations_control = container.add_widget<ValueSlider>(1, 1000);
     iterations_control->set_name("Iterations");
@@ -207,7 +212,7 @@ void GUI::create_simulation_settings_gui(Container& container) {
     iterations_control->set_value(10);
     iterations_control->set_tooltip_text("Count of simulation ticks per render frame");
     iterations_control->on_change = [this](double value) {
-        if(value > 0)
+        if (value > 0)
             m_simulation_view->set_iterations(value);
     };
 
@@ -217,7 +222,7 @@ void GUI::create_simulation_settings_gui(Container& container) {
     tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
     tick_length_control->set_tooltip_text("Amount of simulation seconds per simulation tick (Affects accuracy)");
     tick_length_control->on_change = [this](double value) {
-        if(value > 0)
+        if (value > 0)
             m_world.set_simulation_seconds_per_tick(value);
     };
 }

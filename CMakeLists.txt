@@ -19,12 +19,13 @@ add_executable(
     src/glwrapper/Sphere.cpp
     src/glwrapper/Triangle.cpp
     src/glwrapper/VertexBuffer.cpp
+    src/gui/Application.cpp
     src/gui/Button.cpp
     src/gui/ColorPicker.cpp
     src/gui/Container.cpp
     src/gui/CreateObjectGUI.cpp
     src/gui/GUI.cpp
-    src/gui/Application.cpp
+    src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
     src/gui/SimulationView.cpp
     src/gui/Slider.cpp
