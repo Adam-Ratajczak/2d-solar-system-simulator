@@ -76,7 +76,7 @@ void World::setup_python_bindings(FuncsAdder adder) {
 
 PySSA::Object World::python_get_object_by_name(PySSA::Object const& args) {
     const char* name_arg;
-    if(PyArg_ParseTuple(args.python_object(), "s", &name_arg) < 0)
+    if(!PyArg_ParseTuple(args.python_object(), "s", &name_arg))
         return {};
 
     auto object = get_object_by_name(name_arg);
