@@ -82,4 +82,9 @@ private:
     PySSA::Object python_get_focused() const;
     PySSA::Object python_get_color() const;
     PySSA::Object python_get_radius() const;
+
+    // Not related to simulation trail.
+    std::vector<Vertex> m_display_trail;
+    size_t m_display_trail_append_offset = 0;
+    size_t m_display_trail_length = 0;
 };

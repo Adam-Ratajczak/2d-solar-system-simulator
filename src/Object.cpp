@@ -2,6 +2,7 @@
 #include "Transform.hpp"
 #include "Vector3.hpp"
 #include "World.hpp"
+#include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"
 #include "gui/GUI.hpp"
 #include "gui/SimulationView.hpp"
@@ -34,6 +35,8 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     m_name = name;
     m_orbit_len = period;
 
+    m_display_trail.resize(period * 2);
+
     m_sphere.set_color(m_color);
     m_trail.push_back(m_pos);
 }
@@ -50,7 +53,7 @@ bool Object::hover(SimulationView& view, Vector3 mouse_pos) const {
     auto dist = get_distance(position, mouse_pos);
 
     // std::cout << dist << "\n";
-    
+
     // return get_distance(position, mouse_pos) < 20;
     return false;
 }
@@ -67,6 +70,13 @@ void Object::update_forces(bool reverse) {
 void Object::update() {
     m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
+
+    m_display_trail[m_display_trail_append_offset] = Vertex { .position = m_pos / AU, .color = m_color };
+    m_display_trail_append_offset++;
+    if (m_display_trail_length < m_display_trail.size())
+        m_display_trail_length++;
+    if (m_display_trail_append_offset >= m_display_trail.size())
+        m_display_trail_append_offset = 0;
 
     // if(m_pos != m_trail.back())
     m_trail.push_back(m_pos);
@@ -100,6 +110,9 @@ void Object::draw(SimulationView const& view) {
 
     m_sphere.set_position(scaled_pos);
     m_sphere.draw();
+
+    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data(), m_display_trail_append_offset });
+    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data() + m_display_trail_append_offset, m_display_trail_length - m_display_trail_append_offset });
 
     // FIXME: This thing should be in a Widget.
     if (this->m_focused) {
@@ -253,7 +266,7 @@ void Object::setup_python_bindings(TypeSetup setup) {
 PySSA::Object Object::python_attraction(PySSA::Object const& args) {
     // TODO: C++ API for that
     PyObject* other_arg = nullptr;
-    if(PyArg_ParseTuple(args.python_object(), "O!", &type_object(), &other_arg) < 0)
+    if (PyArg_ParseTuple(args.python_object(), "O!", &type_object(), &other_arg) < 0)
         return {};
     // FIXME: This could go without incrementing refcount
     auto other = get(PySSA::Object::share(other_arg));
@@ -261,33 +274,26 @@ PySSA::Object Object::python_attraction(PySSA::Object const& args) {
     return PySSA::Object::create(attraction(*other));
 }
 
-PySSA::Object Object::python_get_pos() const
-{
+PySSA::Object Object::python_get_pos() const {
     return PySSA::Object::create(m_pos);
 }
 
-PySSA::Object Object::python_get_vel() const
-{
+PySSA::Object Object::python_get_vel() const {
     return PySSA::Object::create(m_vel);
 }
 
-PySSA::Object Object::python_get_name() const
-{
+PySSA::Object Object::python_get_name() const {
     return PySSA::Object::create(m_name);
 }
 
-PySSA::Object Object::python_get_focused() const
-{
+PySSA::Object Object::python_get_focused() const {
     return PySSA::Object::create(m_focused);
 }
 
-PySSA::Object Object::python_get_color() const
-{
+PySSA::Object Object::python_get_color() const {
     return PySSA::Object::create(m_color);
 }
 
-PySSA::Object Object::python_get_radius() const
-{
+PySSA::Object Object::python_get_radius() const {
     return PySSA::Object::create(m_radius);
 }
-
