@@ -8,6 +8,7 @@
 #include "SettingsMenu.hpp"
 #include "SimulationView.hpp"
 #include "Slider.hpp"
+#include "TextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include "ToggleButton.hpp"

@@ -39,6 +39,7 @@ public:
 
     void start_coords_measure() { m_coord_measure = true; }
     void start_focus_measure();
+    void toggle_label_visibility(){ m_show_labels = !m_show_labels;}
 
     // TODO: This should be private
     bool m_measured = false, m_changed = false;
@@ -69,7 +70,7 @@ private:
     sf::Vector2f m_prev_mouse_pos;
     Vector3 m_prev_pos;
     bool m_dragging = false, m_rotating = false;
-    bool m_coord_measure = false, m_focus_measure = false;
+    bool m_coord_measure = false, m_focus_measure = false, m_show_labels = true;
     int m_iterations = 10;
 
     // FIXME: This doesn't quite match here (and also World). Maybe

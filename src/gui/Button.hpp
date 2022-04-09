@@ -11,6 +11,7 @@ class Button : public Widget {
 
 public:
     Button(Container&, sf::Image);
+    Button(Container& c, bool con) : Widget(c){}
 
     std::function<void()> on_click;
 

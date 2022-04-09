@@ -225,6 +225,14 @@ void GUI::create_simulation_settings_gui(Container& container) {
         if (value > 0)
             m_world.set_simulation_seconds_per_tick(value);
     };
+
+    auto toggle_labels_container = container.add_widget<Container>();
+    auto& toggle_labels_layout = toggle_labels_container->set_layout<HorizontalBoxLayout>();
+    toggle_labels_layout.set_spacing(10);
+    auto button_label = container.add_widget<Textfield>();
+    button_label->set_content("Toggle labels: ");
+    button_label->set_size({ Length::Auto, 30.0_px });
+    
 }
 
 void GUI::recalculate_forward_simulation() {
