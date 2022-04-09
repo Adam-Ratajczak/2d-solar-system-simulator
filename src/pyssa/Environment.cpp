@@ -29,6 +29,8 @@ Environment::Environment(World& world)
 }
 
 Environment::~Environment() {
+    Py_DECREF(m_globals);
+    Py_DECREF(m_locals);
     Py_FinalizeEx();
     s_the = nullptr;
 }
