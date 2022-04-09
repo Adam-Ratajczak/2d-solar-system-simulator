@@ -237,6 +237,10 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
     return object;
 }
 
+std::ostream& operator<<(std::ostream& out, Object const& object) {
+    return out << "Object(" << object.m_name << ") @ " << object.m_pos;
+}
+
 void Object::setup_python_bindings(TypeSetup setup) {
     setup.add_method<&Object::python_attraction>("attraction");
     setup.add_attribute<&Object::python_get_pos, nullptr>("pos");

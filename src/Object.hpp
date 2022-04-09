@@ -72,6 +72,8 @@ public:
     static void setup_python_bindings(TypeSetup);
 
 private:
+    friend std::ostream& operator<<(std::ostream& out, Object const&);
+
     PySSA::Object python_attraction(PySSA::Object const& args);
 
     PySSA::Object python_get_pos() const;
