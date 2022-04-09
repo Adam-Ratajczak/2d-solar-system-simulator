@@ -3,6 +3,8 @@
 #include "Container.hpp"
 #include "Textbox.hpp"
 
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 #include <deque>
 
 class PythonREPL : public Container {
@@ -16,8 +18,12 @@ private:
     struct LogLine {
         sf::Color color;
         std::string text;
+        sf::Time time;
     };
     void append_log_line(LogLine);
+    void erase_log_line();
+
+    sf::Clock m_timer;
 
     std::deque<LogLine> m_log_lines;
     Textbox* m_textbox {};

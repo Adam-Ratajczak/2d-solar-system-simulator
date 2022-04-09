@@ -7,7 +7,7 @@
 #include <string>
 
 class Textbox : public Widget {
-    sf::String m_content;
+    sf::String m_content, m_placeholder;
     sf::Color m_bg_color = sf::Color(255, 255, 255);
     sf::Color m_fg_color = sf::Color(200, 200, 200);
     sf::Color m_text_color = sf::Color(150, 150, 150);
@@ -34,6 +34,7 @@ public:
     sf::String get_content() const { return m_content; }
     void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_data_type(Type type) { m_type = type; }
+    void set_placeholder(std::string placeholder) { m_placeholder = placeholder; }
 
     void set_cursor(unsigned);
 

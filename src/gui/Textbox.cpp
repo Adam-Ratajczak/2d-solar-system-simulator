@@ -110,6 +110,10 @@ sf::Text Textbox::generate_sf_text() const {
     text.setFillColor(m_text_color);
     text.setPosition(2, 2);
     text.move(m_scroll, 0);
+
+    if(!is_focused() && m_content.getSize() == 0)
+        text.setString(m_placeholder);
+    
     return text;
 }
 
