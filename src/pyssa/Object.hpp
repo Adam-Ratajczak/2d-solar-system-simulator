@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace PySSA {
 
@@ -68,6 +69,14 @@ public:
     static Object create_string(std::string const&);
     static Object create_int(int);
     static Object create_double(double);
+
+    template<class... Args>
+    static Object tuple(Args... args) {
+        auto tuple = create_tuple(sizeof...(Args));
+        size_t index = 0;
+        (tuple.set_tuple_item(index++, args), ...);
+        return tuple;
+    }
 
     void set_tuple_item(Py_ssize_t i, Object const& object) {
         PyTuple_SetItem(m_object, i, object.share_object());
