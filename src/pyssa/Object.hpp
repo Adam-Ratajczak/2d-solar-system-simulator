@@ -14,22 +14,19 @@ public:
         : m_object(nullptr) { }
 
     ~Object() {
-        if (m_object)
-            Py_DECREF(m_object);
+        Py_XDECREF(m_object);
     }
 
     Object(Object const& other)
         : m_object(other.m_object) {
-        if (m_object)
-            Py_INCREF(m_object);
+        Py_XINCREF(m_object);
     }
 
     Object& operator=(Object const& other) {
         if (this == &other)
             return *this;
         m_object = other.m_object;
-        if (m_object)
-            Py_INCREF(m_object);
+        Py_XINCREF(m_object);
         return *this;
     }
 
@@ -39,6 +36,7 @@ public:
     Object& operator=(Object&& other) {
         if (this == &other)
             return *this;
+        Py_XDECREF(m_object);
         m_object = std::exchange(other.m_object, nullptr);
         return *this;
     }
@@ -55,7 +53,7 @@ public:
     static Object share(PyObject* object) {
         Object o;
         o.m_object = object;
-        Py_INCREF(o.m_object);
+        Py_XINCREF(o.m_object);
         return o;
     }
 
@@ -95,7 +93,7 @@ public:
     // Return an internal Python object, also sharing a reference. Use
     // when calling Python functions that want to share these values
     PyObject* share_object() const {
-        Py_INCREF(m_object);
+        Py_XINCREF(m_object);
         return m_object;
     }
 
