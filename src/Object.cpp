@@ -175,7 +175,6 @@ void Object::draw(SimulationView const& view) {
 void Object::draw_gui(SimulationView const& view) {
     // FIXME: Hardcoded multiplier
     auto position = view.world_to_screen(m_pos / AU);
-    std::cout << m_name << position << std::endl;
 
     sf::Text text(m_name, GUI::font, 15);
     text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
