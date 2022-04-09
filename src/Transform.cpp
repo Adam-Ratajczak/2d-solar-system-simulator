@@ -53,19 +53,4 @@ Matrix4x4d scale(Vector3 fac) {
     } };
 }
 
-Vector3 project(Vector3 p) {
-    GLint viewport[4] {-1,-1,1,1};
-    GLdouble modelview[16] {};
-    GLdouble projection[16] {};
-    GLdouble winX {}, winY {}, winZ {}; // 2D point
-
-    // get the matrices
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
-    //glGetIntegerv(GL_VIEWPORT, viewport);
-
-    int res = gluProject(p.x, p.y, p.z, modelview, projection, viewport, &winX, &winY, &winZ);
-    return { winX, winY, winZ };
-}
-
 }

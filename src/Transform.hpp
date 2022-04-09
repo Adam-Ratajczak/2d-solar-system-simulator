@@ -10,6 +10,4 @@ Matrix4x4d rotation_around_y(double angle);
 Matrix4x4d rotation_around_z(double angle);
 Matrix4x4d scale(Vector3 axis);
 
-Vector3 project(Vector3 v);
-
 }
