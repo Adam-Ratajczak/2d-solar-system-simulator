@@ -5,6 +5,7 @@
 #include "object.h"
 #include "objimpl.h"
 
+#include <sstream>
 #include <vector>
 
 namespace PySSA {
@@ -114,6 +115,18 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
     }();
     type.tp_methods = funcs.methods.data();
     type.tp_getset = funcs.getters_setters.data();
+    if constexpr (requires(std::ostream & out, T const& t) { out << t; }) {
+        if (!type.tp_repr) {
+            struct ReprWrapper {
+                static PyObject* wrapper(PythonType* self) {
+                    std::ostringstream oss;
+                    oss << *self->ptr;
+                    return PyUnicode_FromString(oss.str().c_str());
+                }
+            };
+            type.tp_repr = (reprfunc)ReprWrapper::wrapper;
+        }
+    }
 }
 
 template<class T>
