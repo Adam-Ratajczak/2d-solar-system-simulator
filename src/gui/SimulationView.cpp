@@ -59,6 +59,8 @@ void SimulationView::handle_event(Event& event) {
 
             m_coord_measure = false;
             m_focus_measure = false;
+
+            m_rotating = true;
         }
     }
     else if (event.type() == sf::Event::MouseWheelScrolled) {
@@ -75,12 +77,19 @@ void SimulationView::handle_event(Event& event) {
             // qad from "quick and dirty".
             // FIXME: Use plane projection or sth better???
             Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
-            set_offset(offset() + qad_delta / scale() / 80);
+            set_offset(offset() + Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80 );
+        }else if(m_rotating){
+            auto sizes = window().getSize();
+            auto delta_pos = m_prev_mouse_pos - mouse_pos;
+            m_rotate_z += delta_pos.x / sizes.x * M_PI;
+            m_rotate_y += delta_pos.y / sizes.y * M_PI;
+            // std::cout << m_rotate_x << " " << m_rotate_y << "\n";
         }
         m_prev_mouse_pos = mouse_pos;
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
+        m_rotating = false;
     }
     else if (event.type() == sf::Event::KeyPressed) {
         // FIXME: This is too complex and doesn't even work for all cases.
@@ -108,7 +117,7 @@ void SimulationView::handle_event(Event& event) {
                 m_speed /= 2;
         }
     }
-    m_changed = m_dragging;
+    m_changed = m_dragging | m_rotating;
 }
 
 void SimulationView::draw_grid(sf::RenderWindow& window) const {
@@ -203,13 +212,33 @@ Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
     matrix = matrix * Transform::scale({ scale(), scale(), scale() });
-    matrix = matrix * Transform::rotation_around_x(0.7);
+    matrix = matrix * Transform::rotation_around_x(0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z);
     matrix = matrix * Transform::translation({ 0, 0, -5 });
     return matrix;
 }
 
+Matrix4x4d SimulationView::rotation_matrix() const {
+    Matrix4x4d x_rot =  { { { 1, 0, 0, 0 },
+                            { 0, std::cos(m_rotate_x), -std::sin(m_rotate_x), 0 },
+                            { 0, std::sin(m_rotate_x), -std::cos(m_rotate_x), 0 },
+                            { 0, 0, 0, 0} } };
+
+    Matrix4x4d y_rot =  { { { std::cos(m_rotate_y), 0, std::sin(m_rotate_y), 0 },
+                            { 0, 1, 0, 0 },
+                            { -std::sin(m_rotate_y), 0, std::cos(m_rotate_y), 0 },
+                            { 0, 0, 0, 0 } } };
+
+    Matrix4x4d z_rot =  { { { std::cos(m_rotate_z), -std::sin(m_rotate_z), 0, 0 },
+                            { std::sin(m_rotate_z), -std::cos(m_rotate_z), 0, 0 },
+                            { 0, 0, 1, 0 },
+                            { 0, 0, 0, 0} } };
+
+    return x_rot * y_rot * z_rot;
+}
+
 Vector3 SimulationView::screen_to_world(Vector3 v) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
+    // v = rotation_matrix().inverted() * v;
     Vector3 clip_space { -(v.x - size().x / 2.0) * 2 / size().x, (v.y - size().y / 2.0) * 2 / size().y };
     auto view_space = projection_matrix().inverted() * clip_space;
     // We skip world space because we have combined model+view matrix
@@ -223,6 +252,7 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     auto view_space = modelview_matrix() * local_space;
     auto clip_space = projection_matrix() * view_space;
     Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
+    // result = rotation_matrix() * result;
     // std::cout << "modelview: " << modelview_matrix() << ":: " << local_space << " -> " << view_space << " -> " << clip_space << "->" << result << std::endl;
     return result;
 }

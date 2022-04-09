@@ -188,6 +188,7 @@ GUI::GUI(Application& application, World& world)
     m_home_button->on_click = [this]() {
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
         m_simulation_view->set_zoom(1);
+        m_simulation_view->reset_rotation();
     };
     m_home_button->set_tooltip_text("Reset coordinates");
 }

@@ -24,6 +24,26 @@ Matrix4x4d rotation_around_x(double angle) {
         { 0, 0, 0, 1 } } };
 }
 
+Matrix4x4d rotation_around_y(double angle) {
+    // https://ksuweb.kennesaw.edu/~plaval/math4490/rotgen.pdf
+    double sin {}, cos {};
+    sincos(angle, &sin, &cos);
+    return { { { cos, 0, sin, 0 },
+        { 0, 1, 0, 0 },
+        { -sin, 0, cos, 0 },
+        { 0, 0, 0, 1 } } };
+}
+
+Matrix4x4d rotation_around_z(double angle) {
+    // https://ksuweb.kennesaw.edu/~plaval/math4490/rotgen.pdf
+    double sin {}, cos {};
+    sincos(angle, &sin, &cos);
+    return { { { cos, -sin, 0, 0 },
+        { sin, cos, 0, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 0, 1 } } };
+}
+
 Matrix4x4d scale(Vector3 fac) {
     return { {
         { fac.x, 0, 0, 0 },

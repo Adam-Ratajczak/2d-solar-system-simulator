@@ -3,6 +3,7 @@
 #include "../Constants.hpp"
 #include "../Matrix.hpp"
 #include "../Vector3.hpp"
+#include "../Transform.hpp"
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>
@@ -21,11 +22,13 @@ public:
     Vector3 offset() const { return m_offset; }
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
+    void reset_rotation(){ m_rotate_y = 0; m_rotate_z = 0;}
 
     Vector3 screen_to_world(Vector3 v) const;
     Vector3 world_to_screen(Vector3 v) const;
     Matrix4x4d projection_matrix() const;
     Matrix4x4d modelview_matrix() const;
+    Matrix4x4d rotation_matrix() const;
 
     void reset() {
         m_offset = Vector3 {0, 0, 0};
@@ -61,11 +64,12 @@ private:
     Vector3 m_offset;
     World& m_world;
     double m_zoom = 1;
+    double m_rotate_x = 0, m_rotate_y = 0, m_rotate_z = 0;
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;
     Vector3 m_prev_pos;
-    bool m_dragging = false;
+    bool m_dragging = false, m_rotating = false;
     bool m_coord_measure = false, m_focus_measure = false;
     int m_iterations = 10;
 
