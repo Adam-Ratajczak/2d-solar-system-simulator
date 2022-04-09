@@ -27,7 +27,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     , m_trail(period * 2)
     , m_sphere(radius / AU, 36, 18) {
     m_gravity_factor = mass * G;
-    m_radius = radius * 100;
+    m_radius = radius;
     m_pos = pos;
     m_vel = vel;
     m_color = color;
