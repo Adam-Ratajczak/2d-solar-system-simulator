@@ -43,8 +43,21 @@ int Object::as_int() const {
     return PyLong_AsLong(m_object);
 }
 
+std::vector<Object> Object::as_list() const {
+    Py_ssize_t size = PyList_Size(m_object);
+    std::vector<Object> list;
+    list.resize(size);
+    for(Py_ssize_t s = 0; s < size; s++)
+        list[s] = Object::share(PyList_GetItem(m_object, s));
+    return list;
+}
+
 std::string Object::str() const {
     return PyUnicode_AsUTF8(PyObject_Str(m_object));
+}
+
+std::string Object::repr() const {
+    return PyUnicode_AsUTF8(PyObject_Repr(m_object));
 }
 
 }

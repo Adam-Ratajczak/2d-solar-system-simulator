@@ -107,7 +107,9 @@ public:
     Object call(Object const& args, Object const& kwargs = {}) const;
 
     int as_int() const;
+    std::vector<Object> as_list() const;
     std::string str() const;
+    std::string repr() const;
 
 private:
     PyObject* m_object; // Initialized in Object()
