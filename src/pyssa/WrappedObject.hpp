@@ -20,13 +20,20 @@ public:
     struct PythonType {
         PyObject_HEAD
             T* ptr;
+
+        // Is the object created and should be removed by Python interpreter?
+        bool owned;
     };
+
+    static constexpr bool CanBeCreatedFromPython = requires(Object const& o) { T::create_for_python(o, o); };
 
     static PyTypeObject& type_object();
     Object wrap() {
         auto type = &type_object();
         auto object = Object::take(PyObject_New(PyObject, type));
-        ((PythonType*)(object.python_object()))->ptr = static_cast<T*>(this);
+        auto& py_object = *(PythonType*)object.python_object();
+        py_object.ptr = static_cast<T*>(this);
+        py_object.owned = false;
         return object;
     }
 
@@ -127,6 +134,24 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
             type.tp_repr = (reprfunc)ReprWrapper::wrapper;
         }
     }
+    if constexpr (CanBeCreatedFromPython) {
+        // FIXME: There is a memory leak somewhere but I cannot reproduce it.
+        type.tp_init = [](PyObject* self, PyObject* args, PyObject* kwargs) {
+            auto object = (PythonType*)self;
+            object->ptr = T::create_for_python(Object::share(args), Object::share(kwargs));
+            if(!object->ptr)
+                return -1;
+            object->owned = true;
+            return 0;
+        };
+        type.tp_dealloc = [](PyObject* self) {
+            auto object = (PythonType*)self;
+            if (object->owned)
+                delete object->ptr;
+            Py_TYPE(self)->tp_free(self);
+        };
+        type.tp_new = PyType_GenericNew;
+    }
 }
 
 template<class T>
@@ -138,12 +163,10 @@ PyTypeObject& WrappedObject<T>::type_object() {
         type.tp_basicsize = sizeof(T);
         type.tp_itemsize = 0;
         type.tp_flags = Py_TPFLAGS_DEFAULT;
-        type.tp_new = PyType_GenericNew;
         setup_python_bindings_internal(type);
         return type;
     }();
     assert(PyType_Ready(&type_object) >= 0);
     return type_object;
 }
-
 }
