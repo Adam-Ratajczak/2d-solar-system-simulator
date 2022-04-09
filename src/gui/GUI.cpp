@@ -261,6 +261,7 @@ void GUI::update() {
 void GUI::draw(sf::RenderWindow& window) const {
     if (m_new_object) {
         m_forward_simulated_world.draw(*m_simulation_view);
+        WorldDrawScope scope(*m_simulation_view);
         m_new_object->draw(*m_simulation_view);
     }
 }
