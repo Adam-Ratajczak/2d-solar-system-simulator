@@ -44,7 +44,7 @@ public:
     int simulation_seconds_per_tick() const { return m_simulation_seconds_per_tick; }
     void set_simulation_seconds_per_tick(int s) { m_simulation_seconds_per_tick = s; }
 
-    static void setup_python_bindings(FuncsAdder);
+    static void setup_python_bindings(TypeSetup);
 
 private:
     Object* m_most_massive_object = nullptr;

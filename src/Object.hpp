@@ -69,7 +69,7 @@ public:
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
 
-    static void setup_python_bindings(FuncsAdder);
+    static void setup_python_bindings(TypeSetup);
 
 private:
     PySSA::Object python_attraction(PySSA::Object const& args);

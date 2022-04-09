@@ -68,7 +68,7 @@ void World::clone_for_forward_simulation(World& new_world) const {
         new_world.add_object(object->clone_for_forward_simulation(new_world));
 }
 
-void World::setup_python_bindings(FuncsAdder adder) {
+void World::setup_python_bindings(TypeSetup adder) {
     std::cout << "setup_python_bindings!!" << std::endl;
     adder.add_method<&World::python_get_object_by_name>("get_object_by_name");
     adder.add_attribute<&World::python_get_simulation_seconds_per_tick, &World::python_set_simulation_seconds_per_tick>("simulation_seconds_per_tick");

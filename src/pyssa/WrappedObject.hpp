@@ -45,10 +45,11 @@ private:
     };
 
 protected:
-    class FuncsAdder {
+    class TypeSetup {
     public:
-        FuncsAdder(Funcs& funcs)
-            : m_funcs(funcs) { }
+        TypeSetup(Funcs& funcs, PyTypeObject& type_object)
+            : m_funcs(funcs)
+            , m_type_object(type_object) { }
 
         using Method = Object (T::*)(Object const& args);
         using Getter = Object (T::*)() const;
@@ -91,41 +92,41 @@ protected:
 
     private:
         Funcs& m_funcs;
+        PyTypeObject& m_type_object;
     };
 
 private:
-    static Funcs& python_funcs();
+    static void setup_python_bindings_internal(PyTypeObject&);
 };
 
 template<class T>
-auto WrappedObject<T>::python_funcs() -> Funcs& {
-    static Funcs funcs = []() -> Funcs {
+void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
+    static Funcs funcs = [&]() -> Funcs {
         Funcs funcs2;
-        constexpr bool has_setup_python_bindings = requires(FuncsAdder a) { T::setup_python_bindings(a); };
+        constexpr bool has_setup_python_bindings = requires(TypeSetup a) { T::setup_python_bindings(a); };
         static_assert(has_setup_python_bindings, "You need to define static void setup_python_bindings(FuncsAdder)");
         if constexpr (has_setup_python_bindings) {
-            T::setup_python_bindings(FuncsAdder { funcs2 });
+            T::setup_python_bindings(TypeSetup { funcs2, type });
         }
         funcs2.methods.push_back(PyMethodDef { nullptr, nullptr, 0, nullptr });
         funcs2.getters_setters.push_back(PyGetSetDef { nullptr, nullptr, nullptr, nullptr, nullptr });
         return funcs2;
     }();
-    return funcs;
+    type.tp_methods = funcs.methods.data();
+    type.tp_getset = funcs.getters_setters.data();
 }
 
 template<class T>
 PyTypeObject& WrappedObject<T>::type_object() {
     static PyTypeObject type_object = []() {
-        auto& funcs = python_funcs();
-        auto type = PyTypeObject { PyVarObject_HEAD_INIT(nullptr, 0) };
+        PyTypeObject type { PyVarObject_HEAD_INIT(nullptr, 0) };
         type.tp_name = "WrappedObject";
         type.tp_doc = "TODO";
         type.tp_basicsize = sizeof(T);
         type.tp_itemsize = 0;
         type.tp_flags = Py_TPFLAGS_DEFAULT;
         type.tp_new = PyType_GenericNew;
-        type.tp_methods = funcs.methods.data();
-        type.tp_getset = funcs.getters_setters.data();
+        setup_python_bindings_internal(type);
         return type;
     }();
     assert(PyType_Ready(&type_object) >= 0);
