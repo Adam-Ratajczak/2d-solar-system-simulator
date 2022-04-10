@@ -69,17 +69,35 @@ void BoxLayout::run() {
 
     // 3. Set autosized widgets' size + arrange widgets
     float autosized_widget_size = (available_size_for_autosized_widgets - (m_spacing * (autosized_widget_count - 1))) / autosized_widget_count;
-    float current_position = 0;
     size_t index = 0;
-    for (auto& w : widgets()) {
-        if (!w->is_visible())
-            continue;
-        if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
-            w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
-        w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position + m_padding,
-            vec2f_cross_coord_by_orientation(m_container.position()) + m_padding }));
-        current_position += vec2f_main_coord_by_orientation(w->size()) + m_spacing;
-        index++;
+    switch (m_content_alignment) {
+    case ContentAlignment::BoxStart: {
+        float current_position = 0;
+        for (auto& w : widgets()) {
+            if (!w->is_visible())
+                continue;
+            if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
+                w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
+            w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position + m_padding,
+                vec2f_cross_coord_by_orientation(m_container.position()) + m_padding }));
+            current_position += vec2f_main_coord_by_orientation(w->size()) + m_spacing;
+            index++;
+        }
+    } break;
+    case ContentAlignment::BoxEnd: {
+        float current_position = vec2f_main_coord_by_orientation(m_container.size());
+        for (auto it = widgets().rbegin(); it != widgets().rend(); it++) {
+            auto& w = *it;
+            if (!w->is_visible())
+                continue;
+            if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
+                w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
+            current_position -= vec2f_main_coord_by_orientation(w->size()) + m_spacing;
+            w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position + m_padding,
+                vec2f_cross_coord_by_orientation(m_container.position()) + m_padding }));
+            index++;
+        }
+    } break;
     }
 
     /*for(auto& w : widgets())

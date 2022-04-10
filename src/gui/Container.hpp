@@ -52,8 +52,16 @@ public:
     void set_spacing(float s) { m_spacing = s; }
     virtual void run() override;
 
+    enum class ContentAlignment {
+        BoxStart,
+        BoxEnd
+    };
+
+    void set_content_alignment(ContentAlignment alignment) { m_content_alignment = alignment; }
+
 private:
     Orientation m_orientation;
+    ContentAlignment m_content_alignment = ContentAlignment::BoxStart;
     float m_spacing = 0;
 };
 
