@@ -16,12 +16,12 @@ void Layout::set_multipliers(std::initializer_list<float> list) {
 
 void BoxLayout::run() {
     // std::cout << "BOXLAYOUT " << m_container.size().x << "," << m_container.size().y << " spacing=" << m_spacing << std::endl;
-    auto vec2f_main_coord_by_orientation = [this](auto vec) -> auto {
+    auto vec2f_main_coord_by_orientation = [this](auto vec) -> auto{
         if (m_orientation == Orientation::Horizontal)
             return vec.x;
         return vec.y;
     };
-    auto vec2f_cross_coord_by_orientation = [this](auto vec) -> auto {
+    auto vec2f_cross_coord_by_orientation = [this](auto vec) -> auto{
         if (m_orientation == Orientation::Vertical)
             return vec.x;
         return vec.y;
@@ -52,11 +52,11 @@ void BoxLayout::run() {
             size = 0;
             break;
         }
-        w->set_raw_size(convert_vector_by_orientation({ size, vec2f_cross_coord_by_orientation(m_container.size()) }));
+        w->set_raw_size(convert_vector_by_orientation({ size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
     }
 
     // 2. Compute size available for auto-sized widgets
-    float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(m_container.size());
+    float available_size_for_autosized_widgets = vec2f_main_coord_by_orientation(m_container.size()) - m_padding * 2;
     size_t autosized_widget_count = 0;
     for (auto& w : widgets()) {
         if (!w->is_visible())
@@ -75,9 +75,9 @@ void BoxLayout::run() {
         if (!w->is_visible())
             continue;
         if (vec2f_main_coord_by_orientation(w->input_size()).unit() == Length::Auto)
-            w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) }));
-        w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position,
-            vec2f_cross_coord_by_orientation(m_container.position()) }));
+            w->set_raw_size(convert_vector_by_orientation({ autosized_widget_size, vec2f_cross_coord_by_orientation(m_container.size()) - m_padding * 2 }));
+        w->set_raw_position(convert_vector_by_orientation({ vec2f_main_coord_by_orientation(m_container.position()) + current_position + m_padding,
+            vec2f_cross_coord_by_orientation(m_container.position()) + m_padding }));
         current_position += vec2f_main_coord_by_orientation(w->size()) + m_spacing;
         index++;
     }
@@ -162,16 +162,18 @@ void Container::do_update() {
 }
 
 void Container::relayout() {
-    //std::cout << "TEST " << typeid(*this).name() << std::endl;
+    // std::cout << "TEST " << typeid(*this).name() << std::endl;
 
     for (auto& w : m_widgets) {
-        if (w->m_input_size == LengthVector{}) {
+        if (w->m_input_size == LengthVector {}) {
             w->m_input_size = w->initial_size();
-            //std::cout << this << " " << typeid(*this).name() << " set initial size" << std::endl;
+            // std::cout << this << " " << typeid(*this).name() << " set initial size" << std::endl;
         }
     }
     if (!m_layout)
         return;
+    if (m_layout->padding() == 0)
+        m_layout->set_padding(intrinsic_padding());
     m_layout->run();
 }
 

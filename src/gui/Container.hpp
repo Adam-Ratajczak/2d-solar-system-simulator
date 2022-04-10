@@ -22,10 +22,16 @@ public:
 
     void set_multipliers(std::initializer_list<float> list);
 
+    // Padding = a gap between content (child widgets) and edge
+    // TODO: Support separate paddings for sides
+    void set_padding(float m) { m_padding = m; }
+    float padding() const { return m_padding; }
+
     std::vector<float> m_multipliers;
 
 protected:
     Container& m_container;
+    float m_padding = 0;
 
     WidgetList& widgets();
 };
@@ -42,6 +48,7 @@ public:
         : Layout(c)
         , m_orientation(o) { }
 
+    // Spacing = a gap between widgets (but not between edges and widgets)
     void set_spacing(float s) { m_spacing = s; }
     virtual void run() override;
 
@@ -121,6 +128,8 @@ protected:
     virtual void relayout() override;
     WidgetList m_widgets;
     Widget* m_focused_widget { nullptr };
+
+    virtual float intrinsic_padding() const { return 0; }
 
 private:
     friend Layout;
