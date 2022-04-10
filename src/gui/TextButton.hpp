@@ -1,16 +1,12 @@
 #pragma once
 #include "Button.hpp"
+#include "TextAlign.hpp"
 #include "Widget.hpp"
 #include "NotifyUser.hpp"
 #include <SFML/Graphics.hpp>
 
 class TextButton : public Widget {
 public:
-    enum class Align {
-        CenterLeft,
-        Center,
-        CenterRight
-    };
     explicit TextButton(Container& c)
         : Widget(c) { }
 

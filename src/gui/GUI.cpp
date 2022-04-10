@@ -103,7 +103,7 @@ GUI::GUI(Application& application, World& world)
                 auto color_label_textfield = main_color_container->add_widget<Textfield>();
                 color_label_textfield->set_font_size(20);
                 color_label_textfield->set_content("COLOR");
-                color_label_textfield->set_alignment(Textfield::Align::Center);
+                color_label_textfield->set_alignment(Align::Center);
 
                 m_color_control = main_color_container->add_widget<ColorPicker>();
                 m_color_control->set_size({ Length::Auto, 100.0_px });
@@ -116,7 +116,7 @@ GUI::GUI(Application& application, World& world)
                 name_textfield->set_size({ 150.0_px, Length::Auto });
                 name_textfield->set_font_size(20);
                 name_textfield->set_content("Name: ");
-                name_textfield->set_alignment(Textfield::Align::CenterLeft);
+                name_textfield->set_alignment(Align::CenterLeft);
 
                 m_name_textbox = name_container->add_widget<Textbox>();
                 m_name_textbox->set_limit(20);

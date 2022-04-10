@@ -1,16 +1,9 @@
 #pragma once
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
+#include "TextAlign.hpp"
 
 class Textfield : public Widget {
-public:
-    enum class Align {
-        CenterLeft,
-        Center,
-        CenterRight
-    };
-
-private:
     std::string m_content;
     sf::Color m_bg_color = sf::Color(0, 0, 0, 0);
     sf::Color m_fg_color = sf::Color(0, 0, 255);
