@@ -12,6 +12,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cctype>
 #include <iostream>
+#include <string>
 
 void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_bg_color = bg_color;
@@ -100,6 +101,19 @@ void Textbox::handle_event(Event& event) {
             default:
                 break;
             }
+        }
+    }else if(event.type() == sf::Event::MouseButtonPressed){
+        if(is_hover()){
+            if(m_content.getSize() == 0)
+                return;
+            auto delta = sf::Mouse::getPosition() - position();
+
+            sf::Text text = generate_sf_text();
+            
+            m_cursor = delta.x / (text.getCharacterSize() + text.getLetterSpacing()) + 1;
+
+            if(delta.x < (float)text.getCharacterSize() / 2)
+                m_cursor = 0;
         }
     }
 }
