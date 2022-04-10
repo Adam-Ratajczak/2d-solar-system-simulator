@@ -26,13 +26,13 @@ void Textfield::draw(sf::RenderWindow& window) const {
 
     switch (m_alignment) {
     case Align::CenterLeft:
-        text.setPosition(sf::Vector2f(2, 2 + y_center_factor));
+        text.setPosition(sf::Vector2f(2, std::round(2 + y_center_factor)));
         break;
     case Align::Center:
-        text.setPosition(sf::Vector2f(size().x / 2 - bounds.width / 2, y_center_factor));
+        text.setPosition(sf::Vector2f(std::round(size().x / 2 - bounds.width / 2), std::round(y_center_factor)));
         break;
     case Align::CenterRight:
-        text.setPosition(sf::Vector2f(size().x - bounds.width - 2, y_center_factor));
+        text.setPosition(sf::Vector2f(std::round(size().x - bounds.width - 2), std::round(y_center_factor)));
         break;
     }
 
