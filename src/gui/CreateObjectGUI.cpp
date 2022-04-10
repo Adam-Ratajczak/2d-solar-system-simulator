@@ -4,6 +4,11 @@
 #include <iostream>
 
 void GUI::m_create_object_gui(Container& container) {
+    auto label = container.add_widget<Textfield>();
+    label->set_content("Create Object");
+    label->set_size({ Length::Auto, 30.0_px });
+    label->set_alignment(Align::Center);
+
     m_radius_control = container.add_widget<ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
