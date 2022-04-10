@@ -32,6 +32,8 @@ void PythonREPL::handle_event(Event& event) {
             break;
         if (event.event().key.code == sf::Keyboard::Enter) {
             auto content = m_textbox->get_content().toAnsiString();
+            m_commands.push_back(content);
+            m_curr_command = m_commands.size();
             content += "\n";
             m_console->append_line({ .color = sf::Color(100, 255, 255), .text = ">>> " + content });
             auto result = PySSA::Environment::the().eval_string(content);
@@ -48,6 +50,19 @@ void PythonREPL::handle_event(Event& event) {
             m_textbox->set_content("");
             m_hide_show_button->set_active(true);
             event.set_handled();
+        }else if (event.event().key.code == sf::Keyboard::Up){
+            if(m_curr_command > 0){
+                m_curr_command--;
+                m_textbox->set_content(m_commands[m_curr_command]);
+            }
+        }else if (event.event().key.code == sf::Keyboard::Down){
+            if(m_curr_command < m_commands.size() - 1){
+                m_curr_command++;
+                m_textbox->set_content(m_commands[m_curr_command]);
+            }else {
+                m_curr_command = m_commands.size();
+                m_textbox->set_content("");
+            }
         }
         break;
     default:

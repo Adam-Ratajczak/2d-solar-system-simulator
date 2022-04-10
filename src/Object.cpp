@@ -28,7 +28,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     : m_world(world)
     , m_trail(period * 2)
     , m_sphere(radius / AU, 36, 18)
-    , m_history(1024, { pos, vel }) {
+    , m_history(period, { pos, vel }) {
     m_gravity_factor = mass * G;
     m_radius = radius;
     m_pos = pos;

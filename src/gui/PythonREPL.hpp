@@ -8,6 +8,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <deque>
+#include <vector>
 
 class PythonREPL : public Container {
 public:
@@ -18,4 +19,7 @@ private:
     Console* m_console {};
     HideShowButton* m_hide_show_button {};
     Textbox* m_textbox {};
+
+    std::vector<std::string> m_commands;
+    unsigned m_curr_command = 0;
 };
