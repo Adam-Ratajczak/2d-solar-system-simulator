@@ -26,6 +26,7 @@ add_executable(
     src/gui/ColorPicker.cpp
     src/gui/Container.cpp
     src/gui/CreateObjectGUI.cpp
+    src/gui/Frame.cpp
     src/gui/GUI.cpp
     src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
