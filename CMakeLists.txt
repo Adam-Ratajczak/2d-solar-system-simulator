@@ -16,6 +16,7 @@ add_executable(
     src/Transform.cpp
     src/World.cpp
     src/main.cpp
+    src/gfx/RoundedEdgeRectangleShape.cpp
     src/glwrapper/Helpers.cpp
     src/glwrapper/Sphere.cpp
     src/glwrapper/Triangle.cpp
