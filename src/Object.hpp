@@ -1,5 +1,6 @@
 #pragma once
 
+#include "History.hpp"
 #include "Trail.hpp"
 #include "math/Vector3.hpp"
 #include "glwrapper/Sphere.hpp"
@@ -17,6 +18,7 @@ class Object : public PySSA::WrappedObject<Object> {
 protected:
     double m_density;
     Trail m_trail;
+    History m_history;
     Vector3 attraction(const Object&);
 
     // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?

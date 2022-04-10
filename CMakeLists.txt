@@ -10,6 +10,7 @@ find_package(PythonLibs 3.5 REQUIRED)
 add_executable(
     out
     src/ConfigLoader.cpp
+    src/History.cpp
     src/Object.cpp
     src/SolarSystem.cpp
     src/Trail.cpp

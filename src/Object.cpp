@@ -25,9 +25,9 @@
 
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
-    // FIXME: Very hacky fix for trail.
     , m_trail(period * 2)
-    , m_sphere(radius / AU, 36, 18) {
+    , m_sphere(radius / AU, 36, 18)
+    , m_history(1024, {pos, vel}) {
     m_gravity_factor = mass * G;
     m_radius = radius;
     m_pos = pos;
@@ -101,6 +101,8 @@ void Object::update() {
         m_pe_vel = m_vel.magnitude();
     }
     // std::cout << m_name << ": " << m_trail.size() << "\n";
+
+    m_history.push_back({m_pos, m_vel});
 }
 
 void Object::draw(SimulationView const& view) {
