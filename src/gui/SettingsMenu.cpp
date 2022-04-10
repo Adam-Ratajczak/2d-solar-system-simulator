@@ -20,8 +20,9 @@ SettingsMenu::SettingsMenu(Container& c)
 }
 
 SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, std::string tooltip) {
-    auto button = m_buttons_container->add_widget<ToggleButton>(image);
+    auto button = m_buttons_container->add_widget<ImageButton>(image);
     button->set_tooltip_text(tooltip);
+    button->set_toggleable(true);
     button->on_change = [this, button = button.get()](bool state) {
         for (auto& entry : m_entries) {
             if (entry.button == button) {

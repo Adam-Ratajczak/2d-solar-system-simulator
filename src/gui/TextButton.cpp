@@ -1,49 +1,23 @@
 #include "TextButton.hpp"
+
 #include "Button.hpp"
 #include "GUI.hpp"
-#include <SFML/Window/Event.hpp>
 
-void TextButton::handle_event(Event& event){
-    if(is_hover()){
-        if(event.type() == sf::Event::MouseButtonPressed){
-            m_active = !m_active;
-            on_change(m_active);
-        }
-    }
+TextButton::TextButton(Container& c)
+    : Button(c) {
+    set_display_attributes(sf::Color(200, 80, 80), sf::Color::Blue, sf::Color::White);
+    set_active_display_attributes(sf::Color(80, 200, 80), sf::Color::Blue, sf::Color::White);
 }
 
 void TextButton::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
-    sf::Text text(m_content, GUI::font, 15);
-
-    if(!m_active){
-        rect.setFillColor(m_bg_color);
-        rect.setOutlineColor(m_fg_color);
-        rect.setOutlineThickness(3);
-        text.setFillColor(m_text_color);
-    }else{
-        rect.setFillColor(m_active_bg_color);
-        rect.setOutlineColor(m_active_fg_color);
-        rect.setOutlineThickness(3);
-        text.setFillColor(m_active_text_color);
-        text.setString(m_active_content);
-    }
-
+    rect.setFillColor(bg_color_for_state());
+    rect.setOutlineColor(fg_color_for_state());
+    rect.setOutlineThickness(3);
     window.draw(rect);
 
+    sf::Text text(m_content, GUI::font, 15);
+    text.setFillColor(text_color_for_state());
     align_text(m_alignment, size(), text);
-
     window.draw(text);
-}
-
-void TextButton::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
-    m_bg_color = bg_color;
-    m_fg_color = fg_color;
-    m_text_color = text_color;
-}
-
-void TextButton::set_active_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
-    m_active_bg_color = bg_color;
-    m_active_fg_color = fg_color;
-    m_active_text_color = text_color;
 }

@@ -3,11 +3,11 @@
 #include "../World.hpp"
 #include "Button.hpp"
 #include "Container.hpp"
+#include "ImageButton.hpp"
 #include "PythonREPL.hpp"
 #include "SimulationView.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
-#include "ToggleButton.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -126,7 +126,7 @@ GUI::GUI(Application& application, World& world)
             auto& submit_layout = m_submit_container->set_layout<HorizontalBoxLayout>();
             submit_layout.set_spacing(10);
             {
-                m_coords_button = m_submit_container->add_widget<Button>(load_image("../assets/coordsButton.png"));
+                m_coords_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/coordsButton.png"));
                 m_coords_button->on_click = [this]() {
                     if (m_automatic_orbit_calculation)
                         m_simulation_view->start_focus_measure();
@@ -135,7 +135,8 @@ GUI::GUI(Application& application, World& world)
                 };
                 m_coords_button->set_tooltip_text("Set position");
 
-                m_toggle_unit_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleUnitButton.png"));
+                m_toggle_unit_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/toggleUnitButton.png"));
+                m_toggle_unit_button->set_toggleable(true);
                 m_toggle_unit_button->on_change = [this](bool state) {
                     this->m_units = state;
                     auto vel = this->m_velocity_control->value();
@@ -150,10 +151,12 @@ GUI::GUI(Application& application, World& world)
                 };
                 m_toggle_unit_button->set_tooltip_text("Toggle units");
 
-                m_creative_mode_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/toggleCreativeModeButton.png"));
+                m_creative_mode_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
+                m_creative_mode_button->set_toggleable(true);
                 m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
-                m_toggle_orbit_direction_button = m_submit_container->add_widget<ToggleButton>(load_image("../assets/orbitDirectionButton.png"));
+                m_toggle_orbit_direction_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/orbitDirectionButton.png"));
+                m_toggle_orbit_direction_button->set_toggleable(true);
                 m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
                 m_toggle_orbit_direction_button->on_change = [](bool state) {
                 };
@@ -168,7 +171,7 @@ GUI::GUI(Application& application, World& world)
 
                 m_submit_container->add_widget<Widget>(); // spacer
 
-                m_add_object_button = m_submit_container->add_widget<Button>(load_image("../assets/addObjectButton.png"));
+                m_add_object_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/addObjectButton.png"));
                 m_add_object_button->on_click = [&world, this]() {
                     // FIXME: This (object_list) should be probably private.
                     world.add_object(m_create_object_from_params());
@@ -187,7 +190,7 @@ GUI::GUI(Application& application, World& world)
     python_repl->set_position({ 300.0_px, 10.0_px_o });
     python_repl->set_size({ 700.0_px, 250.0_px });
 
-    m_home_button = add_widget<Button>(load_image("../assets/homeButton.png"));
+    m_home_button = add_widget<ImageButton>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
     m_home_button->on_click = [this]() {
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
@@ -236,15 +239,13 @@ void GUI::create_simulation_settings_gui(Container& container) {
     button_label->set_size({ Length::Auto, 30.0_px });
     auto toggle_labels = toggle_labels_container->add_widget<TextButton>();
     toggle_labels->set_content("Off");
-    toggle_labels->set_display_attributes(sf::Color::Red, sf::Color(150, 0, 0), sf::Color::White);
     toggle_labels->set_active_content("On");
-    toggle_labels->set_active_display_attributes(sf::Color::Green, sf::Color(0, 150, 0), sf::Color::White);
+    toggle_labels->set_toggleable(true);
     toggle_labels->set_active(true);
     toggle_labels->set_alignment(Align::Center);
-    toggle_labels->on_change = [this](bool state){
+    toggle_labels->on_change = [this](bool state) {
         this->m_simulation_view->toggle_label_visibility();
     };
-    
 }
 
 void GUI::recalculate_forward_simulation() {

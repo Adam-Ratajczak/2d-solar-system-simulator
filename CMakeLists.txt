@@ -29,6 +29,7 @@ add_executable(
     src/gui/CreateObjectGUI.cpp
     src/gui/Frame.cpp
     src/gui/GUI.cpp
+    src/gui/ImageButton.cpp
     src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
     src/gui/SimulationView.cpp
@@ -36,7 +37,6 @@ add_executable(
     src/gui/Textbox.cpp
     src/gui/TextButton.cpp
     src/gui/Textfield.cpp
-    src/gui/ToggleButton.cpp
     src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
     src/pyssa/Environment.cpp

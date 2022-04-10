@@ -11,7 +11,6 @@
 #include "TextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
-#include "ToggleButton.hpp"
 #include "ValueSlider.hpp"
 #include "Widget.hpp"
 
@@ -36,9 +35,9 @@ private:
     virtual void relayout() override;
     virtual void update() override;
 
-    std::shared_ptr<ToggleButton> m_creative_mode_button;
-    std::shared_ptr<ToggleButton> m_toggle_orbit_direction_button;
-    std::shared_ptr<ToggleButton> m_toggle_unit_button;
+    std::shared_ptr<ImageButton> m_creative_mode_button;
+    std::shared_ptr<ImageButton> m_toggle_orbit_direction_button;
+    std::shared_ptr<ImageButton> m_toggle_unit_button;
 
     std::shared_ptr<Button> m_home_button;
     std::shared_ptr<Button> m_coords_button;

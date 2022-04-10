@@ -8,39 +8,49 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Button::Button(Container& c, sf::Image img)
-    : Widget(c) {
-    m_texture.loadFromImage(img);
-    m_texture.setSmooth(true);
-}
-
 void Button::handle_event(Event& event) {
-    if (event.event().type == sf::Event::MouseButtonReleased && is_hover()) {
-        m_active = !m_active;
-        on_click_impl();
-    }
+    if (event.event().type == sf::Event::MouseButtonReleased && is_hover())
+        click();
 }
 
-void Button::draw(sf::RenderWindow& window) const {
-    sf::CircleShape cs_bg(0.5);
-    cs_bg.setScale(size());
-    cs_bg.setFillColor(color_for_state());
-    window.draw(cs_bg);
-
-    sf::Sprite sprite;
-    sprite.setTexture(m_texture);
-
-    auto tex_size = sprite.getTexture()->getSize();
-    sprite.setScale(size().x / tex_size.x, size().y / tex_size.y);
-
-    window.draw(sprite);
+sf::Color Button::text_color_for_state() const {
+    return is_active() ? m_active_text_color : m_text_color;
 }
 
-sf::Color Button::color_for_state() const {
-    sf::Color base_color = sf::Color(92, 89, 89);
+sf::Color Button::bg_color_for_state() const {
+    sf::Color base_color = is_active() ? m_active_bg_color : m_bg_color;
     if (is_hover())
-        base_color += sf::Color { 50, 50, 50 };
+        base_color += sf::Color { 20, 20, 20 };
     return base_color;
+}
+
+sf::Color Button::fg_color_for_state() const {
+    sf::Color base_color = is_active() ? m_active_fg_color : m_fg_color;
+    if (is_hover())
+        base_color += sf::Color { 20, 20, 20 };
+    return base_color;
+}
+
+void Button::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+    m_bg_color = bg_color;
+    m_fg_color = fg_color;
+    m_text_color = text_color;
+}
+
+void Button::set_active_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
+    m_active_bg_color = bg_color;
+    m_active_fg_color = fg_color;
+    m_active_text_color = text_color;
+}
+
+void Button::click() {
+    if (m_toggleable) {
+        m_active = !m_active;
+        if (on_change)
+            on_change(m_active);
+    }
+    if (on_click)
+        on_click();
 }
 
 LengthVector Button::initial_size() const {

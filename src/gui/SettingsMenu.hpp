@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Container.hpp"
-#include "ToggleButton.hpp"
+#include "ImageButton.hpp"
 #include <vector>
 
 class SettingsMenu : public Container {
@@ -9,7 +9,7 @@ public:
     explicit SettingsMenu(Container& c);
 
     struct MenuEntry {
-        ToggleButton* button {};
+        ImageButton* button {};
         Container* settings_container {};
         std::function<void(bool)> on_toggle;
     };
