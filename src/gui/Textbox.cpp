@@ -114,6 +114,8 @@ void Textbox::handle_event(Event& event) {
 
             if(delta.x < (float)text.getCharacterSize() / 2)
                 m_cursor = 0;
+            else if(m_cursor > m_content.getSize())
+                m_cursor = m_content.getSize();
         }
     }
 }
