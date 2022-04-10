@@ -3,19 +3,19 @@
 #include "math/Vector3.hpp"
 #include <vector>
 
-struct Entry{
+struct Entry {
     Vector3 pos, vel;
 };
 
-class History{
-    struct Node{
+class History {
+    struct Node {
         Node* prev;
         Node* next;
 
         std::vector<Entry> entry;
         unsigned vector_pos, vector_size;
 
-        Node(Node* _prev, Node* _next, unsigned _size){
+        Node(Node* _prev, Node* _next, unsigned _size) {
             prev = _prev;
             next = _next;
 
@@ -23,6 +23,11 @@ class History{
             vector_pos = 0;
             vector_size = 0;
         }
+
+        Node(Node const&) = delete;
+        Node& operator=(Node const&) = delete;
+        Node(Node&&) = delete;
+        Node& operator=(Node&&) = delete;
     };
 
     Node* m_root;
@@ -31,6 +36,11 @@ class History{
 
 public:
     History(unsigned segments, Entry first_entry);
+
+    History(History const&) = delete;
+    History& operator=(History const&) = delete;
+    History(History&&) = delete;
+    History& operator=(History&&) = delete;
 
     bool move_forward();
     bool move_backward();
