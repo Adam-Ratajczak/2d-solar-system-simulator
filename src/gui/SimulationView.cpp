@@ -306,7 +306,7 @@ void WorldDrawScope::verify() {
     assert(s_world_draw_scope_recursion > 0);
 }
 
-WorldDrawScope::WorldDrawScope(SimulationView const& view)
+WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth)
     : m_simulation_view(view) {
     s_world_draw_scope_recursion++;
     if (s_world_draw_scope_recursion > 1)
@@ -326,6 +326,9 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view)
     glEnable(GL_DEPTH_TEST);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+
+    if (clear_depth == ClearDepth::Yes)
+        glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 WorldDrawScope::~WorldDrawScope() {

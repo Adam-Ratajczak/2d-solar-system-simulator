@@ -88,7 +88,14 @@ private:
 // after the scope.
 class WorldDrawScope {
 public:
-    explicit WorldDrawScope(SimulationView const& view);
+    // Can be used for doing multiple layers.
+    enum class ClearDepth
+    {
+        Yes,
+        No
+    };
+
+    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No);
     ~WorldDrawScope();
  
     static void verify();

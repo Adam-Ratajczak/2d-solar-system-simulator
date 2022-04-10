@@ -2,11 +2,11 @@
 #include <GL/glew.h>
 
 #include "Object.hpp"
-#include "math/Vector3.hpp"
 #include "World.hpp"
 #include "gui/Date.hpp"
 #include "gui/GUI.hpp"
 #include "gui/SimulationView.hpp"
+#include "math/Vector3.hpp"
 #include "modsupport.h"
 #include "pyssa/Object.hpp"
 #include <GL/gl.h>
@@ -45,7 +45,7 @@ void World::update(int steps) {
 void World::draw(SimulationView const& view) const {
 
     {
-        WorldDrawScope scope { view };
+        WorldDrawScope scope { view, WorldDrawScope::ClearDepth::Yes };
         for (auto& p : m_object_list)
             p->draw(view);
     }
@@ -80,22 +80,20 @@ void World::setup_python_bindings(TypeSetup adder) {
 
 PySSA::Object World::python_get_object_by_name(PySSA::Object const& args) {
     const char* name_arg;
-    if(!PyArg_ParseTuple(args.python_object(), "s", &name_arg))
+    if (!PyArg_ParseTuple(args.python_object(), "s", &name_arg))
         return {};
 
     auto object = get_object_by_name(name_arg);
-    if(object)
+    if (object)
         return object->wrap();
     return PySSA::Object::none();
 }
 
-PySSA::Object World::python_get_simulation_seconds_per_tick() const
-{
+PySSA::Object World::python_get_simulation_seconds_per_tick() const {
     return PySSA::Object::create(m_simulation_seconds_per_tick);
 }
 
-bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object)
-{
+bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object) {
     m_simulation_seconds_per_tick = object.as_int();
     return true;
 }
