@@ -59,6 +59,7 @@ bool Environment::run_script(std::string const& path) {
 }
 
 Object Environment::eval_string(std::string const& str) {
+    std::cout << "EVAL >>> " << str;
     // Try eval first
     Object code_object = Object::take(Py_CompileString(str.c_str(), "<stdin>", Py_eval_input));
     if (!code_object) {
