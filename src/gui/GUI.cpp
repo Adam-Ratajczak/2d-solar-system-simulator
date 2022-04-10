@@ -75,7 +75,7 @@ GUI::GUI(Application& application, World& world)
         };
 
         // TODO: Shrink-to-fit
-        create_menu.settings_container->set_size({ 500.0_px, 500.0_px });
+        create_menu.settings_container->set_size({ 500.0_px, 540.0_px });
         auto& layout = create_menu.settings_container->set_layout<VerticalBoxLayout>();
         layout.set_spacing(10);
         {
@@ -202,7 +202,7 @@ GUI::GUI(Application& application, World& world)
 
 void GUI::create_simulation_settings_gui(Container& container) {
 
-    container.set_size({ 500.0_px, 500.0_px });
+    container.set_size({ 500.0_px, 200.0_px });
     container.set_layout<VerticalBoxLayout>().set_spacing(10);
     auto label = container.add_widget<Textfield>();
     label->set_content("Simulation Settings");
