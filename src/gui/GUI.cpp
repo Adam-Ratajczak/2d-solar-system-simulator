@@ -230,9 +230,20 @@ void GUI::create_simulation_settings_gui(Container& container) {
     auto toggle_labels_container = container.add_widget<Container>();
     auto& toggle_labels_layout = toggle_labels_container->set_layout<HorizontalBoxLayout>();
     toggle_labels_layout.set_spacing(10);
-    auto button_label = container.add_widget<Textfield>();
+    toggle_labels_container->set_size({ Length::Auto, 30.0_px });
+
+    auto button_label = toggle_labels_container->add_widget<Textfield>();
     button_label->set_content("Toggle labels: ");
     button_label->set_size({ Length::Auto, 30.0_px });
+    auto toggle_labels = toggle_labels_container->add_widget<TextButton>();
+    toggle_labels->set_content("Off");
+    toggle_labels->set_active_content("On");
+    toggle_labels->set_display_attributes(sf::Color::Green, sf::Color(0, 150, 0), sf::Color::White);
+    toggle_labels->set_active_display_attributes(sf::Color::Red, sf::Color(150, 0, 0), sf::Color::White);
+    toggle_labels->set_active(true);
+    toggle_labels->on_change = [this](bool state){
+        this->m_simulation_view->toggle_label_visibility();
+    };
     
 }
 

@@ -194,7 +194,8 @@ void Object::draw_gui(SimulationView const& view) {
     text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
     // text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
 
-    view.window().draw(text);
+    if(view.show_labels())
+        view.window().draw(text);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {

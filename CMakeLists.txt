@@ -33,6 +33,7 @@ add_executable(
     src/gui/SimulationView.cpp
     src/gui/Slider.cpp
     src/gui/Textbox.cpp
+    src/gui/TextButton.cpp
     src/gui/Textfield.cpp
     src/gui/ToggleButton.cpp
     src/gui/ValueSlider.cpp
