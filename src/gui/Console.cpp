@@ -25,9 +25,11 @@ void Console::handle_event(Event& event) {
 
 void Console::append_line(LogLine line) {
     m_lines.push_back(line);
-    double bottom_content = m_lines.size() * 15 - scroll_area_size();
-    if (bottom_content > 0)
-        m_scroll = bottom_content;
+    if (size().y != 0) {
+        double bottom_content = m_lines.size() * 15 - scroll_area_size();
+        if (bottom_content > 0)
+            m_scroll = bottom_content;
+    }
 }
 
 constexpr float PADDING = 5;
