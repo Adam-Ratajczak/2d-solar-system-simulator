@@ -25,6 +25,7 @@ add_executable(
     src/gui/Application.cpp
     src/gui/Button.cpp
     src/gui/ColorPicker.cpp
+    src/gui/Console.cpp
     src/gui/Container.cpp
     src/gui/CreateObjectGUI.cpp
     src/gui/Frame.cpp
