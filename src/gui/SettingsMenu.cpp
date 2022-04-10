@@ -1,5 +1,7 @@
 #include "SettingsMenu.hpp"
+
 #include "Container.hpp"
+#include "Frame.hpp"
 
 #include <iostream>
 
@@ -36,7 +38,7 @@ SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, std::st
             }
         }
     };
-    auto settings_container = m_settings_container->add_widget<Container>();
+    auto settings_container = m_settings_container->add_widget<Frame>();
     settings_container->set_visible(false);
     m_entries.push_back(MenuEntry { .button = button.get(), .settings_container = settings_container.get() });
     return m_entries.back();
