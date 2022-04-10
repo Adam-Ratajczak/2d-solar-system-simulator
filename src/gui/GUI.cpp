@@ -206,6 +206,7 @@ void GUI::create_simulation_settings_gui(Container& container) {
     auto label = container.add_widget<Textfield>();
     label->set_content("Simulation Settings");
     label->set_size({ Length::Auto, 30.0_px });
+    label->set_alignment(Align::Center);
 
     auto iterations_control = container.add_widget<ValueSlider>(1, 1000);
     iterations_control->set_name("Iterations");
@@ -237,10 +238,11 @@ void GUI::create_simulation_settings_gui(Container& container) {
     button_label->set_size({ Length::Auto, 30.0_px });
     auto toggle_labels = toggle_labels_container->add_widget<TextButton>();
     toggle_labels->set_content("Off");
+    toggle_labels->set_display_attributes(sf::Color::Red, sf::Color(150, 0, 0), sf::Color::White);
     toggle_labels->set_active_content("On");
-    toggle_labels->set_display_attributes(sf::Color::Green, sf::Color(0, 150, 0), sf::Color::White);
-    toggle_labels->set_active_display_attributes(sf::Color::Red, sf::Color(150, 0, 0), sf::Color::White);
+    toggle_labels->set_active_display_attributes(sf::Color::Green, sf::Color(0, 150, 0), sf::Color::White);
     toggle_labels->set_active(true);
+    toggle_labels->set_alignment(Align::Center);
     toggle_labels->on_change = [this](bool state){
         this->m_simulation_view->toggle_label_visibility();
     };
