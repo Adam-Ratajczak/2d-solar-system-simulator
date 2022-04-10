@@ -18,7 +18,6 @@ void GUI::m_create_object_gui(Container& container) {
 
         auto mass_textfield = mass_container->add_widget<Textfield>();
         mass_textfield->set_size({ 150.0_px, Length::Auto });
-        mass_textfield->set_font_size(20);
         mass_textfield->set_content("Mass: ");
         mass_textfield->set_alignment(Align::CenterLeft);
 
@@ -33,7 +32,6 @@ void GUI::m_create_object_gui(Container& container) {
         mass_value_container->set_layout<HorizontalBoxLayout>();
         {
             auto mass_exponent_textfield = mass_value_container->add_widget<Textfield>();
-            mass_exponent_textfield->set_font_size(20);
             mass_exponent_textfield->set_content(" * 10 ^ ");
             mass_exponent_textfield->set_alignment(Align::CenterLeft);
 
@@ -45,7 +43,6 @@ void GUI::m_create_object_gui(Container& container) {
             };
 
             auto mass_unit_textfield = mass_value_container->add_widget<Textfield>();
-            mass_unit_textfield->set_font_size(20);
             mass_unit_textfield->set_content(" kg ");
             mass_unit_textfield->set_alignment(Align::Center);
         }
@@ -86,7 +83,6 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
     {
         auto semi_major_axis_textfield = semi_major_axis_container->add_widget<Textfield>();
         semi_major_axis_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_major_axis_textfield->set_font_size(20);
         semi_major_axis_textfield->set_content("Semi major axis magnitude: ");
         semi_major_axis_textfield->set_alignment(Align::CenterLeft);
 
@@ -97,7 +93,6 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
 
         auto semi_major_axis_unit_textfield = semi_major_axis_container->add_widget<Textfield>();
         semi_major_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_major_axis_unit_textfield->set_font_size(20);
         semi_major_axis_unit_textfield->set_content("km");
         semi_major_axis_unit_textfield->set_alignment(Align::CenterRight);
     }
@@ -109,7 +104,6 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
     {
         auto semi_minor_axis_textfield = semi_minor_axis_container->add_widget<Textfield>();
         semi_minor_axis_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_minor_axis_textfield->set_font_size(20);
         semi_minor_axis_textfield->set_content("Semi minor axis magnitude: ");
         semi_minor_axis_textfield->set_alignment(Align::CenterLeft);
 
@@ -120,7 +114,6 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
 
         auto semi_minor_axis_unit_textfield = semi_minor_axis_container->add_widget<Textfield>();
         semi_minor_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_minor_axis_unit_textfield->set_font_size(20);
         semi_minor_axis_unit_textfield->set_content("km");
         semi_minor_axis_unit_textfield->set_alignment(Align::CenterRight);
     }

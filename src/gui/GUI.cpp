@@ -101,7 +101,6 @@ GUI::GUI(Application& application, World& world)
             main_color_layout.set_spacing(10);
             {
                 auto color_label_textfield = main_color_container->add_widget<Textfield>();
-                color_label_textfield->set_font_size(20);
                 color_label_textfield->set_content("COLOR");
                 color_label_textfield->set_alignment(Align::Center);
 
@@ -114,7 +113,6 @@ GUI::GUI(Application& application, World& world)
             {
                 auto name_textfield = name_container->add_widget<Textfield>();
                 name_textfield->set_size({ 150.0_px, Length::Auto });
-                name_textfield->set_font_size(20);
                 name_textfield->set_content("Name: ");
                 name_textfield->set_alignment(Align::CenterLeft);
 
