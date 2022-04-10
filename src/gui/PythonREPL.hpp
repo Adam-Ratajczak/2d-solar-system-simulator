@@ -18,13 +18,13 @@ private:
     struct LogLine {
         sf::Color color;
         std::string text;
-        sf::Time time;
     };
     void append_log_line(LogLine);
-    void erase_log_line();
-
-    sf::Clock m_timer;
 
     std::deque<LogLine> m_log_lines;
     Textbox* m_textbox {};
+    float m_scroll {};
+
+    float content_size() const;
+    float scroll_area_size() const;
 };
