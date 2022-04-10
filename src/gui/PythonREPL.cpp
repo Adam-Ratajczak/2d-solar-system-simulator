@@ -2,11 +2,22 @@
 
 #include "../pyssa/Environment.hpp"
 #include "GUI.hpp"
+#include "HideShowButton.hpp"
 
 PythonREPL::PythonREPL(Container& c)
     : Container(c) {
-    set_layout<VerticalBoxLayout>();
+    auto& layout = set_layout<VerticalBoxLayout>();
+    layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
+    // TODO: Make this window arbitrarily resizable.
+    m_hide_show_button = add_widget<HideShowButton>().get();
+    m_hide_show_button->set_toggleable(true);
+    m_hide_show_button->on_change = [this](bool b) {
+        m_console->set_visible(b);
+    };
+    m_hide_show_button->set_display_attributes(sf::Color(80, 80, 80), {}, {});
+    m_hide_show_button->set_active_display_attributes(sf::Color(80, 80, 80), {}, {});
     m_console = add_widget<Console>().get();
+    m_console->set_visible(false);
     m_textbox = add_widget<Textbox>().get();
     m_textbox->set_size({ { 100, Length::Percent }, 40.0_px });
     m_textbox->set_position({ 0.0_px, 0.0_px_o });
@@ -35,6 +46,7 @@ void PythonREPL::handle_event(Event& event) {
                 m_console->append_line({ .color = sf::Color(200, 200, 200), .text = result.repr() });
             }
             m_textbox->set_content("");
+            m_hide_show_button->set_active(true);
             event.set_handled();
         }
         break;

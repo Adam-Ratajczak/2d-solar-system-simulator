@@ -2,6 +2,7 @@
 
 #include "Console.hpp"
 #include "Container.hpp"
+#include "HideShowButton.hpp"
 #include "Textbox.hpp"
 
 #include <SFML/System/Clock.hpp>
@@ -15,5 +16,6 @@ public:
 private:
     virtual void handle_event(Event&) override;
     Console* m_console {};
+    HideShowButton* m_hide_show_button {};
     Textbox* m_textbox {};
 };
