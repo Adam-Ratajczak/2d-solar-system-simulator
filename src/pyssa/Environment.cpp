@@ -120,7 +120,7 @@ void Environment::initialize_environment() {
         auto module = PyModule_Create(&pyssa_module);
         PyModule_AddObject(module, "test2", Object::create("TEST").leak_object());
         PyModule_AddObject(module, "world", Environment::the().m_world.wrap().leak_object());
-        PyModule_AddObject(module, "Object", (PyObject*)&::Object::type_object());
+        PyModule_AddType(module, &::Object::type_object());
         return module;
     });
 }
