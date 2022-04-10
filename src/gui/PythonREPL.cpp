@@ -50,16 +50,19 @@ void PythonREPL::handle_event(Event& event) {
             m_textbox->set_content("");
             m_hide_show_button->set_active(true);
             event.set_handled();
-        }else if (event.event().key.code == sf::Keyboard::Up){
-            if(m_curr_command > 0){
+        }
+        else if (event.event().key.code == sf::Keyboard::Up) {
+            if (m_curr_command > 0) {
                 m_curr_command--;
                 m_textbox->set_content(m_commands[m_curr_command]);
             }
-        }else if (event.event().key.code == sf::Keyboard::Down){
-            if(m_curr_command < m_commands.size() - 1){
+        }
+        else if (event.event().key.code == sf::Keyboard::Down) {
+            if (m_commands.size() != 0 && m_curr_command < m_commands.size() - 1) {
                 m_curr_command++;
                 m_textbox->set_content(m_commands[m_curr_command]);
-            }else {
+            }
+            else {
                 m_curr_command = m_commands.size();
                 m_textbox->set_content("");
             }
