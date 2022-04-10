@@ -1,8 +1,8 @@
 #include "SimulationView.hpp"
 
-#include "../math/Transform.hpp"
 #include "../World.hpp"
 #include "../glwrapper/Helpers.hpp"
+#include "../math/Transform.hpp"
 #include "GUI.hpp"
 
 #include <GL/gl.h>
@@ -64,6 +64,8 @@ void SimulationView::handle_event(Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseWheelScrolled) {
+        if (event.event().mouseWheelScroll.wheel != sf::Mouse::VerticalWheel)
+            return;
         if (event.event().mouseWheelScroll.delta > 0)
             apply_zoom(1.1);
         else
@@ -221,7 +223,7 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     auto modelview = modelview_matrix();
     auto projection = projection_matrix();
     Vector3 result;
-    int viewport[] {0, 0, static_cast<int>(size().x), static_cast<int>(size().y)};
+    int viewport[] { 0, 0, static_cast<int>(size().x), static_cast<int>(size().y) };
     gluProject(local_space.x, local_space.y, local_space.z, (double*)modelview.data, (double*)projection.data, viewport, &result.x, &result.y, &result.z);
     // TODO: Figure out why this doesn't work.
     // auto view_space = modelview_matrix() * local_space;
@@ -229,7 +231,7 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // Vector3 result = { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
     // result = rotation_matrix() * result;
     // std::cout << "modelview: " << modelview_matrix() << ":: " << local_space << " -> " << view_space << " -> " << clip_space << "->" << result << std::endl;
-    return {result.x, size().y - result.y, result.z};
+    return { result.x, size().y - result.y, result.z };
 }
 
 void SimulationView::draw(sf::RenderWindow& window) const {
