@@ -30,6 +30,7 @@ add_executable(
     src/gui/CreateObjectGUI.cpp
     src/gui/Frame.cpp
     src/gui/GUI.cpp
+    src/gui/HideShowButton.cpp
     src/gui/ImageButton.cpp
     src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
