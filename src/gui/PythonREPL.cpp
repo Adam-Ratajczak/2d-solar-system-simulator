@@ -59,7 +59,7 @@ void PythonREPL::draw(sf::RenderWindow& window) const {
     size_t s = 0;
 
     for (auto& line : m_log_lines) {
-        sf::Text text(line.text, GUI::font, 15);
+        sf::Text text(line.text, GUI::fixed_width_font, 15);
         text.setPosition(0, s * 15);
         text.setFillColor(line.color);
         window.draw(text);

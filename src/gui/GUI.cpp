@@ -21,6 +21,8 @@
 #include <string>
 
 sf::Font GUI::font;
+sf::Font GUI::bold_font;
+sf::Font GUI::fixed_width_font;
 
 static sf::Image load_image(std::string path) {
     // TODO: Error handling
@@ -32,7 +34,9 @@ static sf::Image load_image(std::string path) {
 GUI::GUI(Application& application, World& world)
     : Container(application)
     , m_world(world) {
-    font.loadFromFile("../assets/Pulang.ttf");
+    font.loadFromFile("../assets/fonts/Xolonium-pn4D.ttf");
+    bold_font.loadFromFile("../assets/fonts/XoloniumBold-xKZO.ttf");
+    fixed_width_font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf");
     set_layout<BasicLayout>();
 
     m_simulation_view = add_widget<SimulationView>(world);

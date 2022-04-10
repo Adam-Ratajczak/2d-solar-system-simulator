@@ -23,6 +23,8 @@ class GUI : public Container {
 public:
     explicit GUI(Application& application, World& world);
     static sf::Font font;
+    static sf::Font bold_font;
+    static sf::Font fixed_width_font;
 
     virtual void handle_event(Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
