@@ -74,6 +74,7 @@ public:
     double gravity_factor() const { return m_gravity_factor; }
 
     static void setup_python_bindings(TypeSetup);
+    static constexpr char const* PythonClassName = "Object";
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);

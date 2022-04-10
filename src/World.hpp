@@ -45,6 +45,7 @@ public:
     void set_simulation_seconds_per_tick(int s) { m_simulation_seconds_per_tick = s; }
 
     static void setup_python_bindings(TypeSetup);
+    static constexpr char const* PythonClassName = "World";
 
 private:
     Object* m_most_massive_object = nullptr;

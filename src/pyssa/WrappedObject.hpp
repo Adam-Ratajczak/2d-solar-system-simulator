@@ -25,7 +25,10 @@ public:
         bool owned;
     };
 
-    static constexpr bool CanBeCreatedFromPython = requires(Object const& o) { T::create_for_python(o, o); };
+    static constexpr bool CanBeCreatedFromPython = requires(Object const& o) {
+        T::create_for_python(o, o);
+        (char const*)T::PythonClassName;
+    };
 
     static PyTypeObject& type_object();
     Object wrap() {
@@ -158,7 +161,7 @@ template<class T>
 PyTypeObject& WrappedObject<T>::type_object() {
     static PyTypeObject type_object = []() {
         PyTypeObject type { PyVarObject_HEAD_INIT(nullptr, 0) };
-        type.tp_name = "WrappedObject";
+        type.tp_name = T::PythonClassName;
         type.tp_doc = "TODO";
         type.tp_basicsize = sizeof(T);
         type.tp_itemsize = 0;
