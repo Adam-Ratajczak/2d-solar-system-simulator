@@ -106,14 +106,18 @@ void Textbox::handle_event(Event& event) {
 
 sf::Text Textbox::generate_sf_text() const {
     // TODO: Cache the result
-    sf::Text text(m_content, GUI::font, size().y - 4);
+    sf::Text text(m_content, GUI::fixed_width_font, 16);
     text.setFillColor(m_text_color);
-    text.setPosition(2, 2);
+    text.setPosition(2, 2 + size().y / 2 - 12);
     text.move(m_scroll, 0);
+    auto bounds = text.getLocalBounds();
+    text.setOrigin(0, 0); // -6 because of SFML not taking descenders into account
 
-    if(!is_focused() && m_content.getSize() == 0)
+    if (!is_focused() && m_content.getSize() == 0) {
+        text.setFillColor(m_placeholder_color);
         text.setString(m_placeholder);
-    
+    }
+
     return text;
 }
 
@@ -138,7 +142,7 @@ void Textbox::draw(sf::RenderWindow& window) const {
     if (is_focused()) {
         sf::RectangleShape cursor(sf::Vector2f(2, 30));
         auto position = calculate_cursor_position();
-        cursor.setPosition({ position.x, position.y + size().y / 2 - 15 });
+        cursor.setPosition({ position.x, size().y / 2 - 15 });
         cursor.setFillColor(sf::Color::Black);
         window.draw(cursor);
     }
