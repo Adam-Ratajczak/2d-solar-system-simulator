@@ -38,7 +38,7 @@ void World::update(int steps) {
             p->update_forces(reverse);
 
         for (auto& p : m_object_list)
-            p->update();
+            p->update(m_simulation_view->speed());
     }
 }
 

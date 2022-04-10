@@ -54,7 +54,7 @@ public:
     double m_radius;
 
     void update_forces(bool reverse);
-    void update();
+    void update(int speed);
     Trail& trail() { return m_trail; }
 
     // Draw the object in world's coordinates.

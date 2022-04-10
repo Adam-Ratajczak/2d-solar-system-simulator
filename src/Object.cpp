@@ -69,7 +69,7 @@ void Object::update_forces(bool reverse) {
     });
 }
 
-void Object::update() {
+void Object::update(int speed) {
     m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
@@ -103,7 +103,14 @@ void Object::update() {
     }
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 
-    m_history.push_back({ m_pos, m_vel });
+    if(speed > 0)
+        m_history.push_back({m_pos, m_vel});
+    else if(speed < 0)
+        m_history.push_front({m_pos, m_vel});
+
+    auto entry = m_history.get_entry();
+    m_pos = entry.pos;
+    m_vel = entry.vel;
 }
 
 void Object::draw(SimulationView const& view) {

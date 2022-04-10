@@ -97,24 +97,17 @@ void SimulationView::handle_event(Event& event) {
         if (event.event().key.code == sf::Keyboard::Right) {
             if (m_speed > 0)
                 m_speed *= 2;
-            else {
-                if (m_speed == 0)
-                    m_speed = 1;
-                else
-                    m_speed /= 2;
-            }
+            else if (m_speed == 0)
+                m_speed = 1;
+            else
+                m_speed /= 2;
         }
         else if (event.event().key.code == sf::Keyboard::Left) {
-            // if (m_speed < 0)
-            //     m_speed *= 2;
-            // else {
-            //     if (m_speed == 0)
-            //         m_speed = -1;
-            //     else
-            //         m_speed /= 2;
-            // }
-
-            if (m_speed > 0)
+            if (m_speed < 0)
+                m_speed *= 2;
+            else if (m_speed == 0)
+                m_speed = -1;
+            else
                 m_speed /= 2;
         }
     }

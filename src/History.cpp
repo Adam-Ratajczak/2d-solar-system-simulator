@@ -13,9 +13,10 @@ bool History::move_forward(){
         return true;
     }
 
-    if(m_current->vector_size == m_current->vector_pos - 1){
+    if(m_current->vector_pos - 1 == m_current->vector_size){
         if(m_current->next != nullptr){
             m_current = m_current->next;
+            m_current->vector_pos = 0;
             return true;
         }
     }
@@ -29,9 +30,10 @@ bool History::move_backward(){
         return true;
     }
 
-    if(m_current->vector_size == 0){
+    if(m_current->vector_pos == 0){
         if(m_current->prev != nullptr){
             m_current = m_current->prev;
+            m_current->vector_pos = m_current->vector_size - 1;
             return true;
         }
     }
@@ -49,7 +51,7 @@ void History::push_back(const Entry entry){
             m_current->vector_pos++;
             m_current->vector_size++;
             m_current->entry[m_current->vector_pos] = entry;
-        }else{
+        }else if(m_current->next == nullptr){
             m_current->next = new Node(m_current, nullptr, m_segments);
             m_current = m_current->next;
             m_current->entry[0] = entry;
@@ -67,7 +69,7 @@ void History::push_front(const Entry entry){
             }
             m_current->entry[0] = entry;
             m_current->vector_size++;
-        }else{
+        }else if(m_current->prev == nullptr){
             m_current->prev = new Node(m_current, nullptr, m_segments);
             m_current = m_current->prev;
             m_current->entry[0] = entry;
