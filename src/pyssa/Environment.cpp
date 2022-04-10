@@ -2,6 +2,7 @@
 
 #include "../World.hpp"
 #include "Object.hpp"
+#include "TupleParser.hpp"
 
 #include <Python.h>
 #include <filesystem>
@@ -103,6 +104,18 @@ std::vector<std::string> Environment::generate_exception_message() const {
     return result;
 }
 
+PyObject* tupleparser_test(PyObject*, PyObject* args)
+{
+    Object args_py = Object::share(args);
+    ::Object* o1 {};
+    ::Object* o2 {};
+    ::Object* o3 {};
+    if(!parse_arguments(args_py, "O!O!O!", Arg::CheckedType<::Object>{o1}, Arg::CheckedType<::Object>{o2}, Arg::CheckedType<::Object>{o3}))
+        return nullptr;
+    std::cout << o1->m_name << "," << o2->m_name << "," << o3->m_name << std::endl;
+    Py_RETURN_NONE;
+}
+
 void Environment::initialize_environment() {
     std::cout << "init python env" << std::endl;
 
@@ -110,6 +123,7 @@ void Environment::initialize_environment() {
     PyImport_AppendInittab("pyssa", []() {
         static PyMethodDef pyssa_methods[] = {
             { "test", [](PyObject*, PyObject*) { return Object::empty_tuple(5).leak_object(); }, METH_NOARGS, "Return the number of arguments received by the process." },
+            { "tupleparser_test", tupleparser_test, METH_VARARGS, "TupleParser Test" },
             { NULL, NULL, 0, NULL }
         };
 

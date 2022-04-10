@@ -1,14 +1,15 @@
 #include "Object.hpp"
-#include "math/Transform.hpp"
-#include "math/Vector3.hpp"
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"
 #include "gui/GUI.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
-#include "modsupport.h"
+#include "math/Transform.hpp"
+#include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
+#include "pyssa/TupleParser.hpp"
+
 #include <GL/gl.h>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -27,7 +28,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     : m_world(world)
     , m_trail(period * 2)
     , m_sphere(radius / AU, 36, 18)
-    , m_history(1024, {pos, vel}) {
+    , m_history(1024, { pos, vel }) {
     m_gravity_factor = mass * G;
     m_radius = radius;
     m_pos = pos;
@@ -102,7 +103,7 @@ void Object::update() {
     }
     // std::cout << m_name << ": " << m_trail.size() << "\n";
 
-    m_history.push_back({m_pos, m_vel});
+    m_history.push_back({ m_pos, m_vel });
 }
 
 void Object::draw(SimulationView const& view) {
@@ -196,7 +197,7 @@ void Object::draw_gui(SimulationView const& view) {
     text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
     // text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
 
-    if(view.show_labels())
+    if (view.show_labels())
         view.window().draw(text);
 }
 
@@ -305,13 +306,9 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
 }
 
 PySSA::Object Object::python_attraction(PySSA::Object const& args) {
-    // TODO: C++ API for that
-    PyObject* other_arg = nullptr;
-    if (PyArg_ParseTuple(args.python_object(), "O!", &type_object(), &other_arg) < 0)
+    Object* other {};
+    if (!PySSA::parse_arguments(args, "O!", PySSA::Arg::CheckedType<Object> { other }))
         return {};
-    // FIXME: This could go without incrementing refcount
-    auto other = get(PySSA::Object::share(other_arg));
-
     return PySSA::Object::create(attraction(*other));
 }
 
