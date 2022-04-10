@@ -290,7 +290,7 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     debugoss << "off=" << offset() << std::endl;
 
     sf::Text debug_text(debugoss.str(), GUI::font, 15);
-    debug_text.setPosition(500, 10);
+    debug_text.setPosition(600, 10);
     window.draw(debug_text);
 }
 
