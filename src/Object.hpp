@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Trail.hpp"
-#include "Vector3.hpp"
+#include "math/Vector3.hpp"
 #include "glwrapper/Sphere.hpp"
 #include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../Constants.hpp"
-#include "../Matrix.hpp"
-#include "../Vector3.hpp"
-#include "../Transform.hpp"
+#include "../math/Matrix.hpp"
+#include "../math/Vector3.hpp"
+#include "../math/Transform.hpp"
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>

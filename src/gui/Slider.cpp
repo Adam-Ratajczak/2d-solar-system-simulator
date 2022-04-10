@@ -1,5 +1,5 @@
 #include "Slider.hpp"
-#include "../Vector3.hpp"
+#include "../math/Vector3.hpp"
 #include "NotifyUser.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>

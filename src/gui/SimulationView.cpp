@@ -1,6 +1,6 @@
 #include "SimulationView.hpp"
 
-#include "../Transform.hpp"
+#include "../math/Transform.hpp"
 #include "../World.hpp"
 #include "../glwrapper/Helpers.hpp"
 #include "GUI.hpp"

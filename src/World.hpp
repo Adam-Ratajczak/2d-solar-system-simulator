@@ -2,7 +2,7 @@
 
 #include "Constants.hpp"
 #include "Object.hpp"
-#include "Vector3.hpp"
+#include "math/Vector3.hpp"
 #include "gui/Date.hpp"
 #include "pyssa/WrappedObject.hpp"
 

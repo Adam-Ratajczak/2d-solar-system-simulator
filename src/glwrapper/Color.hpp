@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Vector3.hpp"
+#include <GL/gl.h>
 #include <SFML/Graphics/Color.hpp>
 #include <cstdint>
 

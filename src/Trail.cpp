@@ -1,6 +1,6 @@
 #include "Trail.hpp"
 #include "Object.hpp"
-#include "Vector3.hpp"
+#include "math/Vector3.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/VertexArray.hpp>

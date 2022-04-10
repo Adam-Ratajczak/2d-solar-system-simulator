@@ -1,6 +1,6 @@
 #include "Object.hpp"
-#include "Transform.hpp"
-#include "Vector3.hpp"
+#include "math/Transform.hpp"
+#include "math/Vector3.hpp"
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"

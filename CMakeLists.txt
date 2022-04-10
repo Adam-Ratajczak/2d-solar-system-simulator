@@ -13,7 +13,7 @@ add_executable(
     src/Object.cpp
     src/SolarSystem.cpp
     src/Trail.cpp
-    src/Transform.cpp
+    src/math/Transform.cpp
     src/World.cpp
     src/main.cpp
     src/gfx/RoundedEdgeRectangleShape.cpp

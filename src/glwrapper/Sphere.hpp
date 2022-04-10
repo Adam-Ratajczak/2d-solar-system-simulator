@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "../Vector3.hpp"
+#include "../math/Vector3.hpp"
 #include "Color.hpp"
 #include "Vertex.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>

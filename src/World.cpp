@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 
 #include "Object.hpp"
-#include "Vector3.hpp"
+#include "math/Vector3.hpp"
 #include "World.hpp"
 #include "gui/Date.hpp"
 #include "gui/GUI.hpp"

@@ -1,8 +1,8 @@
 // keep first!
 #include <GL/glew.h>
 
-#include "Transform.hpp"
-#include "Vector3.hpp"
+#include "math/Transform.hpp"
+#include "math/Vector3.hpp"
 #include "World.hpp"
 #include "gui/Application.hpp"
 #include "gui/GUI.hpp"

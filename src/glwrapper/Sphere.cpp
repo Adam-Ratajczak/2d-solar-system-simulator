@@ -1,5 +1,5 @@
 #include "Sphere.hpp"
-#include "../Transform.hpp"
+#include "../math/Transform.hpp"
 #include "../gui/SimulationView.hpp"
 #include "Color.hpp"
 #include "Helpers.hpp"
