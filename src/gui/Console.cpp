@@ -3,6 +3,8 @@
 #include "GUI.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 
+constexpr float LINE_SPACING = 20;
+
 void Console::handle_event(Event& event) {
     switch (event.type()) {
     case sf::Event::MouseWheelScrolled: {
@@ -14,7 +16,7 @@ void Console::handle_event(Event& event) {
         m_scroll -= event.event().mouseWheelScroll.delta * 60;
         if (m_scroll < 0)
             m_scroll = 0;
-        double bottom_content = m_lines.size() * 15 - scroll_area_size();
+        double bottom_content = m_lines.size() * LINE_SPACING - scroll_area_size();
         if (m_scroll > bottom_content)
             m_scroll = bottom_content;
     } break;
@@ -26,7 +28,7 @@ void Console::handle_event(Event& event) {
 void Console::append_line(LogLine line) {
     m_lines.push_back(line);
     if (size().y != 0) {
-        double bottom_content = m_lines.size() * 15 - scroll_area_size();
+        double bottom_content = m_lines.size() * LINE_SPACING - scroll_area_size();
         if (bottom_content > 0)
             m_scroll = bottom_content;
     }
@@ -42,7 +44,7 @@ void Console::draw(sf::RenderWindow& window) const {
     size_t s = 0;
     for (auto& line : m_lines) {
         sf::Text text(line.text, GUI::fixed_width_font, 15);
-        text.setPosition(PADDING, s * 15 - m_scroll + PADDING);
+        text.setPosition(PADDING, s * LINE_SPACING - m_scroll + PADDING);
         text.setFillColor(line.color);
         window.draw(text);
         s++;
@@ -59,7 +61,7 @@ void Console::draw(sf::RenderWindow& window) const {
 }
 
 float Console::content_size() const {
-    return m_lines.size() * 15;
+    return m_lines.size() * LINE_SPACING;
 }
 
 float Console::scroll_area_size() const {
