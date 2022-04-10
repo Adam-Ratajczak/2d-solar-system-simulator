@@ -18,13 +18,11 @@ void GUI::m_create_object_gui(Container& container) {
 
         auto mass_textfield = mass_container->add_widget<Textfield>();
         mass_textfield->set_size({ 150.0_px, Length::Auto });
-        mass_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
         mass_textfield->set_font_size(20);
         mass_textfield->set_content("Mass: ");
         mass_textfield->set_alignment(Textfield::Align::CenterLeft);
 
         m_mass_textbox = mass_container->add_widget<Textbox>();
-        m_mass_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
         m_mass_textbox->set_limit(6);
         m_mass_textbox->set_content("1.0");
         m_mass_textbox->on_change = [this](auto) {
@@ -35,13 +33,11 @@ void GUI::m_create_object_gui(Container& container) {
         mass_value_container->set_layout<HorizontalBoxLayout>();
         {
             auto mass_exponent_textfield = mass_value_container->add_widget<Textfield>();
-            mass_exponent_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
             mass_exponent_textfield->set_font_size(20);
             mass_exponent_textfield->set_content(" * 10 ^ ");
             mass_exponent_textfield->set_alignment(Textfield::Align::CenterLeft);
 
             m_mass_exponent_textbox = mass_value_container->add_widget<Textbox>();
-            m_mass_exponent_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
             m_mass_exponent_textbox->set_limit(2);
             m_mass_exponent_textbox->set_content("1");
             m_mass_exponent_textbox->on_change = [this](auto) {
@@ -49,7 +45,6 @@ void GUI::m_create_object_gui(Container& container) {
             };
 
             auto mass_unit_textfield = mass_value_container->add_widget<Textfield>();
-            mass_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
             mass_unit_textfield->set_font_size(20);
             mass_unit_textfield->set_content(" kg ");
             mass_unit_textfield->set_alignment(Textfield::Align::Center);
@@ -91,20 +86,17 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
     {
         auto semi_major_axis_textfield = semi_major_axis_container->add_widget<Textfield>();
         semi_major_axis_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_major_axis_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
         semi_major_axis_textfield->set_font_size(20);
         semi_major_axis_textfield->set_content("Semi major axis magnitude: ");
         semi_major_axis_textfield->set_alignment(Textfield::Align::CenterLeft);
 
         m_semi_major_axis_textbox = semi_major_axis_container->add_widget<Textbox>();
-        m_semi_major_axis_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
         m_semi_major_axis_textbox->set_limit(20);
         m_semi_major_axis_textbox->set_data_type(Textbox::NUMBER);
         m_semi_major_axis_textbox->set_content("0");
 
         auto semi_major_axis_unit_textfield = semi_major_axis_container->add_widget<Textfield>();
         semi_major_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_major_axis_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
         semi_major_axis_unit_textfield->set_font_size(20);
         semi_major_axis_unit_textfield->set_content("km");
         semi_major_axis_unit_textfield->set_alignment(Textfield::Align::CenterRight);
@@ -117,20 +109,17 @@ std::shared_ptr<Container> GUI::m_create_object_from_orbit_gui(std::shared_ptr<C
     {
         auto semi_minor_axis_textfield = semi_minor_axis_container->add_widget<Textfield>();
         semi_minor_axis_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_minor_axis_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
         semi_minor_axis_textfield->set_font_size(20);
         semi_minor_axis_textfield->set_content("Semi minor axis magnitude: ");
         semi_minor_axis_textfield->set_alignment(Textfield::Align::CenterLeft);
 
         m_semi_minor_axis_textbox = semi_minor_axis_container->add_widget<Textbox>();
-        m_semi_minor_axis_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
         m_semi_minor_axis_textbox->set_limit(20);
         m_semi_minor_axis_textbox->set_data_type(Textbox::NUMBER);
         m_semi_minor_axis_textbox->set_content("0");
 
         auto semi_minor_axis_unit_textfield = semi_minor_axis_container->add_widget<Textfield>();
         semi_minor_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_minor_axis_unit_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
         semi_minor_axis_unit_textfield->set_font_size(20);
         semi_minor_axis_unit_textfield->set_content("km");
         semi_minor_axis_unit_textfield->set_alignment(Textfield::Align::CenterRight);

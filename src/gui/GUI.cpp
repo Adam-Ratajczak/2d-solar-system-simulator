@@ -101,7 +101,6 @@ GUI::GUI(Application& application, World& world)
             main_color_layout.set_spacing(10);
             {
                 auto color_label_textfield = main_color_container->add_widget<Textfield>();
-                color_label_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
                 color_label_textfield->set_font_size(20);
                 color_label_textfield->set_content("COLOR");
                 color_label_textfield->set_alignment(Textfield::Align::Center);
@@ -115,13 +114,11 @@ GUI::GUI(Application& application, World& world)
             {
                 auto name_textfield = name_container->add_widget<Textfield>();
                 name_textfield->set_size({ 150.0_px, Length::Auto });
-                name_textfield->set_display_attributes(sf::Color(0, 0, 0), sf::Color(0, 0, 255), sf::Color(255, 255, 255));
                 name_textfield->set_font_size(20);
                 name_textfield->set_content("Name: ");
                 name_textfield->set_alignment(Textfield::Align::CenterLeft);
 
                 m_name_textbox = name_container->add_widget<Textbox>();
-                m_name_textbox->set_display_attributes(sf::Color(255, 255, 255), sf::Color(200, 200, 200), sf::Color(150, 150, 150));
                 m_name_textbox->set_limit(20);
                 m_name_textbox->set_data_type(Textbox::TEXT);
                 m_name_textbox->set_content("Planet");
