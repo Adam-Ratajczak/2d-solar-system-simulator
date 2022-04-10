@@ -34,6 +34,10 @@ void Console::append_line(LogLine line) {
     }
 }
 
+void Console::clear(){
+    m_lines.clear();
+}
+
 constexpr float PADDING = 5;
 
 void Console::draw(sf::RenderWindow& window) const {

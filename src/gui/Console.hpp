@@ -14,6 +14,7 @@ public:
     };
 
     void append_line(LogLine);
+    void clear();
 
 private:
     virtual void handle_event(Event&) override;
