@@ -10,8 +10,8 @@ namespace GUI {
 
 class Textbox : public Widget {
     sf::String m_content, m_placeholder;
-    sf::Color m_bg_color = sf::Color(255, 255, 255);
-    sf::Color m_fg_color = sf::Color(200, 200, 200);
+    sf::Color m_bg_color = sf::Color(220, 220, 220);
+    sf::Color m_fg_color = sf::Color(120, 120, 120);
     sf::Color m_text_color = sf::Color(30, 30, 30);
     sf::Color m_placeholder_color = sf::Color(80, 80, 80);
     unsigned m_limit = 16;

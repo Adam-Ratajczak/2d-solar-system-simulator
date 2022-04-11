@@ -185,7 +185,7 @@ sf::Text Textbox::generate_sf_text() const {
     // TODO: Cache the result
     sf::Text text(m_content, application().fixed_width_font, 16);
     text.setFillColor(m_text_color);
-    text.setPosition(2, 2 + size().y / 2 - 12);
+    text.setPosition(5, 2 + size().y / 2 - 12);
     text.move(m_scroll, 0);
     auto bounds = text.getLocalBounds();
     text.setOrigin(0, 0); // -6 because of SFML not taking descenders into account
@@ -204,12 +204,12 @@ sf::Vector2f Textbox::calculate_cursor_position() const {
 
 void Textbox::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rect(size());
+    rect.setOutlineColor(sf::Color(80, 80, 80));
+    rect.setOutlineThickness(-2);
     rect.setFillColor(are_all_parents_enabled() ? m_bg_color : m_bg_color - sf::Color(60, 60, 60, 0));
 
-    if (is_focused()) {
+    if (is_focused())
         rect.setOutlineColor(are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0));
-        rect.setOutlineThickness(3);
-    }
 
     window.draw(rect);
 
@@ -217,9 +217,9 @@ void Textbox::draw(sf::RenderWindow& window) const {
     window.draw(text);
 
     if (is_focused()) {
-        sf::RectangleShape cursor(sf::Vector2f(2, 30));
+        sf::RectangleShape cursor(sf::Vector2f(2, std::min(size().y - 6, 30.f)));
         auto position = calculate_cursor_position();
-        cursor.setPosition({ position.x, size().y / 2 - 15 });
+        cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
         cursor.setFillColor(sf::Color::Black);
         window.draw(cursor);
     }
