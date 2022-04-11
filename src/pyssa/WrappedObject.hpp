@@ -139,21 +139,25 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
     }
     if constexpr (CanBeCreatedFromPython) {
         // FIXME: There is a memory leak somewhere but I cannot reproduce it.
-        type.tp_init = [](PyObject* self, PyObject* args, PyObject* kwargs) {
-            auto object = (PythonType*)self;
-            object->ptr = T::create_for_python(Object::share(args), Object::share(kwargs));
-            if (!object->ptr)
-                return -1;
+        type.tp_new = [](PyTypeObject* type, PyObject* args, PyObject* kwargs) -> PyObject* {
+            auto new_t = T::create_for_python(Object::share(args), Object::share(kwargs));
+            if (!new_t) {
+                std::cout << "create_for_python failed" << std::endl;
+                return nullptr;
+            }
+            auto object = (PythonType*)type->tp_alloc(type, 0);
+            object->ptr = new_t;
             object->owned = true;
-            return 0;
+            std::cout << "### " << object->ptr << " allocated for " << object << std::endl;
+            return (PyObject*)object;
         };
         type.tp_dealloc = [](PyObject* self) {
             auto object = (PythonType*)self;
             if (object->owned)
                 delete object->ptr;
+            std::cout << "### " << object->ptr << " deallocated for " << self << " (owned=" << object->owned << ")" << std::endl;
             Py_TYPE(self)->tp_free(self);
         };
-        type.tp_new = PyType_GenericNew;
     }
 }
 

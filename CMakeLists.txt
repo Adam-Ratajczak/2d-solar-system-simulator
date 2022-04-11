@@ -54,12 +54,13 @@ target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
 target_link_options(out PUBLIC -lGLEW -lGLU -lGL)
 
 target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
-target_link_libraries(out ${PYTHON_LIBRARIES})
+target_link_libraries(out /usr/local/lib/libpython3.11d.so)
+target_compile_definitions(out PRIVATE Py_DEBUG)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_options(out PUBLIC -fsanitize=undefined,address)
     target_link_options(out PUBLIC -fsanitize=undefined,address)
-
+    message("ENABLED SANITIZERS")
 else()
     target_compile_options(out PUBLIC -O3)
 endif()

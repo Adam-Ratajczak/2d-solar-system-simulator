@@ -18,6 +18,8 @@ public:
         : m_object(nullptr) { }
 
     ~Object() {
+        if(m_object)
+            std::cout << "Decreffing " << m_object << ", refcount=" << Py_REFCNT(m_object) << std::endl;
         Py_XDECREF(m_object);
     }
 

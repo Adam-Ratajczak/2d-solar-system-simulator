@@ -30,9 +30,12 @@ Environment::Environment(World& world)
 }
 
 Environment::~Environment() {
+    std::cout << "Before Py_FinalizeEx" << std::endl;
     Py_DECREF(m_globals);
     Py_DECREF(m_locals);
+    std::cout << "Before Py_FinalizeEx but after decreffing" << std::endl;
     Py_FinalizeEx();
+    std::cout << "After Py_FinalizeEx" << std::endl;
     s_the = nullptr;
 }
 
