@@ -48,6 +48,12 @@ private:
     sf::Vector2f calculate_cursor_position() const;
     sf::Text generate_sf_text() const;
 
+    enum class CursorDirection {
+        Left,
+        Right
+    };
+    void move_cursor_by_word(CursorDirection);
+
     float m_scroll = 0;
 };
 

@@ -1,8 +1,10 @@
 #include "Textbox.hpp"
 
+#include "../util/CharacterType.hpp"
 #include "Application.hpp"
 #include "NotifyUser.hpp"
 #include <SFML/Graphics.hpp>
+#include <cassert>
 #include <cctype>
 #include <iostream>
 #include <string>
@@ -79,16 +81,19 @@ void Textbox::handle_event(Event& event) {
     else if (event.type() == sf::Event::KeyPressed) {
         if (is_focused()) {
             // FIXME: Focus check should be handled at Widget level.
-            // std::cout << m_cursor << std::endl;
             switch (event.event().key.code) {
             case sf::Keyboard::Left: {
-                if (m_cursor > 0)
+                if (event.event().key.control)
+                    move_cursor_by_word(CursorDirection::Left);
+                else if (m_cursor > 0)
                     set_cursor(m_cursor - 1);
                 event.set_handled();
                 break;
             }
             case sf::Keyboard::Right: {
-                if (m_cursor < m_content.getSize())
+                if (event.event().key.control)
+                    move_cursor_by_word(CursorDirection::Right);
+                else if (m_cursor < m_content.getSize())
                     set_cursor(m_cursor + 1);
                 event.set_handled();
                 break;
@@ -118,6 +123,62 @@ void Textbox::handle_event(Event& event) {
                 m_cursor = m_content.getSize();
         }
     }
+}
+
+void Textbox::move_cursor_by_word(CursorDirection direction) {
+    // Trying to mimic vscode behavior in c++ source files.
+    enum class State {
+        Start,
+        PendingPunctuation,
+        PendingCharactersOfType,
+        Done
+    } state
+        = State::Start;
+    Util::CharacterType last_character_type = Util::CharacterType::Unknown;
+
+    auto is_in_range = [&](int offset) {
+        return (direction == CursorDirection::Left && offset > 0) || (direction == CursorDirection::Right && offset < m_content.getSize());
+    };
+
+    while (state != State::Done && is_in_range(m_cursor)) {
+        auto next = m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor + 1];
+        std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
+        switch (state) {
+        case State::Start:
+            if (ispunct(next))
+                state = State::PendingCharactersOfType;
+            else if (!isspace(next)) {
+                if (is_in_range(m_cursor - 2) && ispunct(m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor]))
+                    state = State::PendingPunctuation;
+                else
+                    state = State::PendingCharactersOfType;
+                m_cursor++;
+            }
+            break;
+        case State::PendingPunctuation:
+            assert(ispunct(next));
+            state = State::PendingCharactersOfType;
+            break;
+        case State::PendingCharactersOfType: {
+            auto next_type = Util::character_type(next);
+            if (next_type != last_character_type && last_character_type != Util::CharacterType::Unknown) {
+                state = State::Done;
+                if (direction == CursorDirection::Left)
+                    m_cursor++;
+            }
+            last_character_type = next_type;
+            break;
+        }
+        default:
+            assert(false);
+            break;
+        }
+        if (direction == CursorDirection::Left)
+            m_cursor--;
+        else if (m_cursor < m_content.getSize())
+            m_cursor++;
+    }
+    std::cout << "DONE" << std::endl;
 }
 
 sf::Text Textbox::generate_sf_text() const {
@@ -173,5 +234,4 @@ bool Textbox::can_insert_character(uint32_t ch) const {
     }
     return false;
 }
-
 }
