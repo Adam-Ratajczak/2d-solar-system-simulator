@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Object.hpp"
-#include "descrobject.h"
-#include "object.h"
-#include "objimpl.h"
 
 #include <sstream>
 #include <vector>
