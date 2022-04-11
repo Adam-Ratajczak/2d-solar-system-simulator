@@ -102,19 +102,24 @@ void Textbox::handle_event(Event& event) {
                 break;
             }
         }
-    }else if(event.type() == sf::Event::MouseButtonPressed){
-        if(is_hover()){
-            if(m_content.getSize() == 0)
+    }
+    else if (event.type() == sf::Event::MouseButtonPressed) {
+        if (is_hover()) {
+            if (m_content.getSize() == 0)
                 return;
-            auto delta = sf::Mouse::getPosition() - position();
+            auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
 
             sf::Text text = generate_sf_text();
             
-            m_cursor = delta.x / (text.getCharacterSize() + text.getLetterSpacing()) + 1;
+            // We can just check the offset of 1st character because we use
+            // a fixed width font. Normally we would need to iterate over characters
+            // to find the nearest one.
+            float character_width = text.findCharacterPos(1).x - text.getPosition().x;
+            m_cursor = (delta.x - m_scroll) / character_width;
 
-            if(delta.x < (float)text.getCharacterSize() / 2)
+            if (delta.x < 0)
                 m_cursor = 0;
-            else if(m_cursor > m_content.getSize())
+            else if (m_cursor > m_content.getSize())
                 m_cursor = m_content.getSize();
         }
     }
