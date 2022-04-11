@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+namespace GUI {
+
 SettingsMenu::SettingsMenu(Container& c)
     : Container(c) {
     auto& layout = set_layout<HorizontalBoxLayout>();
@@ -43,4 +45,6 @@ SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, std::st
     settings_container->set_visible(false);
     m_entries.push_back(MenuEntry { .button = button.get(), .settings_container = settings_container.get() });
     return m_entries.back();
+}
+
 }

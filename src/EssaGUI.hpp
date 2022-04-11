@@ -1,31 +1,28 @@
 #pragma once
 
-#include "../Object.hpp"
-#include "../World.hpp"
-#include "Button.hpp"
-#include "ColorPicker.hpp"
-#include "Container.hpp"
-#include "SettingsMenu.hpp"
+#include "Object.hpp"
 #include "SimulationView.hpp"
-#include "Slider.hpp"
-#include "TextButton.hpp"
-#include "Textbox.hpp"
-#include "Textfield.hpp"
-#include "ValueSlider.hpp"
-#include "Widget.hpp"
+#include "World.hpp"
+#include "gui/Button.hpp"
+#include "gui/ColorPicker.hpp"
+#include "gui/Container.hpp"
+#include "gui/SettingsMenu.hpp"
+#include "gui/Slider.hpp"
+#include "gui/TextButton.hpp"
+#include "gui/Textbox.hpp"
+#include "gui/Textfield.hpp"
+#include "gui/ValueSlider.hpp"
+#include "gui/Widget.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <random>
 
-class GUI : public Container {
+class EssaGUI : public GUI::Container {
 public:
-    explicit GUI(Application& application, World& world);
-    static sf::Font font;
-    static sf::Font bold_font;
-    static sf::Font fixed_width_font;
+    explicit EssaGUI(GUI::Application& application, World& world);
 
-    virtual void handle_event(Event&) override;
+    virtual void handle_event(GUI::Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;
 
     SimulationView& simulation_view() const { return *m_simulation_view; }
@@ -35,26 +32,26 @@ private:
     virtual void relayout() override;
     virtual void update() override;
 
-    std::shared_ptr<ImageButton> m_creative_mode_button;
-    std::shared_ptr<ImageButton> m_toggle_orbit_direction_button;
-    std::shared_ptr<ImageButton> m_toggle_unit_button;
+    std::shared_ptr<GUI::ImageButton> m_creative_mode_button;
+    std::shared_ptr<GUI::ImageButton> m_toggle_orbit_direction_button;
+    std::shared_ptr<GUI::ImageButton> m_toggle_unit_button;
 
-    std::shared_ptr<Button> m_home_button;
-    std::shared_ptr<Button> m_coords_button;
-    std::shared_ptr<Button> m_add_object_button;
+    std::shared_ptr<GUI::Button> m_home_button;
+    std::shared_ptr<GUI::Button> m_coords_button;
+    std::shared_ptr<GUI::Button> m_add_object_button;
 
-    std::shared_ptr<ValueSlider> m_radius_control;
-    std::shared_ptr<ValueSlider> m_velocity_control;
-    std::shared_ptr<ValueSlider> m_direction_control;
+    std::shared_ptr<GUI::ValueSlider> m_radius_control;
+    std::shared_ptr<GUI::ValueSlider> m_velocity_control;
+    std::shared_ptr<GUI::ValueSlider> m_direction_control;
 
     // FIXME: Port this all to ValueSlider
-    std::shared_ptr<Textbox> m_mass_textbox;
-    std::shared_ptr<Textbox> m_mass_exponent_textbox;
-    std::shared_ptr<Textbox> m_name_textbox;
-    std::shared_ptr<Textbox> m_semi_major_axis_textbox;
-    std::shared_ptr<Textbox> m_semi_minor_axis_textbox;
+    std::shared_ptr<GUI::Textbox> m_mass_textbox;
+    std::shared_ptr<GUI::Textbox> m_mass_exponent_textbox;
+    std::shared_ptr<GUI::Textbox> m_name_textbox;
+    std::shared_ptr<GUI::Textbox> m_semi_major_axis_textbox;
+    std::shared_ptr<GUI::Textbox> m_semi_minor_axis_textbox;
 
-    std::shared_ptr<ColorPicker> m_color_control;
+    std::shared_ptr<GUI::ColorPicker> m_color_control;
 
     std::shared_ptr<Container> semi_major_axis_container;
     std::shared_ptr<Container> semi_minor_axis_container;

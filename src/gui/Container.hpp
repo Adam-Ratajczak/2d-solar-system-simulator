@@ -7,6 +7,8 @@
 #include <type_traits>
 #include <vector>
 
+namespace GUI {
+
 class Container;
 
 using WidgetList = std::vector<std::shared_ptr<Widget>>;
@@ -144,3 +146,5 @@ private:
 
     std::unique_ptr<Layout> m_layout;
 };
+
+}

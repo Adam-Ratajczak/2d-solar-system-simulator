@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+namespace GUI {
+
 class Textbox : public Widget {
     sf::String m_content, m_placeholder;
     sf::Color m_bg_color = sf::Color(255, 255, 255);
@@ -48,3 +50,5 @@ private:
 
     float m_scroll = 0;
 };
+
+}

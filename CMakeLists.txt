@@ -10,8 +10,11 @@ find_package(PythonLibs 3.5 REQUIRED)
 add_executable(
     out
     src/ConfigLoader.cpp
+    src/CreateObjectGUI.cpp
+    src/EssaGUI.cpp
     src/History.cpp
     src/Object.cpp
+    src/SimulationView.cpp
     src/SolarSystem.cpp
     src/Trail.cpp
     src/math/Transform.cpp
@@ -27,14 +30,11 @@ add_executable(
     src/gui/ColorPicker.cpp
     src/gui/Console.cpp
     src/gui/Container.cpp
-    src/gui/CreateObjectGUI.cpp
     src/gui/Frame.cpp
-    src/gui/GUI.cpp
     src/gui/HideShowButton.cpp
     src/gui/ImageButton.cpp
     src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
-    src/gui/SimulationView.cpp
     src/gui/Slider.cpp
     src/gui/Textbox.cpp
     src/gui/TextButton.cpp

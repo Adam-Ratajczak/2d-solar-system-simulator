@@ -3,6 +3,8 @@
 #include <SFML/System.hpp>
 #include <string>
 
+namespace GUI {
+
 class Widget;
 
 struct Tooltip {
@@ -11,5 +13,9 @@ struct Tooltip {
     sf::Vector2f position;
 
     Tooltip(std::string t, Widget* o, sf::Vector2f p)
-    : text(std::move(t)), owner(o), position(p) {}
+        : text(std::move(t))
+        , owner(o)
+        , position(p) { }
 };
+
+}

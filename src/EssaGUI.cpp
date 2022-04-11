@@ -1,28 +1,19 @@
-#include "GUI.hpp"
-#include "../Object.hpp"
-#include "../World.hpp"
-#include "Button.hpp"
-#include "Container.hpp"
-#include "ImageButton.hpp"
-#include "PythonREPL.hpp"
+#include "EssaGUI.hpp"
+
+#include "Object.hpp"
 #include "SimulationView.hpp"
-#include "Textbox.hpp"
-#include "Textfield.hpp"
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include "World.hpp"
+#include "gui/Button.hpp"
+#include "gui/Container.hpp"
+#include "gui/ImageButton.hpp"
+#include "gui/PythonREPL.hpp"
+#include "gui/Textbox.hpp"
+#include "gui/Textfield.hpp"
+
+#include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
 #include <string>
-
-sf::Font GUI::font;
-sf::Font GUI::bold_font;
-sf::Font GUI::fixed_width_font;
 
 static sf::Image load_image(std::string path) {
     // TODO: Error handling
@@ -31,13 +22,10 @@ static sf::Image load_image(std::string path) {
     return image;
 }
 
-GUI::GUI(Application& application, World& world)
+EssaGUI::EssaGUI(GUI::Application& application, World& world)
     : Container(application)
     , m_world(world) {
-    font.loadFromFile("../assets/fonts/Xolonium-pn4D.ttf");
-    bold_font.loadFromFile("../assets/fonts/XoloniumBold-xKZO.ttf");
-    fixed_width_font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf");
-    set_layout<BasicLayout>();
+    set_layout<GUI::BasicLayout>();
 
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
@@ -57,7 +45,7 @@ GUI::GUI(Application& application, World& world)
 
     m_world.m_simulation_view = m_simulation_view.get();
 
-    auto menu = add_widget<SettingsMenu>();
+    auto menu = add_widget<GUI::SettingsMenu>();
     menu->set_position({ 10.0_px, 10.0_px });
     {
         auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
@@ -76,14 +64,14 @@ GUI::GUI(Application& application, World& world)
 
         // TODO: Shrink-to-fit
         create_menu.settings_container->set_size({ 500.0_px, 540.0_px });
-        auto& layout = create_menu.settings_container->set_layout<VerticalBoxLayout>();
+        auto& layout = create_menu.settings_container->set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
         {
             m_create_object_gui(*create_menu.settings_container);
 
             auto mode_specific_options_container = create_menu.settings_container->add_widget<Container>();
             mode_specific_options_container->set_size({ Length::Auto, 100.0_px });
-            mode_specific_options_container->set_layout<BasicLayout>();
+            mode_specific_options_container->set_layout<GUI::BasicLayout>();
 
             m_create_object_from_params_container = m_create_object_from_params_gui(mode_specific_options_container);
             m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
@@ -97,36 +85,36 @@ GUI::GUI(Application& application, World& world)
 
             auto main_color_container = create_menu.settings_container->add_widget<Container>();
             main_color_container->set_size({ Length::Auto, 150.0_px });
-            auto& main_color_layout = main_color_container->set_layout<VerticalBoxLayout>();
+            auto& main_color_layout = main_color_container->set_layout<GUI::VerticalBoxLayout>();
             main_color_layout.set_spacing(10);
             {
-                auto color_label_textfield = main_color_container->add_widget<Textfield>();
+                auto color_label_textfield = main_color_container->add_widget<GUI::Textfield>();
                 color_label_textfield->set_content("COLOR");
-                color_label_textfield->set_alignment(Align::Center);
+                color_label_textfield->set_alignment(GUI::Align::Center);
 
-                m_color_control = main_color_container->add_widget<ColorPicker>();
+                m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
                 m_color_control->set_size({ Length::Auto, 100.0_px });
             }
             auto name_container = create_menu.settings_container->add_widget<Container>();
-            auto& name_layout = name_container->set_layout<HorizontalBoxLayout>();
+            auto& name_layout = name_container->set_layout<GUI::HorizontalBoxLayout>();
             name_layout.set_spacing(10);
             {
-                auto name_textfield = name_container->add_widget<Textfield>();
+                auto name_textfield = name_container->add_widget<GUI::Textfield>();
                 name_textfield->set_size({ 150.0_px, Length::Auto });
                 name_textfield->set_content("Name: ");
-                name_textfield->set_alignment(Align::CenterLeft);
+                name_textfield->set_alignment(GUI::Align::CenterLeft);
 
-                m_name_textbox = name_container->add_widget<Textbox>();
+                m_name_textbox = name_container->add_widget<GUI::Textbox>();
                 m_name_textbox->set_limit(20);
-                m_name_textbox->set_data_type(Textbox::TEXT);
+                m_name_textbox->set_data_type(GUI::Textbox::TEXT);
                 m_name_textbox->set_content("Planet");
             }
             m_submit_container = create_menu.settings_container->add_widget<Container>();
             m_submit_container->set_size({ Length::Auto, 72.0_px });
-            auto& submit_layout = m_submit_container->set_layout<HorizontalBoxLayout>();
+            auto& submit_layout = m_submit_container->set_layout<GUI::HorizontalBoxLayout>();
             submit_layout.set_spacing(10);
             {
-                m_coords_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/coordsButton.png"));
+                m_coords_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/coordsButton.png"));
                 m_coords_button->on_click = [this]() {
                     if (m_automatic_orbit_calculation)
                         m_simulation_view->start_focus_measure();
@@ -135,7 +123,7 @@ GUI::GUI(Application& application, World& world)
                 };
                 m_coords_button->set_tooltip_text("Set position");
 
-                m_toggle_unit_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/toggleUnitButton.png"));
+                m_toggle_unit_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
                 m_toggle_unit_button->set_toggleable(true);
                 m_toggle_unit_button->on_change = [this](bool state) {
                     this->m_units = state;
@@ -151,11 +139,11 @@ GUI::GUI(Application& application, World& world)
                 };
                 m_toggle_unit_button->set_tooltip_text("Toggle units");
 
-                m_creative_mode_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
+                m_creative_mode_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
                 m_creative_mode_button->set_toggleable(true);
                 m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
-                m_toggle_orbit_direction_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/orbitDirectionButton.png"));
+                m_toggle_orbit_direction_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/orbitDirectionButton.png"));
                 m_toggle_orbit_direction_button->set_toggleable(true);
                 m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
                 m_toggle_orbit_direction_button->on_change = [](bool state) {
@@ -171,7 +159,7 @@ GUI::GUI(Application& application, World& world)
 
                 m_submit_container->add_widget<Widget>(); // spacer
 
-                m_add_object_button = m_submit_container->add_widget<ImageButton>(load_image("../assets/addObjectButton.png"));
+                m_add_object_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
                 m_add_object_button->on_click = [&world, this]() {
                     // FIXME: This (object_list) should be probably private.
                     world.add_object(m_create_object_from_params());
@@ -186,11 +174,11 @@ GUI::GUI(Application& application, World& world)
         create_simulation_settings_gui(*settings.settings_container);
     }
 
-    auto python_repl = add_widget<PythonREPL>();
+    auto python_repl = add_widget<GUI::PythonREPL>();
     python_repl->set_position({ 300.0_px, 10.0_px_o });
     python_repl->set_size({ 700.0_px, 250.0_px });
 
-    m_home_button = add_widget<ImageButton>(load_image("../assets/homeButton.png"));
+    m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
     m_home_button->on_click = [this]() {
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
@@ -200,16 +188,16 @@ GUI::GUI(Application& application, World& world)
     m_home_button->set_tooltip_text("Reset coordinates");
 }
 
-void GUI::create_simulation_settings_gui(Container& container) {
+void EssaGUI::create_simulation_settings_gui(Container& container) {
 
     container.set_size({ 500.0_px, 200.0_px });
-    container.set_layout<VerticalBoxLayout>().set_spacing(10);
-    auto label = container.add_widget<Textfield>();
+    container.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
+    auto label = container.add_widget<GUI::Textfield>();
     label->set_content("Simulation Settings");
     label->set_size({ Length::Auto, 30.0_px });
-    label->set_alignment(Align::Center);
+    label->set_alignment(GUI::Align::Center);
 
-    auto iterations_control = container.add_widget<ValueSlider>(1, 1000);
+    auto iterations_control = container.add_widget<GUI::ValueSlider>(1, 1000);
     iterations_control->set_name("Iterations");
     iterations_control->set_unit("i/t");
     iterations_control->set_value(10);
@@ -219,7 +207,7 @@ void GUI::create_simulation_settings_gui(Container& container) {
             m_simulation_view->set_iterations(value);
     };
 
-    auto tick_length_control = container.add_widget<ValueSlider>(60, 60 * 60 * 24, 60);
+    auto tick_length_control = container.add_widget<GUI::ValueSlider>(60, 60 * 60 * 24, 60);
     tick_length_control->set_name("Tick Length");
     tick_length_control->set_unit("s/t");
     tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
@@ -229,26 +217,26 @@ void GUI::create_simulation_settings_gui(Container& container) {
             m_world.set_simulation_seconds_per_tick(value);
     };
 
-    auto toggle_labels_container = container.add_widget<Container>();
-    auto& toggle_labels_layout = toggle_labels_container->set_layout<HorizontalBoxLayout>();
+    auto toggle_labels_container = container.add_widget<GUI::Container>();
+    auto& toggle_labels_layout = toggle_labels_container->set_layout<GUI::HorizontalBoxLayout>();
     toggle_labels_layout.set_spacing(10);
     toggle_labels_container->set_size({ Length::Auto, 30.0_px });
 
-    auto button_label = toggle_labels_container->add_widget<Textfield>();
+    auto button_label = toggle_labels_container->add_widget<GUI::Textfield>();
     button_label->set_content("Toggle labels: ");
     button_label->set_size({ Length::Auto, 30.0_px });
-    auto toggle_labels = toggle_labels_container->add_widget<TextButton>();
+    auto toggle_labels = toggle_labels_container->add_widget<GUI::TextButton>();
     toggle_labels->set_content("Off");
     toggle_labels->set_active_content("On");
     toggle_labels->set_toggleable(true);
     toggle_labels->set_active(true);
-    toggle_labels->set_alignment(Align::Center);
+    toggle_labels->set_alignment(GUI::Align::Center);
     toggle_labels->on_change = [this](bool state) {
         this->m_simulation_view->toggle_label_visibility();
     };
 }
 
-void GUI::recalculate_forward_simulation() {
+void EssaGUI::recalculate_forward_simulation() {
     auto new_object = m_create_object_from_params();
 
     m_world.clone_for_forward_simulation(m_forward_simulated_world);
@@ -268,18 +256,18 @@ void GUI::recalculate_forward_simulation() {
     m_forward_simulation_is_valid = true;
 }
 
-void GUI::relayout() {
+void EssaGUI::relayout() {
     set_raw_size(sf::Vector2f(window().getSize()));
     Container::relayout();
 }
 
-void GUI::update() {
+void EssaGUI::update() {
     // FIXME: We should do this on every tick or just stop the main simulation.
     if (!m_forward_simulation_is_valid)
         recalculate_forward_simulation();
 }
 
-void GUI::draw(sf::RenderWindow& window) const {
+void EssaGUI::draw(sf::RenderWindow& window) const {
     if (m_new_object) {
         m_forward_simulated_world.draw(*m_simulation_view);
         WorldDrawScope scope(*m_simulation_view);
@@ -287,7 +275,7 @@ void GUI::draw(sf::RenderWindow& window) const {
     }
 }
 
-void GUI::handle_event(Event& event) {
+void EssaGUI::handle_event(GUI::Event& event) {
     if (event.type() == sf::Event::Closed) {
         window().close();
         event.set_handled();

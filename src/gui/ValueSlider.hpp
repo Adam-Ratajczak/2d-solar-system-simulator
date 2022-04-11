@@ -5,8 +5,9 @@
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 
-class ValueSlider : public Container
-{
+namespace GUI {
+
+class ValueSlider : public Container {
 public:
     ValueSlider(Container& parent, double min, double max, double step = 1);
 
@@ -20,7 +21,6 @@ public:
 
     std::function<void(double)> on_change;
 
-
 private:
     virtual LengthVector initial_size() const override { return { Length::Auto, 32.0_px }; }
 
@@ -29,3 +29,5 @@ private:
     std::shared_ptr<Textbox> m_textbox;
     std::shared_ptr<Textfield> m_unit_textfield;
 };
+
+}

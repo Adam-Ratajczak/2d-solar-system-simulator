@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../Constants.hpp"
-#include "../math/Matrix.hpp"
-#include "../math/Vector3.hpp"
-#include "../math/Transform.hpp"
-#include "Widget.hpp"
+#include "Constants.hpp"
+#include "gui/Widget.hpp"
+#include "math/Matrix.hpp"
+#include "math/Transform.hpp"
+#include "math/Vector3.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>
 
 class Object;
 class World;
 
-class SimulationView : public Widget {
+class SimulationView : public GUI::Widget {
 public:
-    explicit SimulationView(Container& c, World& world)
+    explicit SimulationView(GUI::Container& c, World& world)
         : Widget(c)
         , m_world(world) { }
 
@@ -22,7 +22,11 @@ public:
     Vector3 offset() const { return m_offset; }
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
-    void reset_rotation(){ m_rotate_x = 0.7; m_rotate_y = 0; m_rotate_z = 0;}
+    void reset_rotation() {
+        m_rotate_x = 0.7;
+        m_rotate_y = 0;
+        m_rotate_z = 0;
+    }
 
     Vector3 screen_to_world(Vector3 v) const;
     Vector3 world_to_screen(Vector3 v) const;
@@ -30,7 +34,7 @@ public:
     Matrix4x4d modelview_matrix() const;
 
     void reset() {
-        m_offset = Vector3 {0, 0, 0};
+        m_offset = Vector3 { 0, 0, 0 };
         m_zoom = 1;
     };
 
@@ -39,8 +43,8 @@ public:
 
     void start_coords_measure() { m_coord_measure = true; }
     void start_focus_measure();
-    void toggle_label_visibility(){ m_show_labels = !m_show_labels;}
-    bool show_labels() const{return m_show_labels;}
+    void toggle_label_visibility() { m_show_labels = !m_show_labels; }
+    bool show_labels() const { return m_show_labels; }
 
     // TODO: This should be private
     bool m_measured = false, m_changed = false;
@@ -56,7 +60,7 @@ public:
     void set_iterations(int i) { m_iterations = i; }
 
 private:
-    virtual void handle_event(Event&) override;
+    virtual void handle_event(GUI::Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
     virtual void update() override;
 
@@ -89,15 +93,14 @@ private:
 class WorldDrawScope {
 public:
     // Can be used for doing multiple layers.
-    enum class ClearDepth
-    {
+    enum class ClearDepth {
         Yes,
         No
     };
 
     explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No);
     ~WorldDrawScope();
- 
+
     static void verify();
 
 private:

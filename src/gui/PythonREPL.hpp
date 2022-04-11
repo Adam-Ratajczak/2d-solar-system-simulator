@@ -10,6 +10,8 @@
 #include <deque>
 #include <vector>
 
+namespace GUI {
+
 class PythonREPL : public Container {
 public:
     explicit PythonREPL(Container& c);
@@ -23,3 +25,5 @@ private:
     std::vector<std::string> m_commands;
     unsigned m_curr_command = 0;
 };
+
+}

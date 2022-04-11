@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+namespace GUI {
+
 WidgetList& Layout::widgets() {
     return m_container.m_widgets;
 }
@@ -200,4 +202,6 @@ void Container::dump(unsigned depth) {
     ++depth;
     for (auto& w : m_widgets)
         w->dump(depth);
+}
+
 }

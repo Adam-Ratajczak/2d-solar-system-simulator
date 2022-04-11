@@ -1,8 +1,10 @@
 #pragma once
 
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
 #include <cmath>
+
+namespace GUI {
+
 enum class Align {
     TopLeft,
     Top,
@@ -15,7 +17,7 @@ enum class Align {
     BottomRight,
 };
 
-inline void align_text(Align alignment, sf::Vector2f size, sf::Text& text){
+inline void align_text(Align alignment, sf::Vector2f size, sf::Text& text) {
     auto bounds = text.getLocalBounds();
 
     // The -5 is needed because SFML doesn't take descenders into account
@@ -49,4 +51,6 @@ inline void align_text(Align alignment, sf::Vector2f size, sf::Text& text){
         text.setPosition(sf::Vector2f(std::round(size.x - bounds.width - 2), std::round(size.y - bounds.height - 5)));
         break;
     }
+}
+
 }

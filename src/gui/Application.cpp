@@ -1,8 +1,25 @@
 #include "Application.hpp"
 
-#include "GUI.hpp"
-
+#include <cassert>
 #include <iostream>
+
+namespace GUI {
+
+Application* s_the {};
+
+Application& Application::the() {
+    assert(s_the);
+    return *s_the;
+}
+
+Application::Application(sf::RenderWindow& wnd)
+    : m_window(wnd) {
+    assert(!s_the);
+    s_the = this;
+    font.loadFromFile("../assets/fonts/Xolonium-pn4D.ttf");
+    bold_font.loadFromFile("../assets/fonts/XoloniumBold-xKZO.ttf");
+    fixed_width_font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf");
+}
 
 void Application::set_focused_widget(Widget* w) {
     m_focused_widget = w;
@@ -16,9 +33,9 @@ void Application::draw() {
 
     m_main_widget->do_draw(m_window);
 
-    m_window.setView(sf::View{sf::FloatRect(0, 0, m_window.getSize().x, m_window.getSize().y)});
+    m_window.setView(sf::View { sf::FloatRect(0, 0, m_window.getSize().x, m_window.getSize().y) });
     for (auto& tooltip : m_tooltips) {
-        sf::Text text(tooltip->text, GUI::font, 15);
+        sf::Text text(tooltip->text, font, 15);
         text.setFillColor(sf::Color::Black);
         text.setPosition(tooltip->position);
 
@@ -44,4 +61,6 @@ void Application::handle_events() {
         Event gui_event(event);
         m_main_widget->do_handle_event(gui_event);
     }
+}
+
 }

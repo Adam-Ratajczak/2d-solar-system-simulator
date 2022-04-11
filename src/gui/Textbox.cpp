@@ -1,18 +1,13 @@
 #include "Textbox.hpp"
-#include "../World.hpp"
-#include "GUI.hpp"
+
+#include "Application.hpp"
 #include "NotifyUser.hpp"
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include <SFML/Graphics.hpp>
 #include <cctype>
 #include <iostream>
 #include <string>
+
+namespace GUI {
 
 void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_bg_color = bg_color;
@@ -110,7 +105,7 @@ void Textbox::handle_event(Event& event) {
             auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
 
             sf::Text text = generate_sf_text();
-            
+
             // We can just check the offset of 1st character because we use
             // a fixed width font. Normally we would need to iterate over characters
             // to find the nearest one.
@@ -127,7 +122,7 @@ void Textbox::handle_event(Event& event) {
 
 sf::Text Textbox::generate_sf_text() const {
     // TODO: Cache the result
-    sf::Text text(m_content, GUI::fixed_width_font, 16);
+    sf::Text text(m_content, application().fixed_width_font, 16);
     text.setFillColor(m_text_color);
     text.setPosition(2, 2 + size().y / 2 - 12);
     text.move(m_scroll, 0);
@@ -177,4 +172,6 @@ bool Textbox::can_insert_character(uint32_t ch) const {
         return isdigit(ch) || (ch == '.' && !m_has_decimal);
     }
     return false;
+}
+
 }

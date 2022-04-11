@@ -3,6 +3,8 @@
 #include "Widget.hpp"
 #include <deque>
 
+namespace GUI {
+
 class Console : public Widget {
 public:
     explicit Console(Container& c)
@@ -26,3 +28,5 @@ private:
     float content_size() const;
     float scroll_area_size() const;
 };
+
+}

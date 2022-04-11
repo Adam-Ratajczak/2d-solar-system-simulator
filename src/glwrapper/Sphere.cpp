@@ -1,6 +1,6 @@
 #include "Sphere.hpp"
+#include "../SimulationView.hpp"
 #include "../math/Transform.hpp"
-#include "../gui/SimulationView.hpp"
 #include "Color.hpp"
 #include "Helpers.hpp"
 

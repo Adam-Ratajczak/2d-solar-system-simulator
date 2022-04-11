@@ -6,10 +6,13 @@
 #include <iostream>
 #include <list>
 
+namespace GUI {
+
 class Application {
 public:
-    explicit Application(sf::RenderWindow& wnd)
-        : m_window(wnd) { }
+    explicit Application(sf::RenderWindow&);
+
+    static Application& the();
 
     sf::RenderWindow& window() const { return m_window; }
     Widget* focused_widget() const { return m_focused_widget; }
@@ -37,6 +40,10 @@ public:
     void handle_events();
     void draw();
 
+    sf::Font font;
+    sf::Font bold_font;
+    sf::Font fixed_width_font;
+
 private:
     sf::RenderWindow& m_window;
     Widget* m_focused_widget {};
@@ -44,3 +51,5 @@ private:
     std::shared_ptr<Widget> m_main_widget;
     std::list<std::unique_ptr<Tooltip>> m_tooltips;
 };
+
+}

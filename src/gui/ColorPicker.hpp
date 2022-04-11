@@ -3,6 +3,8 @@
 #include "Container.hpp"
 #include "Slider.hpp"
 
+namespace GUI {
+
 class ColorPickerDisplay : public Widget {
 public:
     explicit ColorPickerDisplay(Container& c)
@@ -30,3 +32,5 @@ private:
     std::shared_ptr<Slider> m_b_slider;
     std::shared_ptr<ColorPickerDisplay> m_color_picker_display;
 };
+
+}

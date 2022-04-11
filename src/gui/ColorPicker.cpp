@@ -3,6 +3,8 @@
 #include "Container.hpp"
 #include "Textfield.hpp"
 
+namespace GUI {
+
 void ColorPickerDisplay::draw(sf::RenderWindow& window) const {
     sf::RectangleShape rs({ size().x - 10, size().y - 10 });
     rs.setPosition(5, 5);
@@ -55,4 +57,6 @@ sf::Color ColorPicker::value() const {
         static_cast<uint8_t>(m_g_slider->get_value()),
         static_cast<uint8_t>(m_b_slider->get_value())
     };
+}
+
 }

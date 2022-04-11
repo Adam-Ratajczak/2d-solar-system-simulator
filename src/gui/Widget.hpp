@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+namespace GUI {
+
 class Application;
 class Container;
 class Tooltip;
@@ -13,8 +15,7 @@ struct LengthVector {
     Length y;
 };
 
-constexpr bool operator==(LengthVector const& a, LengthVector const& b)
-{
+constexpr bool operator==(LengthVector const& a, LengthVector const& b) {
     return a.x == b.x && a.y == b.y;
 }
 
@@ -102,6 +103,8 @@ protected:
     explicit Widget(Application& application)
         : m_application(application) { }
 
+    Application& application() const { return m_application; }
+
     virtual void relayout() { }
     virtual bool is_mouse_over(sf::Vector2i) const;
     virtual void update();
@@ -112,7 +115,7 @@ protected:
 private:
     friend Container;
 
-    virtual LengthVector initial_size() const { return LengthVector{}; }
+    virtual LengthVector initial_size() const { return LengthVector {}; }
 
     Container* m_parent = nullptr;
     Application& m_application;
@@ -125,3 +128,5 @@ private:
     bool m_visible = true;
     bool m_enabled = true;
 };
+
+}

@@ -1,11 +1,11 @@
 // keep first!
 #include <GL/glew.h>
 
+#include "EssaGUI.hpp"
 #include "Object.hpp"
+#include "SimulationView.hpp"
 #include "World.hpp"
 #include "gui/Date.hpp"
-#include "gui/GUI.hpp"
-#include "gui/SimulationView.hpp"
 #include "math/Vector3.hpp"
 #include "modsupport.h"
 #include "pyssa/Object.hpp"

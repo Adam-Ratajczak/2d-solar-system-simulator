@@ -1,8 +1,10 @@
 #include "Textfield.hpp"
 #include "../World.hpp"
-#include "GUI.hpp"
+#include "Application.hpp"
 #include "TextAlign.hpp"
 #include <SFML/System/Vector2.hpp>
+
+namespace GUI {
 
 void Textfield::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_bg_color = bg_color;
@@ -18,10 +20,12 @@ void Textfield::draw(sf::RenderWindow& window) const {
 
     window.draw(rect);
 
-    sf::Text text(m_content, GUI::font, 15);
+    sf::Text text(m_content, application().font, 15);
     text.setFillColor(m_text_color);
 
     align_text(m_alignment, size(), text);
 
     window.draw(text);
+}
+
 }

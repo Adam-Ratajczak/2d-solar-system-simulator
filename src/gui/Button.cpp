@@ -8,6 +8,8 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
+namespace GUI {
+
 void Button::handle_event(Event& event) {
     if (event.event().type == sf::Event::MouseButtonReleased && is_hover())
         click();
@@ -56,4 +58,6 @@ void Button::click() {
 LengthVector Button::initial_size() const {
     // TODO: Stop special-casing!
     return { 72.0_px, 72.0_px };
+}
+
 }

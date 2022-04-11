@@ -9,6 +9,8 @@
 #include <cmath>
 #include <iostream>
 
+namespace GUI {
+
 Slider::Slider(Container& c, double min_val, double max_val, double step)
     : Widget(c)
     , m_min_val(min_val)
@@ -60,8 +62,7 @@ void Slider::handle_event(Event& event) {
             auto mouse_pos_relative_to_slider = sf::Vector2f({ static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) }) - position();
             m_val = (mouse_pos_relative_to_slider.x / size().x) * (m_max_val - m_min_val) + m_min_val;
 
-            if(m_wraparound)
-            {
+            if (m_wraparound) {
                 auto middle = (m_min_val + m_max_val) / 2;
                 m_val = std::remainder(m_val - m_min_val - middle, (m_max_val - m_min_val)) + m_min_val + middle;
             }
@@ -109,7 +110,8 @@ void Slider::draw(sf::RenderWindow& window) const {
     // std::cout << "XD\n"
 }
 
-double Slider::value_clamped_to_min_max() const
-{
+double Slider::value_clamped_to_min_max() const {
     return std::min(std::max(get_value(), m_min_val), m_max_val);
+}
+
 }

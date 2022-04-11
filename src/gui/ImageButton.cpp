@@ -1,5 +1,7 @@
 #include "ImageButton.hpp"
 
+namespace GUI {
+
 ImageButton::ImageButton(Container& c, sf::Image img)
     : Button(c) {
     m_texture.loadFromImage(img);
@@ -19,4 +21,6 @@ void ImageButton::draw(sf::RenderWindow& window) const {
     sprite.setScale(size().x / tex_size.x, size().y / tex_size.y);
 
     window.draw(sprite);
+}
+
 }

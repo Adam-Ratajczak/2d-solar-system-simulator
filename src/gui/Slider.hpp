@@ -12,6 +12,8 @@
 #include <functional>
 #include <string>
 
+namespace GUI {
+
 class Slider : public Widget {
     double m_val;
     const double m_min_val, m_max_val;
@@ -70,3 +72,5 @@ private:
     double m_exponent = 2;
     bool m_wraparound = false;
 };
+
+}

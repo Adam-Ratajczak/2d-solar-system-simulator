@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 
+namespace GUI {
+
 static std::string serialize_value(double value, double step) {
     std::ostringstream oss;
     oss << std::fixed;
@@ -52,4 +54,6 @@ double ValueSlider::value() const {
 void ValueSlider::set_value(double value){
     m_slider->set_value(value);
     m_textbox->set_content(std::to_string(value));
+}
+
 }

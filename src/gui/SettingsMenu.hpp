@@ -4,6 +4,8 @@
 #include "ImageButton.hpp"
 #include <vector>
 
+namespace GUI {
+
 class SettingsMenu : public Container {
 public:
     explicit SettingsMenu(Container& c);
@@ -21,3 +23,5 @@ private:
     Container* m_buttons_container {};
     Container* m_settings_container {};
 };
+
+}

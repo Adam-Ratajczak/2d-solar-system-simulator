@@ -1,7 +1,9 @@
 #include "Console.hpp"
 
-#include "GUI.hpp"
-#include <SFML/Graphics/RectangleShape.hpp>
+#include "Application.hpp"
+#include <SFML/Graphics.hpp>
+
+namespace GUI {
 
 constexpr float LINE_SPACING = 20;
 
@@ -34,7 +36,7 @@ void Console::append_line(LogLine line) {
     }
 }
 
-void Console::clear(){
+void Console::clear() {
     m_lines.clear();
 }
 
@@ -47,7 +49,7 @@ void Console::draw(sf::RenderWindow& window) const {
 
     size_t s = 0;
     for (auto& line : m_lines) {
-        sf::Text text(line.text, GUI::fixed_width_font, 15);
+        sf::Text text(line.text, application().fixed_width_font, 15);
         text.setPosition(PADDING, s * LINE_SPACING - m_scroll + PADDING);
         text.setFillColor(line.color);
         window.draw(text);
@@ -70,4 +72,6 @@ float Console::content_size() const {
 
 float Console::scroll_area_size() const {
     return size().y - PADDING * 2;
+}
+
 }

@@ -7,6 +7,8 @@
 #include <iostream>
 #include <typeinfo>
 
+namespace GUI {
+
 Widget::Widget(Container& parent)
     : m_parent(&parent)
     , m_application(parent.m_application) {
@@ -126,4 +128,6 @@ void Widget::dump(unsigned depth) {
     for (int i = 0; i < depth; i++)
         std::cout << "-   ";
     std::cout << typeid(*this).name() << ": pos=" << m_pos.x << "," << m_pos.y << " size=" << m_size.x << "," << m_size.y << std::endl;
+}
+
 }

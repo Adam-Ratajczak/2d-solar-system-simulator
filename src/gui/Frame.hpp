@@ -2,6 +2,8 @@
 
 #include "Container.hpp"
 
+namespace GUI {
+
 class Frame : public Container {
 public:
     Frame(Container& c)
@@ -13,3 +15,5 @@ private:
     virtual void draw(sf::RenderWindow&) const override;
     virtual float intrinsic_padding() const override { return BorderRadius; }
 };
+
+}

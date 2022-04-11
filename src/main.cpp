@@ -1,11 +1,11 @@
 // keep first!
 #include <GL/glew.h>
 
-#include "math/Transform.hpp"
-#include "math/Vector3.hpp"
+#include "EssaGUI.hpp"
 #include "World.hpp"
 #include "gui/Application.hpp"
-#include "gui/GUI.hpp"
+#include "math/Transform.hpp"
+#include "math/Vector3.hpp"
 #include "pyssa/Environment.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -17,8 +17,8 @@ int main() {
 
     World world;
 
-    Application application { window };
-    GUI& gui = application.set_main_widget<GUI>(world);
+    GUI::Application application { window };
+    auto& gui = application.set_main_widget<EssaGUI>(world);
 
     prepare_solar(world);
 

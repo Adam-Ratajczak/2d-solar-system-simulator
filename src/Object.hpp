@@ -1,11 +1,11 @@
 #pragma once
 
 #include "History.hpp"
+#include "SimulationView.hpp"
 #include "Trail.hpp"
-#include "math/Vector3.hpp"
 #include "glwrapper/Sphere.hpp"
-#include "gui/SimulationView.hpp"
 #include "gui/Units.hpp"
+#include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"
 #include <SFML/Graphics/Color.hpp>

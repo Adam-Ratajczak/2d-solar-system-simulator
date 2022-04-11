@@ -5,6 +5,8 @@
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
 
+namespace GUI {
+
 class TextButton : public Button {
 public:
     explicit TextButton(Container& c);
@@ -26,3 +28,5 @@ private:
     unsigned m_font_size = 20;
     Align m_alignment = Align::CenterLeft;
 };
+
+}

@@ -5,6 +5,8 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 
+namespace GUI {
+
 class Button : public Widget {
 public:
     explicit Button(Container& c)
@@ -51,3 +53,5 @@ private:
     bool m_toggleable { false };
     bool m_active { false };
 };
+
+}

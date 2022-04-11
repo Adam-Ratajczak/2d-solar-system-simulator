@@ -1,7 +1,9 @@
 #include "TextButton.hpp"
 
+#include "Application.hpp"
 #include "Button.hpp"
-#include "GUI.hpp"
+
+namespace GUI {
 
 TextButton::TextButton(Container& c)
     : Button(c) {
@@ -16,8 +18,10 @@ void TextButton::draw(sf::RenderWindow& window) const {
     rect.setOutlineThickness(3);
     window.draw(rect);
 
-    sf::Text text(m_content, GUI::font, 15);
+    sf::Text text(m_content, application().font, 15);
     text.setFillColor(text_color_for_state());
     align_text(m_alignment, size(), text);
     window.draw(text);
+}
+
 }

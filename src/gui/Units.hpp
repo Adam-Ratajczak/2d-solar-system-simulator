@@ -1,8 +1,9 @@
 #pragma once
 
+#include "../Constants.hpp"
 #include <cmath>
 #include <ostream>
-#include "../Constants.hpp"
+
 class Length {
 public:
     enum Unit {

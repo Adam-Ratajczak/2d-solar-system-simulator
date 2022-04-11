@@ -1,8 +1,10 @@
 #include "PythonREPL.hpp"
 
 #include "../pyssa/Environment.hpp"
-#include "GUI.hpp"
+#include "Application.hpp"
 #include "HideShowButton.hpp"
+
+namespace GUI {
 
 PythonREPL::PythonREPL(Container& c)
     : Container(c) {
@@ -66,12 +68,15 @@ void PythonREPL::handle_event(Event& event) {
                 m_curr_command = m_commands.size();
                 m_textbox->set_content("");
             }
-        }else if(event.event().key.code == sf::Keyboard::L && event.event().key.control){
-            if(m_textbox->is_focused())
+        }
+        else if (event.event().key.code == sf::Keyboard::L && event.event().key.control) {
+            if (m_textbox->is_focused())
                 m_console->clear();
         }
         break;
     default:
         break;
     }
+}
+
 }

@@ -1,7 +1,10 @@
 #pragma once
+
+#include "TextAlign.hpp"
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
-#include "TextAlign.hpp"
+
+namespace GUI {
 
 class Textfield : public Widget {
     std::string m_content;
@@ -27,3 +30,5 @@ public:
     Align get_alignment() const { return m_alignment; };
     void set_alignment(Align alignment) { m_alignment = alignment; };
 };
+
+}

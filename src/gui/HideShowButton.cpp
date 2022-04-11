@@ -1,5 +1,7 @@
 #include "HideShowButton.hpp"
 
+namespace GUI {
+
 HideShowButton::HideShowButton(Container& c)
     : Button(c) {
     set_toggleable(true);
@@ -19,4 +21,6 @@ void HideShowButton::draw(sf::RenderWindow& window) const {
     arrow[1] = { { std::round(size().x / 2), std::round(size().y / 2 + active_factor) }, Color };
     arrow[2] = { { std::round(size().x / 2 + ArrowSize / 2), std::round(size().y / 2 - active_factor) }, Color };
     window.draw(arrow);
+}
+
 }
