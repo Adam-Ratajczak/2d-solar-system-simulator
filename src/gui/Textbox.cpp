@@ -109,7 +109,7 @@ void Textbox::handle_event(Event& event) {
             case sf::Keyboard::Left: {
                 if (event.event().key.control)
                     move_cursor_by_word(CursorDirection::Left);
-                else if (m_cursor > 0){}
+                else if (m_cursor > 0)
                     set_cursor(m_cursor - 1);
 
                 if(!event.event().key.shift)
