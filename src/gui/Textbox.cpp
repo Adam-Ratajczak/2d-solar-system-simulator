@@ -3,11 +3,16 @@
 #include "../util/CharacterType.hpp"
 #include "Application.hpp"
 #include "NotifyUser.hpp"
+#include "Widget.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 #include <cassert>
 #include <cctype>
 #include <iostream>
 #include <string>
+#include <cmath>
 
 namespace GUI {
 
@@ -15,6 +20,25 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_bg_color = bg_color;
     m_fg_color = fg_color;
     m_text_color = text_color;
+}
+
+unsigned Textbox::m_character_pos_from_mouse(Event& event){
+    if (m_content.getSize() == 0)
+        return 0;
+    auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
+
+    sf::Text text = generate_sf_text();
+
+    // We can just check the offset of 1st character because we use
+    // a fixed width font. Normally we would need to iterate over characters
+    // to find the nearest one.
+    float character_width = text.findCharacterPos(1).x - text.getPosition().x;
+
+    if (delta.x < 0)
+        return 0;
+    else if (m_cursor > m_content.getSize())
+        return m_content.getSize();
+    return (delta.x - m_scroll) / character_width;
 }
 
 void Textbox::set_content(sf::String content, NotifyUser notify_user) {
@@ -85,19 +109,25 @@ void Textbox::handle_event(Event& event) {
             case sf::Keyboard::Left: {
                 if (event.event().key.control)
                     move_cursor_by_word(CursorDirection::Left);
-                else if (m_cursor > 0)
+                else if (m_cursor > 0){}
                     set_cursor(m_cursor - 1);
+
+                if(!event.event().key.shift)
+                    m_concurrent = m_cursor;
                 event.set_handled();
-                break;
             }
+            break;
             case sf::Keyboard::Right: {
                 if (event.event().key.control)
                     move_cursor_by_word(CursorDirection::Right);
                 else if (m_cursor < m_content.getSize())
                     set_cursor(m_cursor + 1);
+
+                if(!event.event().key.shift)
+                    m_concurrent = m_cursor;
                 event.set_handled();
-                break;
             }
+            break;
             default:
                 break;
             }
@@ -105,23 +135,14 @@ void Textbox::handle_event(Event& event) {
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
         if (is_hover()) {
-            if (m_content.getSize() == 0)
-                return;
-            auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
-
-            sf::Text text = generate_sf_text();
-
-            // We can just check the offset of 1st character because we use
-            // a fixed width font. Normally we would need to iterate over characters
-            // to find the nearest one.
-            float character_width = text.findCharacterPos(1).x - text.getPosition().x;
-            m_cursor = (delta.x - m_scroll) / character_width;
-
-            if (delta.x < 0)
-                m_cursor = 0;
-            else if (m_cursor > m_content.getSize())
-                m_cursor = m_content.getSize();
+            
+            m_cursor = m_character_pos_from_mouse(event);
+            m_concurrent = m_cursor;
+            
+            m_dragging = true;
         }
+    }else if (event.type() == sf::Event::MouseButtonReleased) {
+        m_dragging = false;
     }
 }
 
@@ -212,9 +233,21 @@ void Textbox::draw(sf::RenderWindow& window) const {
         rect.setOutlineColor(are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0));
 
     window.draw(rect);
-
+    
     auto text = generate_sf_text();
     window.draw(text);
+
+    // if(m_cursor != m_concurrent){
+    //     unsigned step = text.getCharacterSize() + text.getLetterSpacing();
+    //     if(text.getString() != m_placeholder){
+    //         sf::RectangleShape rect;
+    //         rect.setPosition(sf::Vector2f(text.getPosition().x + std::min(m_cursor, m_concurrent) * step, text.getPosition().y));
+    //         rect.setSize(sf::Vector2f(std::fabs(m_cursor - m_concurrent) * step, text.getGlobalBounds().height));
+    //         rect.setFillColor(m_placeholder_color);
+
+    //         window.draw(rect);
+    //     }
+    // }
 
     if (is_focused()) {
         sf::RectangleShape cursor(sf::Vector2f(2, std::min(size().y - 6, 30.f)));

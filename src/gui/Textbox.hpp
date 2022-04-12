@@ -4,6 +4,7 @@
 #include "Widget.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Event.hpp>
 #include <string>
 
 namespace GUI {
@@ -15,8 +16,8 @@ class Textbox : public Widget {
     sf::Color m_text_color = sf::Color(30, 30, 30);
     sf::Color m_placeholder_color = sf::Color(80, 80, 80);
     unsigned m_limit = 16;
-    bool m_has_decimal = false;
-    unsigned m_cursor = 0;
+    bool m_has_decimal = false, m_dragging = false;
+    unsigned m_cursor = 0, m_concurrent = 0;
 
 public:
     enum Type {
@@ -45,6 +46,7 @@ public:
 
 private:
     bool can_insert_character(uint32_t) const;
+    unsigned m_character_pos_from_mouse(Event& event);
     sf::Vector2f calculate_cursor_position() const;
     sf::Text generate_sf_text() const;
 
