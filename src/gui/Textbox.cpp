@@ -10,9 +10,9 @@
 #include <SFML/Window/Event.hpp>
 #include <cassert>
 #include <cctype>
+#include <cmath>
 #include <iostream>
 #include <string>
-#include <cmath>
 
 namespace GUI {
 
@@ -22,7 +22,7 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_text_color = text_color;
 }
 
-unsigned Textbox::m_character_pos_from_mouse(Event& event){
+unsigned Textbox::m_character_pos_from_mouse(Event& event) {
     if (m_content.getSize() == 0)
         return 0;
     auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
@@ -53,7 +53,6 @@ void Textbox::set_content(sf::String content, NotifyUser notify_user) {
 }
 
 void Textbox::set_cursor(unsigned cursor) {
-    auto old_cursor = m_cursor;
     if (cursor > m_content.getSize())
         m_cursor = m_content.getSize();
     else
@@ -112,22 +111,20 @@ void Textbox::handle_event(Event& event) {
                 else if (m_cursor > 0)
                     set_cursor(m_cursor - 1);
 
-                if(!event.event().key.shift)
+                if (!event.event().key.shift)
                     m_concurrent = m_cursor;
                 event.set_handled();
-            }
-            break;
+            } break;
             case sf::Keyboard::Right: {
                 if (event.event().key.control)
                     move_cursor_by_word(CursorDirection::Right);
                 else if (m_cursor < m_content.getSize())
                     set_cursor(m_cursor + 1);
 
-                if(!event.event().key.shift)
+                if (!event.event().key.shift)
                     m_concurrent = m_cursor;
                 event.set_handled();
-            }
-            break;
+            } break;
             default:
                 break;
             }
@@ -135,13 +132,14 @@ void Textbox::handle_event(Event& event) {
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
         if (is_hover()) {
-            
+
             m_cursor = m_character_pos_from_mouse(event);
             m_concurrent = m_cursor;
-            
+
             m_dragging = true;
         }
-    }else if (event.type() == sf::Event::MouseButtonReleased) {
+    }
+    else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
     }
 }
@@ -233,7 +231,7 @@ void Textbox::draw(sf::RenderWindow& window) const {
         rect.setOutlineColor(are_all_parents_enabled() ? m_fg_color : m_fg_color - sf::Color(39, 39, 39, 0));
 
     window.draw(rect);
-    
+
     auto text = generate_sf_text();
     window.draw(text);
 
