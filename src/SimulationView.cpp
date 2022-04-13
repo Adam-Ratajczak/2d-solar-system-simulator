@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "gui/Application.hpp"
+#include "math/Ray.hpp"
 #include "math/Transform.hpp"
 
 #include <GL/gl.h>
@@ -24,14 +25,13 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             m_dragging = true;
-            // FIXME: This requires more advanced math to work properly.
-            m_world.for_each_object([&](Object& object) {
-                if (object.hover(*this, m_prev_mouse_pos)) {
-                    if (m_focused_object != nullptr)
-                        m_focused_object->m_focused = false;
-                    m_focused_object = &object;
-                    m_focused_object->m_focused = true;
-                }
+
+            m_world.for_each_object([&](Object& obj) {
+                auto obj_pos_screen = world_to_screen(obj.m_pos / AU);
+                obj_pos_screen.z = 0;
+                auto distance = obj_pos_screen.distance_to(m_prev_mouse_pos);
+                if (distance < 30)
+                    m_focused_object = &obj;
             });
             if (m_coord_measure) {
                 m_coord_measure = false;
@@ -220,7 +220,6 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // We skip world space because we have combined model+view matrix
     auto clip_space = matrix() * local_space;
     clip_space /= clip_space.w;
-    std::cout << clip_space << std::endl;
     return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
 }
 
@@ -287,7 +286,7 @@ void SimulationView::update() {
 
     // Handle focus
     if (m_focused_object)
-        set_offset(m_focused_object->m_pos);
+        set_offset(-m_focused_object->m_pos / AU);
 }
 
 static size_t s_world_draw_scope_recursion = 0;
