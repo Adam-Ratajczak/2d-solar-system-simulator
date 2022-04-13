@@ -31,6 +31,7 @@ bool History::move_forward(){
 }
 
 bool History::move_backward(){
+    
     if(m_current->vector_pos > 0){
         m_current->vector_pos--;
 
@@ -53,7 +54,9 @@ bool History::move_backward(){
 }
 
 Entry History::get_entry() const{
-    // std::cout << m_segments << " " << m_current->vector_pos << " " << m_current->prev << "\n";
+    // std::cout << m_segments << " " << m_current->vector_pos << "\n";
+    if(m_current->vector_pos < 0)
+        return m_current->entry[0];
     return m_current->entry[m_current->vector_pos];
 }
 
@@ -74,8 +77,7 @@ void History::push_back(const Entry entry){
 
 void History::push_front(const Entry entry){
     if(!move_backward()){
-        if(m_current->vector_size + m_current->vector_pos - m_segments >= 0){
-            // std::cout << m_current->vector_pos << " " << m_current->vector_size << " " << m_segments << "\n";
+        if(m_current->vector_pos >= 0){
             m_current->entry[m_current->vector_pos] = entry;
             m_current->vector_pos--;
         }else{
