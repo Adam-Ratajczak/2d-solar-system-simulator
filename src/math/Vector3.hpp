@@ -109,13 +109,13 @@ inline double get_distance(Vector3 a, Vector3 b) {
     return std::sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
 }
 
-inline double get_distance_to_line(Vector3 a, Vector3 b, Vector3 c) {
-    auto d = (c - b) / get_distance(c, b);
-    auto v = a - b;
+inline double get_distance_to_line(Vector3 line_start, Vector3 line_end, Vector3 point) {
+    auto d = (point - line_end) / get_distance(point, line_end);
+    auto v = line_start - line_end;
     double t = v.dot(d);
-    auto p = b + t * d;
+    auto p = line_end + t * d;
 
-    return get_distance(p, a);
+    return get_distance(p, line_start);
 }
 
 inline void Vector3::glDraw() const {
