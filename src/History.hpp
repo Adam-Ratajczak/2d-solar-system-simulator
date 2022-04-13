@@ -13,7 +13,7 @@ class History {
         Node* next;
 
         std::vector<Entry> entry;
-        unsigned vector_pos, vector_size;
+        int vector_pos, vector_size;
 
         Node(Node* _prev, Node* _next, unsigned _size) {
             prev = _prev;
@@ -34,6 +34,8 @@ class History {
     Node* m_current;
     unsigned m_len, m_pos, m_segments;
 
+    bool m_edge = true;
+
 public:
     History(unsigned segments, Entry first_entry);
 
@@ -44,6 +46,7 @@ public:
 
     bool move_forward();
     bool move_backward();
+    bool on_edge() const{return m_edge;}
 
     Entry get_entry() const;
     void push_back(const Entry entry);

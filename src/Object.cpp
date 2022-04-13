@@ -55,6 +55,8 @@ bool Object::hover(SimulationView& view, Vector3 mouse_pos) const {
 }
 
 void Object::update_forces(bool reverse) {
+    if(!m_history.on_edge())
+        return;
     m_attraction_factor = Vector3();
     m_world.for_each_object([&](Object& object) {
         // TODO: Collisions

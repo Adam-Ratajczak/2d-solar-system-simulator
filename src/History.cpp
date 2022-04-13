@@ -11,6 +11,8 @@ History::History(unsigned segments, Entry first_entry) : m_segments(segments){
 bool History::move_forward(){
     if(m_current->vector_pos < m_current->vector_size - 1){
         m_current->vector_pos++;
+
+        m_edge = false;
         return true;
     }
 
@@ -18,32 +20,40 @@ bool History::move_forward(){
         if(m_current->next != nullptr){
             m_current = m_current->next;
             m_current->vector_pos = 0;
+
+            m_edge = false;
             return true;
         }
     }
 
+    m_edge = true;
     return false;
 }
 
 bool History::move_backward(){
     if(m_current->vector_pos > 0){
         m_current->vector_pos--;
+
+        m_edge = false;
         return true;
     }
 
-    if(m_current->vector_pos == 0){
+    if(m_current->vector_pos <= 0){
         if(m_current->prev != nullptr){
             m_current = m_current->prev;
             m_current->vector_pos = m_segments - 1;
+
+            m_edge = false;
             return true;
         }
     }
 
+    m_edge = true;
     return false;
 }
 
 Entry History::get_entry() const{
-    std::cout << m_segments << " " << m_current->vector_pos << "\n";
+    // std::cout << m_segments << " " << m_current->vector_pos << " " << m_current->prev << "\n";
     return m_current->entry[m_current->vector_pos];
 }
 
@@ -64,10 +74,10 @@ void History::push_back(const Entry entry){
 
 void History::push_front(const Entry entry){
     if(!move_backward()){
-        if(m_current->vector_size + m_current->vector_pos - m_segments > 0){
-            m_current->vector_pos--;
+        if(m_current->vector_size + m_current->vector_pos - m_segments >= 0){
             // std::cout << m_current->vector_pos << " " << m_current->vector_size << " " << m_segments << "\n";
             m_current->entry[m_current->vector_pos] = entry;
+            m_current->vector_pos--;
         }else{
             m_current->prev = new Node(nullptr, m_current, m_segments);
             m_current = m_current->prev;
