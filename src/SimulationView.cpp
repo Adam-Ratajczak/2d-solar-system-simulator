@@ -3,7 +3,6 @@
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "gui/Application.hpp"
-#include "math/Ray.hpp"
 #include "math/Transform.hpp"
 
 #include <GL/gl.h>
@@ -25,6 +24,11 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             m_dragging = true;
+
+            if (m_focused_object) {
+                m_focused_object->m_focused = false;
+                m_focused_object = nullptr;
+            }
 
             m_world.for_each_object([&](Object& obj) {
                 auto obj_pos_screen = world_to_screen(obj.m_pos / AU);
@@ -52,11 +56,6 @@ void SimulationView::handle_event(GUI::Event& event) {
             event.set_handled();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            if (m_focused_object) {
-                m_focused_object->m_focused = false;
-                m_focused_object = nullptr;
-            }
-
             m_coord_measure = false;
             m_focus_measure = false;
 
