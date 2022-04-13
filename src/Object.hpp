@@ -31,6 +31,7 @@ protected:
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
     double m_gravity_factor {};
+    double m_radius {};
 
     bool m_is_forward_simulated = false;
     Sphere m_sphere;
@@ -51,7 +52,6 @@ public:
     std::string m_name;
     bool m_focused = 0;
     sf::Color m_color;
-    double m_radius;
 
     void update_forces(bool reverse);
     void update(int speed);
@@ -75,6 +75,9 @@ public:
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "Object";
+
+    double radius() const { return m_radius; }
+    void set_radius(double radius);
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);

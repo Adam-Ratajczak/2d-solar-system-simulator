@@ -28,6 +28,7 @@ public:
 
     void set_color(Color color);
     void set_position(Vector3 pos) { m_pos = pos; }
+    void set_radius(double radius) { m_radius = radius; }
 
     void draw() const;
 

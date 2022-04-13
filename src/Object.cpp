@@ -255,6 +255,10 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
     return object;
 }
 
+void Object::set_radius(double radius) {
+    m_radius = radius;
+}
+
 std::ostream& operator<<(std::ostream& out, Object const& object) {
     return out << "Object(" << object.m_name << ") @ " << object.m_pos;
 }
