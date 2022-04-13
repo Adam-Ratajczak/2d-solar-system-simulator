@@ -32,6 +32,7 @@ public:
     Vector3 world_to_screen(Vector3 v) const;
     Matrix4x4d projection_matrix() const;
     Matrix4x4d modelview_matrix() const;
+    Matrix4x4d matrix() const;
 
     void reset() {
         m_offset = Vector3 { 0, 0, 0 };
