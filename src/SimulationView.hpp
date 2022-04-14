@@ -74,6 +74,7 @@ private:
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;
+    sf::Vector2f m_prev_drag_pos;
 
     enum class DragMode {
         None,

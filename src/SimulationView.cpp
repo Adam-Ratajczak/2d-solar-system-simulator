@@ -63,9 +63,12 @@ void SimulationView::handle_event(GUI::Event& event) {
     }
     else if (event.type() == sf::Event::MouseMoved) {
         sf::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
-        auto delta_pos = m_prev_mouse_pos - mouse_pos;
+        m_prev_mouse_pos = mouse_pos;
 
-        if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(delta_pos.x) > 20 || std::abs(delta_pos.y) > 20)) {
+        // DRAG
+        auto drag_delta = m_prev_drag_pos - mouse_pos;
+
+        if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(drag_delta.x) > 20 || std::abs(drag_delta.y) > 20)) {
             m_is_dragging = true;
 
             if (m_drag_mode == DragMode::Pan && m_focused_object) {
@@ -77,22 +80,23 @@ void SimulationView::handle_event(GUI::Event& event) {
         if (m_is_dragging) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
-                Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
+                Vector3 qad_delta { drag_delta.x, -drag_delta.y, 0 };
                 set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80);
                 break;
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
-                auto delta_pos = m_prev_mouse_pos - mouse_pos;
-                m_rotate_y += delta_pos.x / sizes.x * M_PI;
-                m_rotate_x += delta_pos.y / sizes.y * M_PI;
+                m_rotate_y += drag_delta.x / sizes.x * M_PI;
+                m_rotate_x += drag_delta.y / sizes.y * M_PI;
                 break;
             }
             default:
                 break;
             }
-            m_prev_mouse_pos = mouse_pos;
+            m_prev_drag_pos = mouse_pos;
         }
+
+        // COORD MEASURE
         if (m_coord_measure) {
             // FIXME: This doesn't work perfectly yet.
             Vector3 mouse_pos_in_clip_space { (mouse_pos.x - size().x / 2.0) * 2 / size().x, -(mouse_pos.y - size().y / 2.0) * 2 / size().y, 1, 1 };
