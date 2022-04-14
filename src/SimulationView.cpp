@@ -237,7 +237,7 @@ Vector3 SimulationView::screen_to_world(Vector3 v) const {
 Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
     auto clip_space = matrix() * local_space;
-    return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
+    return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, clip_space.z };
 }
 
 void SimulationView::draw(sf::RenderWindow& window) const {
