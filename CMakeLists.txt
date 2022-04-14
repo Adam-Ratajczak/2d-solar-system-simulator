@@ -9,6 +9,7 @@ find_package(PythonLibs 3.5 REQUIRED)
 
 add_executable(
     out
+
     src/ConfigLoader.cpp
     src/CreateObjectGUI.cpp
     src/EssaGUI.cpp
@@ -17,14 +18,16 @@ add_executable(
     src/SimulationView.cpp
     src/SolarSystem.cpp
     src/Trail.cpp
-    src/math/Transform.cpp
     src/World.cpp
     src/main.cpp
+
     src/gfx/RoundedEdgeRectangleShape.cpp
+
     src/glwrapper/Helpers.cpp
     src/glwrapper/Sphere.cpp
     src/glwrapper/Triangle.cpp
     src/glwrapper/VertexBuffer.cpp
+
     src/gui/Application.cpp
     src/gui/Button.cpp
     src/gui/ColorPicker.cpp
@@ -41,6 +44,11 @@ add_executable(
     src/gui/Textfield.cpp
     src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
+
+    src/math/Plane.cpp
+    src/math/Ray.cpp
+    src/math/Transform.cpp
+
     src/pyssa/Environment.cpp
     src/pyssa/Object.cpp
 )
