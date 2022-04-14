@@ -128,13 +128,26 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                 m_toggle_unit_button->on_change = [this](bool state) {
                     this->m_units = state;
                     auto vel = this->m_velocity_control->value();
+                    auto ap = m_apogee_control->value();
+                    auto pe = m_perigee_control->value();
                     if (state) {
                         this->m_velocity_control->set_unit("km/h");
                         this->m_velocity_control->set_value(vel * 3.6);
-                    }
-                    else {
+                        this->m_apogee_control->set_unit("AU");
+                        this->m_apogee_control->set_value(ap / AU * 1000);
+                        this->m_apogee_control->slider().set_range(1, 50, 0.1);
+                        this->m_perigee_control->set_unit("AU");
+                        this->m_perigee_control->set_value(pe / AU * 1000);
+                        this->m_perigee_control->slider().set_range(1, 50, 0.1);
+                    }else {
                         this->m_velocity_control->set_unit("m/s");
                         this->m_velocity_control->set_value(vel * (1.f / 3.6));
+                        this->m_apogee_control->set_unit("km");
+                        this->m_apogee_control->set_value(ap / 1000 * AU);
+                        this->m_apogee_control->slider().set_range(0, 1e10, 100);
+                        this->m_perigee_control->set_unit("km");
+                        this->m_perigee_control->set_value(pe / 1000 * AU);
+                        this->m_perigee_control->slider().set_range(0, 1e10, 100);
                     }
                 };
                 m_toggle_unit_button->set_tooltip_text("Toggle units");

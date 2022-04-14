@@ -114,4 +114,10 @@ double Slider::value_clamped_to_min_max() const {
     return std::min(std::max(get_value(), m_min_val), m_max_val);
 }
 
+void Slider::set_range(double min, double max, double step){
+    m_min_val = min;
+    m_max_val = max;
+    m_step = step;
+}
+
 }

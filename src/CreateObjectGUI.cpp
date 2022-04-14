@@ -1,4 +1,5 @@
 #include "EssaGUI.hpp"
+#include "gui/ValueSlider.hpp"
 #include <memory>
 
 #include <iostream>
@@ -80,49 +81,14 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_orbit_gui(std::sha
     auto container = std::make_shared<GUI::Container>(*parent);
     container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
-    // FIXME: This should use ValueSlider.
-    // FIXME: Add on_change callback to invalidate forward simulation.
-    semi_major_axis_container = container->add_widget<GUI::Container>();
-    auto& semi_major_axis_layout = semi_major_axis_container->set_layout<GUI::HorizontalBoxLayout>();
-    semi_major_axis_layout.set_spacing(10);
-    {
-        auto semi_major_axis_textfield = semi_major_axis_container->add_widget<GUI::Textfield>();
-        semi_major_axis_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_major_axis_textfield->set_content("Semi major axis magnitude: ");
-        semi_major_axis_textfield->set_alignment(GUI::Align::CenterLeft);
+    m_apogee_control = container->add_widget<GUI::ValueSlider>(0, 1e10, 100);
+    m_apogee_control->set_name("Apogee");
+    m_apogee_control->set_unit("km");
 
-        m_semi_major_axis_textbox = semi_major_axis_container->add_widget<GUI::Textbox>();
-        m_semi_major_axis_textbox->set_limit(20);
-        m_semi_major_axis_textbox->set_data_type(GUI::Textbox::NUMBER);
-        m_semi_major_axis_textbox->set_content("0");
+    m_perigee_control = container->add_widget<GUI::ValueSlider>(0, 1e10, 100);
+    m_perigee_control->set_name("Perigee");
+    m_perigee_control->set_unit("km");
 
-        auto semi_major_axis_unit_textfield = semi_major_axis_container->add_widget<GUI::Textfield>();
-        semi_major_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_major_axis_unit_textfield->set_content("km");
-        semi_major_axis_unit_textfield->set_alignment(GUI::Align::CenterRight);
-    }
-    semi_major_axis_layout.set_multipliers({ 1.5, 1, 0.5 });
-
-    semi_minor_axis_container = container->add_widget<GUI::Container>();
-    auto& semi_minor_axis_layout = semi_minor_axis_container->set_layout<GUI::HorizontalBoxLayout>();
-    semi_minor_axis_layout.set_spacing(10);
-    {
-        auto semi_minor_axis_textfield = semi_minor_axis_container->add_widget<GUI::Textfield>();
-        semi_minor_axis_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_minor_axis_textfield->set_content("Semi minor axis magnitude: ");
-        semi_minor_axis_textfield->set_alignment(GUI::Align::CenterLeft);
-
-        m_semi_minor_axis_textbox = semi_minor_axis_container->add_widget<GUI::Textbox>();
-        m_semi_minor_axis_textbox->set_limit(20);
-        m_semi_minor_axis_textbox->set_data_type(GUI::Textbox::NUMBER);
-        m_semi_minor_axis_textbox->set_content("0");
-
-        auto semi_minor_axis_unit_textfield = semi_minor_axis_container->add_widget<GUI::Textfield>();
-        semi_minor_axis_unit_textfield->set_size({ 150.0_px, Length::Auto });
-        semi_minor_axis_unit_textfield->set_content("km");
-        semi_minor_axis_unit_textfield->set_alignment(GUI::Align::CenterRight);
-    }
-    semi_minor_axis_layout.set_multipliers({ 1.5, 1, 0.5 });
     return container;
 }
 

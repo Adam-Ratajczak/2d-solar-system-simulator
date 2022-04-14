@@ -16,7 +16,7 @@ namespace GUI {
 
 class Slider : public Widget {
     double m_val;
-    const double m_min_val, m_max_val;
+    double m_min_val, m_max_val;
 
     double m_step;
 
@@ -57,6 +57,7 @@ public:
 
     void set_display_attributes(sf::Color bg_color, sf::Color fg_color);
     void set_text_attributes(unsigned text_size, std::string string, TextPos text_pos = TextPos::RIGHT);
+    void set_range(double min, double max, double step);
 
     double step() const { return m_step; }
 

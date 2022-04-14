@@ -43,13 +43,13 @@ private:
     std::shared_ptr<GUI::ValueSlider> m_radius_control;
     std::shared_ptr<GUI::ValueSlider> m_velocity_control;
     std::shared_ptr<GUI::ValueSlider> m_direction_control;
+    std::shared_ptr<GUI::ValueSlider> m_apogee_control;
+    std::shared_ptr<GUI::ValueSlider> m_perigee_control;
 
     // FIXME: Port this all to ValueSlider
     std::shared_ptr<GUI::Textbox> m_mass_textbox;
     std::shared_ptr<GUI::Textbox> m_mass_exponent_textbox;
     std::shared_ptr<GUI::Textbox> m_name_textbox;
-    std::shared_ptr<GUI::Textbox> m_semi_major_axis_textbox;
-    std::shared_ptr<GUI::Textbox> m_semi_minor_axis_textbox;
 
     std::shared_ptr<GUI::ColorPicker> m_color_control;
 
