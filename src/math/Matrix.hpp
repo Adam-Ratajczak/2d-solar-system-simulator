@@ -161,5 +161,6 @@ inline Vector3 operator*(Matrix4x4d const& mat, Vector3 const& vec) {
     result.y = vec.x * mat.element(0, 1) + vec.y * mat.element(1, 1) + vec.z * mat.element(2, 1) + vec.w * mat.element(3, 1);
     result.z = vec.x * mat.element(0, 2) + vec.y * mat.element(1, 2) + vec.z * mat.element(2, 2) + vec.w * mat.element(3, 2);
     result.w = vec.x * mat.element(0, 3) + vec.y * mat.element(1, 3) + vec.z * mat.element(2, 3) + vec.w * mat.element(3, 3);
+    result /= result.w;
     return result;
 }

@@ -216,9 +216,7 @@ Vector3 SimulationView::screen_to_world(Vector3 v) const {
 
 Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    // We skip world space because we have combined model+view matrix
     auto clip_space = matrix() * local_space;
-    clip_space /= clip_space.w;
     return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, 0 };
 }
 
