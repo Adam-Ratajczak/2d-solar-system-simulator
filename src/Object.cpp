@@ -202,7 +202,6 @@ void Object::draw(SimulationView const& view) {
 void Object::draw_gui(SimulationView const& view) {
     // FIXME: Hardcoded multiplier
     auto position = view.world_to_screen(m_pos / AU);
-    std::cout << position.z << std::endl;
 
     // Don't draw labels of planets outside of clipping box
     if (position.z > 1 || position.z < -1)
