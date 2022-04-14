@@ -73,7 +73,10 @@ void Sphere::draw() const {
     glPushMatrix();
     Transform::translation(m_pos).gl_mult();
     Transform::scale({ m_radius, m_radius, m_radius }).gl_mult();
-    GL::draw_indexed_vertices(GL_TRIANGLES, m_vertices, m_indices);
+    if(m_mode == DrawMode::Full)
+        GL::draw_indexed_vertices(GL_TRIANGLES, m_vertices, m_indices);
+    else if(m_mode == DrawMode::Grid)
+        GL::draw_indexed_vertices(GL_LINES, m_vertices, m_indices);
     glPopMatrix();
 }
 

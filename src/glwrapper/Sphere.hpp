@@ -22,6 +22,10 @@
 
 class Sphere {
 public:
+    enum class DrawMode{
+        Full,
+        Grid
+    };
     // ctor/dtor
     Sphere(double radius, int sectorCount = 36, int stackCount = 18);
     ~Sphere() { }
@@ -29,6 +33,7 @@ public:
     void set_color(Color color);
     void set_position(Vector3 pos) { m_pos = pos; }
     void set_radius(double radius) { m_radius = radius; }
+    void set_draw_mode(DrawMode mode){m_mode = mode;}
 
     void draw() const;
 
@@ -36,6 +41,7 @@ private:
     double m_radius {};
     unsigned m_sectors {};
     unsigned m_stacks {};
+    DrawMode m_mode = DrawMode::Full;
     Vector3 m_pos;
 
     void gen_sphere();

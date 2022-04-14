@@ -22,7 +22,7 @@ std::optional<Vector3> Ray::intersection_with_plane(Plane const& plane) const {
     if (plane_normal.dot(line_direction) == 0)
         return {};
 
-    std::cout << m_start << ":" << m_end << std::endl;
+    // std::cout << m_start << ":" << m_end << std::endl;
 
     double t = (plane_normal.dot(plane_point) - plane_normal.dot(m_start)) / plane_normal.dot(line_direction);
     return m_start + line_direction * t;

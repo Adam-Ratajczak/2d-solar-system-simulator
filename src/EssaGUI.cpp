@@ -271,7 +271,7 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
     toggle_labels->set_active(true);
     toggle_labels->set_alignment(GUI::Align::Center);
     toggle_labels->on_change = [this](bool state) {
-        this->m_simulation_view->toggle_label_visibility();
+        this->m_simulation_view->toggle_label_visibility(state);
     };
 }
 

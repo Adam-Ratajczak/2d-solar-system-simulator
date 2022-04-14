@@ -44,7 +44,7 @@ public:
 
     void start_coords_measure() { m_coord_measure = true; }
     void start_focus_measure();
-    void toggle_label_visibility() { m_show_labels = !m_show_labels; }
+    void toggle_label_visibility(bool visibility) { m_show_labels = visibility; }
     bool show_labels() const { return m_show_labels; }
 
     // TODO: This should be private

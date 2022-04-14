@@ -38,6 +38,7 @@ add_executable(
     src/gui/ImageButton.cpp
     src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
+    src/gui/SelectWidget.cpp
     src/gui/Slider.cpp
     src/gui/Textbox.cpp
     src/gui/TextButton.cpp

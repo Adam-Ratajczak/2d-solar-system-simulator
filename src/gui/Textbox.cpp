@@ -161,7 +161,7 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
 
     while (state != State::Done && is_in_range(m_cursor)) {
         auto next = m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor + 1];
-        std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
+        // std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
         switch (state) {
         case State::Start:
             if (ispunct(next))
@@ -197,7 +197,7 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
         else if (m_cursor < m_content.getSize())
             m_cursor++;
     }
-    std::cout << "DONE" << std::endl;
+    // std::cout << "DONE" << std::endl;
 }
 
 sf::Text Textbox::generate_sf_text() const {
@@ -248,7 +248,7 @@ void Textbox::draw(sf::RenderWindow& window) const {
     // }
 
     if (is_focused()) {
-        std::cout << m_cursor << std::endl;
+        // std::cout << m_cursor << std::endl;
         sf::RectangleShape cursor(sf::Vector2f(2, std::min(size().y - 6, 30.f)));
         auto position = calculate_cursor_position();
         cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
