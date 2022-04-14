@@ -26,6 +26,8 @@ unsigned Textbox::m_character_pos_from_mouse(Event& event) {
     if (m_content.getSize() == 0)
         return 0;
     auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
+    if (delta.x < 0)
+        return 0;
 
     sf::Text text = generate_sf_text();
 
@@ -33,12 +35,8 @@ unsigned Textbox::m_character_pos_from_mouse(Event& event) {
     // a fixed width font. Normally we would need to iterate over characters
     // to find the nearest one.
     float character_width = text.findCharacterPos(1).x - text.getPosition().x;
-
-    if (delta.x < 0)
-        return 0;
-    else if (m_cursor > m_content.getSize())
-        return m_content.getSize();
-    return (delta.x - m_scroll) / character_width;
+    auto cursor = (delta.x - m_scroll) / character_width;
+    return std::min(m_content.getSize(), (size_t)cursor);
 }
 
 void Textbox::set_content(sf::String content, NotifyUser notify_user) {
@@ -248,6 +246,7 @@ void Textbox::draw(sf::RenderWindow& window) const {
     // }
 
     if (is_focused()) {
+        std::cout << m_cursor << std::endl;
         sf::RectangleShape cursor(sf::Vector2f(2, std::min(size().y - 6, 30.f)));
         auto position = calculate_cursor_position();
         cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
