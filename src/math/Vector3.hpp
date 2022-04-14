@@ -7,20 +7,15 @@
 
 class Vector3 {
 public:
-    double x, y, z, w { 1 };
+    double x = 0, y = 0, z = 0, w = 1;
 
-    Vector3()
-        : x(0.)
-        , y(0.)
-        , z(0.) { }
-    Vector3(double _x, double _y, double _z)
+    Vector3() = default;
+
+    Vector3(double _x, double _y, double _z = 0, double _w = 1)
         : x(_x)
         , y(_y)
-        , z(_z) { }
-    Vector3(double _x, double _y)
-        : x(_x)
-        , y(_y)
-        , z(0) { }
+        , z(_z)
+        , w(_w) { }
     Vector3(sf::Vector2f _a)
         : x(_a.x)
         , y(_a.y)
@@ -92,11 +87,11 @@ inline Vector3 Vector3::normalized() const {
     return Vector3(x, y, z) / magnitude();
 }
 
-inline double Vector3::dot(const Vector3& a) const{
+inline double Vector3::dot(const Vector3& a) const {
     return this->x * a.x + this->y * a.y + this->z * a.z;
 }
 
-inline Vector3 Vector3::cross(const Vector3& a) const{
+inline Vector3 Vector3::cross(const Vector3& a) const {
     Vector3 result;
     result.x = this->y * a.z - this->z * a.y;
     result.y = this->z * a.x - this->x * a.z;
