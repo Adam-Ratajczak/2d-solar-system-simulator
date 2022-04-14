@@ -247,6 +247,8 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
     vel += this->m_vel;
     result->m_vel = vel;
 
+    // std::cout << result->m_orbit_len << "\n";
+
     return result;
 }
 
