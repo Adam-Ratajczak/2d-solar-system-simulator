@@ -278,6 +278,8 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
 void EssaGUI::recalculate_forward_simulation() {
     std::unique_ptr<Object> new_object;
 
+    // FIXME: The object should be created only once and its parameters adjusted
+    //        to new settings.
     if (m_automatic_orbit_calculation)
         new_object = m_create_object_from_orbit();
     else
@@ -288,7 +290,6 @@ void EssaGUI::recalculate_forward_simulation() {
 
     m_world.clone_for_forward_simulation(m_forward_simulated_world);
     auto forward_simulated_new_object = new_object.get();
-    std::cout << forward_simulated_new_object->m_pos << " @ " << m_simulation_view->world_to_screen(forward_simulated_new_object->m_pos / AU) << std::endl;
 
     // We need trail of the forward simulated object but
     // the object itself will be drawn at current position.
@@ -317,9 +318,13 @@ void EssaGUI::update() {
 
 void EssaGUI::draw(sf::RenderWindow& window) const {
     if (m_new_object) {
+        {
+            WorldDrawScope scope(*m_simulation_view);
+            m_new_object->draw(*m_simulation_view);
+        }
+        // FIXME: This should be drawn above grid.
+        m_new_object->draw_gui(*m_simulation_view);
         m_forward_simulated_world.draw(*m_simulation_view);
-        WorldDrawScope scope(*m_simulation_view);
-        m_new_object->draw(*m_simulation_view);
     }
 }
 
