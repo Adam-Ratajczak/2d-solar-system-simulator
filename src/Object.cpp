@@ -77,10 +77,17 @@ void Object::update(int speed) {
         m_display_trail_append_offset = 0;
 
     // if(m_pos != m_trail.back())
-    m_trail.push_back(m_pos);
+    
+    if(speed < 0){
+        m_trail.pop_back();
+        m_trail.push_front(m_history.get_entry_from_prev(m_trail.size()).pos);
+        // std::cout << m_history.get_entry_from_prev().pos << " " << m_history.get_entry().pos << "\n";
+    }else if(speed > 0){
+        m_trail.push_back(m_pos);
 
-    if (m_trail.size() > m_orbit_len)
-        m_trail.pop_front();
+        if (m_trail.size() > m_orbit_len)
+            m_trail.pop_front();
+    }
     m_trail.update_trail(*m_world.m_simulation_view, m_color);
 
     auto most_massive_object = m_world.most_massive_object();

@@ -32,7 +32,7 @@ class History {
 
     Node* m_root;
     Node* m_current;
-    unsigned m_len, m_pos, m_segments;
+    int m_len, m_pos, m_segments;
 
     bool m_edge = true;
 
@@ -49,6 +49,7 @@ public:
     bool on_edge() const{return m_edge;}
 
     Entry get_entry() const;
+    Entry get_entry_from_prev(unsigned index) const;
     void push_back(const Entry entry);
     void push_front(const Entry entry);
 

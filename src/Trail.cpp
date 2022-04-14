@@ -19,6 +19,10 @@ void Trail::push_front(const Vector3& pos) {
     m_trail.push_front(pos);
 }
 
+void Trail::pop_back() {
+    m_trail.pop_back();
+}
+
 void Trail::pop_front() {
     m_trail.pop_front();
 }

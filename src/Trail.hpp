@@ -19,6 +19,7 @@ public:
     Trail(size_t max_trail_size);
     void push_back(const Vector3& pos);
     void push_front(const Vector3& pos);
+    void pop_back();
     void pop_front();
     void draw(SimulationView const& view, sf::Color color);
     void update_trail(SimulationView const& view, const sf::Color& m_color);
