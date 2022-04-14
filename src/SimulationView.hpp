@@ -48,7 +48,7 @@ public:
     bool show_labels() const { return m_show_labels; }
 
     // TODO: This should be private
-    bool m_measured = false, m_changed = false;
+    bool m_measured = false;
 
     // FIXME: This should be in GUI.
     void set_fps(float fps) { m_fps = fps; }
@@ -74,7 +74,15 @@ private:
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;
-    bool m_dragging = false, m_rotating = false;
+
+    enum class DragMode {
+        None,
+        Pan,    // left click
+        Rotate, // right click
+    };
+    DragMode m_drag_mode {};
+    bool m_is_dragging { false };
+
     bool m_coord_measure = false, m_focus_measure = false, m_show_labels = true;
     int m_iterations = 10;
 

@@ -20,16 +20,10 @@ void SimulationView::start_focus_measure() {
 }
 
 void SimulationView::handle_event(GUI::Event& event) {
-    m_changed = false;
     if (event.type() == sf::Event::MouseButtonPressed) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
         if (event.event().mouseButton.button == sf::Mouse::Left) {
-            m_dragging = true;
-
-            if (m_focused_object) {
-                m_focused_object->m_focused = false;
-                m_focused_object = nullptr;
-            }
+            m_drag_mode = DragMode::Pan;
 
             m_world.for_each_object([&](Object& obj) {
                 auto obj_pos_screen = world_to_screen(obj.m_pos / AU);
@@ -56,7 +50,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             m_coord_measure = false;
             m_focus_measure = false;
 
-            m_rotating = true;
+            m_drag_mode = DragMode::Rotate;
         }
     }
     else if (event.type() == sf::Event::MouseWheelScrolled) {
@@ -66,25 +60,39 @@ void SimulationView::handle_event(GUI::Event& event) {
             apply_zoom(1.1);
         else
             apply_zoom(1 / 1.1);
-        m_changed = true;
     }
     else if (event.type() == sf::Event::MouseMoved) {
         sf::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
-        if (m_dragging) {
-            auto delta_pos = m_prev_mouse_pos - mouse_pos;
-            // qad from "quick and dirty".
-            // FIXME: Use plane projection or sth better???
-            Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
-            set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80);
+        auto delta_pos = m_prev_mouse_pos - mouse_pos;
+
+        if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(delta_pos.x) > 20 || std::abs(delta_pos.y) > 20)) {
+            m_is_dragging = true;
+
+            if (m_drag_mode == DragMode::Pan && m_focused_object) {
+                m_focused_object->m_focused = false;
+                m_focused_object = nullptr;
+            }
         }
-        else if (m_rotating) {
-            auto sizes = window().getSize();
-            auto delta_pos = m_prev_mouse_pos - mouse_pos;
-            m_rotate_y += delta_pos.x / sizes.x * M_PI;
-            m_rotate_x += delta_pos.y / sizes.y * M_PI;
-            // m_rotate_z = m_rotate_x + M_PI / 2;
+
+        if (m_is_dragging) {
+            switch (m_drag_mode) {
+            case DragMode::Pan: {
+                Vector3 qad_delta { delta_pos.x, -delta_pos.y, 0 };
+                set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80);
+                break;
+            }
+            case DragMode::Rotate: {
+                auto sizes = window().getSize();
+                auto delta_pos = m_prev_mouse_pos - mouse_pos;
+                m_rotate_y += delta_pos.x / sizes.x * M_PI;
+                m_rotate_x += delta_pos.y / sizes.y * M_PI;
+                break;
+            }
+            default:
+                break;
+            }
+            m_prev_mouse_pos = mouse_pos;
         }
-        m_prev_mouse_pos = mouse_pos;
         if (m_coord_measure) {
             // FIXME: This doesn't work perfectly yet.
             Vector3 mouse_pos_in_clip_space { (mouse_pos.x - size().x / 2.0) * 2 / size().x, -(mouse_pos.y - size().y / 2.0) * 2 / size().y, 1, 1 };
@@ -108,8 +116,8 @@ void SimulationView::handle_event(GUI::Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
-        m_dragging = false;
-        m_rotating = false;
+        m_is_dragging = false;
+        m_drag_mode = DragMode::None;
     }
     else if (event.type() == sf::Event::KeyPressed) {
         // FIXME: This is too complex and doesn't even work for all cases.
@@ -130,7 +138,6 @@ void SimulationView::handle_event(GUI::Event& event) {
                 m_speed /= 2;
         }
     }
-    m_changed = m_dragging | m_rotating;
 }
 
 void SimulationView::draw_grid(sf::RenderWindow& window) const {
