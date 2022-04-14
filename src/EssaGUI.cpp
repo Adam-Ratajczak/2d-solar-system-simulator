@@ -154,7 +154,8 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                         this->m_orbiit_tilt_control->set_unit("[rad]");
                         this->m_orbiit_tilt_control->set_value(tilt / 180 * M_PI);
                         this->m_orbiit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
-                    }else {
+                    }
+                    else {
                         this->m_velocity_control->set_unit("m/s");
                         this->m_velocity_control->set_value(vel * (1.f / 3.6));
                         this->m_apogee_control->set_unit("km");
@@ -277,13 +278,17 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
 void EssaGUI::recalculate_forward_simulation() {
     std::unique_ptr<Object> new_object;
 
-    if(m_automatic_orbit_calculation)
+    if (m_automatic_orbit_calculation)
         new_object = m_create_object_from_orbit();
     else
         new_object = m_create_object_from_params();
 
+    if (!new_object)
+        return;
+
     m_world.clone_for_forward_simulation(m_forward_simulated_world);
     auto forward_simulated_new_object = new_object.get();
+    std::cout << forward_simulated_new_object->m_pos << " @ " << m_simulation_view->world_to_screen(forward_simulated_new_object->m_pos / AU) << std::endl;
 
     // We need trail of the forward simulated object but
     // the object itself will be drawn at current position.
