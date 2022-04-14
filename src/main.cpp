@@ -12,7 +12,7 @@
 
 int main() {
     glewInit();
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "2D Solar System Simulator", sf::Style::Default, sf::ContextSettings(24, 0, 0));
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "ESSA", sf::Style::Default, sf::ContextSettings(24, 0, 0));
     window.setFramerateLimit(60);
 
     World world;
