@@ -22,6 +22,7 @@ void SimulationView::start_focus_measure() {
 void SimulationView::handle_event(GUI::Event& event) {
     if (event.type() == sf::Event::MouseButtonPressed) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
+        m_prev_drag_pos = m_prev_mouse_pos;
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             m_drag_mode = DragMode::Pan;
 
@@ -86,6 +87,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
+                std::cout << drag_delta.x << "," << drag_delta.y << std::endl;
                 m_rotate_y += drag_delta.x / sizes.x * M_PI;
                 m_rotate_x += drag_delta.y / sizes.y * M_PI;
                 break;
