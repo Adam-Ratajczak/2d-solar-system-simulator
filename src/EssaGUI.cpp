@@ -13,6 +13,7 @@
 #include "gui/Textfield.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -265,7 +266,6 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
 
     auto button_label = toggle_labels_container->add_widget<GUI::Textfield>();
     button_label->set_content("Toggle labels: ");
-    button_label->set_size({ Length::Auto, 30.0_px });
     auto toggle_labels = toggle_labels_container->add_widget<GUI::TextButton>();
     toggle_labels->set_content("Off");
     toggle_labels->set_active_content("On");
@@ -276,7 +276,6 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
         this->m_simulation_view->toggle_label_visibility(state);
     };
 
-
     auto toggle_sphere_mode_container = container.add_widget<GUI::Container>();
     auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
     toggle_sphere_mode_layout.set_spacing(10);
@@ -285,14 +284,35 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
     auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
     sphere_mode_label->set_content("Toggle Sphere mode: ");
 
-    m_toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
-    m_toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
-    m_toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
-    m_toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
-    m_toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode){
+    auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
+    toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
+    toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
+    toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
+    toggle_sphere_mode->set_alignment(GUI::Align::Center);
+    toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode){
         this->m_world.for_each_object([mode](Object& object){
             object.sphere().set_draw_mode(mode);
         });
+    };
+
+    auto restore_defaults_container = container.add_widget<GUI::Container>();
+    auto& restore_defaults_layout = restore_defaults_container->set_layout<GUI::HorizontalBoxLayout>();
+    restore_defaults_layout.set_spacing(10);
+    restore_defaults_container->set_size({ Length::Auto, 30.0_px });
+
+    auto restore_defaults_label = restore_defaults_container->add_widget<GUI::Textfield>();
+    restore_defaults_label->set_content("Restore defaults: ");
+    auto restore_defaults = restore_defaults_container->add_widget<GUI::TextButton>();
+    restore_defaults->set_content("Restore");
+    restore_defaults->set_toggleable(false);
+    restore_defaults->set_alignment(GUI::Align::Center);
+    restore_defaults->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
+    restore_defaults->on_click = [this, iterations_control, tick_length_control, toggle_labels, toggle_sphere_mode]() {
+        iterations_control->set_value(10);
+        tick_length_control->set_value(60 * 60 * 12);
+        toggle_labels->set_active(true);
+        this->m_simulation_view->toggle_label_visibility(true);
+        toggle_sphere_mode->set_index(0);
     };
 }
 

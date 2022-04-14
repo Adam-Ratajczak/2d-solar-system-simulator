@@ -36,6 +36,8 @@ public:
     void set_fg_color(sf::Color color);
     void set_text_color(sf::Color color);
 
+    void set_index(unsigned index);
+
 private:
     virtual void draw(sf::RenderWindow& window) const override;
     virtual void handle_event(Event& event) override;
@@ -61,12 +63,22 @@ std::pair<std::string, typename StateTextButton<T>::State> StateTextButton<T>::g
             return p;
         i++;
     }
+    return {};
 }
 
 template <typename T>
 void StateTextButton<T>::add_state(sf::String content, T state, sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
     m_states[content] = {bg_color, fg_color, text_color, state};
 ;
+}
+
+template <typename T>
+void StateTextButton<T>::set_index(unsigned int index){
+    if(index >= m_states.size())
+        m_index = m_states.size() - 1;
+    else
+        m_index = index;
+    on_change(state());
 }
 
 template <typename T>

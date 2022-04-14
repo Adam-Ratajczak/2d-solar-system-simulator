@@ -62,8 +62,6 @@ private:
     std::shared_ptr<Container> m_submit_container;
 
     std::shared_ptr<SimulationView> m_simulation_view;
-
-    std::shared_ptr<GUI::StateTextButton<Sphere::DrawMode>> m_toggle_sphere_mode;
     
     Object* m_focused = nullptr;
     bool m_automatic_orbit_calculation = false, m_units = false;
