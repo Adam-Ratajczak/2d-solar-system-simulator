@@ -74,7 +74,6 @@ private:
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;
-    Vector3 m_prev_pos;
     bool m_dragging = false, m_rotating = false;
     bool m_coord_measure = false, m_focus_measure = false, m_show_labels = true;
     int m_iterations = 10;

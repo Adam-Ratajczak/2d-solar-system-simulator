@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "gui/Application.hpp"
+#include "math/Ray.hpp"
 #include "math/Transform.hpp"
 
 #include <GL/gl.h>
@@ -37,14 +38,10 @@ void SimulationView::handle_event(GUI::Event& event) {
                 if (distance < 30)
                     m_focused_object = &obj;
             });
-            if (m_coord_measure) {
+
+            if (m_coord_measure)
                 m_coord_measure = false;
-                m_measured = true;
-                if (on_coord_measure) {
-                    on_coord_measure(m_prev_pos);
-                }
-            }
-            else if (m_focus_measure && m_focused_object != nullptr) {
+            if (m_focus_measure && m_focused_object != nullptr) {
                 m_focus_measure = false;
                 m_measured = true;
                 if (on_focus_measure) {
@@ -88,6 +85,27 @@ void SimulationView::handle_event(GUI::Event& event) {
             // m_rotate_z = m_rotate_x + M_PI / 2;
         }
         m_prev_mouse_pos = mouse_pos;
+        if (m_coord_measure) {
+            // FIXME: This doesn't work perfectly yet.
+            Vector3 mouse_pos_in_clip_space { (mouse_pos.x - size().x / 2.0) * 2 / size().x, -(mouse_pos.y - size().y / 2.0) * 2 / size().y, 1, 1 };
+            Math::Ray ray { {}, mouse_pos_in_clip_space };
+
+            // Transform a grid plane (z = 0) to the clip space.
+            Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix());
+
+            // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
+            auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
+            if (object_pos_in_clip_space) {
+                // Go back to world coordinates to get actual object position.
+                auto object_pos_in_world_space = matrix().inverted() * object_pos_in_clip_space.value();
+
+                // Inform the client about measured position.
+                m_measured = true;
+                if (on_coord_measure) {
+                    on_coord_measure(object_pos_in_world_space * AU);
+                }
+            }
+        }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
