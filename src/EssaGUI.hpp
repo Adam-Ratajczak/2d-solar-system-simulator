@@ -9,6 +9,7 @@
 #include "gui/SettingsMenu.hpp"
 #include "gui/Slider.hpp"
 #include "gui/TextButton.hpp"
+#include "gui/StateTextButton.hpp"
 #include "gui/Textbox.hpp"
 #include "gui/Textfield.hpp"
 #include "gui/ValueSlider.hpp"
@@ -55,15 +56,15 @@ private:
 
     std::shared_ptr<GUI::ColorPicker> m_color_control;
 
-    std::shared_ptr<Container> semi_major_axis_container;
-    std::shared_ptr<Container> semi_minor_axis_container;
-
     std::shared_ptr<Container> m_create_object_from_params_container;
     std::shared_ptr<Container> m_create_object_from_orbit_container;
 
     std::shared_ptr<Container> m_submit_container;
 
     std::shared_ptr<SimulationView> m_simulation_view;
+
+    std::shared_ptr<GUI::StateTextButton<Sphere::DrawMode>> m_toggle_sphere_mode;
+    
     Object* m_focused = nullptr;
     bool m_automatic_orbit_calculation = false, m_units = false;
 

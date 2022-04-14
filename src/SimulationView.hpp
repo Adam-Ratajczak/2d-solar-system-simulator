@@ -60,6 +60,8 @@ public:
     int iterations() const { return m_iterations; }
     void set_iterations(int i) { m_iterations = i; }
 
+    World& world(){return m_world;}
+
 private:
     virtual void handle_event(GUI::Event&) override;
     virtual void draw(sf::RenderWindow&) const override;

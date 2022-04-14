@@ -18,6 +18,7 @@
 #include "Vertex.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <initializer_list>
+#include <iostream>
 #include <vector>
 
 class Sphere {

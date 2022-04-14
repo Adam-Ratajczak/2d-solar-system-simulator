@@ -79,6 +79,8 @@ public:
     double radius() const { return m_radius; }
     void set_radius(double radius);
 
+    Sphere& sphere(){return m_sphere;}
+
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);
 
