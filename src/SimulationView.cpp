@@ -187,6 +187,8 @@ Matrix4x4d SimulationView::projection_matrix() const {
     double fov = 80;
     double fd = 1 / std::tan(fov / 2);
     double aspect = size().x / (double)size().y;
+    // TODO: These should be automatically calculated to make grid visible
+    //       for big scales
     double zFar = 100;
     double zNear = 0.1;
 
