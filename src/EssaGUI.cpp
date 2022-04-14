@@ -63,14 +63,14 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         };
 
         // TODO: Shrink-to-fit
-        create_menu.settings_container->set_size({ 500.0_px, 540.0_px });
+        create_menu.settings_container->set_size({ 500.0_px, 590.0_px });
         auto& layout = create_menu.settings_container->set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
         {
             m_create_object_gui(*create_menu.settings_container);
 
             auto mode_specific_options_container = create_menu.settings_container->add_widget<Container>();
-            mode_specific_options_container->set_size({ Length::Auto, 100.0_px });
+            mode_specific_options_container->set_size({ Length::Auto, 150.0_px });
             mode_specific_options_container->set_layout<GUI::BasicLayout>();
 
             m_create_object_from_params_container = m_create_object_from_params_gui(mode_specific_options_container);
@@ -130,6 +130,10 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                     auto vel = this->m_velocity_control->value();
                     auto ap = m_apogee_control->value();
                     auto pe = m_perigee_control->value();
+                    auto dir = m_direction_control->value();
+                    auto angle = m_orbit_angle_control->value();
+                    auto tilt = m_orbiit_tilt_control->value();
+
                     if (state) {
                         this->m_velocity_control->set_unit("km/h");
                         this->m_velocity_control->set_value(vel * 3.6);
@@ -139,6 +143,16 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                         this->m_perigee_control->set_unit("AU");
                         this->m_perigee_control->set_value(pe / AU * 1000);
                         this->m_perigee_control->slider().set_range(1, 50, 0.1);
+
+                        this->m_direction_control->set_unit("[rad]");
+                        this->m_direction_control->set_value(dir / 180 * M_PI);
+                        this->m_direction_control->slider().set_range(0, 2 * M_PI, 0.01);
+                        this->m_orbit_angle_control->set_unit("[rad]");
+                        this->m_orbit_angle_control->set_value(angle / 180 * M_PI);
+                        this->m_orbit_angle_control->slider().set_range(0, 2 * M_PI, 0.01);
+                        this->m_orbiit_tilt_control->set_unit("[rad]");
+                        this->m_orbiit_tilt_control->set_value(tilt / 180 * M_PI);
+                        this->m_orbiit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
                     }else {
                         this->m_velocity_control->set_unit("m/s");
                         this->m_velocity_control->set_value(vel * (1.f / 3.6));
@@ -148,6 +162,16 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                         this->m_perigee_control->set_unit("km");
                         this->m_perigee_control->set_value(pe / 1000 * AU);
                         this->m_perigee_control->slider().set_range(0, 1e10, 100);
+
+                        this->m_direction_control->set_unit("[deg]");
+                        this->m_direction_control->set_value(dir / M_PI * 180);
+                        this->m_direction_control->slider().set_range(0, 360, 1);
+                        this->m_orbit_angle_control->set_unit("[deg]");
+                        this->m_orbit_angle_control->set_value(dir / M_PI * 180);
+                        this->m_orbit_angle_control->slider().set_range(0, 360, 1);
+                        this->m_orbiit_tilt_control->set_unit("[deg]");
+                        this->m_orbiit_tilt_control->set_value(dir / M_PI * 180);
+                        this->m_orbiit_tilt_control->slider().set_range(0, 360, 1);
                     }
                 };
                 m_toggle_unit_button->set_tooltip_text("Toggle units");

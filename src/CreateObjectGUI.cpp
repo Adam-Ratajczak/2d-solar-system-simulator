@@ -70,7 +70,7 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_params_gui(std::sh
     m_direction_control = container->add_widget<GUI::ValueSlider>(0, 360, 0.1);
     m_direction_control->set_name("Direction");
     m_direction_control->set_unit("[deg]");
-    m_direction_control->slider().set_wraparound(true);
+    m_direction_control->slider();
     m_direction_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
@@ -88,6 +88,14 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_orbit_gui(std::sha
     m_perigee_control = container->add_widget<GUI::ValueSlider>(0, 1e10, 100);
     m_perigee_control->set_name("Perigee");
     m_perigee_control->set_unit("km");
+
+    m_orbit_angle_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
+    m_orbit_angle_control->set_name("Angle");
+    m_orbit_angle_control->set_unit("[deg]");
+
+    m_orbiit_tilt_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
+    m_orbiit_tilt_control->set_name("Tilt");
+    m_orbiit_tilt_control->set_unit("[deg]");
 
     return container;
 }

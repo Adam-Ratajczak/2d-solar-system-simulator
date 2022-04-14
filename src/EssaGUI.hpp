@@ -43,6 +43,8 @@ private:
     std::shared_ptr<GUI::ValueSlider> m_radius_control;
     std::shared_ptr<GUI::ValueSlider> m_velocity_control;
     std::shared_ptr<GUI::ValueSlider> m_direction_control;
+    std::shared_ptr<GUI::ValueSlider> m_orbit_angle_control;
+    std::shared_ptr<GUI::ValueSlider> m_orbiit_tilt_control;
     std::shared_ptr<GUI::ValueSlider> m_apogee_control;
     std::shared_ptr<GUI::ValueSlider> m_perigee_control;
 
