@@ -87,7 +87,6 @@ void SimulationView::handle_event(GUI::Event& event) {
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
-                std::cout << drag_delta.x << "," << drag_delta.y << std::endl;
                 m_rotate_y += drag_delta.x / sizes.x * M_PI;
                 m_rotate_x += drag_delta.y / sizes.y * M_PI;
                 break;
