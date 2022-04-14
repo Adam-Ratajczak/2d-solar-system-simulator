@@ -1,4 +1,6 @@
 #include "EssaGUI.hpp"
+#include "Object.hpp"
+#include "gui/Units.hpp"
 #include "gui/ValueSlider.hpp"
 #include <memory>
 
@@ -103,11 +105,12 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_orbit_gui(std::sha
 std::unique_ptr<Object> EssaGUI::m_create_object_from_params() const {
     double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
     double radius = m_radius_control->value() * 1000;
-
-    double theta = m_direction_control->value() / 360 * 2 * M_PI;
+    double theta = m_direction_control->value();
     double velocity = m_velocity_control->value();
-    if (m_units)
-        velocity /= 3.6;
+
+    if(!m_toggle_unit_button->is_active())
+        theta = theta / 360 * 2 * M_PI;
+
     Vector3 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
     sf::Color color = m_color_control->value();
@@ -116,4 +119,27 @@ std::unique_ptr<Object> EssaGUI::m_create_object_from_params() const {
     std::string name = m_name_textbox->get_content();
 
     return std::make_unique<Object>(m_world, mass, radius, m_new_object_pos, vel, color, name, 1000);
+}
+
+std::unique_ptr<Object> EssaGUI::m_create_object_from_orbit() const{
+    double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+    Distance radius = {static_cast<float>(m_radius_control->value()), Distance::Kilometer};
+    Distance apogee, perigee;
+    Angle angle, tilt;
+
+    if(m_toggle_unit_button->is_active()){
+        apogee = {static_cast<float>(m_apogee_control->value()), Distance::AU};
+        perigee = {static_cast<float>(m_perigee_control->value()), Distance::AU};
+
+        angle = {static_cast<float>(m_orbit_angle_control->value()), Angle::Rad};
+        tilt = {static_cast<float>(m_orbiit_tilt_control->value()), Angle::Rad};
+    }else{
+        apogee = {static_cast<float>(m_apogee_control->value()), Distance::Kilometer};
+        perigee = {static_cast<float>(m_perigee_control->value()), Distance::Kilometer};
+
+        angle = {static_cast<float>(m_orbit_angle_control->value()), Angle::Deg};
+        tilt = {static_cast<float>(m_orbiit_tilt_control->value()), Angle::Deg};
+    }
+
+    return m_focused->create_object_relative_to(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content(), 0.0_deg);
 }

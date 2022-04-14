@@ -71,6 +71,7 @@ private:
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
     void m_create_object_gui(Container& container);
     std::unique_ptr<Object> m_create_object_from_params() const;
+    std::unique_ptr<Object> m_create_object_from_orbit() const;
     void create_simulation_settings_gui(Container& container);
 
     World m_forward_simulated_world;

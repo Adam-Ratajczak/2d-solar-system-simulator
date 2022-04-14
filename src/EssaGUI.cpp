@@ -13,6 +13,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <string>
 
 static sf::Image load_image(std::string path) {
@@ -274,7 +275,12 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
 }
 
 void EssaGUI::recalculate_forward_simulation() {
-    auto new_object = m_create_object_from_params();
+    std::unique_ptr<Object> new_object;
+
+    if(m_automatic_orbit_calculation)
+        new_object = m_create_object_from_orbit();
+    else
+        new_object = m_create_object_from_params();
 
     m_world.clone_for_forward_simulation(m_forward_simulated_world);
     auto forward_simulated_new_object = new_object.get();

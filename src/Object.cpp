@@ -206,6 +206,7 @@ void Object::draw_gui(SimulationView const& view) {
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
+    // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
     double a = (apogee.value() + perigee.value()) / 2;
     double b = std::sqrt(apogee.value() * perigee.value());
