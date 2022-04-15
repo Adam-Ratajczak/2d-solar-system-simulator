@@ -72,6 +72,7 @@ private:
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
     std::shared_ptr<Container> m_create_focused_object_info_gui();
     void m_update_focused_object_info_gui(Object* focused);
+    void m_switch_info(bool state);
 
     std::vector<std::shared_ptr<GUI::Textfield>> m_info_content;
 
