@@ -97,6 +97,9 @@ public:
 
     void set_tooltip_text(std::string t) { m_tooltip_text = std::move(t); }
 
+    std::string_view name() const { return m_name; }
+    void set_name(std::string_view name) { m_name = name; }
+
     virtual void dump(unsigned depth);
 
 protected:
@@ -124,6 +127,7 @@ private:
     Tooltip* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
     std::string m_tooltip_text;
+    std::string_view m_name;
     bool m_hover = false;
     bool m_visible = true;
     bool m_enabled = true;

@@ -204,4 +204,28 @@ void Container::dump(unsigned depth) {
         w->dump(depth);
 }
 
+Widget* Container::find_widget(std::string_view name) const {
+    // FIXME: Make it not O(n)
+    for (auto& w : m_widgets) {
+        if (w->name() == name)
+            return w.get();
+    }
+    return nullptr;
+}
+
+Widget* Container::find_widget_recursively(std::string_view name) const {
+    auto widget = find_widget(name);
+    if (widget)
+        return widget;
+    for (auto& w : m_widgets) {
+        auto container = dynamic_cast<Container*>(w.get());
+        if (container) {
+            widget = container->find_widget_recursively(name);
+            if (widget)
+                return widget;
+        }
+    }
+    return nullptr;
+}
+
 }
