@@ -46,6 +46,9 @@ public:
     void start_focus_measure();
     void toggle_label_visibility(bool visibility) { m_show_labels = visibility; }
     bool show_labels() const { return m_show_labels; }
+    void set_show_grid(bool b) { m_show_grid = b; }
+    void set_show_trails(bool b) { m_show_trails = b; }
+    bool show_trails() const { return m_show_trails; }
 
     // TODO: This should be private
     bool m_measured = false;
@@ -86,7 +89,13 @@ private:
     DragMode m_drag_mode {};
     bool m_is_dragging { false };
 
-    bool m_coord_measure = false, m_focus_measure = false, m_show_labels = true;
+    bool m_coord_measure = false;
+    bool m_focus_measure = false;
+
+    bool m_show_labels = true;
+    bool m_show_grid = true;
+    bool m_show_trails = true;
+    
     int m_iterations = 10;
 
     // FIXME: This doesn't quite match here (and also World). Maybe

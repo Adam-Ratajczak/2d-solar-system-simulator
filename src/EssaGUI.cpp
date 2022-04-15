@@ -232,7 +232,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 
 void EssaGUI::create_simulation_settings_gui(Container& container) {
 
-    container.set_size({ 500.0_px, 300.0_px });
+    container.set_size({ 500.0_px, 400.0_px });
     container.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
     auto label = container.add_widget<GUI::Textfield>();
     label->set_content("Simulation Settings");
@@ -259,23 +259,6 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
             m_world.set_simulation_seconds_per_tick(value);
     };
 
-    auto toggle_labels_container = container.add_widget<GUI::Container>();
-    auto& toggle_labels_layout = toggle_labels_container->set_layout<GUI::HorizontalBoxLayout>();
-    toggle_labels_layout.set_spacing(10);
-    toggle_labels_container->set_size({ Length::Auto, 30.0_px });
-
-    auto button_label = toggle_labels_container->add_widget<GUI::Textfield>();
-    button_label->set_content("Toggle labels: ");
-    auto toggle_labels = toggle_labels_container->add_widget<GUI::TextButton>();
-    toggle_labels->set_content("Off");
-    toggle_labels->set_active_content("On");
-    toggle_labels->set_toggleable(true);
-    toggle_labels->set_active(true);
-    toggle_labels->set_alignment(GUI::Align::Center);
-    toggle_labels->on_change = [this](bool state) {
-        this->m_simulation_view->toggle_label_visibility(state);
-    };
-
     auto toggle_sphere_mode_container = container.add_widget<GUI::Container>();
     auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
     toggle_sphere_mode_layout.set_spacing(10);
@@ -289,11 +272,39 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
     toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
     toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
     toggle_sphere_mode->set_alignment(GUI::Align::Center);
-    toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode){
-        this->m_world.for_each_object([mode](Object& object){
+    toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode) {
+        this->m_world.for_each_object([mode](Object& object) {
             object.sphere().set_draw_mode(mode);
         });
     };
+
+    auto add_toggle = [&](std::string title, auto on_change) {
+        auto toggle_container = container.add_widget<GUI::Container>();
+        auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
+        toggle_layout.set_spacing(10);
+        toggle_container->set_size({ Length::Auto, 30.0_px });
+        auto button_label = toggle_container->add_widget<GUI::Textfield>();
+        button_label->set_content(title + ": ");
+        button_label->set_size({ Length::Auto, 30.0_px });
+        auto toggle = toggle_container->add_widget<GUI::TextButton>();
+        toggle->set_content("Off");
+        toggle->set_active_content("On");
+        toggle->set_toggleable(true);
+        toggle->set_active(true);
+        toggle->set_alignment(GUI::Align::Center);
+        toggle->on_change = std::move(on_change);
+        return toggle;
+    };
+
+    auto show_labels_toggle = add_toggle("Show labels", [this](bool state) {
+        this->m_simulation_view->toggle_label_visibility(state);
+    });
+    auto show_grid_toggle = add_toggle("Show grid", [this](bool state) {
+        this->m_simulation_view->set_show_grid(state);
+    });
+    auto show_trails_toggle = add_toggle("Show trails", [this](bool state) {
+        this->m_simulation_view->set_show_trails(state);
+    });
 
     auto restore_defaults_container = container.add_widget<GUI::Container>();
     auto& restore_defaults_layout = restore_defaults_container->set_layout<GUI::HorizontalBoxLayout>();
@@ -307,10 +318,12 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
     restore_defaults->set_toggleable(false);
     restore_defaults->set_alignment(GUI::Align::Center);
     restore_defaults->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
-    restore_defaults->on_click = [this, iterations_control, tick_length_control, toggle_labels, toggle_sphere_mode]() {
+    restore_defaults->on_click = [this, iterations_control, tick_length_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
         iterations_control->set_value(10);
         tick_length_control->set_value(60 * 60 * 12);
-        toggle_labels->set_active(true);
+        show_labels_toggle->set_active(true);
+        show_grid_toggle->set_active(true);
+        show_trails_toggle->set_active(true);
         this->m_simulation_view->toggle_label_visibility(true);
         toggle_sphere_mode->set_index(0);
     };

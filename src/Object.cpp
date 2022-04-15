@@ -52,7 +52,7 @@ bool Object::hover(SimulationView& view, Vector3 mouse_pos) const {
 }
 
 void Object::update_forces(bool reverse) {
-    if(!m_history.on_edge())
+    if (!m_history.on_edge())
         return;
     m_attraction_factor = Vector3();
     m_world.for_each_object([&](Object& object) {
@@ -66,9 +66,9 @@ void Object::update(int speed) {
     m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
-    if(speed > 0)
+    if (speed > 0)
         m_trail.push_back(m_pos);
-    else if(speed < 0){
+    else if (speed < 0) {
         m_trail.push_front(m_pos);
     }
 
@@ -106,8 +106,9 @@ void Object::draw(SimulationView const& view) {
 
     m_sphere.set_position(scaled_pos);
     m_sphere.draw();
-    
-    m_trail.draw();
+
+    if (view.show_trails())
+        m_trail.draw();
 
     // FIXME: This thing should be in a Widget.
     if (this->m_focused) {

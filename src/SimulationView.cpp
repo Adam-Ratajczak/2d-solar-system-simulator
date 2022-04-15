@@ -253,7 +253,8 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
 }
 
 void SimulationView::draw(sf::RenderWindow& window) const {
-    draw_grid(window);
+    if (m_show_grid)
+        draw_grid(window);
     m_world.draw(*this);
 
     if (m_coord_measure) {
