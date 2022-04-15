@@ -148,21 +148,21 @@ void SimulationView::handle_event(GUI::Event& event) {
 void SimulationView::draw_grid(sf::RenderWindow& window) const {
     constexpr float zoom_step_exponent = 2;
     auto spacing = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom / 2) / std::log2(zoom_step_exponent)));
+    constexpr int major_gridline_interval = 4;
+    auto major_gridline_spacing = spacing * major_gridline_interval;
     {
         WorldDrawScope scope(*this);
-        constexpr int major_gridline_interval = 4;
         float bounds = 500 * spacing;
         // Vector3 start_coords = screen_to_world({ 0, 0 });
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
         // start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
         // Vector3 end_coords = screen_to_world({ size().x, size().y });
         Vector3 start_coords = { -bounds, -bounds, 0 };
+        start_coords.x -= std::round(m_offset.x / major_gridline_spacing) * major_gridline_spacing;
+        start_coords.y -= std::round(m_offset.y / major_gridline_spacing) * major_gridline_spacing;
         Vector3 end_coords = { bounds, bounds, 0 };
-
-        if (start_coords.x > end_coords.x)
-            std::swap(start_coords.x, end_coords.x);
-        if (start_coords.y > end_coords.y)
-            std::swap(start_coords.y, end_coords.y);
+        end_coords.x -= std::round(m_offset.x / major_gridline_spacing) * major_gridline_spacing;
+        end_coords.y -= std::round(m_offset.y / major_gridline_spacing) * major_gridline_spacing;
 
         sf::Color const major_grid_line_color { 60, 60, 60 };
         sf::Color const grid_line_color { 25, 25, 25 };
@@ -175,15 +175,15 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
         for (double x = start_coords.x; x < end_coords.x; x += spacing) {
             auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { x, -bounds, 0 }, .color = color });
-            vertices.push_back(Vertex { .position = { x, bounds, 0 }, .color = color });
+            vertices.push_back(Vertex { .position = { x, start_coords.y, 0 }, .color = color });
+            vertices.push_back(Vertex { .position = { x, end_coords.y, 0 }, .color = color });
             index++;
         }
         index = 0;
         for (double y = start_coords.y; y < end_coords.y; y += spacing) {
             auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { -bounds, y, 0 }, .color = color });
-            vertices.push_back(Vertex { .position = { bounds, y, 0 }, .color = color });
+            vertices.push_back(Vertex { .position = { start_coords.x, y, 0 }, .color = color });
+            vertices.push_back(Vertex { .position = { end_coords.x, y, 0 }, .color = color });
             index++;
         }
 
