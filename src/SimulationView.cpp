@@ -152,7 +152,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     auto major_gridline_spacing = spacing * major_gridline_interval;
     {
         WorldDrawScope scope(*this);
-        float bounds = 500 * spacing;
+        float bounds = 50 * spacing;
         // Vector3 start_coords = screen_to_world({ 0, 0 });
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
         // start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
@@ -163,27 +163,48 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
         Vector3 end_coords = { bounds, bounds, 0 };
         end_coords.x -= std::round(m_offset.x / major_gridline_spacing) * major_gridline_spacing;
         end_coords.y -= std::round(m_offset.y / major_gridline_spacing) * major_gridline_spacing;
+        Vector3 center_coords = (start_coords + end_coords) / 2.0;
 
-        sf::Color const major_grid_line_color { 60, 60, 60 };
-        sf::Color const grid_line_color { 25, 25, 25 };
+        sf::Color const major_grid_line_color { 87, 87, 108 };
+        sf::Color const grid_line_color { 25, 25, 37 };
 
         // TODO: Create proper API for it.
         std::vector<Vertex> vertices;
 
         int index = 0;
 
+        auto blend_color = [](sf::Color start, sf::Color end, float fac) {
+            return sf::Color {
+                static_cast<uint8_t>(start.r * (1 - fac) + end.r * fac),
+                static_cast<uint8_t>(start.g * (1 - fac) + end.g * fac),
+                static_cast<uint8_t>(start.b * (1 - fac) + end.b * fac),
+                static_cast<uint8_t>(start.a * (1 - fac) + end.a * fac),
+            };
+        };
+
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
+        // TODO: Add real fog shader instead of THIS thing
         for (double x = start_coords.x; x < end_coords.x; x += spacing) {
-            auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { x, start_coords.y, 0 }, .color = color });
-            vertices.push_back(Vertex { .position = { x, end_coords.y, 0 }, .color = color });
+            auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
+            vertices.push_back(Vertex { .position = { x, start_coords.y, 0 }, .color = sf::Color::Transparent });
+            double factor = std::abs(0.5 - (x - start_coords.x) / (end_coords.x - start_coords.x)) * 2;
+            auto center_color = blend_color(color, sf::Color::Transparent, factor);
+            vertices.push_back(Vertex { .position = { x, center_coords.y, 0 }, .color = center_color });
+            // FIXME: Make this duplicate vertex not needed
+            vertices.push_back(Vertex { .position = { x, center_coords.y, 0 }, .color = center_color });
+            vertices.push_back(Vertex { .position = { x, end_coords.y, 0 }, .color = sf::Color::Transparent });
             index++;
         }
         index = 0;
         for (double y = start_coords.y; y < end_coords.y; y += spacing) {
-            auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { start_coords.x, y, 0 }, .color = color });
-            vertices.push_back(Vertex { .position = { end_coords.x, y, 0 }, .color = color });
+            auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
+            vertices.push_back(Vertex { .position = { start_coords.x, y, 0 }, .color = sf::Color::Transparent });
+            double factor = std::abs(0.5 - (y - start_coords.y) / (end_coords.y - start_coords.y)) * 2;
+            auto center_color = blend_color(color, sf::Color::Transparent, factor);
+            vertices.push_back(Vertex { .position = { center_coords.x, y, 0 }, .color = center_color });
+            // FIXME: Make this duplicate vertex not needed
+            vertices.push_back(Vertex { .position = { center_coords.x, y, 0 }, .color = center_color });
+            vertices.push_back(Vertex { .position = { end_coords.x, y, 0 }, .color = sf::Color::Transparent });
             index++;
         }
 
