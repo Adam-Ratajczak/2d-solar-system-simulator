@@ -58,9 +58,9 @@ void SimulationView::handle_event(GUI::Event& event) {
         if (event.event().mouseWheelScroll.wheel != sf::Mouse::VerticalWheel)
             return;
         if (event.event().mouseWheelScroll.delta > 0)
-            apply_zoom(1.1);
-        else
             apply_zoom(1 / 1.1);
+        else
+            apply_zoom(1.1);
     }
     else if (event.type() == sf::Event::MouseMoved) {
         sf::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
@@ -82,7 +82,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
                 Vector3 qad_delta { drag_delta.x, -drag_delta.y, 0 };
-                set_offset(offset() + (Transform::rotation_around_z(-m_yaw) * qad_delta / scale() / 80));
+                set_offset(offset() + (Transform::rotation_around_z(-m_yaw) * qad_delta * scale() / 320));
                 break;
             }
             case DragMode::Rotate: {
@@ -147,8 +147,7 @@ void SimulationView::handle_event(GUI::Event& event) {
 
 void SimulationView::draw_grid(sf::RenderWindow& window) const {
     constexpr float zoom_step_exponent = 2;
-    auto zoom_rounded_to_power = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom) / std::log2(zoom_step_exponent)));
-    float spacing = 1 / zoom_rounded_to_power;
+    auto spacing = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom / 2) / std::log2(zoom_step_exponent)));
     {
         WorldDrawScope scope(*this);
         constexpr int major_gridline_interval = 4;
@@ -174,14 +173,14 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
         int index = 0;
 
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
-        for (float x = start_coords.x; x < end_coords.x; x += spacing) {
+        for (double x = start_coords.x; x < end_coords.x; x += spacing) {
             auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
             vertices.push_back(Vertex { .position = { x, -bounds, 0 }, .color = color });
             vertices.push_back(Vertex { .position = { x, bounds, 0 }, .color = color });
             index++;
         }
         index = 0;
-        for (float y = start_coords.y; y < end_coords.y; y += spacing) {
+        for (double y = start_coords.y; y < end_coords.y; y += spacing) {
             auto color = index % major_gridline_interval == 0 ? major_grid_line_color : grid_line_color;
             vertices.push_back(Vertex { .position = { -bounds, y, 0 }, .color = color });
             vertices.push_back(Vertex { .position = { bounds, y, 0 }, .color = color });
@@ -217,10 +216,8 @@ Matrix4x4d SimulationView::projection_matrix() const {
     double fov = 80;
     double fd = 1 / std::tan(fov / 2);
     double aspect = size().x / (double)size().y;
-    // TODO: These should be automatically calculated to make grid visible
-    //       for big scales
-    double zFar = 100;
-    double zNear = 0.1;
+    double zFar = 1000 * scale();
+    double zNear = 0.1 * scale();
 
     return { { { fd / aspect, 0, 0, 0 },
         { 0, fd, 0, 0 },
@@ -231,10 +228,9 @@ Matrix4x4d SimulationView::projection_matrix() const {
 Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
-    matrix = matrix * Transform::scale({ scale(), scale(), scale() });
     matrix = matrix * Transform::rotation_around_z(m_yaw);
     matrix = matrix * Transform::rotation_around_x(m_pitch);
-    matrix = matrix * Transform::translation({ 0, 0, -5 });
+    matrix = matrix * Transform::translation({ 0, 0, -scale() });
     return matrix;
 }
 
