@@ -7,7 +7,6 @@
 #include <SFML/Graphics/Color.hpp>
 #include <list>
 
-// TODO: Strip this class of all display-related things.
 class Trail {
     std::vector<Vertex> m_display_trail;
     int m_display_trail_append_offset = 0;
