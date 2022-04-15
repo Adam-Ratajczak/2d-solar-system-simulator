@@ -306,6 +306,8 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
         this->m_simulation_view->set_show_trails(state);
     });
 
+    container.add_widget<GUI::Widget>(); // SPACER
+
     auto restore_defaults_container = container.add_widget<GUI::Container>();
     auto& restore_defaults_layout = restore_defaults_container->set_layout<GUI::HorizontalBoxLayout>();
     restore_defaults_layout.set_spacing(10);
