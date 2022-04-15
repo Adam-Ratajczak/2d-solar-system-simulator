@@ -31,10 +31,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     m_name = name;
     m_orbit_len = period;
 
-    m_display_trail.resize(period * 2);
-
     m_sphere.set_color(m_color);
-    m_trail.push_back(m_pos);
 }
 
 Vector3 Object::attraction(const Object& other) {
@@ -69,26 +66,7 @@ void Object::update(int speed) {
     m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
-    m_display_trail[m_display_trail_append_offset] = Vertex { .position = m_pos / AU, .color = m_color };
-    m_display_trail_append_offset++;
-    if (m_display_trail_length < m_display_trail.size())
-        m_display_trail_length++;
-    if (m_display_trail_append_offset >= m_display_trail.size())
-        m_display_trail_append_offset = 0;
-
-    // if(m_pos != m_trail.back())
-    
-    if(speed < 0){
-        m_trail.pop_back();
-        m_trail.push_front(m_history.get_entry_from_prev(m_trail.size()).pos);
-        // std::cout << m_history.get_entry_from_prev().pos << " " << m_history.get_entry().pos << "\n";
-    }else if(speed > 0){
-        m_trail.push_back(m_pos);
-
-        if (m_trail.size() > m_orbit_len)
-            m_trail.pop_front();
-    }
-    m_trail.update_trail(*m_world.m_simulation_view, m_color);
+    m_trail.update_trail(m_pos, m_color);
 
     auto most_massive_object = m_world.most_massive_object();
     if (most_massive_object == this)
@@ -124,9 +102,8 @@ void Object::draw(SimulationView const& view) {
 
     m_sphere.set_position(scaled_pos);
     m_sphere.draw();
-
-    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data(), m_display_trail_append_offset });
-    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data() + m_display_trail_append_offset, m_display_trail_length - m_display_trail_append_offset });
+    
+    m_trail.draw();
 
     // FIXME: This thing should be in a Widget.
     if (this->m_focused) {

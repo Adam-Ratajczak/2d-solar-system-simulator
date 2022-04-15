@@ -1,28 +1,19 @@
 #pragma once
 
 #include "SimulationView.hpp"
+#include "glwrapper/Vertex.hpp"
 #include "math/Vector3.hpp"
 #include <SFML/Graphics.hpp>
 #include <list>
 
 // TODO: Strip this class of all display-related things.
 class Trail {
-    std::list<Vector3> m_trail;
-    Vector3 m_prev_offset, m_prev_window_size;
-    double m_prev_zoom {};
-    size_t m_append_index = 0;
-    size_t m_max_trail_size = 0;
-    sf::VertexArray m_trail_vertexbuffer;
-    void m_recalculate(SimulationView const& view, sf::Color m_color);
-
+    std::vector<Vertex> m_display_trail;
+    size_t m_display_trail_append_offset = 0;
+    size_t m_display_trail_length = 0;
+    
 public:
     Trail(size_t max_trail_size);
-    void push_back(const Vector3& pos);
-    void push_front(const Vector3& pos);
-    void pop_back();
-    void pop_front();
-    void draw(SimulationView const& view, sf::Color color);
-    void update_trail(SimulationView const& view, const sf::Color& m_color);
-
-    unsigned size() const { return m_trail.size(); }
+    void draw();
+    void update_trail(Vector3 pos, const sf::Color& m_color);
 };

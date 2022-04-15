@@ -340,8 +340,8 @@ void EssaGUI::recalculate_forward_simulation() {
     m_forward_simulated_world.update(500);
 
     // FIXME: bruh trail invalidation
-    forward_simulated_new_object->trail().push_front(m_new_object->m_pos);
-    forward_simulated_new_object->trail().update_trail(*m_simulation_view, forward_simulated_new_object->m_color);
+    // forward_simulated_new_object->trail().push_front(m_new_object->m_pos);
+    // forward_simulated_new_object->trail().update_trail(*m_simulation_view, forward_simulated_new_object->m_color);
 
     m_forward_simulation_is_valid = true;
 }
