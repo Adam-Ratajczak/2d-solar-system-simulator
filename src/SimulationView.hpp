@@ -23,9 +23,8 @@ public:
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
-        m_rotate_x = 0.7;
-        m_rotate_y = 0;
-        m_rotate_z = 0;
+        m_pitch = 0.7;
+        m_yaw = 0;
     }
 
     Vector3 screen_to_world(Vector3 v) const;
@@ -73,9 +72,11 @@ private:
     void draw_grid(sf::RenderWindow&) const;
 
     Vector3 m_offset;
+    double m_yaw = 0;
+    double m_pitch = 0.7;
+
     World& m_world;
     double m_zoom = 1;
-    double m_rotate_x = 0.7, m_rotate_y = 0, m_rotate_z = 0;
     Object* m_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;

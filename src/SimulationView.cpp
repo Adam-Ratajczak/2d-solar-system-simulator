@@ -82,13 +82,13 @@ void SimulationView::handle_event(GUI::Event& event) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
                 Vector3 qad_delta { drag_delta.x, -drag_delta.y, 0 };
-                set_offset(offset() + Transform::rotation_around_y(m_rotate_x - 0.7) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z) * qad_delta / scale() / 80);
+                set_offset(offset() + (Transform::rotation_around_z(-m_yaw) * qad_delta / scale() / 80));
                 break;
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
-                m_rotate_y += drag_delta.x / sizes.x * M_PI;
-                m_rotate_x += drag_delta.y / sizes.y * M_PI;
+                m_yaw += drag_delta.x / sizes.x * M_PI;
+                m_pitch += drag_delta.y / sizes.y * M_PI;
                 break;
             }
             default:
@@ -232,7 +232,8 @@ Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
     matrix = matrix * Transform::scale({ scale(), scale(), scale() });
-    matrix = matrix * Transform::rotation_around_x(m_rotate_x) * Transform::rotation_around_y(m_rotate_y) * Transform::rotation_around_z(m_rotate_z);
+    matrix = matrix * Transform::rotation_around_z(m_yaw);
+    matrix = matrix * Transform::rotation_around_x(m_pitch);
     matrix = matrix * Transform::translation({ 0, 0, -5 });
     return matrix;
 }
