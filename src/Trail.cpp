@@ -8,10 +8,11 @@
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
-Trail::Trail(size_t max_trail_size)
-    : m_display_trail(max_trail_size){}
+Trail::Trail(size_t max_trail_size, sf::Color color)
+    : m_display_trail(max_trail_size)
+    , m_color(color){}
 
-void Trail::update_trail(Vector3 pos, const sf::Color& m_color) {
+void Trail::push_back(Vector3 pos) {
     m_display_trail[m_display_trail_append_offset] = Vertex { .position = pos / AU, .color = m_color };
     m_display_trail_append_offset++;
     if (m_display_trail_length < m_display_trail.size())
@@ -20,9 +21,16 @@ void Trail::update_trail(Vector3 pos, const sf::Color& m_color) {
         m_display_trail_append_offset = 0;
 }
 
+void Trail::push_front(Vector3 pos) {
+    m_display_trail_append_offset--;
+    if (m_display_trail_append_offset < 0)
+        m_display_trail_append_offset = m_display_trail_length - 1;
+    m_display_trail[m_display_trail_append_offset] = Vertex { .position = pos / AU, .color = m_color };
+}
+
 void Trail::draw() {
 
-    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data(), m_display_trail_append_offset });
-    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data() + m_display_trail_append_offset, m_display_trail_length - m_display_trail_append_offset });
+    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data(), static_cast<size_t>(m_display_trail_append_offset) });
+    GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data() + m_display_trail_append_offset, static_cast<size_t>(m_display_trail_length - m_display_trail_append_offset) });
 
 }

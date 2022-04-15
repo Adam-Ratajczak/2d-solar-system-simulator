@@ -20,7 +20,7 @@
 
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
-    , m_trail(period * 2)
+    , m_trail(period * 2, color)
     , m_sphere(radius / AU, 36, 18)
     , m_history(period, { pos, vel }) {
     m_gravity_factor = mass * G;
@@ -66,7 +66,11 @@ void Object::update(int speed) {
     m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
     m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
-    m_trail.update_trail(m_pos, m_color);
+    if(speed > 0)
+        m_trail.push_back(m_pos);
+    else if(speed < 0){
+        m_trail.push_front(m_pos);
+    }
 
     auto most_massive_object = m_world.most_massive_object();
     if (most_massive_object == this)
