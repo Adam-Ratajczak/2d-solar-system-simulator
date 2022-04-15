@@ -3,16 +3,12 @@
 #include "math/Vector3.hpp"
 #include <vector>
 
-struct Entry {
-    Vector3 pos, vel;
-};
-
 class History {
     struct Node {
         Node* prev;
         Node* next;
 
-        std::vector<Entry> entry;
+        std::vector<Vector3> entry;
         int vector_pos, vector_size;
 
         Node(Node* _prev, Node* _next, unsigned _size) {
@@ -37,7 +33,7 @@ class History {
     bool m_edge = true;
 
 public:
-    History(unsigned segments, Entry first_entry);
+    History(unsigned segments, Vector3 first_entry);
 
     History(History const&) = delete;
     History& operator=(History const&) = delete;
@@ -48,10 +44,10 @@ public:
     bool move_backward();
     bool on_edge() const{return m_edge;}
 
-    Entry get_entry() const;
-    Entry get_entry_from_prev(unsigned index) const;
-    void push_back(const Entry entry);
-    void push_front(const Entry entry);
+    Vector3 get_entry() const;
+    Vector3 get_entry_from_prev(unsigned index) const;
+    void push_back(const Vector3 entry);
+    void push_front(const Vector3 entry);
 
     ~History();
 };
