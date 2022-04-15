@@ -13,6 +13,7 @@
 #include <limits>
 #include <list>
 #include <string>
+#include <vector>
 
 class Object : public PySSA::WrappedObject<Object> {
 protected:
@@ -80,6 +81,8 @@ public:
     void set_radius(double radius);
 
     Sphere& sphere(){return m_sphere;}
+
+    std::vector<std::string> get_info() const;
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);

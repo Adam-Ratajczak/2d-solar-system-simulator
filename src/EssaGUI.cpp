@@ -46,6 +46,8 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         m_focused = focusing;
         // std::cout << m_focused << "\n";
     };
+    m_focused_object_info = m_create_focused_object_info_gui();
+    m_focused_object_info->set_visible(false);
 
     m_world.m_simulation_view = m_simulation_view.get();
 
@@ -157,8 +159,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                         this->m_orbiit_tilt_control->set_unit("[rad]");
                         this->m_orbiit_tilt_control->set_value(tilt / 180 * M_PI);
                         this->m_orbiit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
-                    }
-                    else {
+                    }else {
                         this->m_velocity_control->set_unit("m/s");
                         this->m_velocity_control->set_value(vel * (1.f / 3.6));
                         this->m_apogee_control->set_unit("km");
@@ -368,6 +369,14 @@ void EssaGUI::relayout() {
 
 void EssaGUI::update() {
     // FIXME: We should do this on every tick or just stop the main simulation.
+
+    if(m_simulation_view->focused_object() != nullptr){
+        m_focused_object_info->set_visible(true);
+        m_update_focused_object_info_gui(m_simulation_view->focused_object());
+    }else {
+        m_focused_object_info->set_visible(false);
+    }
+
     if (!m_forward_simulation_is_valid)
         recalculate_forward_simulation();
 }

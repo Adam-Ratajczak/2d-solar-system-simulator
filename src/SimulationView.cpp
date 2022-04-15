@@ -9,6 +9,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cmath>
+#include <optional>
 #include <sstream>
 
 void SimulationView::start_focus_measure() {
@@ -335,6 +336,12 @@ void SimulationView::update() {
     // Handle focus
     if (m_focused_object)
         set_offset(-m_focused_object->m_pos / AU);
+}
+
+Object* SimulationView::focused_object() const{
+    if(m_focused_object != nullptr)
+        return m_focused_object;
+    return {};
 }
 
 static size_t s_world_draw_scope_recursion = 0;

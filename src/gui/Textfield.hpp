@@ -22,7 +22,7 @@ public:
     virtual void draw(sf::RenderWindow& window) const override;
 
     std::string get_content() const { return m_content; }
-    void set_content(std::string content) { m_content = content; }
+    Textfield& set_content(std::string content) { m_content = content; return *this;}
 
     unsigned get_font_size() const { return m_font_size; }
     void set_font_size(unsigned font_size) { m_font_size = font_size; }

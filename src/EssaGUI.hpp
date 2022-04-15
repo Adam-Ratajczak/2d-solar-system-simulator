@@ -18,6 +18,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <random>
+#include <vector>
 
 class EssaGUI : public GUI::Container {
 public:
@@ -58,6 +59,7 @@ private:
 
     std::shared_ptr<Container> m_create_object_from_params_container;
     std::shared_ptr<Container> m_create_object_from_orbit_container;
+    std::shared_ptr<Container> m_focused_object_info;
 
     std::shared_ptr<Container> m_submit_container;
 
@@ -68,6 +70,11 @@ private:
 
     std::shared_ptr<Container> m_create_object_from_params_gui(std::shared_ptr<Container> parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
+    std::shared_ptr<Container> m_create_focused_object_info_gui();
+    void m_update_focused_object_info_gui(Object* focused);
+
+    std::vector<std::shared_ptr<GUI::Textfield>> m_info_content;
+
     void m_create_object_gui(Container& container);
     std::unique_ptr<Object> m_create_object_from_params() const;
     std::unique_ptr<Object> m_create_object_from_orbit() const;

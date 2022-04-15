@@ -7,6 +7,7 @@
 #include "math/Vector3.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>
+#include <optional>
 
 class Object;
 class World;
@@ -63,6 +64,7 @@ public:
     void set_iterations(int i) { m_iterations = i; }
 
     World& world(){return m_world;}
+    Object* focused_object() const;
 
 private:
     virtual void handle_event(GUI::Event&) override;
