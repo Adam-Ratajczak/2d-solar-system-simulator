@@ -81,6 +81,7 @@ Object* World::get_object_by_name(std::string const& name) {
 void World::reset(){
     m_object_list.clear();
     m_most_massive_object = nullptr;
+    m_simulation_view->set_focused(nullptr);
     m_date.set_date(1990.3);
     prepare_solar(*this);
 }

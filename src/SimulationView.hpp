@@ -65,6 +65,7 @@ public:
 
     World& world(){return m_world;}
     Object* focused_object() const;
+    void set_focused(Object* obj){m_focused_object = obj;}
 
 private:
     virtual void handle_event(GUI::Event&) override;
