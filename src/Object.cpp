@@ -159,11 +159,12 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
-    double a = (apogee.value() + perigee.value()) * std::cos(alpha.rad()) / 2;
+    double a = (apogee.value() + perigee.value()) / 2;
     double b = std::sqrt(apogee.value() * perigee.value());
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
-    Vector3 pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * b, std::sin(alpha.rad()) * a);
+    // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
+    Vector3 pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
 
@@ -187,8 +188,6 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
 
     vel += this->m_vel;
     result->m_vel = vel;
-
-    // std::cout << result->m_orbit_len << "\n";
 
     return result;
 }
@@ -286,7 +285,7 @@ PySSA::Object Object::python_get_name() const {
 }
 
 PySSA::Object Object::python_get_focused() const {
-    return PySSA::Object::create(m_focused);
+    return PySSA::Object::create(this == m_world.m_simulation_view->focused_object());
 }
 
 PySSA::Object Object::python_get_color() const {

@@ -171,7 +171,6 @@ std::unique_ptr<Object> EssaGUI::m_create_object_from_params() const {
     Vector3 vel(std::cos(theta) * velocity, std::sin(theta) * velocity);
 
     sf::Color color = m_color_control->value();
-    // std::cout << (int)color.r << "," << (int)color.g << "," << (int)color.b << "," << (int)color.a << std::endl;
 
     std::string name = m_name_textbox->get_content();
 

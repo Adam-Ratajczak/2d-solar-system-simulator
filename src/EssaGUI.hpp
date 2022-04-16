@@ -90,5 +90,5 @@ private:
     std::unique_ptr<Object> m_new_object;
     Vector3 m_new_object_pos;
     int m_saved_speed = 0;
-    void recalculate_forward_simulation();
+    void m_recalculate_forward_simulation();
 };

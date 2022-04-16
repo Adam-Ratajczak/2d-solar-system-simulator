@@ -24,12 +24,9 @@ protected:
 
     Vector3 m_pos;
 
-    // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
     World& m_world;
-    void m_draw_trail();
-    Vector3 m_prev_offset;
     Vector3 m_attraction_factor;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
@@ -39,9 +36,11 @@ protected:
     bool m_is_forward_simulated = false;
     Sphere m_sphere;
     int m_creation_date;
+    Vector3 m_vel;
+    std::string m_name;
+    sf::Color m_color;
 
 public:
-    // FIXME: Too much arguments!!!
     Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -51,12 +50,9 @@ public:
     Object(Object&& other) = delete;
     Object& operator=(Object&& other) = delete;
 
-    Vector3 m_vel;
-    std::string m_name;
-    bool m_focused = 0;
-    sf::Color m_color;
-
     Vector3 render_position() const { return m_pos / AU; }
+
+    std::string name() const{return m_name;}
 
     void update_forces(bool reverse);
     void update(int speed);
@@ -77,6 +73,7 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
+    double pos_change_angle();
     int creation_date() const{return m_creation_date;}
 
     static void setup_python_bindings(TypeSetup);

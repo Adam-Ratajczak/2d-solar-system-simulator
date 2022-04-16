@@ -72,7 +72,7 @@ void World::draw(SimulationView const& view) const {
 
 Object* World::get_object_by_name(std::string const& name) {
     for (auto& obj : m_object_list) {
-        if (obj->m_name == name)
+        if (obj->name() == name)
             return obj.get();
     }
     return nullptr;

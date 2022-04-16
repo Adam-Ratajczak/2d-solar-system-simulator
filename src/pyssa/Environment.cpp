@@ -112,7 +112,7 @@ PyObject* tupleparser_test(PyObject*, PyObject* args)
     ::Object* o3 {};
     if(!parse_arguments(args_py, "O!O!O!", Arg::CheckedType<::Object>{o1}, Arg::CheckedType<::Object>{o2}, Arg::CheckedType<::Object>{o3}))
         return nullptr;
-    std::cout << o1->m_name << "," << o2->m_name << "," << o3->m_name << std::endl;
+    std::cout << o1->name() << "," << o2->name() << "," << o3->name() << std::endl;
     Py_RETURN_NONE;
 }
 

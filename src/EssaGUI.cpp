@@ -172,6 +172,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         m_simulation_view->set_offset(sf::Vector2f(0, 0));
         m_simulation_view->set_zoom(1);
         m_simulation_view->reset_rotation();
+        m_simulation_view->set_focused(nullptr);
     };
     m_home_button->set_tooltip_text("Reset coordinates");
 }
@@ -305,7 +306,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     };
 }
 
-void EssaGUI::recalculate_forward_simulation() {
+void EssaGUI::m_recalculate_forward_simulation() {
     std::unique_ptr<Object> new_object;
 
     // FIXME: The object should be created only once and its parameters adjusted
@@ -352,7 +353,7 @@ void EssaGUI::update() {
     }
 
     if (!m_forward_simulation_is_valid)
-        recalculate_forward_simulation();
+        m_recalculate_forward_simulation();
 }
 
 void EssaGUI::draw(sf::RenderWindow& window) const {

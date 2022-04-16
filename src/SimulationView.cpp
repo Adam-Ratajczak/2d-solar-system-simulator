@@ -14,7 +14,6 @@
 
 void SimulationView::start_focus_measure() {
     if (m_focused_object != nullptr) {
-        m_focused_object->m_focused = false;
         m_focused_object = nullptr;
     }
     m_focus_measure = true;
@@ -43,7 +42,6 @@ void SimulationView::handle_event(GUI::Event& event) {
                 if (on_focus_measure) {
                     on_focus_measure(m_focused_object);
                 }
-                m_focused_object->m_focused = false;
                 m_focused_object = nullptr;
             }
             event.set_handled();
@@ -74,7 +72,6 @@ void SimulationView::handle_event(GUI::Event& event) {
             m_is_dragging = true;
 
             if (m_drag_mode == DragMode::Pan && m_focused_object) {
-                m_focused_object->m_focused = false;
                 m_focused_object = nullptr;
                 m_offset.z = 0;
             }
