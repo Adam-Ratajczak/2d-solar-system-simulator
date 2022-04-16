@@ -9,6 +9,7 @@
 #include "gui/ImageButton.hpp"
 #include "gui/PythonREPL.hpp"
 #include "gui/StateTextButton.hpp"
+#include "gui/TextButton.hpp"
 #include "gui/Textbox.hpp"
 #include "gui/Textfield.hpp"
 
@@ -181,13 +182,44 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 }
 
 void EssaGUI::m_create_simulation_settings_gui(Container& container) {
-    // TODO: Split it into Simulation Settings and Display Settings
     container.set_size({ 500.0_px, 500.0_px });
     container.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
     auto label = container.add_widget<GUI::Textfield>();
-    label->set_content("Simulation Settings");
+    label->set_content("Display Settings");
     label->set_size({ Length::Auto, 30.0_px });
     label->set_alignment(GUI::Align::Center);
+    label->set_id("settings_label");
+
+    auto setting_toggle_container = container.add_widget<GUI::Container>();
+    setting_toggle_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(0);
+    setting_toggle_container->set_size({Length::Auto, 30.0_px});
+    auto display_settings_toggle = setting_toggle_container->add_widget<GUI::TextButton>();
+    display_settings_toggle->set_content("Display Settings");
+    display_settings_toggle->set_display_attributes(sf::Color::Red, sf::Color::Green, sf::Color::White);
+    display_settings_toggle->set_active_content("Display Settings");
+    display_settings_toggle->set_active_display_attributes(sf::Color::Green, sf::Color::Red, sf::Color::White);
+    display_settings_toggle->set_active(true);
+    display_settings_toggle->set_toggleable(true);
+    display_settings_toggle->set_size({Length::Auto, 20.0_px});
+    display_settings_toggle->set_alignment(GUI::Align::Center);
+
+    auto simulation_settings_toggle = setting_toggle_container->add_widget<GUI::TextButton>();
+    simulation_settings_toggle->set_content("Simulation Settings");
+    simulation_settings_toggle->set_display_attributes(sf::Color::Red, sf::Color::Green, sf::Color::White);
+    simulation_settings_toggle->set_active_content("Simulation Settings");
+    simulation_settings_toggle->set_active_display_attributes(sf::Color::Green, sf::Color::Red, sf::Color::White);
+    simulation_settings_toggle->set_active(false);
+    simulation_settings_toggle->set_toggleable(true);
+    simulation_settings_toggle->set_size({Length::Auto, 20.0_px});
+    simulation_settings_toggle->set_alignment(GUI::Align::Center);
+
+    display_settings_toggle->on_change = [simulation_settings_toggle = simulation_settings_toggle.get()](bool state){
+        simulation_settings_toggle->set_active(!state);
+    };
+
+    simulation_settings_toggle->on_change = [display_settings_toggle = display_settings_toggle.get()](bool state){
+        display_settings_toggle->set_active(!state);
+    };
 
     auto iterations_control = container.add_widget<GUI::ValueSlider>(1, 1000);
     iterations_control->set_name("Iterations");
@@ -198,6 +230,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         if (value > 0)
             m_simulation_view->set_iterations(value);
     };
+    iterations_control->set_class_name("Simulation");
 
     auto tick_length_control = container.add_widget<GUI::ValueSlider>(60, 60 * 60 * 24, 60);
     tick_length_control->set_name("Tick Length");
@@ -208,6 +241,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         if (value > 0)
             m_world.set_simulation_seconds_per_tick(value);
     };
+    tick_length_control->set_class_name("Simulation");
 
     auto fov_control = container.add_widget<GUI::ValueSlider>(20, 160, 1);
     fov_control->set_name("FOV");
@@ -218,12 +252,14 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         if (value > 0)
             m_simulation_view->set_fov(Angle { static_cast<float>(value), Angle::Unit::Deg });
     };
+    fov_control->set_class_name("Display");
 
     auto toggle_sphere_mode_container
         = container.add_widget<GUI::Container>();
     auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
     toggle_sphere_mode_layout.set_spacing(10);
     toggle_sphere_mode_container->set_size({ Length::Auto, 30.0_px });
+    toggle_sphere_mode_container->set_class_name("Display");
 
     auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
     sphere_mode_label->set_content("Toggle Sphere mode: ");
@@ -241,6 +277,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
 
     auto add_toggle = [&](std::string title, auto on_change) {
         auto toggle_container = container.add_widget<GUI::Container>();
+        toggle_container->set_class_name("Display");
         auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
         toggle_layout.set_spacing(10);
         toggle_container->set_size({ Length::Auto, 30.0_px });
@@ -273,6 +310,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     auto& restore_sim_layout = restore_sim_container->set_layout<GUI::HorizontalBoxLayout>();
     restore_sim_layout.set_spacing(10);
     restore_sim_container->set_size({ Length::Auto, 30.0_px });
+    restore_sim_container->set_class_name("Simulation");
 
     auto restore_sim_label = restore_sim_container->add_widget<GUI::Textfield>();
     restore_sim_label->set_content("Restore Simulation state: ");
@@ -307,6 +345,37 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         this->m_simulation_view->toggle_label_visibility(true);
         toggle_sphere_mode->set_index(0);
     };
+    
+    display_settings_toggle->on_change = [this
+                                        , simulation_settings_toggle = simulation_settings_toggle.get()
+                                        , container = &container](bool state) mutable{
+        simulation_settings_toggle->set_active(!state);
+        this->m_switch_settings(state, container);
+    };
+
+    simulation_settings_toggle->on_change = [this
+                                        , display_settings_toggle = display_settings_toggle.get()
+                                        , container = &container](bool state) mutable{
+        display_settings_toggle->set_active(!state);
+        this->m_switch_settings(!state, container);
+    };
+
+    m_switch_settings(true, &container);
+}
+void EssaGUI::m_switch_settings(bool state, GUI::Container *container){
+    auto display_settings = container->find_widget_by_class_name("Display");
+    auto sim_settings = container->find_widget_by_class_name("Simulation");
+
+    for(auto& d : display_settings)
+        d->set_visible(state);
+
+    for(auto& s : sim_settings)
+        s->set_visible(!state);
+    
+    if(state)
+        container->find_widget_of_type<GUI::Textfield>("settings_label")->set_content("Display Settings");
+    else
+        container->find_widget_of_type<GUI::Textfield>("settings_label")->set_content("Simulation Settings");
 }
 
 void EssaGUI::m_recalculate_forward_simulation() {
