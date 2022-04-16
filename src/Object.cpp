@@ -64,14 +64,13 @@ void Object::update_forces(bool reverse) {
 void Object::update(int speed) {
     if(m_history.on_edge())
         m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
+    else 
+        m_vel = m_history.get_entry();
 
     if (speed > 0)
         m_history.push_back(m_vel);
     else if (speed < 0)
         m_history.push_front();
-
-    auto entry = m_history.get_entry();
-    m_vel = entry;
 
     if(speed < 0 && !m_history.on_edge())
         m_pos -= m_vel * m_world.simulation_seconds_per_tick();

@@ -72,10 +72,12 @@ void History::push_back(const Vector3 entry){
     if(!move_forward()){
         if(m_current->vector_size < m_segments){
             m_current->entry[m_current->vector_pos] = entry;
-        }else{
+        }else if(m_current->next == nullptr){
             m_current->next = new Node(m_current, nullptr, m_segments);
             m_current = m_current->next;
             m_current->entry[m_current->vector_pos] = entry;
+        }else {
+            m_edge = false;
         }
         m_current->vector_size++;
     }
