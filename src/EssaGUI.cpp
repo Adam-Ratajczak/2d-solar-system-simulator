@@ -150,7 +150,10 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 
                 m_add_object_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
                 m_add_object_button->on_click = [&world, this]() {
-                    world.add_object(m_create_object_from_params());
+                    if(m_automatic_orbit_calculation)
+                        world.add_object(m_create_object_from_orbit());
+                    else
+                        world.add_object(m_create_object_from_params());
                     m_simulation_view->m_measured = false;
                 };
                 m_add_object_button->set_tooltip_text("Add object");
@@ -309,8 +312,6 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
 void EssaGUI::m_recalculate_forward_simulation() {
     std::unique_ptr<Object> new_object;
 
-    // FIXME: The object should be created only once and its parameters adjusted
-    //        to new settings.
     if (m_automatic_orbit_calculation)
         new_object = m_create_object_from_orbit();
     else
@@ -328,10 +329,6 @@ void EssaGUI::m_recalculate_forward_simulation() {
     m_forward_simulated_world.add_object(std::move(new_object));
 
     m_forward_simulated_world.update(500);
-
-    // FIXME: bruh trail invalidation
-    // forward_simulated_new_object->trail().push_front(m_new_object->m_pos);
-    // forward_simulated_new_object->trail().update_trail(*m_simulation_view, forward_simulated_new_object->m_color);
 
     m_forward_simulation_is_valid = true;
 }

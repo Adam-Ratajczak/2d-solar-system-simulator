@@ -208,24 +208,30 @@ std::unique_ptr<Object> EssaGUI::m_create_object_from_orbit() const {
     if (!m_focused)
         return nullptr;
     double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
-    Distance radius = { static_cast<float>(m_radius_control->value()), Distance::Kilometer };
+    Distance radius = { static_cast<float>(m_radius_control->value() * 1000), Distance::Kilometer };
     Distance apogee, perigee;
     Angle angle, tilt;
 
     if (m_toggle_unit_button->is_active()) {
-        apogee = { static_cast<float>(m_apogee_control->value()), Distance::AU };
-        perigee = { static_cast<float>(m_perigee_control->value()), Distance::AU };
+        apogee = { static_cast<float>(m_apogee_control->value() * AU), Distance::Au };
+        perigee = { static_cast<float>(m_perigee_control->value() * AU), Distance::Au };
 
         angle = { static_cast<float>(m_orbit_angle_control->value()), Angle::Rad };
         tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Rad };
     }
     else {
-        apogee = { static_cast<float>(m_apogee_control->value()), Distance::Kilometer };
-        perigee = { static_cast<float>(m_perigee_control->value()), Distance::Kilometer };
+        apogee = { static_cast<float>(m_apogee_control->value() * 1000), Distance::Kilometer };
+        perigee = { static_cast<float>(m_perigee_control->value() * 1000), Distance::Kilometer };
 
         angle = { static_cast<float>(m_orbit_angle_control->value()), Angle::Deg };
         tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Deg };
     }
+
+    // std::cout << radius << "\n";
+    // std::cout << apogee << "\n";
+    // std::cout << perigee << "\n";
+    // std::cout << angle << "\n";
+    // std::cout << tilt << "\n";
 
     return m_focused->create_object_relative_to(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content(), 0.0_deg);
 }
