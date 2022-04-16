@@ -131,19 +131,20 @@ public:
 
     virtual void dump(unsigned depth) override;
 
-    Widget* find_widget(std::string_view) const;
-    Widget* find_widget_recursively(std::string_view) const;
+    Widget* find_widget_by_id(std::string_view) const;
+    std::vector<Widget*> find_widget_by_class_name(std::string_view) const;
+    Widget* find_widget_by_id_recursively(std::string_view) const;
     
     template<class T> requires(std::is_base_of_v<Widget, T>)
     T* find_widget_of_type(std::string_view name) const
     {
-        return dynamic_cast<T*>(find_widget(name));
+        return dynamic_cast<T*>(find_widget_by_id(name));
     }
     
     template<class T> requires(std::is_base_of_v<Widget, T>)
     T* find_widget_of_type_recursively(std::string_view name) const
     {
-        return dynamic_cast<T*>(find_widget_recursively(name));
+        return dynamic_cast<T*>(find_widget_by_id_recursively(name));
     }
 
 protected:
