@@ -9,7 +9,7 @@
 #include <iostream>
 
 Trail::Trail(size_t max_trail_size, sf::Color color)
-    : m_display_trail(max_trail_size)
+    : m_display_trail((max_trail_size == 0) ? 1000 : max_trail_size)
     , m_color(color){}
 
 void Trail::push_back(Vector3 pos) {

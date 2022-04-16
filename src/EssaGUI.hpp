@@ -36,20 +36,23 @@ private:
     virtual void relayout() override;
     virtual void update() override;
 
-    std::shared_ptr<GUI::ImageButton> m_creative_mode_button;
     std::shared_ptr<GUI::ImageButton> m_toggle_orbit_direction_button;
     std::shared_ptr<GUI::ImageButton> m_toggle_unit_button;
-    std::shared_ptr<GUI::ImageButton> m_toggle_calera_mode_at_focus;
+    std::shared_ptr<GUI::ImageButton> m_toggle_camera_mode_at_focus;
 
     std::shared_ptr<GUI::Button> m_home_button;
     std::shared_ptr<GUI::Button> m_coords_button;
     std::shared_ptr<GUI::Button> m_add_object_button;
 
     std::shared_ptr<GUI::ValueSlider> m_radius_control;
+
     std::shared_ptr<GUI::ValueSlider> m_velocity_control;
-    std::shared_ptr<GUI::ValueSlider> m_direction_control;
+    std::shared_ptr<GUI::ValueSlider> m_direction_xz_control;
+    std::shared_ptr<GUI::ValueSlider> m_direction_yz_control;
+    std::shared_ptr<GUI::ValueSlider> m_y_position_control;
+
     std::shared_ptr<GUI::ValueSlider> m_orbit_angle_control;
-    std::shared_ptr<GUI::ValueSlider> m_orbiit_tilt_control;
+    std::shared_ptr<GUI::ValueSlider> m_orbit_tilt_control;
     std::shared_ptr<GUI::ValueSlider> m_apogee_control;
     std::shared_ptr<GUI::ValueSlider> m_perigee_control;
 
@@ -69,9 +72,9 @@ private:
     std::shared_ptr<SimulationView> m_simulation_view;
     
     Object* m_focused = nullptr;
-    bool m_automatic_orbit_calculation = false, m_units = false;
+    bool m_automatic_orbit_calculation = false;
 
-    std::shared_ptr<GUI::ImageButton> m_create_toggle_units_button();
+    std::shared_ptr<GUI::ImageButton> m_create_toggle_unit_button();
     std::shared_ptr<Container> m_create_object_from_params_gui(std::shared_ptr<Container> parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(std::shared_ptr<Container> parent);
     std::shared_ptr<Container> m_create_focused_object_info_gui();

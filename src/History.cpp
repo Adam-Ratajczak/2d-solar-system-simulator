@@ -2,6 +2,8 @@
 #include <iostream>
 
 History::History(unsigned segments, Entry first_entry) : m_segments(segments), m_first_entry(first_entry){
+    if(m_segments < 1000)
+        m_segments = 1000;
     m_root = new Node(nullptr, nullptr, m_segments);
     m_current = m_root;
     m_current->entry[0] = first_entry.pos;

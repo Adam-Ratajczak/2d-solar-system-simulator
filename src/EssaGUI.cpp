@@ -126,23 +126,23 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                 };
                 m_coords_button->set_tooltip_text("Set position");
 
-                m_toggle_unit_button = 
+                auto creative_mode_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
+                creative_mode_button->set_toggleable(true);
+                creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
-                m_creative_mode_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
-                m_creative_mode_button->set_toggleable(true);
-                m_creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
+                creative_mode_button->on_change = [this](bool state) {
+                    m_create_object_from_params_container->set_visible(!state);
+                    m_create_object_from_orbit_container->set_visible(state);
+                    m_toggle_orbit_direction_button->set_visible(state);
+                    m_automatic_orbit_calculation = state;
+                };
+
+                m_toggle_unit_button = m_create_toggle_unit_button();
 
                 m_toggle_orbit_direction_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/orbitDirectionButton.png"));
                 m_toggle_orbit_direction_button->set_toggleable(true);
                 m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
                 m_toggle_orbit_direction_button->on_change = [](bool state) {
-                };
-
-                m_creative_mode_button->on_change = [this](bool state) {
-                    m_create_object_from_params_container->set_visible(!state);
-                    m_create_object_from_orbit_container->set_visible(state);
-                    m_toggle_orbit_direction_button->set_visible(state);
-                    m_automatic_orbit_calculation = state;
                 };
                 m_toggle_orbit_direction_button->set_visible(false);
 
@@ -169,7 +169,10 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
     m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
     m_home_button->on_click = [this]() {
-        m_simulation_view->reset();
+        m_simulation_view->set_offset(sf::Vector2f(0, 0));
+        m_simulation_view->set_zoom(1);
+        m_simulation_view->reset_rotation();
+        m_simulation_view->set_focused(nullptr);
     };
     m_home_button->set_tooltip_text("Reset coordinates");
 }

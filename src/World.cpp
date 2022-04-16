@@ -83,6 +83,7 @@ void World::reset(){
     m_most_massive_object = nullptr;
     m_simulation_view->set_focused(nullptr);
     m_date.set_date(1990.3);
+    m_object_history.clear_history(0);
     prepare_solar(*this);
 }
 
