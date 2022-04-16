@@ -73,7 +73,6 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
-    double pos_change_angle();
     int creation_date() const{return m_creation_date;}
 
     static void setup_python_bindings(TypeSetup);
