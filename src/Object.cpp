@@ -122,10 +122,10 @@ std::vector<std::string> Object::get_info() const{
     result.push_back(std::to_string(exponent));
     result.push_back(std::to_string((int)m_radius / 1000));
     result.push_back(std::to_string((int)m_vel.magnitude()));
-    result.push_back(std::to_string((int)get_distance(this->m_pos, m_world.most_massive_object()->m_pos) / AU));
-    result.push_back(std::to_string((int)m_ap / AU));
+    result.push_back(std::to_string(get_distance(this->m_pos, m_world.most_massive_object()->m_pos) / AU));
+    result.push_back(std::to_string(m_ap / AU));
     result.push_back(std::to_string((int)m_ap_vel));
-    result.push_back(std::to_string((int)m_pe));
+    result.push_back(std::to_string(m_pe / AU));
     result.push_back(std::to_string((int)m_pe_vel));
     result.push_back(std::to_string(m_orbit_len / 365.25));
     result.push_back(std::to_string(eccencrity));

@@ -18,61 +18,61 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_focused_object_info_gui(){
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // mass value
     subcontainer->add_widget<GUI::Textfield>()->set_content(" * 10 ^ ");                    // scientific notation
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // exponent
-    subcontainer->add_widget<GUI::Textfield>()->set_content("kg");                          // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("kg").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Radius: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // radius value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("km");                          // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("km").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Velocity: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // velocity value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("m / s");                       // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("m / s").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Distance: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // distance value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("AU");                          // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("AU").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Apogee: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // apogee value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("AU");                          // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("AU").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Velocity at apogee: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // apogee vel value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("m / s");                       // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("m / s").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Perigee: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // perigee value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("AU");                          // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("AU").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Velocity at perigee: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // perigee vel value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("m / s");                       // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("m / s").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
     subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     subcontainer->add_widget<GUI::Textfield>()->set_content("Period: ").set_size({150.0_px, Length::Auto});
     m_info_content.push_back(subcontainer->add_widget<GUI::Textfield>());                   // period value
-    subcontainer->add_widget<GUI::Textfield>()->set_content("years");                       // unit
+    subcontainer->add_widget<GUI::Textfield>()->set_content("years").set_alignment(GUI::Align::CenterRight);
 
     subcontainer = container->add_widget<GUI::Container>();
     subcontainer->set_class_name("hideable");
