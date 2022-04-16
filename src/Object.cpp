@@ -159,7 +159,7 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
-    double a = (apogee.value() + perigee.value()) / 2;
+    double a = (apogee.value() + perigee.value()) * std::cos(alpha.rad()) / 2;
     double b = std::sqrt(apogee.value() * perigee.value());
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
