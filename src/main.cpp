@@ -20,7 +20,7 @@ int main() {
     GUI::Application application { window };
     auto& gui = application.set_main_widget<EssaGUI>(world);
 
-    prepare_solar(world);
+    world.reset();
 
     // PySSA test
     PySSA::Environment env(world);
@@ -35,15 +35,13 @@ int main() {
     while (window.isOpen()) {
         application.handle_events();
 
-        // FIXME: This should be done by Application.
-        gui.do_update();
+        application.update();
 
-        // FIXME: View should be set by Application.
-        window.setView(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
+        application.set_view(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
+
         window.clear();
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        // FIXME: FPS should be part of GUI, not World!
         gui.simulation_view().set_fps(1.f / fps_clock.restart().asSeconds());
         application.draw();
 

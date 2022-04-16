@@ -3,6 +3,7 @@
 #include "Container.hpp"
 #include "Tooltip.hpp"
 
+#include <SFML/Graphics/View.hpp>
 #include <iostream>
 #include <list>
 
@@ -43,6 +44,9 @@ public:
     sf::Font font;
     sf::Font bold_font;
     sf::Font fixed_width_font;
+
+    void update(){m_main_widget->do_update();}
+    void set_view(sf::View view){m_window.setView(view);}
 
 private:
     sf::RenderWindow& m_window;

@@ -37,7 +37,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
 
 Vector3 Object::attraction(const Object& other) {
     Vector3 dist = this->m_pos - other.m_pos;
-    double force = other.m_gravity_factor / (dist.x * dist.x + dist.y * dist.y);
+    double force = other.m_gravity_factor / (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z);
     Vector3 normalized_dist = dist.normalized();
     return normalized_dist * force;
 }
