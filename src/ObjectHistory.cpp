@@ -16,7 +16,7 @@ bool ObjectHistory::set_time(unsigned int time) {
     return false;
 }
 
-void ObjectHistory::push_to_entry(std::unique_ptr<Object>& obj) {
+void ObjectHistory::push_to_entry(std::unique_ptr<Object> obj) {
     obj->reset_history();
     m_entries.push_back(std::move(obj));
 }

@@ -16,7 +16,7 @@ public:
     void clear_history(unsigned long to_index);
     bool set_time(unsigned time);
 
-    void push_to_entry(std::unique_ptr<Object>& obj);
+    void push_to_entry(std::unique_ptr<Object> obj);
     std::unique_ptr<Object> pop_from_entries();
     std::unique_ptr<Object>& back() { return m_entries.back(); }
 

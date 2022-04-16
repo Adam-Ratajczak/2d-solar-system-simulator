@@ -45,7 +45,7 @@ void World::update(int steps) {
             m_date.move_backward();
 
             if(m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()){
-                m_object_history.push_to_entry(m_object_list.back());
+                m_object_history.push_to_entry(std::move(m_object_list.back()));
                 m_object_list.pop_back();
             }
         }
