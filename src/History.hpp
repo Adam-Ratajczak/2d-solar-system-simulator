@@ -48,7 +48,7 @@ public:
     Vector3 get_entry() const;
     Vector3 get_entry_from_prev(unsigned index) const;
     void push_back(const Vector3 entry);
-    void push_front(const Vector3 entry);
+    void push_front();
     void reset();
     Vector3 first_entry() const{return m_first_entry;}
 

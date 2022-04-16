@@ -19,4 +19,5 @@ public:
     void draw();
     void push_back(Vector3 pos);
     void push_front(Vector3 pos);
+    void pop_back();
 };

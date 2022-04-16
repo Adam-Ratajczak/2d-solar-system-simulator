@@ -68,7 +68,7 @@ void Object::update(int speed) {
     if (speed > 0)
         m_history.push_back(m_vel);
     else if (speed < 0)
-        m_history.push_front(m_vel);
+        m_history.push_front();
 
     auto entry = m_history.get_entry();
     m_vel = entry;
@@ -78,10 +78,7 @@ void Object::update(int speed) {
     else
         m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
-    if (speed > 0)
-        m_trail.push_back(m_pos);
-    else if (speed < 0)
-        m_trail.push_front(m_pos);
+    m_trail.push_back(m_pos);
 
     auto most_massive_object = m_world.most_massive_object();
     if (most_massive_object == this)

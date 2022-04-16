@@ -28,6 +28,11 @@ void Trail::push_front(Vector3 pos) {
     m_display_trail[m_display_trail_append_offset] = Vertex { .position = pos / AU, .color = m_color };
 }
 
+void Trail::pop_back(){
+    if(m_display_trail_length > 0)
+        m_display_trail_length--;
+}
+
 void Trail::draw() {
 
     GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data(), static_cast<size_t>(m_display_trail_append_offset) });

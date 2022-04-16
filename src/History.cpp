@@ -53,7 +53,7 @@ bool History::move_backward(){
 }
 
 Vector3 History::get_entry() const{
-    std::cout << m_current->vector_pos << " " << m_current->entry.size() << "\n";
+    // std::cout << m_current->vector_pos << " " << m_current->entry.size() << "\n";
     return m_current->entry[m_current->vector_pos];
 }
 
@@ -61,8 +61,6 @@ Vector3 History::get_entry_from_prev(unsigned index) const{
     if(index > m_pos)
         return m_root->entry[0];
     auto temp = m_current;
-
-    // std::cout << index << " " << m_segments << ": " << index / m_segments << "\n";
 
     for(unsigned i = 0; i < index / m_segments; i++)
         temp = temp->prev;
@@ -83,7 +81,7 @@ void History::push_back(const Vector3 entry){
     }
 }
 
-void History::push_front(const Vector3 entry){
+void History::push_front(){
     move_backward();
 
     if(m_current->vector_pos < 0)
