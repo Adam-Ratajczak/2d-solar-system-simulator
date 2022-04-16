@@ -3,12 +3,11 @@
 #include "Object.hpp"
 #include <memory>
 #include <vector>
-class ObjectHistory{
+class ObjectHistory {
 
     std::vector<std::unique_ptr<Object>> m_entries;
 
     unsigned m_pos = 0;
-    std::unique_ptr<Object> m_obj;
 
 public:
     ObjectHistory() = default;
@@ -18,9 +17,8 @@ public:
     bool set_time(unsigned time);
 
     void push_to_entry(std::unique_ptr<Object>& obj);
-    std::unique_ptr<Object>& pop_from_entries();
-    std::unique_ptr<Object>& back(){return m_entries.back();}
+    std::unique_ptr<Object> pop_from_entries();
+    std::unique_ptr<Object>& back() { return m_entries.back(); }
 
-    unsigned size() const{return m_entries.size();}
-
+    unsigned size() const { return m_entries.size(); }
 };
