@@ -70,6 +70,8 @@ public:
     Object* focused_object() const;
     void set_focused(Object* obj) { m_focused_object = obj; }
 
+    void change_speed(bool state){m_allow_change_speed = state;}
+
 private:
     virtual void handle_event(GUI::Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
@@ -103,6 +105,8 @@ private:
     bool m_show_labels = true;
     bool m_show_grid = true;
     bool m_show_trails = true;
+
+    bool m_allow_change_speed = true;
 
     int m_iterations = 10;
 

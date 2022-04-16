@@ -126,8 +126,7 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_is_dragging = false;
         m_drag_mode = DragMode::None;
     }
-    else if (event.type() == sf::Event::KeyPressed) {
-        // FIXME: This is too complex and doesn't even work for all cases.
+    else if (event.type() == sf::Event::KeyPressed && m_allow_change_speed) {
         if (event.event().key.code == sf::Keyboard::Right) {
             if (m_speed > 0)
                 m_speed *= 2;

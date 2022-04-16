@@ -19,7 +19,7 @@
 #include <memory>
 #include <string>
 
-static sf::Image load_image(std::string path) {
+sf::Image load_image(std::string path) {
     // TODO: Error handling
     sf::Image image;
     image.loadFromFile(path);
@@ -34,17 +34,14 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_simulation_view->on_coord_measure = [&](Vector3 pos) {
-        // TODO: Add widget enabled state and use it instead.
         m_add_object_button->set_visible(true);
         m_forward_simulation_is_valid = false;
         m_new_object_pos = pos;
     };
 
     m_simulation_view->on_focus_measure = [&](Object* focusing) {
-        // TODO: Add widget enabled state and use it instead.
         m_add_object_button->set_visible(true);
         m_focused = focusing;
-        // std::cout << m_focused << "\n";
     };
     m_focused_object_info = m_create_focused_object_info_gui();
     m_focused_object_info->set_visible(false);
@@ -56,13 +53,13 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     {
         auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
         create_menu.on_toggle = [this](bool state) {
+            m_simulation_view->change_speed(!state);
             if (!state) {
                 m_new_object = nullptr;
                 m_forward_simulation_is_valid = true;
                 m_simulation_view->set_speed(m_saved_speed);
             }
             else {
-                // TODO: Don't allow to resume simulation.
                 m_saved_speed = m_simulation_view->speed();
                 m_simulation_view->set_speed(0);
             }
@@ -129,59 +126,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                 };
                 m_coords_button->set_tooltip_text("Set position");
 
-                m_toggle_unit_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
-                m_toggle_unit_button->set_toggleable(true);
-                m_toggle_unit_button->on_change = [this](bool state) {
-                    this->m_units = state;
-                    auto vel = this->m_velocity_control->value();
-                    auto ap = m_apogee_control->value();
-                    auto pe = m_perigee_control->value();
-                    auto dir = m_direction_control->value();
-                    auto angle = m_orbit_angle_control->value();
-                    auto tilt = m_orbiit_tilt_control->value();
-
-                    if (state) {
-                        this->m_velocity_control->set_unit("km/h");
-                        this->m_velocity_control->set_value(vel * 3.6);
-                        this->m_apogee_control->set_unit("AU");
-                        this->m_apogee_control->set_value(ap / AU * 1000);
-                        this->m_apogee_control->slider().set_range(1, 50, 0.1);
-                        this->m_perigee_control->set_unit("AU");
-                        this->m_perigee_control->set_value(pe / AU * 1000);
-                        this->m_perigee_control->slider().set_range(1, 50, 0.1);
-
-                        this->m_direction_control->set_unit("[rad]");
-                        this->m_direction_control->set_value(dir / 180 * M_PI);
-                        this->m_direction_control->slider().set_range(0, 2 * M_PI, 0.01);
-                        this->m_orbit_angle_control->set_unit("[rad]");
-                        this->m_orbit_angle_control->set_value(angle / 180 * M_PI);
-                        this->m_orbit_angle_control->slider().set_range(0, 2 * M_PI, 0.01);
-                        this->m_orbiit_tilt_control->set_unit("[rad]");
-                        this->m_orbiit_tilt_control->set_value(tilt / 180 * M_PI);
-                        this->m_orbiit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
-                    }
-                    else {
-                        this->m_velocity_control->set_unit("m/s");
-                        this->m_velocity_control->set_value(vel * (1.f / 3.6));
-                        this->m_apogee_control->set_unit("km");
-                        this->m_apogee_control->set_value(ap / 1000 * AU);
-                        this->m_apogee_control->slider().set_range(0, 1e10, 100);
-                        this->m_perigee_control->set_unit("km");
-                        this->m_perigee_control->set_value(pe / 1000 * AU);
-                        this->m_perigee_control->slider().set_range(0, 1e10, 100);
-
-                        this->m_direction_control->set_unit("[deg]");
-                        this->m_direction_control->set_value(dir / M_PI * 180);
-                        this->m_direction_control->slider().set_range(0, 360, 1);
-                        this->m_orbit_angle_control->set_unit("[deg]");
-                        this->m_orbit_angle_control->set_value(dir / M_PI * 180);
-                        this->m_orbit_angle_control->slider().set_range(0, 360, 1);
-                        this->m_orbiit_tilt_control->set_unit("[deg]");
-                        this->m_orbiit_tilt_control->set_value(dir / M_PI * 180);
-                        this->m_orbiit_tilt_control->slider().set_range(0, 360, 1);
-                    }
-                };
-                m_toggle_unit_button->set_tooltip_text("Toggle units");
+                m_toggle_unit_button = 
 
                 m_creative_mode_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
                 m_creative_mode_button->set_toggleable(true);
@@ -205,7 +150,6 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 
                 m_add_object_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
                 m_add_object_button->on_click = [&world, this]() {
-                    // FIXME: This (object_list) should be probably private.
                     world.add_object(m_create_object_from_params());
                     m_simulation_view->m_measured = false;
                 };
@@ -215,7 +159,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     }
     {
         auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
-        create_simulation_settings_gui(*settings.settings_container);
+        m_create_simulation_settings_gui(*settings.settings_container);
     }
 
     auto python_repl = add_widget<GUI::PythonREPL>();
@@ -232,7 +176,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     m_home_button->set_tooltip_text("Reset coordinates");
 }
 
-void EssaGUI::create_simulation_settings_gui(Container& container) {
+void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     // TODO: Split it into Simulation Settings and Display Settings
     container.set_size({ 500.0_px, 500.0_px });
     container.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
