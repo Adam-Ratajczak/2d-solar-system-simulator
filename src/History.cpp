@@ -1,7 +1,7 @@
 #include "History.hpp"
 #include <iostream>
 
-History::History(unsigned segments, Vector3 first_entry) : m_segments(segments){
+History::History(unsigned segments, Vector3 first_entry) : m_segments(segments), m_first_entry(first_entry){
     m_root = new Node(nullptr, nullptr, m_segments);
     m_current = m_root;
     m_current->entry[0] = first_entry;
@@ -10,19 +10,16 @@ History::History(unsigned segments, Vector3 first_entry) : m_segments(segments){
 }
 
 bool History::move_forward(){
-    if(m_current->vector_pos < m_current->vector_size - 1){
-        m_current->vector_pos++;
-        m_pos++;
+    m_current->vector_pos++;
+    m_pos++;
 
+    if(m_current->vector_pos < m_current->vector_size - 1){
         m_edge = false;
         return true;
-    }
-
-    if(m_current->vector_pos == m_segments){
+    }else if(m_current->vector_pos >= m_segments){
         if(m_current->next != nullptr){
             m_current = m_current->next;
             m_current->vector_pos = 0;
-            m_pos++;
 
             m_edge = false;
             return true;
@@ -34,20 +31,17 @@ bool History::move_forward(){
 }
 
 bool History::move_backward(){
+    m_current->vector_pos--;
+    m_pos--;
     
-    if(m_current->vector_pos > 0){
-        m_current->vector_pos--;
-        m_pos--;
+    if(m_current->vector_pos >= 0){
 
         m_edge = false;
         return true;
-    }
-
-    if(m_current->vector_pos <= 0){
+    }else{
         if(m_current->prev != nullptr){
             m_current = m_current->prev;
             m_current->vector_pos = m_segments - 1;
-            m_pos--;
 
             m_edge = false;
             return true;
@@ -59,8 +53,7 @@ bool History::move_backward(){
 }
 
 Vector3 History::get_entry() const{
-    if(m_current->vector_pos < 0)
-        return m_current->entry[0];
+    std::cout << m_current->vector_pos << " " << m_current->entry.size() << "\n";
     return m_current->entry[m_current->vector_pos];
 }
 
@@ -80,34 +73,26 @@ Vector3 History::get_entry_from_prev(unsigned index) const{
 void History::push_back(const Vector3 entry){
     if(!move_forward()){
         if(m_current->vector_size < m_segments){
-            m_current->vector_pos++;
             m_current->entry[m_current->vector_pos] = entry;
         }else{
             m_current->next = new Node(m_current, nullptr, m_segments);
             m_current = m_current->next;
-            m_current->vector_pos = 0;
             m_current->entry[m_current->vector_pos] = entry;
         }
         m_current->vector_size++;
-        m_len++;
     }
 }
 
 void History::push_front(const Vector3 entry){
-    if(!move_backward()){
-        if(m_current->vector_pos >= 0){
-            m_current->entry[m_current->vector_pos] = entry;
-            m_current->vector_pos--;
-        }else{
-            m_current->prev = new Node(nullptr, m_current, m_segments);
-            m_current = m_current->prev;
-            m_current->vector_pos = m_segments - 1;
-            m_current->entry[m_current->vector_pos] = entry;
-            m_root = m_current;
-        }
-        m_current->vector_size++;
-        m_len++;
-    }
+    move_backward();
+
+    if(m_current->vector_pos < 0)
+        m_current->vector_pos = 0;
+}
+
+void History::reset(){
+    m_current = m_root;
+    m_root->vector_pos = 0;
 }
 
 History::~History(){

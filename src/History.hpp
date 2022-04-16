@@ -31,6 +31,7 @@ class History {
     int m_len, m_pos, m_segments;
 
     bool m_edge = true;
+    Vector3 m_first_entry;
 
 public:
     History(unsigned segments, Vector3 first_entry);
@@ -48,6 +49,8 @@ public:
     Vector3 get_entry_from_prev(unsigned index) const;
     void push_back(const Vector3 entry);
     void push_front(const Vector3 entry);
+    void reset();
+    Vector3 first_entry() const{return m_first_entry;}
 
     ~History();
 };

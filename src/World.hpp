@@ -2,6 +2,7 @@
 
 #include "Constants.hpp"
 #include "Object.hpp"
+#include "ObjectHistory.hpp"
 #include "math/Vector3.hpp"
 #include "gui/Date.hpp"
 #include "pyssa/WrappedObject.hpp"
@@ -49,6 +50,7 @@ public:
 private:
     Object* m_most_massive_object = nullptr;
     Date m_date;
+    ObjectHistory m_object_history;
     std::list<std::unique_ptr<Object>> m_object_list;
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
 

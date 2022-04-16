@@ -23,16 +23,33 @@ void World::add_object(std::unique_ptr<Object> object) {
         m_most_massive_object = object.get();
 
     m_object_list.push_back(std::move(object));
+        
+    if(m_object_history.set_time(m_date.get_int()))
+        m_object_history.clear_history(m_object_history.get_pos());
 }
 
 void World::update(int steps) {
     assert(steps != 0);
     bool reverse = steps < 0;
+
+
     for (unsigned i = 0; i < std::abs(steps); i++) {
-        if (!reverse)
+        m_object_history.set_time(m_date.get_int());
+        if (!reverse){
             m_date.move_forward();
-        else
+
+            if(m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int()){
+                m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
+            }
+        }else{
             m_date.move_backward();
+
+            if(m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()){
+                m_object_history.push_to_entry(m_object_list.back());
+                m_object_list.pop_back();
+            }
+        }
+        
 
         for (auto& p : m_object_list)
             p->update_forces(reverse);

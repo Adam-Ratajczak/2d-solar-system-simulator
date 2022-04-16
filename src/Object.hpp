@@ -86,6 +86,8 @@ public:
 
     std::vector<std::string> get_info() const;
 
+    void reset_history(){m_history.reset(); m_vel = m_history.first_entry();}
+
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);
 
