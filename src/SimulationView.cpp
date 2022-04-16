@@ -76,6 +76,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             if (m_drag_mode == DragMode::Pan && m_focused_object) {
                 m_focused_object->m_focused = false;
                 m_focused_object = nullptr;
+                m_offset.z = 0;
             }
         }
 
