@@ -82,14 +82,14 @@ void SimulationView::handle_event(GUI::Event& event) {
         if (m_is_dragging) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
-                Vector3 qad_delta { drag_delta.x, -drag_delta.y, 0 };
+                Vector3 qad_delta { -drag_delta.x, drag_delta.y, 0 };
                 set_offset(offset() + (Transform::rotation_around_z(-m_yaw) * qad_delta * scale() / 320));
                 break;
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
                 m_yaw += drag_delta.x / sizes.x * M_PI;
-                m_pitch += drag_delta.y / sizes.y * M_PI;
+                m_pitch -= drag_delta.y / sizes.y * M_PI;
                 break;
             }
             default:
@@ -235,7 +235,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
 }
 
 Matrix4x4d SimulationView::projection_matrix() const {
-    double fov = 80;
+    double fov = m_fov.rad();
     double fd = 1 / std::tan(fov / 2);
     double aspect = size().x / (double)size().y;
     double zFar = 1000 * scale();

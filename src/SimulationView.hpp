@@ -16,7 +16,7 @@ class SimulationView : public GUI::Widget {
 public:
     explicit SimulationView(GUI::Container& c, World& world)
         : Widget(c)
-        , m_world(world) { }
+        , m_world(world) { reset(); }
 
     void set_offset(Vector3 o) { m_offset = o; }
     void set_zoom(double d) { m_zoom = d; }
@@ -24,7 +24,7 @@ public:
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
-        m_pitch = 0.7;
+        m_pitch = -0.7;
         m_yaw = 0;
     }
 
@@ -37,6 +37,7 @@ public:
     void reset() {
         m_offset = Vector3 { 0, 0, 0 };
         m_zoom = 1;
+        reset_rotation();
     };
 
     std::function<void(Vector3 pos)> on_coord_measure;
@@ -49,6 +50,8 @@ public:
     void set_show_grid(bool b) { m_show_grid = b; }
     void set_show_trails(bool b) { m_show_trails = b; }
     bool show_trails() const { return m_show_trails; }
+
+    void set_fov(Angle fov) { m_fov = fov; }
 
     // TODO: This should be private
     bool m_measured = false;
@@ -63,9 +66,9 @@ public:
     int iterations() const { return m_iterations; }
     void set_iterations(int i) { m_iterations = i; }
 
-    World& world(){return m_world;}
+    World& world() { return m_world; }
     Object* focused_object() const;
-    void set_focused(Object* obj){m_focused_object = obj;}
+    void set_focused(Object* obj) { m_focused_object = obj; }
 
 private:
     virtual void handle_event(GUI::Event&) override;
@@ -75,8 +78,9 @@ private:
     void draw_grid(sf::RenderWindow&) const;
 
     Vector3 m_offset;
+    Angle m_fov = 80.0_deg;
     double m_yaw = 0;
-    double m_pitch = 0.7;
+    double m_pitch = 0;
 
     World& m_world;
     double m_zoom = 1;
@@ -99,7 +103,7 @@ private:
     bool m_show_labels = true;
     bool m_show_grid = true;
     bool m_show_trails = true;
-    
+
     int m_iterations = 10;
 
     // FIXME: This doesn't quite match here (and also World). Maybe

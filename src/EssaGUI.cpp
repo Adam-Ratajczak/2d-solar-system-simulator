@@ -159,7 +159,8 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                         this->m_orbiit_tilt_control->set_unit("[rad]");
                         this->m_orbiit_tilt_control->set_value(tilt / 180 * M_PI);
                         this->m_orbiit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
-                    }else {
+                    }
+                    else {
                         this->m_velocity_control->set_unit("m/s");
                         this->m_velocity_control->set_value(vel * (1.f / 3.6));
                         this->m_apogee_control->set_unit("km");
@@ -232,8 +233,8 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 }
 
 void EssaGUI::create_simulation_settings_gui(Container& container) {
-
-    container.set_size({ 500.0_px, 400.0_px });
+    // TODO: Split it into Simulation Settings and Display Settings
+    container.set_size({ 500.0_px, 500.0_px });
     container.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
     auto label = container.add_widget<GUI::Textfield>();
     label->set_content("Simulation Settings");
@@ -260,7 +261,18 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
             m_world.set_simulation_seconds_per_tick(value);
     };
 
-    auto toggle_sphere_mode_container = container.add_widget<GUI::Container>();
+    auto fov_control = container.add_widget<GUI::ValueSlider>(20, 160, 1);
+    fov_control->set_name("FOV");
+    fov_control->set_unit("deg");
+    fov_control->set_value(80);
+    fov_control->set_tooltip_text("Field of View");
+    fov_control->on_change = [this](double value) {
+        if (value > 0)
+            m_simulation_view->set_fov(Angle { static_cast<float>(value), Angle::Unit::Deg });
+    };
+
+    auto toggle_sphere_mode_container
+        = container.add_widget<GUI::Container>();
     auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
     toggle_sphere_mode_layout.set_spacing(10);
     toggle_sphere_mode_container->set_size({ Length::Auto, 30.0_px });
@@ -337,9 +349,10 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
     restore_defaults->set_toggleable(false);
     restore_defaults->set_alignment(GUI::Align::Center);
     restore_defaults->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
-    restore_defaults->on_click = [this, iterations_control, tick_length_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
+    restore_defaults->on_click = [this, iterations_control, tick_length_control, fov_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
         iterations_control->set_value(10);
         tick_length_control->set_value(60 * 60 * 12);
+        fov_control->set_value(80);
         show_labels_toggle->set_active(true);
         show_grid_toggle->set_active(true);
         show_trails_toggle->set_active(true);
@@ -386,10 +399,11 @@ void EssaGUI::relayout() {
 void EssaGUI::update() {
     // FIXME: We should do this on every tick or just stop the main simulation.
 
-    if(m_simulation_view->focused_object() != nullptr){
+    if (m_simulation_view->focused_object() != nullptr) {
         m_focused_object_info->set_visible(true);
         m_update_focused_object_info_gui(m_simulation_view->focused_object());
-    }else {
+    }
+    else {
         m_focused_object_info->set_visible(false);
     }
 
