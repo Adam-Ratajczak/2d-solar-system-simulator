@@ -28,7 +28,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             m_drag_mode = DragMode::Pan;
 
             m_world.for_each_object([&](Object& obj) {
-                auto obj_pos_screen = world_to_screen(obj.m_pos / AU);
+                auto obj_pos_screen = world_to_screen(obj.render_position());
                 obj_pos_screen.z = 0;
                 auto distance = obj_pos_screen.distance_to(m_prev_mouse_pos);
                 if (distance < 30)
@@ -335,7 +335,7 @@ void SimulationView::update() {
 
     // Handle focus
     if (m_focused_object)
-        set_offset(-m_focused_object->m_pos / AU);
+        set_offset(-m_focused_object->render_position());
 }
 
 Object* SimulationView::focused_object() const{

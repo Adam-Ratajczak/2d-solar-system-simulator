@@ -43,7 +43,7 @@ Vector3 Object::attraction(const Object& other) {
 }
 
 bool Object::hover(SimulationView& view, Vector3 mouse_pos) const {
-    auto position = view.world_to_screen(m_pos / AU);
+    auto position = view.world_to_screen(render_position());
     auto dist = get_distance(position, mouse_pos);
 
     // std::cout << dist << "\n";
@@ -102,8 +102,7 @@ void Object::update(int speed) {
 
 void Object::draw(SimulationView const& view) {
 
-    // FIXME: Hardcoded multiplier
-    auto scaled_pos = m_pos / AU;
+    auto scaled_pos = render_position();
     auto& target = view.window();
 
     m_sphere.set_position(scaled_pos);

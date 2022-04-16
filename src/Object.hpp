@@ -22,6 +22,8 @@ protected:
     History m_history;
     Vector3 attraction(const Object&);
 
+    Vector3 m_pos;
+
     // FIXME: What is m_ap, m_pe, m_ap_vel, m_pe_vel?
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
@@ -49,11 +51,12 @@ public:
     Object(Object&& other) = delete;
     Object& operator=(Object&& other) = delete;
 
-    Vector3 m_pos;
     Vector3 m_vel;
     std::string m_name;
     bool m_focused = 0;
     sf::Color m_color;
+
+    Vector3 render_position() const { return m_pos / AU; }
 
     void update_forces(bool reverse);
     void update(int speed);
