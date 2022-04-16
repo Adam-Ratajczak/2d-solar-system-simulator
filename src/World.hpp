@@ -21,9 +21,6 @@ public:
     World& operator=(World const& other) = delete;
     World(World&& other) = default;
     World& operator=(World&& other) = default;
-
-    Date date;
-    bool collisions = false;
     SimulationView* m_simulation_view {};
 
     void update(int steps);
@@ -32,6 +29,7 @@ public:
     Object* get_object_by_name(std::string const& name);
 
     Object* most_massive_object() const { return m_most_massive_object; }
+    Date date() const{return m_date;}
 
     template<class C>
     void for_each_object(C callback) {
@@ -43,12 +41,14 @@ public:
 
     int simulation_seconds_per_tick() const { return m_simulation_seconds_per_tick; }
     void set_simulation_seconds_per_tick(int s) { m_simulation_seconds_per_tick = s; }
+    
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "World";
 
 private:
     Object* m_most_massive_object = nullptr;
+    Date m_date;
     std::list<std::unique_ptr<Object>> m_object_list;
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
 

@@ -16,7 +16,7 @@
 #include <sstream>
 
 World::World()
-    : date(1990.3) { }
+    : m_date(1990.3) { }
 
 void World::add_object(std::unique_ptr<Object> object) {
     if (!m_most_massive_object || m_most_massive_object->gravity_factor() < object->gravity_factor())
@@ -30,9 +30,9 @@ void World::update(int steps) {
     bool reverse = steps < 0;
     for (unsigned i = 0; i < std::abs(steps); i++) {
         if (!reverse)
-            date.day_count++;
+            m_date.move_forward();
         else
-            date.day_count--;
+            m_date.move_backward();
 
         for (auto& p : m_object_list)
             p->update_forces(reverse);

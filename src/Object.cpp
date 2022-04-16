@@ -23,16 +23,16 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     : m_world(world)
     , m_trail(period * 2, color)
     , m_sphere(radius / AU, 36, 18)
-    , m_history(period, vel) {
-    m_gravity_factor = mass * G;
-    m_radius = radius;
-    m_pos = pos;
-    m_vel = vel;
-    m_color = color;
-    m_name = name;
-    m_orbit_len = period;
-
-    m_sphere.set_color(m_color);
+    , m_history(period, vel) 
+    , m_gravity_factor(mass * G)
+    , m_radius(radius)
+    , m_pos(pos)
+    , m_vel(vel)
+    , m_color(color)
+    , m_name(name)
+    , m_orbit_len(period)
+    , m_creation_date(world.date().get_int()){
+                m_sphere.set_color(m_color);
 }
 
 Vector3 Object::attraction(const Object& other) {

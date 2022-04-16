@@ -36,6 +36,7 @@ protected:
 
     bool m_is_forward_simulated = false;
     Sphere m_sphere;
+    int m_creation_date;
 
 public:
     // FIXME: Too much arguments!!!
@@ -73,6 +74,7 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
+    int creation_date() const{return m_creation_date;}
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "Object";

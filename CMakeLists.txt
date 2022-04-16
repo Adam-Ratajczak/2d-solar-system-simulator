@@ -16,6 +16,7 @@ add_executable(
     src/FocusedObjectGUI.cpp
     src/History.cpp
     src/Object.cpp
+    src/ObjectHistory.cpp
     src/SimulationView.cpp
     src/SolarSystem.cpp
     src/Trail.cpp

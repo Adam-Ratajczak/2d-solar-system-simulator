@@ -296,7 +296,7 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     }
 
     std::ostringstream oss;
-    oss << m_world.date.to_string();
+    oss << m_world.date().to_string();
     if (m_speed == 0)
         oss << " (Paused";
     else

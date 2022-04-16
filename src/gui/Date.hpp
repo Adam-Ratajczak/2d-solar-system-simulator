@@ -17,14 +17,14 @@ const unsigned month_day_count[12] {
 };
 
 class Date {
+    int m_day_count;
 public:
-    int day_count;
     Date(float year)
-        : day_count(year * 365.25) {};
+        : m_day_count(year * 365.25) {};
 
-    std::string to_string() {
-        int years = day_count / 365.25;
-        int days = day_count - years * 365.25;
+    std::string to_string() const{
+        int years = m_day_count / 365.25;
+        int days = m_day_count - years * 365.25;
 
         if (years < 0) {
             days = -days;
@@ -58,5 +58,17 @@ public:
             return std::to_string(days) + " " + month_name[i] + " " + std::to_string(years) + " AD";
         else
             return std::to_string(days) + " " + month_name[i] + " " + std::to_string(-years) + " BC";
+    }
+
+    int get_int() const{
+        return m_day_count;
+    }
+
+    void move_forward(unsigned days = 1){
+        m_day_count += days;
+    }
+
+    void move_backward(unsigned days = 1){
+        m_day_count -= days;
     }
 };
