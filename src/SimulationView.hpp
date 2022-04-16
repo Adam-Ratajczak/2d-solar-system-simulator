@@ -37,6 +37,7 @@ public:
     void reset() {
         m_offset = Vector3 { 0, 0, 0 };
         m_zoom = 1;
+        m_focused_object = nullptr;
         reset_rotation();
     };
 
@@ -70,7 +71,7 @@ public:
     Object* focused_object() const;
     void set_focused(Object* obj) { m_focused_object = obj; }
 
-    void change_speed(bool state){m_allow_change_speed = state;}
+    void change_speed(bool state) { m_allow_change_speed = state; }
 
 private:
     virtual void handle_event(GUI::Event&) override;
