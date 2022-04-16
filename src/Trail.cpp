@@ -33,9 +33,12 @@ void Trail::pop_back(){
         m_display_trail_length--;
 }
 
-void Trail::draw() {
+void Trail::reset(){
+    m_display_trail_append_offset = 0;
+    m_display_trail_length = 0;
+}
 
+void Trail::draw() {
     GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data(), static_cast<size_t>(m_display_trail_append_offset) });
     GL::draw_vertices(GL_LINE_STRIP, { m_display_trail.data() + m_display_trail_append_offset, static_cast<size_t>(m_display_trail_length - m_display_trail_append_offset) });
-
 }

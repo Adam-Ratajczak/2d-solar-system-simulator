@@ -23,7 +23,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     : m_world(world)
     , m_trail(period * 2, color)
     , m_sphere(radius / AU, 36, 18)
-    , m_history(period, vel) 
+    , m_history(period, {pos, vel}) 
     , m_gravity_factor(mass * G)
     , m_radius(radius)
     , m_pos(pos)
@@ -62,20 +62,23 @@ void Object::update_forces(bool reverse) {
 }
 
 void Object::update(int speed) {
-    if(m_history.on_edge())
+    if(m_history.on_edge()){
         m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
-    else 
-        m_vel = m_history.get_entry();
+
+        if(speed > 0)
+            m_pos += m_vel * m_world.simulation_seconds_per_tick();
+        else if(speed < 0)
+            m_pos -= m_vel * m_world.simulation_seconds_per_tick();
+    }else{
+        auto entry = m_history.get_entry();
+        m_pos = entry.pos;
+        m_vel = entry.vel;
+    }
 
     if (speed > 0)
-        m_history.push_back(m_vel);
+        m_history.push_back({m_pos, m_vel});
     else if (speed < 0)
         m_history.push_front();
-
-    if(speed < 0 && !m_history.on_edge())
-        m_pos -= m_vel * m_world.simulation_seconds_per_tick();
-    else
-        m_pos += m_vel * m_world.simulation_seconds_per_tick();
 
     m_trail.push_back(m_pos);
 
@@ -127,6 +130,15 @@ std::vector<std::string> Object::get_info() const{
     result.push_back(std::to_string(eccencrity));
 
     return result;
+}
+
+void Object::reset_history(){
+    m_history.reset();
+    m_trail.reset();
+
+    auto entry = m_history.first_entry();
+    m_pos = entry.pos;
+    m_vel = entry.vel;
 }
 
 void Object::draw_gui(SimulationView const& view) {

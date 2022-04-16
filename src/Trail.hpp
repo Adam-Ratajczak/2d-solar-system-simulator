@@ -20,4 +20,5 @@ public:
     void push_back(Vector3 pos);
     void push_front(Vector3 pos);
     void pop_back();
+    void reset();
 };

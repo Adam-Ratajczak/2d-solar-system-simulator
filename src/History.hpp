@@ -4,11 +4,15 @@
 #include <vector>
 
 class History {
+    struct Entry{
+        Vector3 pos, vel;
+    };
+
     struct Node {
         Node* prev;
         Node* next;
 
-        std::vector<Vector3> entry;
+        std::vector<Entry> entry;
         int vector_pos, vector_size;
 
         Node(Node* _prev, Node* _next, unsigned _size) {
@@ -31,10 +35,10 @@ class History {
     int m_len, m_pos, m_segments;
 
     bool m_edge = true;
-    Vector3 m_first_entry;
+    Entry m_first_entry;
 
 public:
-    History(unsigned segments, Vector3 first_entry);
+    History(unsigned segments, Entry first_entry);
 
     History(History const&) = delete;
     History& operator=(History const&) = delete;
@@ -45,12 +49,12 @@ public:
     bool move_backward();
     bool on_edge() const{return m_edge;}
 
-    Vector3 get_entry() const;
-    Vector3 get_entry_from_prev(unsigned index) const;
-    void push_back(const Vector3 entry);
+    Entry get_entry() const;
+    Entry get_entry_from_prev(unsigned index) const;
+    void push_back(const Entry entry);
     void push_front();
     void reset();
-    Vector3 first_entry() const{return m_first_entry;}
+    Entry first_entry() const{return m_first_entry;}
 
     ~History();
 };
