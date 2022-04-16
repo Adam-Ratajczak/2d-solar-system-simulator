@@ -319,6 +319,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     restore_sim->set_toggleable(false);
     restore_sim->set_alignment(GUI::Align::Center);
     restore_sim->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
+    restore_sim->set_tooltip_text("Restore Simulation to state from the beginning");
     restore_sim->on_click = [world = &m_world]() {
         world->reset();
     };
@@ -347,17 +348,21 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     };
     
     display_settings_toggle->on_change = [this
+                                        , display_settings_toggle = display_settings_toggle.get()
                                         , simulation_settings_toggle = simulation_settings_toggle.get()
                                         , container = &container](bool state) mutable{
-        simulation_settings_toggle->set_active(!state);
-        this->m_switch_settings(state, container);
+        display_settings_toggle->set_active_without_action(true);
+        simulation_settings_toggle->set_active_without_action(false);
+        this->m_switch_settings(true, container);
     };
 
     simulation_settings_toggle->on_change = [this
                                         , display_settings_toggle = display_settings_toggle.get()
+                                        , simulation_settings_toggle = simulation_settings_toggle.get()
                                         , container = &container](bool state) mutable{
-        display_settings_toggle->set_active(!state);
-        this->m_switch_settings(!state, container);
+        display_settings_toggle->set_active_without_action(false);
+        simulation_settings_toggle->set_active_without_action(true);
+        this->m_switch_settings(false, container);
     };
 
     m_switch_settings(true, &container);
