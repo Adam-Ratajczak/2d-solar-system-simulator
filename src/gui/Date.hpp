@@ -64,6 +64,10 @@ public:
         return m_day_count;
     }
 
+    void set_date(float date){
+        m_day_count = date * 365.25;
+    }
+
     void move_forward(unsigned days = 1){
         m_day_count += days;
     }

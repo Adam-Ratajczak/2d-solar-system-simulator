@@ -27,6 +27,7 @@ public:
     void update(int steps);
     void draw(SimulationView const& view) const;
     void add_object(std::unique_ptr<Object>);
+    void reset();
     Object* get_object_by_name(std::string const& name);
 
     Object* most_massive_object() const { return m_most_massive_object; }

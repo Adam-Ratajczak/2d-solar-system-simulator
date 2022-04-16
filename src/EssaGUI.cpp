@@ -309,6 +309,22 @@ void EssaGUI::create_simulation_settings_gui(Container& container) {
 
     container.add_widget<GUI::Widget>(); // SPACER
 
+    auto restore_sim_container = container.add_widget<GUI::Container>();
+    auto& restore_sim_layout = restore_sim_container->set_layout<GUI::HorizontalBoxLayout>();
+    restore_sim_layout.set_spacing(10);
+    restore_sim_container->set_size({ Length::Auto, 30.0_px });
+
+    auto restore_sim_label = restore_sim_container->add_widget<GUI::Textfield>();
+    restore_sim_label->set_content("Restore Simulation state: ");
+    auto restore_sim = restore_sim_container->add_widget<GUI::TextButton>();
+    restore_sim->set_content("Restore");
+    restore_sim->set_toggleable(false);
+    restore_sim->set_alignment(GUI::Align::Center);
+    restore_sim->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
+    restore_sim->on_click = [world = &m_world]() {
+        world->reset();
+    };
+
     auto restore_defaults_container = container.add_widget<GUI::Container>();
     auto& restore_defaults_layout = restore_defaults_container->set_layout<GUI::HorizontalBoxLayout>();
     restore_defaults_layout.set_spacing(10);
