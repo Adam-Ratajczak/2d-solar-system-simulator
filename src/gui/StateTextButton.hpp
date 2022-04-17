@@ -49,3 +49,9 @@ private:
 };
 
 }
+
+// These ifndefs are just so that clangd doesn't complain that much
+#ifndef STATE_TEXT_BUTTON_INL
+#define STATE_TEXT_BUTTON_HPP
+#include "StateTextButton.inl"
+#endif

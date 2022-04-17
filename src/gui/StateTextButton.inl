@@ -1,10 +1,15 @@
+// Included from StateTextButton.hpp
+#ifndef STATE_TEXT_BUTTON_HPP
+// These ifndefs are just so that clangd doesn't complain that much
+#define STATE_TEXT_BUTTON_INL
 #include "StateTextButton.hpp"
+#endif
+
 #include "Widget.hpp"
-#include "../glwrapper/Sphere.hpp"
 #include <SFML/Window/Event.hpp>
 
 namespace GUI {
-    
+
 template <typename T>
 StateTextButton<T>::StateTextButton(Container& c)
     : Widget(c) {}
@@ -69,5 +74,3 @@ T StateTextButton<T>::state() const{
 }
 
 }
-
-template class GUI::StateTextButton<Sphere::DrawMode>;
