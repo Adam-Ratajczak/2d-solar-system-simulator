@@ -91,11 +91,11 @@ void Widget::handle_event(Event& event) {
 }
 
 void Widget::draw(sf::RenderWindow& window) const {
-    // sf::RectangleShape outline(size());
-    // outline.setOutlineThickness(-1);
-    // outline.setOutlineColor(sf::Color::Red);
-    // outline.setFillColor(sf::Color::Transparent);
-    // window.draw(outline);
+    sf::RectangleShape background(size());
+    // background.setOutlineThickness(-1);
+    // background.setOutlineColor(sf::Color::Red);
+    background.setFillColor(m_background_color);
+    window.draw(background);
 }
 
 void Widget::do_draw(sf::RenderWindow& window) const {

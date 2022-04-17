@@ -106,6 +106,8 @@ public:
 
     virtual void dump(unsigned depth);
 
+    void set_background_color(sf::Color const& color) { m_background_color = color; }
+
 protected:
     explicit Widget(Application& application)
         : m_application(application) { }
@@ -135,6 +137,7 @@ private:
     bool m_hover = false;
     bool m_visible = true;
     bool m_enabled = true;
+    sf::Color m_background_color = sf::Color::Transparent;
 };
 
 }
