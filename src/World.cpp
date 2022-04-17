@@ -23,8 +23,8 @@ void World::add_object(std::unique_ptr<Object> object) {
         m_most_massive_object = object.get();
 
     m_object_list.push_back(std::move(object));
-        
-    if(m_object_history.set_time(m_date.get_int()))
+
+    if (m_object_history.set_time(m_date.get_int()))
         m_object_history.clear_history(m_object_history.get_pos());
 }
 
@@ -34,21 +34,21 @@ void World::update(int steps) {
 
     for (unsigned i = 0; i < std::abs(steps); i++) {
         m_object_history.set_time(m_date.get_int());
-        if (!reverse){
+        if (!reverse) {
             m_date.move_forward();
 
-            if(m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int()){
+            if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int()) {
                 m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
             }
-        }else{
+        }
+        else {
             m_date.move_backward();
 
-            if(m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()){
+            if (m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()) {
                 m_object_history.push_to_entry(std::move(m_object_list.back()));
                 m_object_list.pop_back();
             }
         }
-        
 
         for (auto& p : m_object_list)
             p->update_forces(reverse);
@@ -77,13 +77,17 @@ Object* World::get_object_by_name(std::string const& name) {
     return nullptr;
 }
 
-void World::reset(){
+void World::reset() {
     m_object_list.clear();
     m_most_massive_object = nullptr;
     m_simulation_view->set_focused(nullptr);
     m_date.set_date(1990.3);
     m_object_history.clear_history(0);
     prepare_solar(*this);
+}
+
+void World::reset_all_trails() {
+    for_each_object([](Object& o) { o.trail().reset(); });
 }
 
 void World::clone_for_forward_simulation(World& new_world) const {

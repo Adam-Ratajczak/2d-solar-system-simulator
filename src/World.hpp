@@ -44,6 +44,7 @@ public:
     int simulation_seconds_per_tick() const { return m_simulation_seconds_per_tick; }
     void set_simulation_seconds_per_tick(int s) { m_simulation_seconds_per_tick = s; }
     
+    void reset_all_trails();
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "World";

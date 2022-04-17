@@ -214,6 +214,13 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
             if (value > 0)
                 m_world.set_simulation_seconds_per_tick(value);
         };
+
+        auto reset_trails_button = simulation_settings.add_widget<GUI::TextButton>();
+        reset_trails_button->set_size({ Length::Auto, 30.0_px });
+        reset_trails_button->set_content("Clear Trails");
+        reset_trails_button->on_click = [&]() {
+            m_world.reset_all_trails();
+        };
     }
 
     auto& display_settings = tab_widget->add_tab("Display");
