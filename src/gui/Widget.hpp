@@ -79,8 +79,10 @@ public:
     virtual void do_draw(sf::RenderWindow&) const;
 
     void set_visible(bool visible) {
-        m_visible = visible;
-        set_needs_relayout();
+        if (m_visible != visible) {
+            m_visible = visible;
+            set_needs_relayout();
+        }
     }
 
     bool is_visible() const { return m_visible; }
