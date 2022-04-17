@@ -113,7 +113,7 @@ void Widget::do_draw(sf::RenderWindow& window) const {
 void Widget::do_relayout() {
     if (this->m_visible)
         this->relayout();
-    //std::cout << "do_relayout "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
+    // std::cout << "do_relayout "  << this << ":" << typeid(*this).name() << m_size.x << "," << m_size.y << "@" << m_pos.x << "," << m_pos.y << std::endl;
 }
 
 void Widget::set_needs_relayout() {
@@ -127,7 +127,12 @@ sf::RenderWindow& Widget::window() const {
 void Widget::dump(unsigned depth) {
     for (int i = 0; i < depth; i++)
         std::cout << "-   ";
-    std::cout << typeid(*this).name() << ": pos=" << m_pos.x << "," << m_pos.y << " size=" << m_size.x << "," << m_size.y << std::endl;
+    std::cout << (m_visible ? "(-) " : "(+) ");
+    std::cout << typeid(*this).name() << " @" << this;
+    if (!m_id.empty())
+        std::cout << " #" << m_id;
+    std::cout << ": pos=" << m_pos.x << "," << m_pos.y << " size=" << m_size.x << "," << m_size.y;
+    std::cout << std::endl;
 }
 
 }

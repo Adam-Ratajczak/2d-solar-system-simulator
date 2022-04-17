@@ -187,7 +187,8 @@ void Container::relayout() {
     for (auto& w : m_widgets) {
         if (w->m_input_size == LengthVector {}) {
             w->m_input_size = w->initial_size();
-            // std::cout << this << " " << typeid(*this).name() << " set initial size" << std::endl;
+            // std::cout << w << " " << typeid(*w).name() << " set initial size to "
+            //           << w->m_input_size.x.value() << "," << w->m_input_size.y.value() << std::endl;
         }
     }
     if (!m_layout)
@@ -200,8 +201,17 @@ void Container::relayout() {
 void Container::dump(unsigned depth) {
     Widget::dump(depth);
     ++depth;
-    for (auto& w : m_widgets)
+    if (m_layout) {
+
+        for (int i = 0; i < depth; i++)
+            std::cout << "-   ";
+        std::cout << "layout: " << typeid(*m_layout).name() << std::endl;
+    }
+    if (!is_visible())
+        return;
+    for (auto& w : m_widgets) {
         w->dump(depth);
+    }
 }
 
 Widget* Container::find_widget_by_id(std::string_view id) const {
@@ -213,7 +223,7 @@ Widget* Container::find_widget_by_id(std::string_view id) const {
     return nullptr;
 }
 
-std::vector<Widget*> Container::find_widget_by_class_name(std::string_view class_name) const{
+std::vector<Widget*> Container::find_widget_by_class_name(std::string_view class_name) const {
     std::vector<Widget*> result;
     for (auto& w : m_widgets) {
         if (w->class_name() == class_name)
