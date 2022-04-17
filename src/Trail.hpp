@@ -8,12 +8,12 @@
 #include <list>
 
 class Trail {
-    std::vector<Vertex> m_display_trail;
-    int m_display_trail_append_offset = 0;
-    int m_display_trail_length = 0;
+    std::vector<Vertex> m_vertexes;
+    int m_append_offset = 1;
+    int m_length = 0;
 
     const sf::Color m_color;
-    
+
 public:
     Trail(size_t max_trail_size, sf::Color color);
     void draw();
