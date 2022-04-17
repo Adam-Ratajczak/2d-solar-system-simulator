@@ -32,6 +32,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     , m_name(name)
     , m_orbit_len(period)
     , m_creation_date(world.date().get_int()) {
+    m_trail.push_back(m_pos);
     m_sphere.set_color(m_color);
 }
 
