@@ -29,7 +29,7 @@ private:
     sf::String m_content;
     sf::String m_active_content;
     unsigned m_font_size = 20;
-    Align m_alignment = Align::CenterLeft;
+    Align m_alignment = Align::Center;
 };
 
 }
