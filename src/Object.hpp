@@ -52,7 +52,7 @@ public:
 
     Vector3 render_position() const { return m_pos / AU; }
 
-    std::string name() const{return m_name;}
+    std::string name() const { return m_name; }
 
     void update_forces(bool reverse);
     void update(int speed);
@@ -73,7 +73,7 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
-    int creation_date() const{return m_creation_date;}
+    int creation_date() const { return m_creation_date; }
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "Object";
@@ -81,7 +81,7 @@ public:
     double radius() const { return m_radius; }
     void set_radius(double radius);
 
-    Sphere& sphere(){return m_sphere;}
+    Sphere& sphere() { return m_sphere; }
 
     std::vector<std::string> get_info() const;
 

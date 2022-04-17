@@ -23,7 +23,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     : m_world(world)
     , m_trail(period * 2, color)
     , m_sphere(radius / AU, 36, 18)
-    , m_history(period, {pos, vel}) 
+    , m_history(period, { pos, vel })
     , m_gravity_factor(mass * G)
     , m_radius(radius)
     , m_pos(pos)
@@ -31,8 +31,8 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     , m_color(color)
     , m_name(name)
     , m_orbit_len(period)
-    , m_creation_date(world.date().get_int()){
-                m_sphere.set_color(m_color);
+    , m_creation_date(world.date().get_int()) {
+    m_sphere.set_color(m_color);
 }
 
 Vector3 Object::attraction(const Object& other) {
@@ -62,21 +62,22 @@ void Object::update_forces(bool reverse) {
 }
 
 void Object::update(int speed) {
-    if(m_history.on_edge()){
+    if (m_history.on_edge()) {
         m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
 
-        if(speed > 0)
+        if (speed > 0)
             m_pos += m_vel * m_world.simulation_seconds_per_tick();
-        else if(speed < 0)
+        else if (speed < 0)
             m_pos -= m_vel * m_world.simulation_seconds_per_tick();
-    }else{
+    }
+    else {
         auto entry = m_history.get_entry();
         m_pos = entry.pos;
         m_vel = entry.vel;
     }
 
     if (speed > 0)
-        m_history.push_back({m_pos, m_vel});
+        m_history.push_back({ m_pos, m_vel });
     else if (speed < 0)
         m_history.push_front();
 
@@ -97,7 +98,6 @@ void Object::update(int speed) {
         m_pe_vel = m_vel.magnitude();
     }
     // std::cout << m_name << ": " << m_trail.size() << "\n";
-
 }
 
 void Object::draw(SimulationView const& view) {
@@ -110,10 +110,9 @@ void Object::draw(SimulationView const& view) {
 
     if (view.show_trails())
         m_trail.draw();
-
 }
 
-std::vector<std::string> Object::get_info() const{
+std::vector<std::string> Object::get_info() const {
     std::vector<std::string> result;
     unsigned exponent = std::log10(this->mass());
     result.push_back(std::to_string(this->mass() / std::pow(10, exponent)));
@@ -131,7 +130,7 @@ std::vector<std::string> Object::get_info() const{
     return result;
 }
 
-void Object::reset_history(){
+void Object::reset_history() {
     m_history.reset();
     m_trail.reset();
 
