@@ -98,6 +98,9 @@ void Textbox::handle_event(Event& event) {
                 set_cursor(m_cursor + 1);
             }
 
+            if(m_type == NUMBER)
+                m_fit_in_range();
+
             event.set_handled();
         }
     }
@@ -111,8 +114,6 @@ void Textbox::handle_event(Event& event) {
                 else if (m_cursor > 0)
                     set_cursor(m_cursor - 1);
 
-                if (!event.event().key.shift)
-                    m_concurrent = m_cursor;
                 event.set_handled();
             } break;
             case sf::Keyboard::Right: {
@@ -121,8 +122,6 @@ void Textbox::handle_event(Event& event) {
                 else if (m_cursor < m_content.getSize())
                     set_cursor(m_cursor + 1);
 
-                if (!event.event().key.shift)
-                    m_concurrent = m_cursor;
                 event.set_handled();
             } break;
             default:
@@ -134,7 +133,6 @@ void Textbox::handle_event(Event& event) {
         if (is_hover()) {
 
             m_cursor = m_character_pos_from_mouse(event);
-            m_concurrent = m_cursor;
 
             m_dragging = true;
         }
@@ -142,6 +140,15 @@ void Textbox::handle_event(Event& event) {
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
     }
+}
+
+void Textbox::m_fit_in_range(){
+    double val = std::stod(m_content.toAnsiString());
+
+    if(val < m_min_value)
+        m_content = std::to_string(m_min_value);
+    else if(val > m_max_value)
+        m_content = std::to_string(m_max_value);
 }
 
 void Textbox::move_cursor_by_word(CursorDirection direction) {
@@ -234,18 +241,6 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     auto text = generate_sf_text();
     window.draw(text);
-
-    // if(m_cursor != m_concurrent){
-    //     unsigned step = text.getCharacterSize() + text.getLetterSpacing();
-    //     if(text.getString() != m_placeholder){
-    //         sf::RectangleShape rect;
-    //         rect.setPosition(sf::Vector2f(text.getPosition().x + std::min(m_cursor, m_concurrent) * step, text.getPosition().y));
-    //         rect.setSize(sf::Vector2f(std::fabs(m_cursor - m_concurrent) * step, text.getGlobalBounds().height));
-    //         rect.setFillColor(m_placeholder_color);
-
-    //         window.draw(rect);
-    //     }
-    // }
 
     if (is_focused()) {
         // std::cout << m_cursor << std::endl;

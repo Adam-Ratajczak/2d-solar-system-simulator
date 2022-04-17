@@ -103,6 +103,7 @@ void EssaGUI::m_create_object_gui(GUI::Container& container) {
         m_mass_textbox = mass_container->add_widget<GUI::Textbox>();
         m_mass_textbox->set_limit(6);
         m_mass_textbox->set_content("1.0");
+        m_mass_textbox->set_min_max_values(1, 9.9);
         m_mass_textbox->on_change = [this](auto) {
             m_forward_simulation_is_valid = false;
         };
@@ -117,6 +118,7 @@ void EssaGUI::m_create_object_gui(GUI::Container& container) {
             m_mass_exponent_textbox = mass_value_container->add_widget<GUI::Textbox>();
             m_mass_exponent_textbox->set_limit(2);
             m_mass_exponent_textbox->set_content("1");
+            m_mass_exponent_textbox->set_min_max_values(1, 40);
             m_mass_exponent_textbox->on_change = [this](auto) {
                 m_forward_simulation_is_valid = false;
             };

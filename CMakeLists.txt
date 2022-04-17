@@ -10,6 +10,7 @@ find_package(PythonLibs 3.5 REQUIRED)
 add_executable(
     out
 
+    src/CanvasMode.cpp
     src/ConfigLoader.cpp
     src/CreateObjectGUI.cpp
     src/EssaGUI.cpp

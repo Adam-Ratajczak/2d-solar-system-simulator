@@ -56,7 +56,6 @@ private:
     std::shared_ptr<GUI::ValueSlider> m_apogee_control;
     std::shared_ptr<GUI::ValueSlider> m_perigee_control;
 
-    // FIXME: Port this all to ValueSlider
     std::shared_ptr<GUI::Textbox> m_mass_textbox;
     std::shared_ptr<GUI::Textbox> m_mass_exponent_textbox;
     std::shared_ptr<GUI::Textbox> m_name_textbox;

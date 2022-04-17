@@ -17,7 +17,8 @@ class Textbox : public Widget {
     sf::Color m_placeholder_color = sf::Color(80, 80, 80);
     unsigned m_limit = 16;
     bool m_has_decimal = false, m_dragging = false;
-    unsigned m_cursor = 0, m_concurrent = 0;
+    unsigned m_cursor = 0;
+    double m_min_value, m_max_value;
 
 public:
     enum Type {
@@ -39,6 +40,7 @@ public:
     void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_data_type(Type type) { m_type = type; }
     void set_placeholder(std::string placeholder) { m_placeholder = placeholder; }
+    void set_min_max_values(double min_value, double max_value){m_min_value = min_value; m_max_value = max_value;}
 
     void set_cursor(unsigned);
 
@@ -49,6 +51,7 @@ private:
     unsigned m_character_pos_from_mouse(Event& event);
     sf::Vector2f calculate_cursor_position() const;
     sf::Text generate_sf_text() const;
+    void m_fit_in_range();
 
     enum class CursorDirection {
         Left,
