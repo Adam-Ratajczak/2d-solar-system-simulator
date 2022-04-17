@@ -21,4 +21,7 @@ public:
     void push_front(Vector3 pos);
     void pop_back();
     void reset();
+
+private:
+    friend std::ostream& operator<<(std::ostream&, Trail const&);
 };
