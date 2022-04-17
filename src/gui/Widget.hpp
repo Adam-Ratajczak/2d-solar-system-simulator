@@ -107,6 +107,7 @@ public:
     virtual void dump(unsigned depth);
 
     void set_background_color(sf::Color const& color) { m_background_color = color; }
+    sf::Color get_background_color()const {return m_background_color;}
 
 protected:
     explicit Widget(Application& application)

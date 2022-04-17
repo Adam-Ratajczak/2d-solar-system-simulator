@@ -43,6 +43,7 @@ private:
     std::shared_ptr<GUI::Button> m_home_button;
     std::shared_ptr<GUI::Button> m_coords_button;
     std::shared_ptr<GUI::Button> m_add_object_button;
+    std::shared_ptr<GUI::Button> m_canvas_mode_button;
 
     std::shared_ptr<GUI::ValueSlider> m_radius_control;
 
@@ -82,10 +83,11 @@ private:
 
     std::vector<std::shared_ptr<GUI::Textfield>> m_info_content;
 
-    void m_create_object_gui(Container& container);
     std::unique_ptr<Object> m_create_object_from_params() const;
     std::unique_ptr<Object> m_create_object_from_orbit() const;
     void m_create_simulation_settings_gui(Container& container);
+    void m_create_object_gui(Container& container);
+    void m_create_cavas_mode_gui(Container& parent);
 
     World m_forward_simulated_world;
     bool m_forward_simulation_is_valid = true;

@@ -146,9 +146,9 @@ void Textbox::m_fit_in_range(){
     double val = std::stod(m_content.toAnsiString());
 
     if(val < m_min_value)
-        m_content = std::to_string(m_min_value);
+        m_content = std::to_string(m_min_value).substr(0, m_limit);
     else if(val > m_max_value)
-        m_content = std::to_string(m_max_value);
+        m_content = std::to_string(m_max_value).substr(0, m_limit);
 }
 
 void Textbox::move_cursor_by_word(CursorDirection direction) {

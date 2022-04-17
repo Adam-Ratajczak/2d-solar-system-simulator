@@ -36,6 +36,7 @@ add_executable(
     src/gui/ColorPicker.cpp
     src/gui/Console.cpp
     src/gui/Container.cpp
+    src/gui/DateTextbox.cpp
     src/gui/Frame.cpp
     src/gui/HideShowButton.cpp
     src/gui/ImageButton.cpp

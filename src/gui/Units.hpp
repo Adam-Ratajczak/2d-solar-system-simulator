@@ -44,6 +44,10 @@ constexpr Length operator""_px_o(long double v) {
     return Length(v, Length::PxOtherSide);
 }
 
+constexpr Length operator""_perc(long double v) {
+    return Length(v, Length::Percent);
+}
+
 class Angle {
 public:
     enum Unit {

@@ -48,6 +48,17 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     m_focused_object_info = m_create_focused_object_info_gui();
     m_focused_object_info->set_visible(false);
 
+    m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
+    m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
+    m_home_button->on_click = [this]() {
+        m_simulation_view->reset();
+    };
+    m_home_button->set_tooltip_text("Reset coordinates");
+
+    auto python_repl = add_widget<GUI::PythonREPL>();
+    python_repl->set_position({ 300.0_px, 10.0_px_o });
+    python_repl->set_size({ 700.0_px, 250.0_px });
+
     m_world.m_simulation_view = m_simulation_view.get();
 
     auto menu = add_widget<GUI::SettingsMenu>();
@@ -158,25 +169,19 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
                         world.add_object(m_create_object_from_params());
                     m_simulation_view->m_measured = false;
                 };
-                m_add_object_button->set_tooltip_text("Add object");
             }
         }
     }
+
+    { 
+        auto& canvas_mode = menu->add_entry(load_image("../assets/canvasMode.png"), "Canvas Mode");
+        m_create_cavas_mode_gui(*canvas_mode.settings_container);
+    }
+
     {
         auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
         m_create_simulation_settings_gui(*settings.settings_container);
     }
-
-    auto python_repl = add_widget<GUI::PythonREPL>();
-    python_repl->set_position({ 300.0_px, 10.0_px_o });
-    python_repl->set_size({ 700.0_px, 250.0_px });
-
-    m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
-    m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
-    m_home_button->on_click = [this]() {
-        m_simulation_view->reset();
-    };
-    m_home_button->set_tooltip_text("Reset coordinates");
 }
 
 void EssaGUI::m_create_simulation_settings_gui(Container& container) {
