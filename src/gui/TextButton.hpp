@@ -20,6 +20,9 @@ public:
     Align get_alignment() const { return m_alignment; };
     void set_alignment(Align alignment) { m_alignment = alignment; };
 
+    sf::String content() const { return m_content; }
+    sf::String active_content() const { return m_content; }
+
 private:
     virtual void draw(sf::RenderWindow& window) const override;
 
