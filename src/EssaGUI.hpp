@@ -79,7 +79,6 @@ private:
     std::shared_ptr<Container> m_create_focused_object_info_gui();
     void m_update_focused_object_info_gui(Object* focused);
     void m_switch_info(bool state);
-    void m_switch_settings(bool state, GUI::Container *container);
 
     std::vector<std::shared_ptr<GUI::Textfield>> m_info_content;
 

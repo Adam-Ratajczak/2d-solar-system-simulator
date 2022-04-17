@@ -9,6 +9,7 @@
 #include "gui/ImageButton.hpp"
 #include "gui/PythonREPL.hpp"
 #include "gui/StateTextButton.hpp"
+#include "gui/TabWidget.hpp"
 #include "gui/TextButton.hpp"
 #include "gui/Textbox.hpp"
 #include "gui/Textfield.hpp"
@@ -151,7 +152,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 
                 m_add_object_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
                 m_add_object_button->on_click = [&world, this]() {
-                    if(m_automatic_orbit_calculation)
+                    if (m_automatic_orbit_calculation)
                         world.add_object(m_create_object_from_orbit());
                     else
                         world.add_object(m_create_object_from_params());
@@ -181,133 +182,108 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     container.set_size({ 500.0_px, 500.0_px });
     container.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
-    auto label = container.add_widget<GUI::Textfield>();
-    label->set_content("Display Settings");
-    label->set_size({ Length::Auto, 30.0_px });
-    label->set_alignment(GUI::Align::Center);
-    label->set_id("settings_label");
 
-    auto setting_toggle_container = container.add_widget<GUI::Container>();
-    setting_toggle_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(0);
-    setting_toggle_container->set_size({Length::Auto, 30.0_px});
-    auto display_settings_toggle = setting_toggle_container->add_widget<GUI::TextButton>();
-    display_settings_toggle->set_content("Display Settings");
-    display_settings_toggle->set_display_attributes(sf::Color::Red, sf::Color::Green, sf::Color::White);
-    display_settings_toggle->set_active_content("Display Settings");
-    display_settings_toggle->set_active_display_attributes(sf::Color::Green, sf::Color::Red, sf::Color::White);
-    display_settings_toggle->set_active(true);
-    display_settings_toggle->set_toggleable(true);
-    display_settings_toggle->set_size({Length::Auto, 20.0_px});
-    display_settings_toggle->set_alignment(GUI::Align::Center);
+    auto title_label = container.add_widget<GUI::Textfield>();
+    title_label->set_content("Settings");
+    title_label->set_size({ Length::Auto, 30.0_px });
+    title_label->set_alignment(GUI::Align::Center);
 
-    auto simulation_settings_toggle = setting_toggle_container->add_widget<GUI::TextButton>();
-    simulation_settings_toggle->set_content("Simulation Settings");
-    simulation_settings_toggle->set_display_attributes(sf::Color::Red, sf::Color::Green, sf::Color::White);
-    simulation_settings_toggle->set_active_content("Simulation Settings");
-    simulation_settings_toggle->set_active_display_attributes(sf::Color::Green, sf::Color::Red, sf::Color::White);
-    simulation_settings_toggle->set_active(false);
-    simulation_settings_toggle->set_toggleable(true);
-    simulation_settings_toggle->set_size({Length::Auto, 20.0_px});
-    simulation_settings_toggle->set_alignment(GUI::Align::Center);
+    auto tab_widget = container.add_widget<GUI::TabWidget>();
+    auto& simulation_settings = tab_widget->add_tab("Simulation");
+    {
+        auto& layout = simulation_settings.set_layout<GUI::VerticalBoxLayout>();
+        layout.set_spacing(10);
+        layout.set_padding(10);
+        auto iterations_control = simulation_settings.add_widget<GUI::ValueSlider>(1, 1000);
+        iterations_control->set_name("Iterations");
+        iterations_control->set_unit("i/t");
+        iterations_control->set_value(10);
+        iterations_control->set_tooltip_text("Count of simulation ticks per render frame");
+        iterations_control->on_change = [this](double value) {
+            if (value > 0)
+                m_simulation_view->set_iterations(value);
+        };
+        iterations_control->set_class_name("Simulation");
 
-    display_settings_toggle->on_change = [simulation_settings_toggle = simulation_settings_toggle.get()](bool state){
-        simulation_settings_toggle->set_active(!state);
-    };
+        auto tick_length_control = simulation_settings.add_widget<GUI::ValueSlider>(60, 60 * 60 * 24, 60);
+        tick_length_control->set_name("Tick Length");
+        tick_length_control->set_unit("s/t");
+        tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
+        tick_length_control->set_tooltip_text("Amount of simulation seconds per simulation tick (Affects accuracy)");
+        tick_length_control->on_change = [this](double value) {
+            if (value > 0)
+                m_world.set_simulation_seconds_per_tick(value);
+        };
+    }
 
-    simulation_settings_toggle->on_change = [display_settings_toggle = display_settings_toggle.get()](bool state){
-        display_settings_toggle->set_active(!state);
-    };
+    auto& display_settings = tab_widget->add_tab("Display");
+    display_settings.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
+    {
+        auto& layout = display_settings.set_layout<GUI::VerticalBoxLayout>();
+        layout.set_spacing(10);
+        layout.set_padding(10);
+        auto fov_control = display_settings.add_widget<GUI::ValueSlider>(20, 160, 1);
+        fov_control->set_name("FOV");
+        fov_control->set_unit("deg");
+        fov_control->set_value(80);
+        fov_control->set_tooltip_text("Field of View");
+        fov_control->on_change = [this](double value) {
+            if (value > 0)
+                m_simulation_view->set_fov(Angle { static_cast<float>(value), Angle::Unit::Deg });
+        };
 
-    auto iterations_control = container.add_widget<GUI::ValueSlider>(1, 1000);
-    iterations_control->set_name("Iterations");
-    iterations_control->set_unit("i/t");
-    iterations_control->set_value(10);
-    iterations_control->set_tooltip_text("Count of simulation ticks per render frame");
-    iterations_control->on_change = [this](double value) {
-        if (value > 0)
-            m_simulation_view->set_iterations(value);
-    };
-    iterations_control->set_class_name("Simulation");
+        auto toggle_sphere_mode_container = display_settings.add_widget<GUI::Container>();
+        auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
+        toggle_sphere_mode_layout.set_spacing(10);
+        toggle_sphere_mode_container->set_size({ Length::Auto, 30.0_px });
 
-    auto tick_length_control = container.add_widget<GUI::ValueSlider>(60, 60 * 60 * 24, 60);
-    tick_length_control->set_name("Tick Length");
-    tick_length_control->set_unit("s/t");
-    tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
-    tick_length_control->set_tooltip_text("Amount of simulation seconds per simulation tick (Affects accuracy)");
-    tick_length_control->on_change = [this](double value) {
-        if (value > 0)
-            m_world.set_simulation_seconds_per_tick(value);
-    };
-    tick_length_control->set_class_name("Simulation");
+        auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
+        sphere_mode_label->set_content("Toggle Sphere mode: ");
 
-    auto fov_control = container.add_widget<GUI::ValueSlider>(20, 160, 1);
-    fov_control->set_name("FOV");
-    fov_control->set_unit("deg");
-    fov_control->set_value(80);
-    fov_control->set_tooltip_text("Field of View");
-    fov_control->on_change = [this](double value) {
-        if (value > 0)
-            m_simulation_view->set_fov(Angle { static_cast<float>(value), Angle::Unit::Deg });
-    };
-    fov_control->set_class_name("Display");
+        auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
+        toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
+        toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
+        toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
+        toggle_sphere_mode->set_alignment(GUI::Align::Center);
+        toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode) {
+            this->m_world.for_each_object([mode](Object& object) {
+                object.sphere().set_draw_mode(mode);
+            });
+        };
 
-    auto toggle_sphere_mode_container
-        = container.add_widget<GUI::Container>();
-    auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
-    toggle_sphere_mode_layout.set_spacing(10);
-    toggle_sphere_mode_container->set_size({ Length::Auto, 30.0_px });
-    toggle_sphere_mode_container->set_class_name("Display");
+        auto add_toggle = [&](std::string title, auto on_change) {
+            auto toggle_container = display_settings.add_widget<GUI::Container>();
+            auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
+            toggle_layout.set_spacing(10);
+            toggle_container->set_size({ Length::Auto, 30.0_px });
+            auto button_label = toggle_container->add_widget<GUI::Textfield>();
+            button_label->set_content(title + ": ");
+            button_label->set_size({ Length::Auto, 30.0_px });
+            auto toggle = toggle_container->add_widget<GUI::TextButton>();
+            toggle->set_content("Off");
+            toggle->set_active_content("On");
+            toggle->set_toggleable(true);
+            toggle->set_active(true);
+            toggle->set_alignment(GUI::Align::Center);
+            toggle->on_change = std::move(on_change);
+            return toggle;
+        };
 
-    auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
-    sphere_mode_label->set_content("Toggle Sphere mode: ");
-
-    auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
-    toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
-    toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
-    toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
-    toggle_sphere_mode->set_alignment(GUI::Align::Center);
-    toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode) {
-        this->m_world.for_each_object([mode](Object& object) {
-            object.sphere().set_draw_mode(mode);
+        auto show_labels_toggle = add_toggle("Show labels", [this](bool state) {
+            this->m_simulation_view->toggle_label_visibility(state);
         });
-    };
-
-    auto add_toggle = [&](std::string title, auto on_change) {
-        auto toggle_container = container.add_widget<GUI::Container>();
-        toggle_container->set_class_name("Display");
-        auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
-        toggle_layout.set_spacing(10);
-        toggle_container->set_size({ Length::Auto, 30.0_px });
-        auto button_label = toggle_container->add_widget<GUI::Textfield>();
-        button_label->set_content(title + ": ");
-        button_label->set_size({ Length::Auto, 30.0_px });
-        auto toggle = toggle_container->add_widget<GUI::TextButton>();
-        toggle->set_content("Off");
-        toggle->set_active_content("On");
-        toggle->set_toggleable(true);
-        toggle->set_active(true);
-        toggle->set_alignment(GUI::Align::Center);
-        toggle->on_change = std::move(on_change);
-        return toggle;
-    };
-
-    auto show_labels_toggle = add_toggle("Show labels", [this](bool state) {
-        this->m_simulation_view->toggle_label_visibility(state);
-    });
-    auto show_grid_toggle = add_toggle("Show grid", [this](bool state) {
-        this->m_simulation_view->set_show_grid(state);
-    });
-    auto show_trails_toggle = add_toggle("Show trails", [this](bool state) {
-        this->m_simulation_view->set_show_trails(state);
-    });
-
-    container.add_widget<GUI::Widget>(); // SPACER
+        auto show_grid_toggle = add_toggle("Show grid", [this](bool state) {
+            this->m_simulation_view->set_show_grid(state);
+        });
+        auto show_trails_toggle = add_toggle("Show trails", [this](bool state) {
+            this->m_simulation_view->set_show_trails(state);
+        });
+    }
 
     auto restore_sim_container = container.add_widget<GUI::Container>();
     auto& restore_sim_layout = restore_sim_container->set_layout<GUI::HorizontalBoxLayout>();
     restore_sim_layout.set_spacing(10);
     restore_sim_container->set_size({ Length::Auto, 30.0_px });
-    restore_sim_container->set_class_name("Simulation");
 
     auto restore_sim_label = restore_sim_container->add_widget<GUI::Textfield>();
     restore_sim_label->set_content("Restore Simulation state: ");
@@ -333,7 +309,8 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     restore_defaults->set_toggleable(false);
     restore_defaults->set_alignment(GUI::Align::Center);
     restore_defaults->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
-    restore_defaults->on_click = [this, iterations_control, tick_length_control, fov_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
+    // TODO
+    /*restore_defaults->on_click = [this, iterations_control, tick_length_control, fov_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
         iterations_control->set_value(10);
         tick_length_control->set_value(60 * 60 * 12);
         fov_control->set_value(80);
@@ -342,42 +319,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         show_trails_toggle->set_active(true);
         this->m_simulation_view->toggle_label_visibility(true);
         toggle_sphere_mode->set_index(0);
-    };
-    
-    display_settings_toggle->on_change = [this
-                                        , display_settings_toggle = display_settings_toggle.get()
-                                        , simulation_settings_toggle = simulation_settings_toggle.get()
-                                        , container = &container](bool state) mutable{
-        display_settings_toggle->set_active_without_action(true);
-        simulation_settings_toggle->set_active_without_action(false);
-        this->m_switch_settings(true, container);
-    };
-
-    simulation_settings_toggle->on_change = [this
-                                        , display_settings_toggle = display_settings_toggle.get()
-                                        , simulation_settings_toggle = simulation_settings_toggle.get()
-                                        , container = &container](bool state) mutable{
-        display_settings_toggle->set_active_without_action(false);
-        simulation_settings_toggle->set_active_without_action(true);
-        this->m_switch_settings(false, container);
-    };
-
-    m_switch_settings(true, &container);
-}
-void EssaGUI::m_switch_settings(bool state, GUI::Container *container){
-    auto display_settings = container->find_widget_by_class_name("Display");
-    auto sim_settings = container->find_widget_by_class_name("Simulation");
-
-    for(auto& d : display_settings)
-        d->set_visible(state);
-
-    for(auto& s : sim_settings)
-        s->set_visible(!state);
-    
-    if(state)
-        container->find_widget_of_type<GUI::Textfield>("settings_label")->set_content("Display Settings");
-    else
-        container->find_widget_of_type<GUI::Textfield>("settings_label")->set_content("Simulation Settings");
+    };*/
 }
 
 void EssaGUI::m_recalculate_forward_simulation() {
