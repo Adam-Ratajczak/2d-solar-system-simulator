@@ -32,7 +32,6 @@ void World::update(int steps) {
     assert(steps != 0);
     bool reverse = steps < 0;
 
-
     for (unsigned i = 0; i < std::abs(steps); i++) {
         m_object_history.set_time(m_date.get_int());
         if (!reverse){
@@ -55,7 +54,7 @@ void World::update(int steps) {
             p->update_forces(reverse);
 
         for (auto& p : m_object_list)
-            p->update(m_simulation_view->speed());
+            p->update(steps);
     }
 }
 
