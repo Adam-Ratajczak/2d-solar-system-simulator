@@ -22,14 +22,14 @@ sf::Color Button::text_color_for_state() const {
 sf::Color Button::bg_color_for_state() const {
     sf::Color base_color = is_active() ? m_active_bg_color : m_bg_color;
     if (is_hover())
-        base_color += sf::Color { 20, 20, 20 };
+        base_color += sf::Color { 20, 20, 20, 0 };
     return base_color;
 }
 
 sf::Color Button::fg_color_for_state() const {
     sf::Color base_color = is_active() ? m_active_fg_color : m_fg_color;
     if (is_hover())
-        base_color += sf::Color { 20, 20, 20 };
+        base_color += sf::Color { 20, 20, 20, 0 };
     return base_color;
 }
 
