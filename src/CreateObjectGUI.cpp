@@ -11,10 +11,12 @@ std::shared_ptr<GUI::ImageButton> EssaGUI::m_create_toggle_unit_button(){
     auto button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
-        auto vel = this->m_velocity_control->value();
+        auto vel = m_velocity_control->value();
         auto ap = m_apogee_control->value();
         auto pe = m_perigee_control->value();
-        auto dir = m_direction_xz_control->value();
+        auto y_pos = m_y_position_control->value();
+        auto dir_xz = m_direction_xz_control->value();
+        auto dir_yz = m_direction_yz_control->value();
         auto angle = m_orbit_angle_control->value();
         auto tilt = m_orbit_tilt_control->value();
 
@@ -23,14 +25,20 @@ std::shared_ptr<GUI::ImageButton> EssaGUI::m_create_toggle_unit_button(){
             this->m_velocity_control->set_value(vel * 3.6);
             this->m_apogee_control->set_unit("AU");
             this->m_apogee_control->set_value(ap / AU * 1000);
-            this->m_apogee_control->slider().set_range(1, 50, 0.1);
+            this->m_apogee_control->slider().set_range(0, 100, 0.1);
             this->m_perigee_control->set_unit("AU");
             this->m_perigee_control->set_value(pe / AU * 1000);
-            this->m_perigee_control->slider().set_range(1, 50, 0.1);
+            this->m_perigee_control->slider().set_range(0, 100, 0.1);
+            this->m_y_position_control->set_unit("AU");
+            this->m_y_position_control->set_value(y_pos / AU * 1000);
+            this->m_y_position_control->slider().set_range(-50, 50, 0.1);
 
             this->m_direction_xz_control->set_unit("[rad]");
-            this->m_direction_xz_control->set_value(dir / 180 * M_PI);
+            this->m_direction_xz_control->set_value(dir_xz / 180 * M_PI);
             this->m_direction_xz_control->slider().set_range(0, 2 * M_PI, 0.01);
+            this->m_direction_yz_control->set_unit("[rad]");
+            this->m_direction_yz_control->set_value(dir_yz / 180 * M_PI);
+            this->m_direction_yz_control->slider().set_range(- M_PI / 2, M_PI / 2, 0.01);
             this->m_orbit_angle_control->set_unit("[rad]");
             this->m_orbit_angle_control->set_value(angle / 180 * M_PI);
             this->m_orbit_angle_control->slider().set_range(0, 2 * M_PI, 0.01);
@@ -39,23 +47,29 @@ std::shared_ptr<GUI::ImageButton> EssaGUI::m_create_toggle_unit_button(){
             this->m_orbit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
         }else {
             this->m_velocity_control->set_unit("m/s");
-            this->m_velocity_control->set_value(vel * (1.f / 3.6));
+            this->m_velocity_control->set_value(vel / 3.6);
             this->m_apogee_control->set_unit("km");
             this->m_apogee_control->set_value(ap / 1000 * AU);
-            this->m_apogee_control->slider().set_range(0, 1e10, 100);
+            this->m_apogee_control->slider().set_range(0, 50 * AU, 100);
             this->m_perigee_control->set_unit("km");
             this->m_perigee_control->set_value(pe / 1000 * AU);
-            this->m_perigee_control->slider().set_range(0, 1e10, 100);
+            this->m_perigee_control->slider().set_range(0, 50 * AU, 100);
+            this->m_y_position_control->set_unit("km");
+            this->m_y_position_control->set_value(y_pos / 1000 * AU);
+            this->m_y_position_control->slider().set_range(-50 * AU, 50 * AU, 100);
 
             this->m_direction_xz_control->set_unit("[deg]");
-            this->m_direction_xz_control->set_value(dir / M_PI * 180);
+            this->m_direction_xz_control->set_value(dir_xz / M_PI * 180);
             this->m_direction_xz_control->slider().set_range(0, 360, 1);
+            this->m_direction_yz_control->set_unit("[deg]");
+            this->m_direction_yz_control->set_value(dir_yz / M_PI * 180);
+            this->m_direction_yz_control->slider().set_range(-90, 90, 1);
             this->m_orbit_angle_control->set_unit("[deg]");
-            this->m_orbit_angle_control->set_value(dir / M_PI * 180);
+            this->m_orbit_angle_control->set_value(angle / M_PI * 180);
             this->m_orbit_angle_control->slider().set_range(0, 360, 1);
             this->m_orbit_tilt_control->set_unit("[deg]");
-            this->m_orbit_tilt_control->set_value(dir / M_PI * 180);
-            this->m_orbit_tilt_control->slider().set_range(0, 360, 1);
+            this->m_orbit_tilt_control->set_value(tilt / M_PI * 180);
+            this->m_orbit_tilt_control->slider().set_range(-90, 90, 1);
         }
     };
     button->set_tooltip_text("Toggle units");
@@ -126,21 +140,21 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_params_gui(std::sh
         m_forward_simulation_is_valid = false;
     };
 
-    m_direction_xz_control = container->add_widget<GUI::ValueSlider>(0, 360, 0.1);
+    m_direction_xz_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
     m_direction_xz_control->set_name("Direction X");
     m_direction_xz_control->set_unit("[deg]");
     m_direction_xz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_direction_yz_control = container->add_widget<GUI::ValueSlider>(-90, 90, 0.1);
+    m_direction_yz_control = container->add_widget<GUI::ValueSlider>(-90, 90, 1);
     m_direction_yz_control->set_name("Direction Y");
     m_direction_yz_control->set_unit("[deg]");
     m_direction_yz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_y_position_control = container->add_widget<GUI::ValueSlider>(-50 * AU, 50 * AU);
+    m_y_position_control = container->add_widget<GUI::ValueSlider>(-0.05 * AU, 0.05 * AU);
     m_y_position_control->set_name("Y position");
     m_y_position_control->set_unit("AU");
     m_y_position_control->on_change = [this](double) {
@@ -154,14 +168,14 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_orbit_gui(std::sha
     auto container = std::make_shared<GUI::Container>(*parent);
     container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
-    m_apogee_control = container->add_widget<GUI::ValueSlider>(0, 1e10, 100);
+    m_apogee_control = container->add_widget<GUI::ValueSlider>(0, 0.05 * AU);
     m_apogee_control->set_name("Apogee");
     m_apogee_control->set_unit("km");
     m_apogee_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_perigee_control = container->add_widget<GUI::ValueSlider>(0, 1e10, 100);
+    m_perigee_control = container->add_widget<GUI::ValueSlider>(0, 0.05 * AU);
     m_perigee_control->set_name("Perigee");
     m_perigee_control->set_unit("km");
     m_perigee_control->on_change = [this](double) {
@@ -175,7 +189,7 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_orbit_gui(std::sha
         m_forward_simulation_is_valid = false;
     };
 
-    m_orbit_tilt_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
+    m_orbit_tilt_control = container->add_widget<GUI::ValueSlider>(-90, 90, 1);
     m_orbit_tilt_control->set_name("Tilt");
     m_orbit_tilt_control->set_unit("[deg]");
     m_orbit_tilt_control->on_change = [this](double) {
@@ -191,6 +205,11 @@ std::unique_ptr<Object> EssaGUI::m_create_object_from_params() const {
     double theta = m_direction_xz_control->value();
     double alpha = m_direction_yz_control->value();
     double velocity = m_velocity_control->value();
+
+    if(!m_toggle_unit_button->is_active()){
+        theta = theta / 180 * M_PI;
+        alpha = alpha / 180 * M_PI;
+    }
 
     Vector3 vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
 
@@ -226,12 +245,6 @@ std::unique_ptr<Object> EssaGUI::m_create_object_from_orbit() const {
         angle = { static_cast<float>(m_orbit_angle_control->value()), Angle::Deg };
         tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Deg };
     }
-
-    // std::cout << radius << "\n";
-    // std::cout << apogee << "\n";
-    // std::cout << perigee << "\n";
-    // std::cout << angle << "\n";
-    // std::cout << tilt << "\n";
 
     return m_focused->create_object_relative_to(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content(), 0.0_deg);
 }
