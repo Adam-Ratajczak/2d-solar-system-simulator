@@ -43,6 +43,7 @@ add_executable(
     src/gui/SettingsMenu.cpp
     src/gui/SelectWidget.cpp
     src/gui/Slider.cpp
+    src/gui/TabWidget.cpp
     src/gui/Textbox.cpp
     src/gui/TextButton.cpp
     src/gui/Textfield.cpp
