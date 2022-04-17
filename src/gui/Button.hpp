@@ -42,7 +42,6 @@ protected:
     sf::Color text_color_for_state() const;
 
 private:
-    virtual LengthVector initial_size() const override;
     void click();
 
     sf::Color m_bg_color { 92, 89, 89 };

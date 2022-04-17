@@ -55,9 +55,4 @@ void Button::click() {
         on_click();
 }
 
-LengthVector Button::initial_size() const {
-    // TODO: Stop special-casing!
-    return { 72.0_px, 72.0_px };
-}
-
 }

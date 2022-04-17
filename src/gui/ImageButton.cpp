@@ -23,4 +23,9 @@ void ImageButton::draw(sf::RenderWindow& window) const {
     window.draw(sprite);
 }
 
+LengthVector ImageButton::initial_size() const {
+    // TODO: Stop special-casing!
+    return { 72.0_px, 72.0_px };
+}
+
 }
