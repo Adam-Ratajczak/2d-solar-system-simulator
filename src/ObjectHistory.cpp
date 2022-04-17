@@ -2,7 +2,7 @@
 
 void ObjectHistory::clear_history(unsigned long to_index) {
     m_entries.resize(std::min(to_index, m_entries.size()));
-    m_pos = to_index;
+    m_pos = to_index - 1;
 }
 
 bool ObjectHistory::set_time(unsigned int time) {

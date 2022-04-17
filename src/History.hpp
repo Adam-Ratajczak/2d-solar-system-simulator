@@ -12,7 +12,7 @@ class History {
         Node* prev;
         Node* next;
 
-        std::vector<Vector3> entry;
+        std::vector<Entry> entry;
         int vector_pos, vector_size;
 
         Node(Node* _prev, Node* _next, unsigned _size) {
@@ -28,15 +28,19 @@ class History {
         Node& operator=(Node const&) = delete;
         Node(Node&&) = delete;
         Node& operator=(Node&&) = delete;
+
+        ~Node(){
+            if(next != nullptr)
+                delete next;
+        }
     };
 
     Node* m_root;
     Node* m_current;
-    int m_len, m_pos, m_segments;
+    int m_segments;
 
     bool m_edge = true;
     Entry m_first_entry;
-    Vector3 m_vel;
 
 public:
     History(unsigned segments, Entry first_entry);
@@ -54,6 +58,7 @@ public:
     void push_back(const Entry entry);
     void push_front();
     void reset();
+    void reset_future_entries();
     Entry first_entry() const{return m_first_entry;}
 
     ~History();

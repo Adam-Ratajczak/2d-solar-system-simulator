@@ -6,15 +6,12 @@ History::History(unsigned segments, Entry first_entry) : m_segments(segments), m
         m_segments = 1000;
     m_root = new Node(nullptr, nullptr, m_segments);
     m_current = m_root;
-    m_current->entry[0] = first_entry.pos;
-    m_vel = first_entry.vel;
+    m_current->entry[0] = first_entry;
     m_current->vector_size++;
-    m_len = 0;
 }
 
 bool History::move_forward(){
     m_current->vector_pos++;
-    m_pos++;
 
     if(m_current->vector_pos < m_current->vector_size - 1){
         m_edge = false;
@@ -35,7 +32,6 @@ bool History::move_forward(){
 
 bool History::move_backward(){
     m_current->vector_pos--;
-    m_pos--;
     
     if(m_current->vector_pos >= 0){
 
@@ -57,21 +53,30 @@ bool History::move_backward(){
 
 History::Entry History::get_entry() const{
     // std::cout << m_current->vector_pos << " " << m_current->entry.size() << "\n";
-    return {m_current->entry[m_current->vector_pos], m_vel};
+    return m_current->entry[m_current->vector_pos];
+}
+
+void History::reset_future_entries(){
+    if(m_current->next != nullptr)
+        delete m_current->next;
+    m_current->next = nullptr;
+
+    m_current->vector_size = m_current->vector_pos + 1;
+    m_edge = true;
+    // std::cout << m_current->next << " " << m_current << " " << m_current->vector_size << " " << m_current->vector_pos << "\n";
 }
 
 void History::push_back(const Entry entry){
     if(!move_forward()){
         if(m_current->vector_size < m_segments){
-            m_current->entry[m_current->vector_pos] = entry.pos;
+            m_current->entry[m_current->vector_pos] = entry;
         }else if(m_current->next == nullptr){
             m_current->next = new Node(m_current, nullptr, m_segments);
             m_current = m_current->next;
-            m_current->entry[m_current->vector_pos] = entry.pos;
+            m_current->entry[m_current->vector_pos] = entry;
         }else {
             m_edge = false;
         }
-        m_vel = entry.vel;
         m_current->vector_size++;
     }
 }
@@ -89,10 +94,5 @@ void History::reset(){
 }
 
 History::~History(){
-    while(m_root->next != nullptr){
-        m_root = m_root->next;
-        delete m_root->prev;
-    }
-
     delete m_root;
 }
