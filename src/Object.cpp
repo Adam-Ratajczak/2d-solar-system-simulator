@@ -141,8 +141,7 @@ void Object::reset_history(){
 }
 
 void Object::draw_gui(SimulationView const& view) {
-    // FIXME: Hardcoded multiplier
-    auto position = view.world_to_screen(m_pos / AU);
+    auto position = view.world_to_screen(render_position());
 
     // Don't draw labels of planets outside of clipping box
     if (position.z > 1 || position.z < -1)
