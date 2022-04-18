@@ -12,6 +12,10 @@ void ImageButton::draw(sf::RenderWindow& window) const {
     sf::CircleShape cs_bg(0.5);
     cs_bg.setScale(size());
     cs_bg.setFillColor(bg_color_for_state());
+    if(is_focused()) {
+        cs_bg.setOutlineColor(sf::Color(200, 200, 200));
+        cs_bg.setOutlineThickness(-0.05);
+    }
     window.draw(cs_bg);
 
     sf::Sprite sprite;
