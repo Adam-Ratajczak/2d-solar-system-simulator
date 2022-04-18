@@ -119,6 +119,7 @@ protected:
     virtual bool is_mouse_over(sf::Vector2i) const;
     virtual void update();
     virtual void handle_event(Event&);
+    virtual bool accepts_focus() const { return false; }
 
     void set_needs_relayout();
 

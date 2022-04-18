@@ -81,7 +81,7 @@ void Widget::handle_event(Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
-        if (m_hover) {
+        if (m_hover && accepts_focus()) {
             set_focused();
             event.set_handled();
         }
@@ -92,8 +92,8 @@ void Widget::handle_event(Event& event) {
 
 void Widget::draw(sf::RenderWindow& window) const {
     sf::RectangleShape background(size());
-    // background.setOutlineThickness(-1);
-    // background.setOutlineColor(sf::Color::Red);
+    background.setOutlineThickness(-1);
+    background.setOutlineColor(is_focused() ? sf::Color::Green : sf::Color::Red);
     background.setFillColor(m_background_color);
     window.draw(background);
 }

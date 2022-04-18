@@ -52,6 +52,7 @@ private:
     sf::Vector2f calculate_cursor_position() const;
     sf::Text generate_sf_text() const;
     void m_fit_in_range();
+    virtual bool accepts_focus() const override { return true; }
 
     enum class CursorDirection {
         Left,

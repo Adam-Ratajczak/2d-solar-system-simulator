@@ -78,6 +78,8 @@ private:
     virtual void draw(sf::RenderWindow&) const override;
     virtual void update() override;
 
+    virtual bool accepts_focus() const override { return true; }
+
     void draw_grid(sf::RenderWindow&) const;
 
     Vector3 m_offset;

@@ -25,6 +25,8 @@ private:
     std::deque<LogLine> m_lines;
     float m_scroll {};
 
+    virtual bool accepts_focus() const override { return true; }
+
     float content_size() const;
     float scroll_area_size() const;
 };

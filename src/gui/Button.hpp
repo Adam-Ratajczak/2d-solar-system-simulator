@@ -41,6 +41,8 @@ protected:
     sf::Color fg_color_for_state() const;
     sf::Color text_color_for_state() const;
 
+    virtual bool accepts_focus() const override { return true; }
+
 private:
     void click();
 
