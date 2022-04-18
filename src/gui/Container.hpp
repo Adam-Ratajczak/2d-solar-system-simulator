@@ -4,6 +4,7 @@
 
 #include <initializer_list>
 #include <memory>
+#include <optional>
 #include <type_traits>
 #include <vector>
 
@@ -134,16 +135,16 @@ public:
     Widget* find_widget_by_id(std::string_view) const;
     std::vector<Widget*> find_widget_by_class_name(std::string_view) const;
     Widget* find_widget_by_id_recursively(std::string_view) const;
-    
-    template<class T> requires(std::is_base_of_v<Widget, T>)
-    T* find_widget_of_type(std::string_view name) const
-    {
+
+    template<class T>
+    requires(std::is_base_of_v<Widget, T>)
+        T* find_widget_of_type(std::string_view name) const {
         return dynamic_cast<T*>(find_widget_by_id(name));
     }
-    
-    template<class T> requires(std::is_base_of_v<Widget, T>)
-    T* find_widget_of_type_recursively(std::string_view name) const
-    {
+
+    template<class T>
+    requires(std::is_base_of_v<Widget, T>)
+        T* find_widget_of_type_recursively(std::string_view name) const {
         return dynamic_cast<T*>(find_widget_by_id_recursively(name));
     }
 
@@ -152,10 +153,24 @@ protected:
         : Widget(application) { }
 
     virtual void relayout() override;
-    WidgetList m_widgets;
-    Widget* m_focused_widget { nullptr };
-
+    virtual void handle_event(Event&) override;
     virtual float intrinsic_padding() const { return 0; }
+    virtual void focus_first_child_or_self() override;
+    virtual bool accepts_focus() const override;
+
+    // Isolated focus - so that the widget cannot be focused from outside
+    // and the focus cannot "escape" the widget using Tab. Used for settings
+    // windows and settings menu so that you can "circulate" all settings
+    // using Tab.
+    // FIXME: Allow user to set it for any container.
+    virtual bool isolated_focus() const { return false; }
+
+    std::optional<size_t> focused_widget_index(bool recursive) const;
+    // Returns true if the focus changed (one of children was focused)
+    bool focus_next_widget(bool called_from_child);
+    void focus_first_child();
+
+    WidgetList m_widgets;
 
 private:
     friend Layout;

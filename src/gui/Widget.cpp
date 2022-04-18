@@ -56,11 +56,16 @@ void Widget::do_update() {
 }
 
 void Widget::set_focused() {
+    assert(accepts_focus());
     m_application.set_focused_widget(this);
 }
 
 bool Widget::is_focused() const {
     return m_application.focused_widget() == this;
+}
+
+void Widget::focus_first_child_or_self() {
+    set_focused();
 }
 
 bool Widget::are_all_parents_enabled() const {
@@ -92,8 +97,8 @@ void Widget::handle_event(Event& event) {
 
 void Widget::draw(sf::RenderWindow& window) const {
     sf::RectangleShape background(size());
-    background.setOutlineThickness(-1);
-    background.setOutlineColor(is_focused() ? sf::Color::Green : sf::Color::Red);
+    // background.setOutlineThickness(-1);
+    // background.setOutlineColor(is_focused() ? sf::Color::Green : sf::Color::Red);
     background.setFillColor(m_background_color);
     window.draw(background);
 }

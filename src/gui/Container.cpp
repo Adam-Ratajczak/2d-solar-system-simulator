@@ -1,5 +1,8 @@
 #include "Container.hpp"
 
+#include "Application.hpp"
+
+#include <cassert>
 #include <iostream>
 
 namespace GUI {
@@ -175,6 +178,81 @@ void Container::do_handle_event(Event& event) {
         Widget::do_handle_event(event);
 }
 
+void Container::handle_event(Event& event) {
+    if (event.type() == sf::Event::KeyPressed && event.event().key.code == sf::Keyboard::Tab) {
+        if (focus_next_widget(false))
+            event.set_handled();
+    }
+}
+
+std::optional<size_t> Container::focused_widget_index(bool recursive) const {
+    for (size_t c = 0; auto& w : m_widgets) {
+        if (application().focused_widget() == w.get())
+            return c;
+        if (recursive) {
+            auto container = dynamic_cast<Container*>(w.get());
+            if (container) {
+                auto index = container->focused_widget_index(true);
+                if (index.has_value())
+                    return c;
+            }
+        }
+        c++;
+    }
+    return {};
+}
+
+bool Container::focus_next_widget(bool called_from_child) {
+    auto index_opt = focused_widget_index(called_from_child);
+    if (!index_opt.has_value())
+        return false;
+    if (!called_from_child)
+        std::cout << "======================RUNNING TAB FOCUS======================" << std::endl;
+    auto index = index_opt.value();
+    do {
+        index++;
+        dump(0);
+        std::cout << "focus_next_widget " << called_from_child << ": " << index << " " << m_widgets.size() << std::endl;
+        if (index == m_widgets.size()) {
+            if (m_parent && !isolated_focus())
+                m_parent->focus_next_widget(true);
+            else
+                focus_first_child_or_self();
+            break;
+        }
+        else if (m_widgets[index]->is_visible() && m_widgets[index]->accepts_focus()) {
+            std::cout << "Focusing first_child_or_self: " << index << std::endl;
+            m_widgets[index]->focus_first_child_or_self();
+            break;
+        }
+    } while (true);
+    return true;
+}
+
+void Container::focus_first_child_or_self() {
+    if (m_widgets.size() == 0) {
+        std::cout << "No widgets to focus @" << this << std::endl;
+        return;
+    }
+
+    for (auto& widget : m_widgets) {
+        if (widget->is_visible() && widget->accepts_focus()) {
+            widget->focus_first_child_or_self();
+            break;
+        }
+    }
+}
+
+bool Container::accepts_focus() const {
+    if (isolated_focus())
+        return false;
+    for (auto& widget : m_widgets) {
+        if (widget->is_visible() && widget->accepts_focus())
+            return true;
+    }
+    return false;
+}
+
 void Container::do_update() {
     Widget::do_update();
     for (auto const& w : m_widgets)
@@ -246,5 +324,4 @@ Widget* Container::find_widget_by_id_recursively(std::string_view id) const {
     }
     return nullptr;
 }
-
 }
