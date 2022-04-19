@@ -35,7 +35,7 @@ void Trail::pop_back() {
 }
 
 void Trail::reset() {
-    m_append_offset = 0;
+    m_append_offset = 1;
     m_length = 0;
 }
 
