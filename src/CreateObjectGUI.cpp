@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-std::shared_ptr<GUI::ImageButton> EssaGUI::m_create_toggle_unit_button(){
+std::shared_ptr<GUI::ImageButton> EssaGUI::m_create_toggle_unit_button() {
     auto button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
@@ -38,14 +38,15 @@ std::shared_ptr<GUI::ImageButton> EssaGUI::m_create_toggle_unit_button(){
             this->m_direction_xz_control->slider().set_range(0, 2 * M_PI, 0.01);
             this->m_direction_yz_control->set_unit("[rad]");
             this->m_direction_yz_control->set_value(dir_yz / 180 * M_PI);
-            this->m_direction_yz_control->slider().set_range(- M_PI / 2, M_PI / 2, 0.01);
+            this->m_direction_yz_control->slider().set_range(-M_PI / 2, M_PI / 2, 0.01);
             this->m_orbit_angle_control->set_unit("[rad]");
             this->m_orbit_angle_control->set_value(angle / 180 * M_PI);
             this->m_orbit_angle_control->slider().set_range(0, 2 * M_PI, 0.01);
             this->m_orbit_tilt_control->set_unit("[rad]");
             this->m_orbit_tilt_control->set_value(tilt / 180 * M_PI);
             this->m_orbit_tilt_control->slider().set_range(0, 2 * M_PI, 0.01);
-        }else {
+        }
+        else {
             this->m_velocity_control->set_unit("m/s");
             this->m_velocity_control->set_value(vel / 3.6);
             this->m_apogee_control->set_unit("km");
@@ -135,7 +136,7 @@ std::shared_ptr<GUI::Container> EssaGUI::m_create_object_from_params_gui(std::sh
     auto container = std::make_shared<GUI::Container>(*parent);
     container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
-    m_velocity_control = container->add_widget<GUI::ValueSlider>(0, 500000);
+    m_velocity_control = container->add_widget<GUI::ValueSlider>(0, 50000);
     m_velocity_control->set_name("Velocity");
     m_velocity_control->set_unit("m/s");
     m_velocity_control->on_change = [this](double) {
@@ -208,7 +209,7 @@ std::unique_ptr<Object> EssaGUI::m_create_object_from_params() const {
     double alpha = m_direction_yz_control->value();
     double velocity = m_velocity_control->value();
 
-    if(!m_toggle_unit_button->is_active()){
+    if (!m_toggle_unit_button->is_active()) {
         theta = theta / 180 * M_PI;
         alpha = alpha / 180 * M_PI;
     }
