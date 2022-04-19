@@ -98,8 +98,6 @@ void Textbox::handle_event(Event& event) {
                 set_cursor(m_cursor + 1);
             }
 
-            if(m_type == NUMBER)
-                m_fit_in_range();
 
             event.set_handled();
         }
@@ -140,9 +138,15 @@ void Textbox::handle_event(Event& event) {
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
     }
+
+    if(m_type == NUMBER && m_has_limit)
+        m_fit_in_range();
 }
 
 void Textbox::m_fit_in_range(){
+    if(is_focused())
+        return;
+
     double val = std::stod(m_content.toAnsiString());
 
     if(val < m_min_value)

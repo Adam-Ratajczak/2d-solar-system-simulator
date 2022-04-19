@@ -62,6 +62,8 @@ private:
     bool python_set_simulation_seconds_per_tick(PySSA::Object const&);
 
     friend std::ostream& operator<<(std::ostream& out, World const&);
+
+    void m_set_new_most_massive_object();
 };
 
 void prepare_solar(World& world);
