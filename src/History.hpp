@@ -59,6 +59,7 @@ public:
     void push_front();
     void reset();
     void reset_future_entries();
+    void change_current(Entry entry);
     Entry first_entry() const{return m_first_entry;}
 
     ~History();

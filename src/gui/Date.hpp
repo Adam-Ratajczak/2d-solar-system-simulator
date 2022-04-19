@@ -45,7 +45,7 @@ public:
     }
 
     std::string to_date_string() const{
-        std::string str = m_prepare_string(m_day) + "." + m_prepare_string(m_month + 1) + " " + m_prepare_string(m_year);
+        std::string str = m_prepare_string(m_day + 1) + "." + m_prepare_string(m_month + 1) + " " + m_prepare_string(m_year);
         if(m_era == AD)
             str += " AD, ";
         else
@@ -58,6 +58,7 @@ public:
     int get_int() const{
         int result = 0;
         result += m_year * 365.25;
+
         for(unsigned i = 0; i < m_month; i++)
             result += month_day[i];
         result += m_day;
@@ -82,9 +83,13 @@ public:
     unsigned ms() const{return m_month;}
     unsigned yrs() const{return m_year;}
 
+    bool new_day() const{return m_new_day;}
+    void set_if_new_day(bool state){m_new_day = state;}
+
 private:
     unsigned m_year, m_month, m_day, m_hour, m_minute, m_second;
     Era m_era;
+    bool m_new_day = false;
 
     std::string m_prepare_string(unsigned val) const{
         if(val < 10)
@@ -95,6 +100,8 @@ private:
 
 inline Date operator+(const Date& d1, const Date& d2){
     unsigned sec, min, hr, d, m, yr;
+    unsigned prev_days = d1.ds();
+
     sec = d1.secs() + d2.secs();
     min = d1.mins() + d2.mins();
     hr = d1.hrs() + d2.hrs();
@@ -119,53 +126,65 @@ inline Date operator+(const Date& d1, const Date& d2){
     yr += m / 12;
     m = m % 12;
 
-    return Date(yr, m, d, Date::AD, hr, min, sec);
+    auto result = Date(yr, m, d, Date::AD, hr, min, sec);
+    result.set_if_new_day(prev_days != result.ds());
+
+    return result;
 }
 
 inline Date operator-(const Date& d1, const Date& d2){
     int sec, min, hr, d, m, yr;
+    unsigned prev_days = d1.ds();
+
     sec = d1.secs() - d2.secs();
     min = d1.mins() - d2.mins();
     hr = d1.hrs() - d2.hrs();
     d = d1.ds() - d2.ds();
     m = d1.ms() - d2.ms();
     yr = d1.yrs() - d2.yrs();
-
-    min -= sec / 60;
-    sec = sec % 60;
-    hr -= min / 60;
-    min = min % 60;
-    d -= hr / 24;
-    hr = hr % 24;
+    
+    if(sec < 0){
+        sec = 60 - sec;
+        min--;
+    }
+    
+    if(min < 0){
+        min = 60 - min;
+        hr--;
+    }
+    
+    if(hr < 0){
+        hr = 24 - hr;
+        d--;
+    }
 
     if(m < 0){
-        m = 11 - m;
+        m = 12 - m;
         yr--;
     }
 
-    if(d > month_day[m]){
-        d = d % month_day[m];
+    if(d < 0){
+        d = month_day[m] - d;
         m--;
+        
+        if(m < 0){
+            m = 12 - m;
+            yr--;
+        }
     }
-    m = m % 12;
+    
+    
+    auto result = Date(yr, m, d, Date::AD, hr, min, sec);
+    result.set_if_new_day(prev_days != result.ds());
 
-    sec = std::abs(sec);
-    min = std::abs(min);
-    hr = std::abs(hr);
-    d = std::abs(d);
-    m = std::abs(m);
-    yr = std::abs(yr);
-
-    return Date(yr, m, d, Date::AD, hr, min, sec);
+    return result;
 }
 
 inline Date operator+(const Date& d1, int s){
-
     return d1 + Date(s);
 }
 
 inline Date operator-(const Date& d1, int s){
-
     return d1 - Date(s);
 }
 

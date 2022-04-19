@@ -94,10 +94,14 @@ void Object::update(int speed) {
         m_vel = entry.vel;
     }
 
-    if (speed > 0)
-        m_history.push_back({ m_pos, m_vel });
-    else if (speed < 0)
-        m_history.push_front();
+    if(m_world.date().new_day()){
+        if (speed > 0)
+            m_history.push_back({ m_pos, m_vel });
+        else if (speed < 0)
+            m_history.push_front();
+    }else if(m_history.on_edge()){
+        m_history.change_current({m_pos, m_vel});
+    }
 
     if (!m_most_attracting_object || m_is_forward_simulated) {
         m_trail.recalculate_with_offset({});

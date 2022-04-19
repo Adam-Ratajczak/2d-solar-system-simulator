@@ -88,6 +88,10 @@ void History::push_front(){
         m_current->vector_pos = 0;
 }
 
+void History::change_current(Entry entry){
+    m_current->entry[m_current->vector_pos] = entry;
+}
+
 void History::reset(){
     m_current = m_root;
     m_root->vector_pos = 0;
