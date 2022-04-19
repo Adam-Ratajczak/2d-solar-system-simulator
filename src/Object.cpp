@@ -45,16 +45,6 @@ Vector3 Object::attraction(const Object& other) {
     return normalized_dist * force;
 }
 
-bool Object::hover(SimulationView& view, Vector3 mouse_pos) const {
-    auto position = view.world_to_screen(render_position());
-    auto dist = get_distance(position, mouse_pos);
-
-    // std::cout << dist << "\n";
-
-    // return get_distance(position, mouse_pos) < 20;
-    return false;
-}
-
 void Object::update_forces(bool reverse) {
     m_attraction_factor = Vector3();
     m_world.for_each_object([&](Object& object) {

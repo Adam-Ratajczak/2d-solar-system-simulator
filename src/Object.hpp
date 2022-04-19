@@ -16,30 +16,6 @@
 #include <vector>
 
 class Object : public PySSA::WrappedObject<Object> {
-protected:
-    double m_density;
-    Trail m_trail;
-    History m_history;
-    Vector3 attraction(const Object&);
-
-    Vector3 m_pos;
-
-    double m_ap = 0, m_pe = std::numeric_limits<double>::max();
-    double m_ap_vel = 0, m_pe_vel = 0;
-    World& m_world;
-    Vector3 m_attraction_factor;
-    float m_prev_zoom;
-    double m_orbit_len, eccencrity;
-    double m_gravity_factor {};
-    double m_radius {};
-
-    bool m_is_forward_simulated = false;
-    Sphere m_sphere;
-    int m_creation_date;
-    Vector3 m_vel;
-    std::string m_name;
-    sf::Color m_color;
-
 public:
     Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
@@ -64,7 +40,6 @@ public:
     // Draw the GUI layer of the object (without world transform)
     void draw_gui(SimulationView const&);
 
-    bool hover(SimulationView& view, Vector3 mouse_pos) const;
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation = 0.0_rad);
@@ -86,7 +61,7 @@ public:
     std::vector<std::string> get_info() const;
 
     void reset_history();
-    void reset_future(){m_history.reset_future_entries();}
+    void reset_future() { m_history.reset_future_entries(); }
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);
@@ -99,4 +74,27 @@ private:
     PySSA::Object python_get_focused() const;
     PySSA::Object python_get_color() const;
     PySSA::Object python_get_radius() const;
+
+    double m_density;
+    Trail m_trail;
+    History m_history;
+    Vector3 attraction(const Object&);
+
+    Vector3 m_pos;
+
+    double m_ap = 0, m_pe = std::numeric_limits<double>::max();
+    double m_ap_vel = 0, m_pe_vel = 0;
+    World& m_world;
+    Vector3 m_attraction_factor;
+    float m_prev_zoom;
+    double m_orbit_len, eccencrity;
+    double m_gravity_factor {};
+    double m_radius {};
+
+    bool m_is_forward_simulated = false;
+    Sphere m_sphere;
+    int m_creation_date;
+    Vector3 m_vel;
+    std::string m_name;
+    sf::Color m_color;
 };
