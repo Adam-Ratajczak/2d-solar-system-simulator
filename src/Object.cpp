@@ -57,8 +57,25 @@ void Object::update_forces_against(Object& object) {
     double denominator = dist.magnitude_squared();
     denominator *= std::sqrt(denominator);
     auto attraction_base = dist / denominator;
-    m_attraction_factor -= attraction_base * object.m_gravity_factor;
-    object.m_attraction_factor += attraction_base * m_gravity_factor;
+
+    // TODO: Do it properly
+    auto this_attraction = attraction_base * object.m_gravity_factor;
+    m_attraction_factor -= this_attraction;
+    auto this_attraction_mag = this_attraction.magnitude_squared();
+
+    if (this_attraction_mag > m_max_attraction && object.m_gravity_factor > m_gravity_factor) {
+        m_max_attraction = this_attraction_mag;
+        m_most_attracting_object = &object;
+    }
+
+    auto other_attraction = attraction_base * m_gravity_factor;
+    object.m_attraction_factor += other_attraction;
+
+    auto other_attraction_mag = other_attraction.magnitude_squared();
+    if (other_attraction_mag > object.m_max_attraction && object.m_gravity_factor < m_gravity_factor) {
+        object.m_max_attraction = other_attraction_mag;
+        object.m_most_attracting_object = this;
+    }
 }
 
 void Object::update(int speed) {
