@@ -136,6 +136,16 @@ void Textbox::handle_event(Event& event) {
         m_fit_in_range();
 }
 
+std::string Textbox::m_fix_content(std::string content) const{
+    unsigned i = content.size();
+    while (i > 0 && content[i - 1] == '0')
+        i--;
+
+    if(content[i - 1] == '.')
+        return content.substr(0, i) + '0';
+    return content.substr(0, std::min(m_limit, i));
+}
+
 void Textbox::m_fit_in_range() {
     if(is_focused())
         return;
@@ -150,7 +160,7 @@ void Textbox::m_fit_in_range() {
             oss << m_max_value;
         else
             return;
-        m_content = oss.str().substr(0, m_limit);
+        m_content = m_fix_content(oss.str());
     } catch (...) {
         return;
     }
