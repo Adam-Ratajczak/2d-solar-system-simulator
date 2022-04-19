@@ -13,6 +13,7 @@
 #include "gui/TextButton.hpp"
 #include "gui/Textbox.hpp"
 #include "gui/Textfield.hpp"
+#include "util/SimulationClock.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -262,6 +263,29 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
             this->m_world.for_each_object([mode](Object& object) {
                 object.sphere().set_draw_mode(mode);
             });
+        };
+
+        auto toggle_time_format_container = display_settings.add_widget<GUI::Container>();
+        auto& toggle_time_format_layout = toggle_time_format_container->set_layout<GUI::HorizontalBoxLayout>();
+        toggle_time_format_layout.set_spacing(10);
+        toggle_time_format_container->set_size({ Length::Auto, 30.0_px });
+
+        auto toggle_time_format_label = toggle_time_format_container->add_widget<GUI::Textfield>();
+        toggle_time_format_label->set_content("Toggle time format: ");
+
+        auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
+        toggle_time_format->set_alignment(GUI::Align::Center);
+        toggle_time_format->add_state("American format", Util::SimulationClock::Format::AMERICAN, sf::Color::Green);
+        toggle_time_format->add_state("Short format", Util::SimulationClock::Format::SHORT_TIME, sf::Color::Green);
+        toggle_time_format->add_state("Mid format", Util::SimulationClock::Format::MID_TIME, sf::Color::Green);
+        toggle_time_format->add_state("Long format", Util::SimulationClock::Format::LONG_TIME, sf::Color::Green);
+        toggle_time_format->add_state("No clock American format", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, sf::Color::Green);
+        toggle_time_format->add_state("No clock short format", Util::SimulationClock::Format::NO_CLOCK_SHORT, sf::Color::Green);
+        toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, sf::Color::Green);
+        toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, sf::Color::Green);
+
+        toggle_time_format->on_change = [](Util::SimulationClock::Format state){
+            Util::SimulationClock::time_format = state;
         };
 
         auto add_toggle = [&](std::string title, auto on_change) {
