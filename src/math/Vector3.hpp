@@ -35,6 +35,7 @@ public:
 
     double magnitude() const;
     double magnitude_squared() const;
+    double inverted_magnitude() const;
     double angle() const;
 
     void glDraw() const;
@@ -78,6 +79,10 @@ inline double Vector3::magnitude() const {
     return std::sqrt(magnitude_squared());
 }
 
+inline double Vector3::inverted_magnitude() const {
+    return 1 / magnitude();
+}
+
 inline double Vector3::magnitude_squared() const {
     return x * x + y * y + z * z;
 }
@@ -93,7 +98,7 @@ inline Vector3 Vector3::rotate_vector(double theta) const {
 }
 
 inline Vector3 Vector3::normalized() const {
-    return Vector3(x, y, z) / magnitude();
+    return Vector3(x, y, z) * inverted_magnitude();
 }
 
 inline double Vector3::dot(const Vector3& a) const {
