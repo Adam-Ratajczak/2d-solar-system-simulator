@@ -2,7 +2,9 @@
 
 #include "Object.hpp"
 #include "glwrapper/Helpers.hpp"
+#include "math/Transform.hpp"
 #include "math/Vector3.hpp"
+#include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -39,7 +41,20 @@ void Trail::reset() {
     m_length = 0;
 }
 
+void Trail::recalculate_with_offset(Vector3 offset) {
+    if (m_offset == offset)
+        return;
+    for (size_t s = 0; s < m_length; s++)
+        m_vertexes[s].position = m_vertexes[s].position - m_offset + offset;
+    m_offset = offset;
+}
+
 void Trail::draw() {
+    if (m_offset != Vector3()) {
+        glPushMatrix();
+        Transform::translation(m_offset / AU).gl_mult();
+    }
+
     if (m_length != m_vertexes.size()) {
         GL::draw_vertices(GL_LINE_STRIP, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
     }
@@ -47,6 +62,9 @@ void Trail::draw() {
         GL::draw_vertices(GL_LINE_STRIP, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
         GL::draw_vertices(GL_LINE_STRIP, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
     }
+
+    if (m_offset != Vector3())
+        glPopMatrix();
 }
 
 std::ostream& operator<<(std::ostream& out, Trail const& trail) {

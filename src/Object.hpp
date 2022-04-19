@@ -119,5 +119,6 @@ private:
     sf::Color m_color;
 
     double m_max_attraction = 0;
+    Object* m_old_most_attracting_object = nullptr;
     Object* m_most_attracting_object = nullptr;
 };

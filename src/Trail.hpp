@@ -11,6 +11,7 @@ class Trail {
     std::vector<Vertex> m_vertexes;
     int m_append_offset = 1;
     int m_length = 0;
+    Vector3 m_offset;
 
     const sf::Color m_color;
 
@@ -21,6 +22,8 @@ public:
     void push_front(Vector3 pos);
     void pop_back();
     void reset();
+    void set_offset(Vector3 offset) { m_offset = offset; }
+    void recalculate_with_offset(Vector3 offset);
 
 private:
     friend std::ostream& operator<<(std::ostream&, Trail const&);
