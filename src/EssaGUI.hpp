@@ -45,6 +45,7 @@ private:
     std::shared_ptr<GUI::Button> m_add_object_button;
     std::shared_ptr<GUI::Button> m_canvas_mode_button;
 
+    std::shared_ptr<GUI::ValueSlider> m_forward_simulation_ticks_control;
     std::shared_ptr<GUI::ValueSlider> m_radius_control;
 
     std::shared_ptr<GUI::ValueSlider> m_velocity_control;

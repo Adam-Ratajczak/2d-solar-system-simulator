@@ -79,7 +79,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         };
 
         // TODO: Shrink-to-fit
-        create_menu.settings_container->set_size({ 500.0_px, 590.0_px });
+        create_menu.settings_container->set_size({ 500.0_px, 680.0_px });
         auto& layout = create_menu.settings_container->set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
         {
@@ -353,7 +353,7 @@ void EssaGUI::m_recalculate_forward_simulation() {
     m_new_object = new_object->clone_for_forward_simulation(m_forward_simulated_world);
     m_forward_simulated_world.add_object(std::move(new_object));
 
-    m_forward_simulated_world.update(500);
+    m_forward_simulated_world.update(m_forward_simulation_ticks_control->value());
 
     m_forward_simulation_is_valid = true;
 }

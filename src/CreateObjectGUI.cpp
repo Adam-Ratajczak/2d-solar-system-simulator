@@ -84,6 +84,14 @@ void EssaGUI::m_create_object_gui(GUI::Container& container) {
     label->set_size({ Length::Auto, 30.0_px });
     label->set_alignment(GUI::Align::Center);
 
+    m_forward_simulation_ticks_control = container.add_widget<GUI::ValueSlider>(1, 1000);
+    m_forward_simulation_ticks_control->set_name("Simulate");
+    m_forward_simulation_ticks_control->set_unit("ticks");
+    m_forward_simulation_ticks_control->set_tooltip_text("How many ticks should be forward-simulated");
+    m_forward_simulation_ticks_control->on_change = [this](auto) {
+        m_forward_simulation_is_valid = false;
+    };
+
     m_radius_control = container.add_widget<GUI::ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
