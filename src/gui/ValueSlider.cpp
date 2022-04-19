@@ -36,12 +36,17 @@ ValueSlider::ValueSlider(Container& parent, double min, double max, double step)
     m_textbox->set_data_type(Textbox::NUMBER);
     m_textbox->set_content(serialize_value(m_slider->get_value(), m_slider->step()));
     m_textbox->on_change = [this](std::string const& value) {
-        if(value.empty())
-            m_slider->set_value(0);
+        if (value.empty())
+            m_slider->set_value(0, NotifyUser::No);
         try {
             // Notify user so that they get on_change().
-            m_slider->set_value(std::stod(value));
-        } catch (...) { ; }
+            auto value_as_number = std::stod(value);
+            m_slider->set_value(value_as_number, NotifyUser::No);
+            if (on_change)
+                on_change(value_as_number);
+        } catch (...) {
+            ;
+        }
     };
     m_unit_textfield = add_widget<Textfield>();
     m_unit_textfield->set_size({ 50.0_px, Length::Auto });
@@ -51,7 +56,7 @@ double ValueSlider::value() const {
     return m_slider->get_value();
 }
 
-void ValueSlider::set_value(double value){
+void ValueSlider::set_value(double value) {
     m_slider->set_value(value);
     m_textbox->set_content(std::to_string(value));
 }
