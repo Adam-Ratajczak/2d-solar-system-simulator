@@ -74,7 +74,7 @@ void FocusedObjectGUI::update_from_object(Object* focused) {
 
     auto info = focused->get_info();
 
-    auto to_exponent_string = [](double value) {
+    auto to_exponent_string = [](double value) -> sf::String {
         std::ostringstream oss;
         if (value < 10) {
             oss << value;
@@ -87,7 +87,8 @@ void FocusedObjectGUI::update_from_object(Object* focused) {
         int exponent = (double)std::log10(value);
         double mantissa = value / std::pow(10, exponent);
         oss << std::fixed << std::setprecision(4) << mantissa << " \u00D7 10^" << exponent; // × (MULTIPLICATION SIGN)
-        return oss.str();
+        auto oss_str = oss.str();
+        return sf::String::fromUtf8(oss_str.begin(), oss_str.end());
     };
 
     m_mass_textfield->set_content(to_exponent_string(info.mass));
