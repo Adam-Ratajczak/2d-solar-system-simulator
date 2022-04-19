@@ -33,7 +33,7 @@ inline void align_text(Align alignment, sf::Vector2f size, sf::Text& text) {
         text.setPosition(sf::Vector2f(std::round(size.x - bounds.width - 2), -5));
         break;
     case Align::CenterLeft:
-        text.setPosition(sf::Vector2f(2, std::round(2 + size.y / 2 - bounds.height / 2 - 5)));
+        text.setPosition(sf::Vector2f(2, std::round(size.y / 2 - bounds.height / 2 - 5)));
         break;
     case Align::Center:
         text.setPosition(sf::Vector2f(std::round(size.x / 2 - bounds.width / 2), std::round(size.y / 2 - bounds.height / 2 - 5)));
