@@ -45,7 +45,8 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         m_add_object_button->set_visible(true);
         m_focused = focusing;
     };
-    m_focused_object_info = m_create_focused_object_info_gui();
+    m_focused_object_info = add_widget<FocusedObjectGUI>();
+    m_focused_object_info->set_position({10.0_px_o, 10.0_px});
     m_focused_object_info->set_visible(false);
 
     m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
@@ -360,15 +361,7 @@ void EssaGUI::relayout() {
 }
 
 void EssaGUI::update() {
-    // FIXME: We should do this on every tick or just stop the main simulation.
-
-    if (m_simulation_view->focused_object() != nullptr) {
-        m_focused_object_info->set_visible(true);
-        m_update_focused_object_info_gui(m_simulation_view->focused_object());
-    }
-    else {
-        m_focused_object_info->set_visible(false);
-    }
+    m_focused_object_info->update_from_object(m_simulation_view->focused_object());
 
     if (!m_forward_simulation_is_valid)
         m_recalculate_forward_simulation();

@@ -29,7 +29,6 @@ void World::add_object(std::unique_ptr<Object> object) {
     });
 
     m_object_history.clear_history(m_object_history.get_pos());
-    m_set_new_most_massive_object();
 }
 
 void World::update(int steps) {
@@ -42,10 +41,8 @@ void World::update(int steps) {
             if (!reverse) {
                 m_date.move_forward();
 
-                if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int()) {
+                if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int())
                     m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
-                    m_set_new_most_massive_object();
-                }
             }
             else {
                 m_date.move_backward();
@@ -53,7 +50,6 @@ void World::update(int steps) {
                 if (m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()) {
                     m_object_history.push_to_entry(std::move(m_object_list.back()));
                     m_object_list.pop_back();
-                    m_set_new_most_massive_object();
                 }
             }
         }
@@ -63,14 +59,6 @@ void World::update(int steps) {
 
         for (auto& p : m_object_list)
             p->update(steps);
-    }
-}
-
-void World::m_set_new_most_massive_object() {
-    m_most_massive_object = m_object_list.front().get();
-    for (const auto& o : m_object_list) {
-        if (o->mass() > m_most_massive_object->mass())
-            m_most_massive_object = o.get();
     }
 }
 
@@ -95,7 +83,6 @@ Object* World::get_object_by_name(std::string const& name) {
 
 void World::reset() {
     m_object_list.clear();
-    m_most_massive_object = nullptr;
     m_simulation_view->set_focused(nullptr);
     m_date.set_date(1990.3);
     m_object_history.clear_history(0);

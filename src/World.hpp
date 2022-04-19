@@ -30,7 +30,6 @@ public:
     void reset();
     Object* get_object_by_name(std::string const& name);
 
-    Object* most_massive_object() const { return m_most_massive_object; }
     Date date() const{return m_date;}
 
     template<class C>
@@ -50,7 +49,6 @@ public:
     static constexpr char const* PythonClassName = "World";
 
 private:
-    Object* m_most_massive_object = nullptr;
     Date m_date;
     ObjectHistory m_object_history;
     std::list<std::unique_ptr<Object>> m_object_list;
@@ -63,8 +61,6 @@ private:
     bool python_set_simulation_seconds_per_tick(PySSA::Object const&);
 
     friend std::ostream& operator<<(std::ostream& out, World const&);
-
-    void m_set_new_most_massive_object();
 };
 
 void prepare_solar(World& world);

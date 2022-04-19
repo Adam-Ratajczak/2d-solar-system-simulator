@@ -47,10 +47,18 @@ Vector3 Object::attraction(const Object& other) {
 
 void Object::update_forces(bool reverse) {
     m_attraction_factor = Vector3();
+    double max_attraction = 0;
     m_world.for_each_object([&](Object& object) {
         // TODO: Collisions
-        if (this != &object)
-            m_attraction_factor -= attraction(object);
+        if (this != &object) {
+            auto attraction = this->attraction(object);
+            auto attraction_dst = attraction.magnitude() / object.gravity_factor();
+            if (attraction_dst > max_attraction && object.m_gravity_factor > m_gravity_factor) {
+                m_most_attracting_object = &object;
+                max_attraction = attraction_dst;
+            }
+            m_attraction_factor -= attraction;
+        }
     });
 }
 
@@ -76,11 +84,10 @@ void Object::update(int speed) {
 
     m_trail.push_back(m_pos);
 
-    auto most_massive_object = m_world.most_massive_object();
-    if (most_massive_object == this)
+    if (!m_most_attracting_object)
         return;
 
-    double distance_from_object = get_distance(this->m_pos, most_massive_object->m_pos);
+    double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
     if (m_ap < distance_from_object) {
         m_ap = distance_from_object;
         m_ap_vel = m_vel.magnitude();
@@ -105,22 +112,24 @@ void Object::draw(SimulationView const& view) {
         m_trail.draw();
 }
 
-std::vector<std::string> Object::get_info() const {
-    std::vector<std::string> result;
-    unsigned exponent = std::log10(this->mass());
-    result.push_back(std::to_string(this->mass() / std::pow(10, exponent)));
-    result.push_back(std::to_string(exponent));
-    result.push_back(std::to_string((int)m_radius / 1000));
-    result.push_back(std::to_string((int)m_vel.magnitude()));
-    result.push_back(std::to_string(get_distance(this->m_pos, m_world.most_massive_object()->m_pos) / AU));
-    result.push_back(std::to_string(m_ap / AU));
-    result.push_back(std::to_string((int)m_ap_vel));
-    result.push_back(std::to_string(m_pe / AU));
-    result.push_back(std::to_string((int)m_pe_vel));
-    result.push_back(std::to_string(m_orbit_len / 365.25));
-    result.push_back(std::to_string(eccencrity));
+Object::Info Object::get_info() const {
+    Info info {
+        .mass = mass(),
+        .radius = m_radius,
+        .absolute_velocity = m_vel.magnitude()
+    };
 
-    return result;
+    if (m_most_attracting_object) {
+        info.distance_from_most_massive_object = get_distance(this->m_pos, m_most_attracting_object->m_pos) / AU;
+        info.apogee = m_ap / AU;
+        info.apogee_velocity = m_ap_vel;
+        info.perigee = m_pe / AU;
+        info.perigee_velocity = m_pe_vel;
+        info.orbit_period = m_orbit_len / 365.25;
+        info.orbit_eccencrity = eccencrity;
+    }
+
+    return info;
 }
 
 void Object::reset_history() {

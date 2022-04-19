@@ -58,7 +58,24 @@ public:
 
     Sphere& sphere() { return m_sphere; }
 
-    std::vector<std::string> get_info() const;
+    Object* most_attracting_object() const { return m_most_attracting_object; }
+
+    struct Info {
+        double mass;
+        double radius;
+        double absolute_velocity;
+
+        // Only if orbiting around more massive object.
+        double distance_from_most_massive_object = 0; // in AU
+        double apogee = 0; // in AU
+        double apogee_velocity = 0;
+        double perigee = 0; // in AU
+        double perigee_velocity = 0;
+        double orbit_period = 0;
+        double orbit_eccencrity = 0;
+    };
+
+    Info get_info() const;
 
     void reset_history();
     void reset_future() { m_history.reset_future_entries(); }
@@ -97,4 +114,6 @@ private:
     Vector3 m_vel;
     std::string m_name;
     sf::Color m_color;
+
+    Object* m_most_attracting_object = nullptr;
 };
