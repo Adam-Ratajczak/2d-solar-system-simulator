@@ -1,12 +1,25 @@
 #include "SimulationClock.hpp"
 
+Util::SimulationClock::Format Util::SimulationClock::time_format = Util::SimulationClock::Format::SHORT_TIME;
+
 std::ostream& operator<<(std::ostream& out, Util::SimulationClock::time_point const& time) {
     auto time_as_time_t = time.time_since_epoch().count();
     
     tm* time_as_tm = gmtime(&time_as_time_t);
 
     char buffer[256];
-    strftime(buffer, 256, "%Y-%m-%d %H:%M:%S", time_as_tm);
+
+    switch (Util::SimulationClock::time_format) {
+        case Util::SimulationClock::Format::SHORT_TIME: strftime(buffer, 256, "%D, %T", time_as_tm); break;
+        case Util::SimulationClock::Format::AMERICAN: strftime(buffer, 256, "%F, %r", time_as_tm); break;
+        case Util::SimulationClock::Format::MID_TIME: strftime(buffer, 256, "%a, %d %b %G, %T", time_as_tm); break;
+        case Util::SimulationClock::Format::LONG_TIME: strftime(buffer, 256, "%A, %d %B %G, %T", time_as_tm); break;
+        case Util::SimulationClock::Format::NO_CLOCK_SHORT: strftime(buffer, 256, "%D", time_as_tm); break;
+        case Util::SimulationClock::Format::NO_CLOCK_AMERICAN: strftime(buffer, 256, "%F", time_as_tm); break;
+        case Util::SimulationClock::Format::NO_CLOCK_MID: strftime(buffer, 256, "%a, %d %b %G", time_as_tm); break;
+        case Util::SimulationClock::Format::NO_CLOCK_LONG: strftime(buffer, 256, "%A, %d %B %G", time_as_tm); break;
+    }
+
     out << buffer;
     return out;
 }
