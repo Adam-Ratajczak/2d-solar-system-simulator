@@ -22,6 +22,8 @@
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
     , m_trail(period * 2, color)
+    // FIXME: Share the sphere as it is identical for all objects and
+    //        takes most of the object's used memory.
     , m_sphere(radius / AU, 36, 18)
     , m_history(period, { pos, vel })
     , m_gravity_factor(mass * G)
@@ -147,11 +149,13 @@ void Object::draw_gui(SimulationView const& view) {
     if (position.z > 1 || position.z < -1)
         return;
 
+    if (!view.show_labels())
+        return;
     sf::Text text(m_name, GUI::Application::the().font, 15);
     text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
-
-    if (view.show_labels())
-        view.window().draw(text);
+    if (m_is_forward_simulated)
+        text.setFillColor(sf::Color(128, 128, 128));
+    view.window().draw(text);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
