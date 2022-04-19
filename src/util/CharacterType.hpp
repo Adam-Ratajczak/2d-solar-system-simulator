@@ -13,11 +13,11 @@ enum class CharacterType {
 };
 
 constexpr CharacterType character_type(uint32_t codepoint) {
+    if (std::isalnum(codepoint) || codepoint == '_')
+        return CharacterType::Identifier;
     if (std::ispunct(codepoint))
         return CharacterType::Punctuation;
-    else if (std::isalnum(codepoint) || codepoint == '_')
-        return CharacterType::Identifier;
-    else if (std::isspace(codepoint))
+    if (std::isspace(codepoint))
         return CharacterType::Whitespace;
     return CharacterType::Unknown;
 }
