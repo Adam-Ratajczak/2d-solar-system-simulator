@@ -173,7 +173,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         }
     }
 
-    { 
+    {
         auto& canvas_mode = menu->add_entry(load_image("../assets/canvasMode.png"), "Canvas Mode");
         m_create_cavas_mode_gui(*canvas_mode.settings_container);
     }
@@ -335,23 +335,19 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
 }
 
 void EssaGUI::m_recalculate_forward_simulation() {
-    std::unique_ptr<Object> new_object;
-
     if (m_automatic_orbit_calculation)
-        new_object = m_create_object_from_orbit();
+        m_new_object = m_create_object_from_orbit();
     else
-        new_object = m_create_object_from_params();
+        m_new_object = m_create_object_from_params();
 
-    if (!new_object)
+    if (!m_new_object)
         return;
 
     m_world.clone_for_forward_simulation(m_forward_simulated_world);
-    auto forward_simulated_new_object = new_object.get();
 
     // We need trail of the forward simulated object but
     // the object itself will be drawn at current position.
-    m_new_object = new_object->clone_for_forward_simulation(m_forward_simulated_world);
-    m_forward_simulated_world.add_object(std::move(new_object));
+    m_forward_simulated_world.add_object(m_new_object->clone_for_forward_simulation(m_forward_simulated_world));
 
     m_forward_simulated_world.update(m_forward_simulation_ticks_control->value());
 
