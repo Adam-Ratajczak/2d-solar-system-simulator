@@ -5,26 +5,30 @@
 #include <cmath>
 #include <ostream>
 
+#if defined(__GNUC__) || defined(__clang__)
+#    define ALWAYS_INLINE [[gnu::always_inline]]
+#endif
+
 class Vector3 {
 public:
     double x = 0, y = 0, z = 0, w = 1;
 
-    Vector3() = default;
+    ALWAYS_INLINE Vector3() = default;
 
-    Vector3(double _x, double _y, double _z = 0, double _w = 1)
+    ALWAYS_INLINE Vector3(double _x, double _y, double _z = 0, double _w = 1)
         : x(_x)
         , y(_y)
         , z(_z)
         , w(_w) { }
-    Vector3(sf::Vector2f _a)
+    ALWAYS_INLINE Vector3(sf::Vector2f _a)
         : x(_a.x)
         , y(_a.y)
         , z(0) { }
-    Vector3(sf::Vector2u _a)
+    ALWAYS_INLINE Vector3(sf::Vector2u _a)
         : x(_a.x)
         , y(_a.y)
         , z(0) { }
-    Vector3(sf::Vector2i _a)
+    ALWAYS_INLINE Vector3(sf::Vector2i _a)
         : x(_a.x)
         , y(_a.y)
         , z(0) { }
