@@ -33,7 +33,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     , m_color(color)
     , m_name(name)
     , m_orbit_len(period)
-    , m_creation_date(world.date().get_int()) {
+    , m_creation_date(world.date()) {
     m_trail.push_back(m_pos);
     m_sphere.set_color(m_color);
 }
@@ -94,40 +94,32 @@ void Object::update(int speed) {
         m_vel = entry.vel;
     }
 
-    if(m_world.date().new_day()){
-        if (speed > 0)
-            m_history.push_back({ m_pos, m_vel });
-        else if (speed < 0)
-            m_history.push_front();
+    if (speed > 0)
+        m_history.push_back({ m_pos, m_vel });
+    else if (speed < 0)
+        m_history.push_front();
 
-        if (!m_most_attracting_object || m_is_forward_simulated) {
-            m_trail.recalculate_with_offset({});
-            m_trail.push_back(m_pos);
-            return;
-        }
+    if (!m_most_attracting_object || m_is_forward_simulated) {
+        m_trail.recalculate_with_offset({});
+        m_trail.push_back(m_pos);
+        return;
+    }
 
-        if (m_most_attracting_object != m_old_most_attracting_object)
-            m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
-        else
-            m_trail.set_offset(m_most_attracting_object->m_pos);
-        m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
+    if (m_most_attracting_object != m_old_most_attracting_object)
+        m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
+    else
+        m_trail.set_offset(m_most_attracting_object->m_pos);
+    m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
 
-        double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
-        if (m_ap < distance_from_object) {
-            m_ap = distance_from_object;
-            m_ap_vel = m_vel.magnitude();
-        }
+    double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
+    if (m_ap < distance_from_object) {
+        m_ap = distance_from_object;
+        m_ap_vel = m_vel.magnitude();
+    }
 
-        if (m_pe > distance_from_object) {
-            m_pe = distance_from_object;
-            m_pe_vel = m_vel.magnitude();
-        }
-    }else{ 
-        if(m_history.on_edge())
-            m_history.change_current({m_pos, m_vel});
-
-        if(m_most_attracting_object != nullptr)
-            m_trail.change_current(m_pos - m_most_attracting_object->m_pos);
+    if (m_pe > distance_from_object) {
+        m_pe = distance_from_object;
+        m_pe_vel = m_vel.magnitude();
     }
 }
 

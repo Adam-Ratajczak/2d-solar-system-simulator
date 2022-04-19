@@ -1,11 +1,12 @@
 #include "ObjectHistory.hpp"
+#include "util/SimulationClock.hpp"
 
 void ObjectHistory::clear_history(unsigned long to_index) {
     m_entries.resize(std::min(to_index, m_entries.size()));
     m_pos = to_index - 1;
 }
 
-bool ObjectHistory::set_time(unsigned int time) {
+bool ObjectHistory::set_time(Util::SimulationClock::time_point time) {
     m_pos = m_entries.size();
 
     for (auto& e : m_entries) {

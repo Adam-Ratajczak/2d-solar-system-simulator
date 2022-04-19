@@ -57,6 +57,8 @@ add_executable(
 
     src/pyssa/Environment.cpp
     src/pyssa/Object.cpp
+
+    src/util/SimulationClock.cpp
 )
 
 target_link_libraries(

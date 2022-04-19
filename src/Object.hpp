@@ -8,6 +8,7 @@
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"
+#include "util/SimulationClock.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
@@ -49,7 +50,7 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
-    int creation_date() const { return m_creation_date; }
+    Util::SimulationClock::time_point creation_date() const { return m_creation_date; }
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "Object";
@@ -68,7 +69,7 @@ public:
 
         // Only if orbiting around more massive object.
         double distance_from_most_massive_object = 0; // in AU
-        double apogee = 0; // in AU
+        double apogee = 0;                            // in AU
         double apogee_velocity = 0;
         double perigee = 0; // in AU
         double perigee_velocity = 0;
@@ -113,7 +114,7 @@ private:
 
     bool m_is_forward_simulated = false;
     Sphere m_sphere;
-    int m_creation_date;
+    Util::SimulationClock::time_point m_creation_date;
     Vector3 m_vel;
     std::string m_name;
     sf::Color m_color;
