@@ -24,6 +24,7 @@ public:
     void reset();
     void set_offset(Vector3 offset) { m_offset = offset; }
     void recalculate_with_offset(Vector3 offset);
+    void change_current(Vector3 pos);
 
 private:
     friend std::ostream& operator<<(std::ostream&, Trail const&);

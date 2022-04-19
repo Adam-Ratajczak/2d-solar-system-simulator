@@ -166,14 +166,13 @@ inline Date operator-(const Date& d1, const Date& d2){
     if(d < 0){
         d = month_day[m] - d;
         m--;
-        
+
         if(m < 0){
             m = 12 - m;
             yr--;
         }
     }
-    
-    
+
     auto result = Date(yr, m, d, Date::AD, hr, min, sec);
     result.set_if_new_day(prev_days != result.ds());
 

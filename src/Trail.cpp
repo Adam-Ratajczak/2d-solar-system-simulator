@@ -67,6 +67,10 @@ void Trail::draw() {
         glPopMatrix();
 }
 
+void Trail::change_current(Vector3 pos){
+    m_vertexes[m_append_offset - 1].position = pos / AU;
+}
+
 std::ostream& operator<<(std::ostream& out, Trail const& trail) {
     out << "Trail(" << trail.m_length << "): ";
     for (size_t s = 0; auto& t : trail.m_vertexes) {

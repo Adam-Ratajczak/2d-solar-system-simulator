@@ -99,33 +99,36 @@ void Object::update(int speed) {
             m_history.push_back({ m_pos, m_vel });
         else if (speed < 0)
             m_history.push_front();
-    }else if(m_history.on_edge()){
-        m_history.change_current({m_pos, m_vel});
-    }
 
-    if (!m_most_attracting_object || m_is_forward_simulated) {
-        m_trail.recalculate_with_offset({});
-        m_trail.push_back(m_pos);
-        return;
-    }
+        if (!m_most_attracting_object || m_is_forward_simulated) {
+            m_trail.recalculate_with_offset({});
+            m_trail.push_back(m_pos);
+            return;
+        }
 
-    if (m_most_attracting_object != m_old_most_attracting_object)
-        m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
-    else
-        m_trail.set_offset(m_most_attracting_object->m_pos);
-    m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
+        if (m_most_attracting_object != m_old_most_attracting_object)
+            m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
+        else
+            m_trail.set_offset(m_most_attracting_object->m_pos);
+        m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
 
-    double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
-    if (m_ap < distance_from_object) {
-        m_ap = distance_from_object;
-        m_ap_vel = m_vel.magnitude();
-    }
+        double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
+        if (m_ap < distance_from_object) {
+            m_ap = distance_from_object;
+            m_ap_vel = m_vel.magnitude();
+        }
 
-    if (m_pe > distance_from_object) {
-        m_pe = distance_from_object;
-        m_pe_vel = m_vel.magnitude();
+        if (m_pe > distance_from_object) {
+            m_pe = distance_from_object;
+            m_pe_vel = m_vel.magnitude();
+        }
+    }else{ 
+        if(m_history.on_edge())
+            m_history.change_current({m_pos, m_vel});
+
+        if(m_most_attracting_object != nullptr)
+            m_trail.change_current(m_pos - m_most_attracting_object->m_pos);
     }
-    // std::cout << m_name << ": " << m_trail.size() << "\n";
 }
 
 void Object::draw(SimulationView const& view) {
