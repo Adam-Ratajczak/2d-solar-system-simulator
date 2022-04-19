@@ -124,21 +124,31 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_drag_mode = DragMode::None;
     }
     else if (event.type() == sf::Event::KeyPressed && m_allow_change_speed) {
-        if (event.event().key.code == sf::Keyboard::Right) {
-            if (m_speed > 0)
-                m_speed *= 2;
-            else if (m_speed == 0)
-                m_speed = 1;
-            else
-                m_speed /= 2;
+        if (event.event().key.shift) {
+            if (m_speed != 0)
+                return;
+            if (event.event().key.code == sf::Keyboard::Right)
+                m_world.update(1);
+            else if (event.event().key.code == sf::Keyboard::Left)
+                m_world.update(-1);
         }
-        else if (event.event().key.code == sf::Keyboard::Left) {
-            if (m_speed < 0)
-                m_speed *= 2;
-            else if (m_speed == 0)
-                m_speed = -1;
-            else
-                m_speed /= 2;
+        else {
+            if (event.event().key.code == sf::Keyboard::Right) {
+                if (m_speed > 0)
+                    m_speed *= 2;
+                else if (m_speed == 0)
+                    m_speed = 1;
+                else
+                    m_speed /= 2;
+            }
+            else if (event.event().key.code == sf::Keyboard::Left) {
+                if (m_speed < 0)
+                    m_speed *= 2;
+                else if (m_speed == 0)
+                    m_speed = -1;
+                else
+                    m_speed /= 2;
+            }
         }
     }
 }
@@ -335,8 +345,8 @@ void SimulationView::update() {
         set_offset(-m_focused_object->render_position());
 }
 
-Object* SimulationView::focused_object() const{
-    if(m_focused_object != nullptr)
+Object* SimulationView::focused_object() const {
+    if (m_focused_object != nullptr)
         return m_focused_object;
     return {};
 }
