@@ -16,7 +16,7 @@
 #include <sstream>
 
 World::World()
-    : m_date(1990.3) { }
+    : m_date(1990, 4, 20) { }
 
 void World::add_object(std::unique_ptr<Object> object) {
     m_object_list.push_back(std::move(object));
@@ -39,13 +39,13 @@ void World::update(int steps) {
         if (!m_is_forward_simulated) {
             m_object_history.set_time(m_date.get_int());
             if (!reverse) {
-                m_date.move_forward();
+                m_date += m_simulation_seconds_per_tick;
 
                 if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int())
                     m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
             }
             else {
-                m_date.move_backward();
+                m_date -= m_simulation_seconds_per_tick;
 
                 if (m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()) {
                     m_object_history.push_to_entry(std::move(m_object_list.back()));
@@ -92,7 +92,7 @@ Object* World::get_object_by_name(std::string const& name) {
 void World::reset() {
     m_object_list.clear();
     m_simulation_view->set_focused(nullptr);
-    m_date.set_date(1990.3);
+    m_date.set_date(1990, 4, 20);
     m_object_history.clear_history(0);
     prepare_solar(*this);
 }

@@ -57,7 +57,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     m_home_button->set_tooltip_text("Reset coordinates");
 
     auto python_repl = add_widget<GUI::PythonREPL>();
-    python_repl->set_position({ 300.0_px, 10.0_px_o });
+    python_repl->set_position({ 600.0_px, 10.0_px_o });
     python_repl->set_size({ 700.0_px, 250.0_px });
 
     m_world.m_simulation_view = m_simulation_view.get();
