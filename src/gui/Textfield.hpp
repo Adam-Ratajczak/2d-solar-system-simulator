@@ -11,7 +11,7 @@ class Textfield : public Widget {
     sf::Color m_bg_color = sf::Color(0, 0, 0, 0);
     sf::Color m_fg_color = sf::Color(0, 0, 255);
     sf::Color m_text_color = sf::Color(255, 255, 255);
-    unsigned m_font_size = 20;
+    unsigned m_font_size = 15;
     Align m_alignment = Align::CenterLeft;
 
 public:

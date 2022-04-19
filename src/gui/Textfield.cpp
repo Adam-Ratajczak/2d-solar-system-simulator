@@ -20,7 +20,7 @@ void Textfield::draw(sf::RenderWindow& window) const {
 
     window.draw(rect);
 
-    sf::Text text(m_content, application().font, 15);
+    sf::Text text(m_content, application().font, m_font_size);
     text.setFillColor(m_text_color);
 
     align_text(m_alignment, size(), text);
