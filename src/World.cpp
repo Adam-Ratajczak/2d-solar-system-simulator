@@ -23,8 +23,8 @@ void World::add_object(std::unique_ptr<Object> object) {
 
     if (m_object_history.set_time(m_date.get_int()))
         m_object_history.clear_history(m_object_history.get_pos());
-    
-    for_each_object([](Object& obj){
+
+    for_each_object([](Object& obj) {
         obj.reset_future();
     });
 
@@ -37,21 +37,24 @@ void World::update(int steps) {
     bool reverse = steps < 0;
 
     for (unsigned i = 0; i < std::abs(steps); i++) {
-        m_object_history.set_time(m_date.get_int());
-        if (!reverse) {
-            m_date.move_forward();
+        if (!m_is_forward_simulated) {
+            m_object_history.set_time(m_date.get_int());
+            if (!reverse) {
+                m_date.move_forward();
 
-            if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int()) {
-                m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
-                m_set_new_most_massive_object();
+                if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date.get_int()) {
+                    m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
+                    m_set_new_most_massive_object();
+                }
             }
-        }else {
-            m_date.move_backward();
+            else {
+                m_date.move_backward();
 
-            if (m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()) {
-                m_object_history.push_to_entry(std::move(m_object_list.back()));
-                m_object_list.pop_back();
-                m_set_new_most_massive_object();
+                if (m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date.get_int()) {
+                    m_object_history.push_to_entry(std::move(m_object_list.back()));
+                    m_object_list.pop_back();
+                    m_set_new_most_massive_object();
+                }
             }
         }
 
@@ -63,10 +66,10 @@ void World::update(int steps) {
     }
 }
 
-void World::m_set_new_most_massive_object(){
+void World::m_set_new_most_massive_object() {
     m_most_massive_object = m_object_list.front().get();
-    for(const auto& o : m_object_list){
-        if(o->mass() > m_most_massive_object->mass())
+    for (const auto& o : m_object_list) {
+        if (o->mass() > m_most_massive_object->mass())
             m_most_massive_object = o.get();
     }
 }
@@ -105,6 +108,7 @@ void World::reset_all_trails() {
 
 void World::clone_for_forward_simulation(World& new_world) const {
     new_world = World();
+    new_world.m_is_forward_simulated = true;
     new_world.m_simulation_view = m_simulation_view;
     for (auto& object : m_object_list)
         new_world.add_object(object->clone_for_forward_simulation(new_world));
