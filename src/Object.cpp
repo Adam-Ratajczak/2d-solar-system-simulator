@@ -53,7 +53,10 @@ void Object::setup_update_forces() {
 void Object::update_forces_against(Object& object) {
     // TODO: Collisions
     Vector3 dist = this->m_pos - object.m_pos;
-    auto attraction_base = dist.normalized() / dist.magnitude_squared();
+    // denominator: R^2*normalized(dist)
+    double denominator = dist.magnitude_squared();
+    denominator *= std::sqrt(denominator);
+    auto attraction_base = dist / denominator;
     m_attraction_factor -= attraction_base * object.m_gravity_factor;
     object.m_attraction_factor += attraction_base * m_gravity_factor;
 }
