@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
+#include <limits>
 #include <string>
 
 namespace GUI {
@@ -18,7 +19,8 @@ class Textbox : public Widget {
     unsigned m_limit = 16;
     bool m_has_decimal = false, m_dragging = false, m_has_limit = false;
     unsigned m_cursor = 0;
-    double m_min_value, m_max_value;
+    double m_min_value = std::numeric_limits<double>::lowest();
+    double m_max_value = std::numeric_limits<double>::max();
 
 public:
     enum Type {

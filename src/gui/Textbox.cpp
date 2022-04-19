@@ -5,13 +5,11 @@
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
 #include <cassert>
 #include <cctype>
 #include <cmath>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 namespace GUI {
@@ -88,16 +86,16 @@ void Textbox::handle_event(Event& event) {
                 }
             }
             else if (can_insert_character(codepoint)) {
-                if (m_type == NUMBER && m_content == "0") {
+                if (m_type == NUMBER && m_content == "0")
                     m_content = "";
-                    m_cursor = 0;
-                }
                 m_content.insert(m_cursor, codepoint);
                 if (on_change)
                     on_change(m_content);
                 set_cursor(m_cursor + 1);
             }
 
+            if (m_type == NUMBER)
+                m_fit_in_range();
 
             event.set_handled();
         }
@@ -129,9 +127,7 @@ void Textbox::handle_event(Event& event) {
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
         if (is_hover()) {
-
             m_cursor = m_character_pos_from_mouse(event);
-
             m_dragging = true;
         }
     }
@@ -139,20 +135,25 @@ void Textbox::handle_event(Event& event) {
         m_dragging = false;
     }
 
-    if(m_type == NUMBER && m_has_limit)
+    if (m_type == NUMBER && m_has_limit)
         m_fit_in_range();
 }
 
-void Textbox::m_fit_in_range(){
-    if(is_focused())
+void Textbox::m_fit_in_range() {
+    try {
+        double val = std::stod(m_content.toAnsiString());
+        std::ostringstream oss;
+        oss << std::fixed;
+        if (val < m_min_value)
+            oss << m_min_value;
+        else if (val > m_max_value)
+            oss << m_max_value;
+        else
+            return;
+        m_content = oss.str();
+    } catch (...) {
         return;
-
-    double val = std::stod(m_content.toAnsiString());
-
-    if(val < m_min_value)
-        m_content = std::to_string(m_min_value).substr(0, m_limit);
-    else if(val > m_max_value)
-        m_content = std::to_string(m_max_value).substr(0, m_limit);
+    }
 }
 
 void Textbox::move_cursor_by_word(CursorDirection direction) {
