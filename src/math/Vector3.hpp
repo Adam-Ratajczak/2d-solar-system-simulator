@@ -30,6 +30,7 @@ public:
         , z(0) { }
 
     double magnitude() const;
+    double magnitude_squared() const;
     double angle() const;
 
     void glDraw() const;
@@ -70,7 +71,11 @@ inline bool operator==(const Vector3& a, const Vector3& b) { return a.x == b.x &
 inline bool operator!=(const Vector3& a, const Vector3& b) { return !(a == b); }
 
 inline double Vector3::magnitude() const {
-    return std::sqrt(x * x + y * y + z * z);
+    return std::sqrt(magnitude_squared());
+}
+
+inline double Vector3::magnitude_squared() const {
+    return x * x + y * y + z * z;
 }
 
 inline double Vector3::angle() const {
