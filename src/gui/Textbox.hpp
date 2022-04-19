@@ -17,7 +17,9 @@ class Textbox : public Widget {
     sf::Color m_text_color = sf::Color(30, 30, 30);
     sf::Color m_placeholder_color = sf::Color(80, 80, 80);
     unsigned m_limit = 16;
-    bool m_has_decimal = false, m_dragging = false, m_has_limit = false;
+    bool m_has_decimal = false;
+    bool m_dragging = false;
+    bool m_has_limit = false;
     unsigned m_cursor = 0;
     double m_min_value = std::numeric_limits<double>::lowest();
     double m_max_value = std::numeric_limits<double>::max();
@@ -42,7 +44,11 @@ public:
     void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_data_type(Type type) { m_type = type; }
     void set_placeholder(std::string placeholder) { m_placeholder = placeholder; }
-    void set_min_max_values(double min_value, double max_value){m_min_value = min_value; m_max_value = max_value; m_has_limit = true;}
+    void set_min_max_values(double min_value, double max_value) {
+        m_min_value = min_value;
+        m_max_value = max_value;
+        m_has_limit = true;
+    }
 
     void set_cursor(unsigned);
 
