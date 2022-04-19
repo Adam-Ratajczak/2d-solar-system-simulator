@@ -189,7 +189,7 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
             if (ispunct(next))
                 state = State::PendingCharactersOfType;
             else if (!isspace(next)) {
-                if (is_in_range(m_cursor - 2) && ispunct(m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor]))
+                if (is_in_range(m_cursor - 2) && ispunct(m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor + 1]))
                     state = State::PendingPunctuation;
                 else
                     state = State::PendingCharactersOfType;
