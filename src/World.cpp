@@ -59,9 +59,10 @@ void World::update(int steps) {
 
         for (auto it = m_object_list.begin(); it != m_object_list.end(); it++) {
             auto it2 = it;
+            auto& this_object = **it;
             it2++;
             for (; it2 != m_object_list.end(); it2++)
-                (*it)->update_forces_against(**it2);
+                this_object.update_forces_against(**it2);
         }
 
         for (auto& p : m_object_list)
