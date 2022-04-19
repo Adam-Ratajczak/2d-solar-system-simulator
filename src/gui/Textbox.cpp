@@ -137,6 +137,9 @@ void Textbox::handle_event(Event& event) {
 }
 
 void Textbox::m_fit_in_range() {
+    if(is_focused())
+        return;
+        
     try {
         double val = std::stod(m_content.toAnsiString());
         std::ostringstream oss;
@@ -147,7 +150,7 @@ void Textbox::m_fit_in_range() {
             oss << m_max_value;
         else
             return;
-        m_content = oss.str();
+        m_content = oss.str().substr(0, m_limit);
     } catch (...) {
         return;
     }
