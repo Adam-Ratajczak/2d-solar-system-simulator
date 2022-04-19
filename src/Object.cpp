@@ -40,26 +40,22 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
 
 Vector3 Object::attraction(const Object& other) {
     Vector3 dist = this->m_pos - other.m_pos;
-    double force = other.m_gravity_factor / (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z);
+    double force = other.m_gravity_factor / dist.magnitude_squared();
     Vector3 normalized_dist = dist.normalized();
     return normalized_dist * force;
 }
 
-void Object::update_forces(bool reverse) {
+void Object::setup_update_forces() {
     m_attraction_factor = Vector3();
-    double max_attraction = 0;
-    m_world.for_each_object([&](Object& object) {
-        // TODO: Collisions
-        if (this != &object) {
-            auto attraction = this->attraction(object);
-            auto attraction_dst = attraction.magnitude() / object.gravity_factor();
-            if (attraction_dst > max_attraction && object.m_gravity_factor > m_gravity_factor) {
-                m_most_attracting_object = &object;
-                max_attraction = attraction_dst;
-            }
-            m_attraction_factor -= attraction;
-        }
-    });
+    m_max_attraction = 0;
+}
+
+void Object::update_forces_against(Object& object) {
+    // TODO: Collisions
+    Vector3 dist = this->m_pos - object.m_pos;
+    auto attraction_base = dist.normalized() / dist.magnitude_squared();
+    m_attraction_factor -= attraction_base * object.m_gravity_factor;
+    object.m_attraction_factor += attraction_base * m_gravity_factor;
 }
 
 void Object::update(int speed) {

@@ -55,7 +55,14 @@ void World::update(int steps) {
         }
 
         for (auto& p : m_object_list)
-            p->update_forces(reverse);
+            p->setup_update_forces();
+
+        for (auto it = m_object_list.begin(); it != m_object_list.end(); it++) {
+            auto it2 = it;
+            it2++;
+            for (; it2 != m_object_list.end(); it2++)
+                (*it)->update_forces_against(**it2);
+        }
 
         for (auto& p : m_object_list)
             p->update(steps);

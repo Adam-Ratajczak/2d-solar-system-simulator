@@ -30,7 +30,8 @@ public:
 
     std::string name() const { return m_name; }
 
-    void update_forces(bool reverse);
+    void setup_update_forces();
+    void update_forces_against(Object&);
     void update(int speed);
     Trail& trail() { return m_trail; }
 
@@ -95,6 +96,8 @@ private:
     double m_density;
     Trail m_trail;
     History m_history;
+
+    // NOTE: We only keep that for Python. It's not used anywhere.
     Vector3 attraction(const Object&);
 
     Vector3 m_pos;
@@ -115,5 +118,6 @@ private:
     std::string m_name;
     sf::Color m_color;
 
+    double m_max_attraction = 0;
     Object* m_most_attracting_object = nullptr;
 };
