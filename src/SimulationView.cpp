@@ -303,7 +303,7 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     }
 
     std::ostringstream oss;
-    oss << m_world.date().to_full_date_string();
+    oss << m_world.date();
     if (m_speed == 0)
         oss << " (Paused";
     else

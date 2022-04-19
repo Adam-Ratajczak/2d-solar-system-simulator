@@ -14,7 +14,7 @@ public:
 
     unsigned get_pos() const { return m_pos; }
     void clear_history(unsigned long to_index);
-    bool set_time(unsigned time);
+    bool set_time(Util::SimulationClock::time_point time);
 
     void push_to_entry(std::unique_ptr<Object> obj);
     std::unique_ptr<Object> pop_from_entries();
