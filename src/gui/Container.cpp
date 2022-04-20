@@ -260,8 +260,8 @@ void Container::do_update() {
 }
 
 void Container::relayout() {
-    // std::cout << "TEST " << typeid(*this).name() << std::endl;
-
+    if (m_widgets.empty())
+        return;
     for (auto& w : m_widgets) {
         if (w->m_input_size == LengthVector {}) {
             w->m_input_size = w->initial_size();
@@ -269,8 +269,11 @@ void Container::relayout() {
             //           << w->m_input_size.x.value() << "," << w->m_input_size.y.value() << std::endl;
         }
     }
-    if (!m_layout)
-        return;
+    if (!m_layout) {
+        std::cout << "Not trying to relayout widget without layout!" << std::endl;
+        dump(0);
+        assert(false);
+    }
     if (m_layout->padding() == 0)
         m_layout->set_padding(intrinsic_padding());
     m_layout->run();
