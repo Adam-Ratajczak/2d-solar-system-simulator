@@ -14,6 +14,7 @@ add_executable(
     src/ConfigLoader.cpp
     src/CreateObjectGUI.cpp
     src/EssaGUI.cpp
+    src/EssaSettings.cpp
     src/FocusedObjectGUI.cpp
     src/History.cpp
     src/Object.cpp

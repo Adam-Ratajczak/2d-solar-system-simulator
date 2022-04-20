@@ -28,6 +28,7 @@ void Application::set_focused_widget(Widget* w) {
 void Application::draw() {
     if (m_needs_relayout) {
         m_main_widget->do_relayout();
+        // m_main_widget->dump(0);
         m_needs_relayout = false;
     }
 

@@ -85,7 +85,6 @@ private:
 
     std::unique_ptr<Object> m_create_object_from_params() const;
     std::unique_ptr<Object> m_create_object_from_orbit() const;
-    void m_create_simulation_settings_gui(Container& container);
     void m_create_object_gui(Container& container);
     void m_create_cavas_mode_gui(Container& parent);
 
@@ -95,6 +94,4 @@ private:
     Vector3 m_new_object_pos;
     int m_saved_speed = 0;
     void m_recalculate_forward_simulation();
-
-    std::vector<std::function<void()>> m_on_restore_defaults;
 };
