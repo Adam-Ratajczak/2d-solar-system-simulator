@@ -156,9 +156,11 @@ public:
     std::vector<T*> find_widgets_of_type_by_class_name(std::string_view name) const {
         auto elements = find_widgets_by_class_name(name);
         std::vector<T*> result;
-        result.resize(elements.size());
-        for(unsigned i = 0; i < elements.size(); i++)
-            result[i] = dynamic_cast<T*>(elements[i]);
+        for (unsigned i = 0; i < elements.size(); i++) {
+            auto maybe_element = dynamic_cast<T*>(elements[i]);
+            if (maybe_element)
+                result.push_back(maybe_element);
+        }
             
         return result;
     }
@@ -168,9 +170,11 @@ public:
     std::vector<T*> find_widgets_of_type_by_class_name_recursively(std::string_view name) const {
         auto elements = find_widgets_by_class_name_recursively(name);
         std::vector<T*> result;
-        result.resize(elements.size());
-        for(unsigned i = 0; i < elements.size(); i++)
-            result[i] = dynamic_cast<T*>(elements[i]);
+        for (unsigned i = 0; i < elements.size(); i++) {
+            auto maybe_element = dynamic_cast<T*>(elements[i]);
+            if (maybe_element)
+                result.push_back(maybe_element);
+        }
 
         return result;
     }
