@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <cstdio>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -120,8 +121,14 @@ public:
 
     Object call(Object const& args, Object const& kwargs = {}) const;
 
-    int as_int() const;
-    std::vector<Object> as_list() const;
+    std::optional<std::string> as_string() const;
+    std::optional<int> as_int() const;
+    std::optional<double> as_double() const;
+    std::optional<std::vector<Object>> as_list() const;
+    std::optional<std::vector<Object>> as_tuple() const;
+    std::optional<Vector3> as_vector() const;
+    std::optional<sf::Color> as_color() const;
+
     std::string str() const;
     std::string repr() const;
 

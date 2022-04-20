@@ -136,6 +136,9 @@ PySSA::Object World::python_get_simulation_seconds_per_tick() const {
 }
 
 bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object) {
-    m_simulation_seconds_per_tick = object.as_int();
+    auto maybe_value = object.as_int();
+    if (!maybe_value.has_value())
+        return false;
+    m_simulation_seconds_per_tick = maybe_value.value();
     return true;
 }

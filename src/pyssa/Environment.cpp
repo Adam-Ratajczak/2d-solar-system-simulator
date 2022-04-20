@@ -99,7 +99,8 @@ std::vector<std::string> Environment::generate_exception_message() const {
         formatted_list = format_exception.call(Object::tuple(Object::share(type), Object::share(value), Object::share(traceback)));
     }
     std::vector<std::string> result;
-    for (auto& element : formatted_list.as_list()) {
+    auto list = formatted_list.as_list();
+    for (auto& element : list.value()) {
         result.push_back(element.str());
     }
     return result;

@@ -55,8 +55,25 @@ Object Object::call(Object const& args, Object const& kwargs) const {
     return Object::take(PyObject_Call(m_object, args.share_object(), kwargs.share_object()));
 }
 
-int Object::as_int() const {
-    return PyLong_AsLong(m_object);
+std::optional<std::string> Object::as_string() const {
+    Py_ssize_t size;
+    auto data = PyUnicode_AsUTF8AndSize(m_object, &size);
+    assert(size >= 0);
+    return std::string { data, static_cast<size_t>(size) };
+}
+
+std::optional<int> Object::as_int() const {
+    auto value = PyLong_AsLong(m_object);
+    if (value == -1 && PyErr_Occurred())
+        return {};
+    return value;
+}
+
+std::optional<double> Object::as_double() const {
+    auto value = PyFloat_AsDouble(m_object);
+    if (value == -1 && PyErr_Occurred())
+        return {};
+    return value;
 }
 
 std::optional<std::vector<Object>> Object::as_list() const {
@@ -70,6 +87,85 @@ std::optional<std::vector<Object>> Object::as_list() const {
     for (Py_ssize_t s = 0; s < size; s++)
         list[s] = Object::share(PyList_GET_ITEM(m_object, s));
     return list;
+}
+
+std::optional<std::vector<Object>> Object::as_tuple() const {
+    if (!PyTuple_Check(m_object)) {
+        PyErr_SetString(PyExc_TypeError, "Object is not a tuple instance");
+        return {};
+    }
+    Py_ssize_t size = PyTuple_Size(m_object);
+    std::vector<Object> list;
+    list.resize(size);
+    for (Py_ssize_t s = 0; s < size; s++)
+        list[s] = Object::share(PyTuple_GET_ITEM(m_object, s));
+    return list;
+}
+
+std::optional<Vector3> Object::as_vector() const {
+    auto object_as_tuple = as_tuple();
+    if (!object_as_tuple.has_value())
+        return {};
+    auto tuple = object_as_tuple.value();
+    if (tuple.size() != 3) {
+        PyErr_SetString(PyExc_TypeError, "Tuple must have 3 elements to be a vector");
+        return {};
+    }
+    auto x = tuple[0].as_double();
+    if (!x.has_value()) {
+        PyErr_SetString(PyExc_TypeError, "'x' coordinate must be a float");
+        return {};
+    }
+    auto y = tuple[1].as_double();
+    if (!y.has_value()) {
+        PyErr_SetString(PyExc_TypeError, "'y' coordinate must be a float");
+        return {};
+    }
+    auto z = tuple[2].as_double();
+    if (!z.has_value()) {
+        PyErr_SetString(PyExc_TypeError, "'z' coordinate must be a float");
+        return {};
+    }
+    return Vector3(x.value(), y.value(), z.value());
+}
+
+std::optional<sf::Color> Object::as_color() const {
+    auto object_as_tuple = as_tuple();
+    if (!object_as_tuple.has_value())
+        return {};
+    auto tuple = object_as_tuple.value();
+    if (tuple.size() != 3) {
+        PyErr_SetString(PyExc_TypeError, "Tuple must have 3 elements to be a vector");
+        return {};
+    }
+    auto r = tuple[0].as_int();
+    if (!r.has_value()) {
+        PyErr_SetString(PyExc_TypeError, "'r' component must be an int");
+        return {};
+    }
+    auto g = tuple[1].as_int();
+    if (!g.has_value()) {
+        PyErr_SetString(PyExc_TypeError, "'g' component must be an int");
+        return {};
+    }
+    auto b = tuple[2].as_int();
+    if (!b.has_value()) {
+        PyErr_SetString(PyExc_TypeError, "'b' component must be an int");
+        return {};
+    }
+    if (r.value() < 0 || r.value() > 255) {
+        PyErr_Format(PyExc_ValueError, "'r' component must be in range <0;255>, %d given", r);
+        return {};
+    }
+    if (g.value() < 0 || g.value() > 255) {
+        PyErr_Format(PyExc_ValueError, "'g' component must be in range <0;255>, %d given", g);
+        return {};
+    }
+    if (b.value() < 0 || b.value() > 255) {
+        PyErr_Format(PyExc_ValueError, "'b' component must be in range <0;255>, %d given", b);
+        return {};
+    }
+    return sf::Color(r.value(), g.value(), b.value());
 }
 
 std::string Object::str() const {
