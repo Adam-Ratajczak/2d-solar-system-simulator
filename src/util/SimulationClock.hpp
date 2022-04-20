@@ -32,7 +32,7 @@ namespace SimulationTime {
 
 
 // This expects data in human-readable units
-// E.g if you want to create 1970-02-15 you call create(1920, 2, 15, 0, 0, 0).
+// E.g if you want to create 1970-02-15 you call create(1970, 2, 15, 0, 0, 0).
 // Maybe it is obvious but C library uses another format.
 SimulationClock::time_point create(int year, int month, int day, int hour = 0, int minute = 0, int second = 0);
 
