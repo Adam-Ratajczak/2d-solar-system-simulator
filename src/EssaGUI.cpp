@@ -83,7 +83,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 
 void EssaGUI::relayout() {
     set_raw_size(sf::Vector2f(window().getSize()));
-    std::cout << m_create_object_gui.get() << "\n";
+    // std::cout << m_create_object_gui.get() << "\n";
     Container::relayout();
 }
 
