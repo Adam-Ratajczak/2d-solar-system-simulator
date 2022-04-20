@@ -21,11 +21,11 @@
 
 Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_world(world)
-    , m_trail(period * 2, color)
+    , m_trail(std::min(1000U, std::max(2U, period * 2)), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
     , m_sphere(radius / AU, 36, 18)
-    , m_history(period, { pos, vel })
+    , m_history(std::max(1U, period), { pos, vel })
     , m_gravity_factor(mass * G)
     , m_radius(radius)
     , m_pos(pos)
