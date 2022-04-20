@@ -10,15 +10,15 @@ class EssaCreateObject : public GUI::Container {
 public:
     explicit EssaCreateObject(GUI::Container& container, SimulationView& simulation_view);
 
-    void set_new_object(std::unique_ptr<Object> new_obj){m_new_object = std::move(new_obj);}
+    void set_new_object(std::unique_ptr<Object> new_obj) { m_new_object = std::move(new_obj); }
     void recalculate_forward_simulation();
-    void forward_simulation_state(bool state){m_forward_simulation_is_valid = state;}
+    void forward_simulation_state(bool state) { m_forward_simulation_is_valid = state; }
 
-    std::unique_ptr<Object>& new_object(){return m_new_object;}
-    World& forward_simulated_world(){return m_forward_simulated_world;}
+    std::unique_ptr<Object>& new_object() { return m_new_object; }
+    World& forward_simulated_world() { return m_forward_simulated_world; }
 
-    bool is_forward_simulation_valid() const{return m_forward_simulation_is_valid;}
-    bool new_object_exist()const{return m_new_object != nullptr;}
+    bool is_forward_simulation_valid() const { return m_forward_simulation_is_valid; }
+    bool new_object_exist() const { return m_new_object != nullptr; }
 
 private:
     std::shared_ptr<GUI::Button> m_coords_button;
