@@ -305,7 +305,7 @@ Widget* Container::find_widget_by_id(std::string_view id) const {
     return nullptr;
 }
 
-std::vector<Widget*> Container::find_widget_by_class_name(std::string_view class_name) const {
+std::vector<Widget*> Container::find_widgets_by_class_name(std::string_view class_name) const {
     std::vector<Widget*> result;
     for (auto& w : m_widgets) {
         if (w->class_name() == class_name)
@@ -314,22 +314,22 @@ std::vector<Widget*> Container::find_widget_by_class_name(std::string_view class
     return result;
 }
 
-void Container::m_find_widget_by_class_name_recursively_helper(std::string_view class_name, std::vector<Widget*>& vec)const{
-    auto widget_vec = find_widget_by_class_name(class_name);
-    for(auto& w : widget_vec)
+void Container::m_find_widgets_by_class_name_recursively_helper(std::string_view class_name, std::vector<Widget*>& vec) const {
+    auto widget_vec = find_widgets_by_class_name(class_name);
+    for (auto& w : widget_vec)
         vec.push_back(w);
 
     for (auto& w : m_widgets) {
         auto container = dynamic_cast<Container*>(w.get());
         if (container) {
-            container->m_find_widget_by_class_name_recursively_helper(class_name, vec);
+            container->m_find_widgets_by_class_name_recursively_helper(class_name, vec);
         }
     }
 }
 
-std::vector<Widget*> Container::find_widget_by_class_name_recursively(std::string_view class_name) const{
+std::vector<Widget*> Container::find_widgets_by_class_name_recursively(std::string_view class_name) const {
     std::vector<Widget*> result;
-    m_find_widget_by_class_name_recursively_helper(class_name, result);
+    m_find_widgets_by_class_name_recursively_helper(class_name, result);
 
     return result;
 }

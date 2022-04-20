@@ -137,22 +137,22 @@ std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
         auto vel = m_velocity_control->value();
-        auto dist = find_widget_of_type_by_class_name_recursively<GUI::ValueSlider>("Dist");
-        auto angle = find_widget_of_type_by_class_name_recursively<GUI::ValueSlider>("Angle");
+        auto dist = find_widgets_of_type_by_class_name_recursively<GUI::ValueSlider>("Dist");
+        auto angle = find_widgets_of_type_by_class_name_recursively<GUI::ValueSlider>("Angle");
 
         if (state) {
             this->m_velocity_control->set_unit("km/h");
             this->m_velocity_control->set_value(vel * 3.6);
             this->m_velocity_control->slider().set_range(0, 500000, 1);
 
-            for(auto& d : dist){
+            for (auto& d : dist) {
                 d->set_unit("AU");
                 d->set_value(d->value() / AU * 1000);
                 d->slider().set_range(0, 100, 0.1);
             }
             this->m_y_position_control->slider().set_range(-50, 50, 0.1);
 
-            for(auto& a : angle){
+            for (auto& a : angle) {
                 a->set_unit("[rad]");
                 a->set_value(a->value() / 180 * M_PI);
                 a->slider().set_range(0, 2 * M_PI, 0.01);
@@ -165,14 +165,14 @@ std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(
             this->m_velocity_control->set_value(vel / 3.6);
             this->m_velocity_control->slider().set_range(0, 500000 / 3.6, 1);
 
-            for(auto& d : dist){
+            for (auto& d : dist) {
                 d->set_unit("km");
                 d->set_value(d->value() / 1000 * AU);
                 d->slider().set_range(0, 0.1 * AU, 0.1);
             }
             this->m_y_position_control->slider().set_range(-50 * AU, 50 * AU, 100);
 
-            for(auto& a : angle){
+            for (auto& a : angle) {
                 a->set_unit("[deg]");
                 a->set_value(a->value() / M_PI * 180);
                 a->slider().set_range(0, 360, 1);

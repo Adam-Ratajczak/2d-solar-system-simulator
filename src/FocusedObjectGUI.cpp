@@ -54,7 +54,7 @@ void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
         set_size({ 380.0_px, 345.0_px });
     else
         set_size({ 380.0_px, 135.0_px });
-    auto object_infos = find_widget_by_class_name("most_massive_data");
+    auto object_infos = find_widgets_by_class_name("most_massive_data");
 
     for (auto& info : object_infos)
         info->set_visible(visible);
