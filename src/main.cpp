@@ -23,7 +23,7 @@ int main() {
     world.reset();
 
     // PySSA test
-    PySSA::Environment env(world);
+    PySSA::Environment env(world, gui.simulation_view());
     if (!env.run_script("test.py")) {
         std::cout << "Failed to execute python script :(" << std::endl;
     }

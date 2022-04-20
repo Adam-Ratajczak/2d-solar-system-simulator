@@ -5,6 +5,7 @@
 #include "math/Matrix.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
+#include "pyssa/WrappedObject.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include <optional>
@@ -12,7 +13,8 @@
 class Object;
 class World;
 
-class SimulationView : public GUI::Widget {
+class SimulationView : public GUI::Widget
+    , public PySSA::WrappedObject<SimulationView> {
 public:
     explicit SimulationView(GUI::Container& c, World& world)
         : Widget(c)
@@ -73,6 +75,9 @@ public:
 
     void change_speed(bool state) { m_allow_change_speed = state; }
 
+    static void setup_python_bindings(TypeSetup);
+    static constexpr char const* PythonClassName = "SimulationView";
+
 private:
     virtual void handle_event(GUI::Event&) override;
     virtual void draw(sf::RenderWindow&) const override;
@@ -81,6 +86,8 @@ private:
     virtual bool accepts_focus() const override { return true; }
 
     void draw_grid(sf::RenderWindow&) const;
+
+    PySSA::Object python_reset(PySSA::Object const& args);
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;

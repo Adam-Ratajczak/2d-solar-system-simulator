@@ -351,6 +351,15 @@ Object* SimulationView::focused_object() const {
     return {};
 }
 
+void SimulationView::setup_python_bindings(TypeSetup type_setup) {
+    type_setup.add_method<&SimulationView::python_reset>("reset");
+}
+
+PySSA::Object SimulationView::python_reset(PySSA::Object const&) {
+    reset();
+    return PySSA::Object::none();
+}
+
 static size_t s_world_draw_scope_recursion = 0;
 
 void WorldDrawScope::verify() {

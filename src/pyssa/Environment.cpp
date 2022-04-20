@@ -18,8 +18,9 @@ Environment& Environment::the() {
     return *s_the;
 }
 
-Environment::Environment(World& world)
-    : m_world(world) {
+Environment::Environment(World& world, SimulationView& sv)
+    : m_world(world)
+    , m_simulation_view(sv) {
     assert(!s_the);
     s_the = this;
     initialize_environment();
@@ -104,13 +105,12 @@ std::vector<std::string> Environment::generate_exception_message() const {
     return result;
 }
 
-PyObject* tupleparser_test(PyObject*, PyObject* args)
-{
+PyObject* tupleparser_test(PyObject*, PyObject* args) {
     Object args_py = Object::share(args);
     ::Object* o1 {};
     ::Object* o2 {};
     ::Object* o3 {};
-    if(!parse_arguments(args_py, "O!O!O!", Arg::CheckedType<::Object>{o1}, Arg::CheckedType<::Object>{o2}, Arg::CheckedType<::Object>{o3}))
+    if (!parse_arguments(args_py, "O!O!O!", Arg::CheckedType<::Object> { o1 }, Arg::CheckedType<::Object> { o2 }, Arg::CheckedType<::Object> { o3 }))
         return nullptr;
     std::cout << o1->name() << "," << o2->name() << "," << o3->name() << std::endl;
     Py_RETURN_NONE;
@@ -134,6 +134,7 @@ void Environment::initialize_environment() {
         auto module = PyModule_Create(&pyssa_module);
         PyModule_AddObject(module, "test2", Object::create("TEST").leak_object());
         PyModule_AddObject(module, "world", Environment::the().m_world.wrap().leak_object());
+        PyModule_AddObject(module, "sv", Environment::the().m_simulation_view.wrap().leak_object());
         PyModule_AddType(module, &::Object::type_object());
         return module;
     });
