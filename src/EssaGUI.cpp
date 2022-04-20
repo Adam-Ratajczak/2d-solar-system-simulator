@@ -47,7 +47,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         m_focused = focusing;
     };
     m_focused_object_info = add_widget<FocusedObjectGUI>();
-    m_focused_object_info->set_position({10.0_px_o, 10.0_px});
+    m_focused_object_info->set_position({ 10.0_px_o, 10.0_px });
     m_focused_object_info->set_visible(false);
 
     m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
@@ -204,7 +204,9 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         auto iterations_control = simulation_settings.add_widget<GUI::ValueSlider>(1, 1000);
         iterations_control->set_name("Iterations");
         iterations_control->set_unit("i/t");
-        iterations_control->set_value(10);
+        m_on_restore_defaults.push_back([iterations_control]() {
+            iterations_control->set_value(10);
+        });
         iterations_control->set_tooltip_text("Count of simulation ticks per render frame");
         iterations_control->on_change = [this](double value) {
             if (value > 0)
@@ -215,7 +217,9 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         auto tick_length_control = simulation_settings.add_widget<GUI::ValueSlider>(60, 60 * 60 * 24, 60);
         tick_length_control->set_name("Tick Length");
         tick_length_control->set_unit("s/t");
-        tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
+        m_on_restore_defaults.push_back([tick_length_control]() {
+            tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
+        });
         tick_length_control->set_tooltip_text("Amount of simulation seconds per simulation tick (Affects accuracy)");
         tick_length_control->on_change = [this](double value) {
             if (value > 0)
@@ -239,7 +243,9 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         auto fov_control = display_settings.add_widget<GUI::ValueSlider>(20, 160, 1);
         fov_control->set_name("FOV");
         fov_control->set_unit("deg");
-        fov_control->set_value(80);
+        m_on_restore_defaults.push_back([fov_control]() {
+            fov_control->set_value(80);
+        });
         fov_control->set_tooltip_text("Field of View");
         fov_control->on_change = [this](double value) {
             if (value > 0)
@@ -259,6 +265,9 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
         toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
         toggle_sphere_mode->set_alignment(GUI::Align::Center);
+        m_on_restore_defaults.push_back([toggle_sphere_mode]() {
+            toggle_sphere_mode->set_index(0);
+        });
         toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode) {
             this->m_world.for_each_object([mode](Object& object) {
                 object.sphere().set_draw_mode(mode);
@@ -284,11 +293,15 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
         toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, sf::Color::Blue);
         toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, sf::Color::Blue);
 
-        toggle_time_format->on_change = [](Util::SimulationClock::Format state){
+        m_on_restore_defaults.push_back([toggle_time_format]() {
+            toggle_time_format->set_index(0);
+        });
+
+        toggle_time_format->on_change = [](Util::SimulationClock::Format state) {
             Util::SimulationClock::time_format = state;
         };
 
-        auto add_toggle = [&](std::string title, auto on_change) {
+        auto add_toggle = [&](std::string title, auto on_change, bool default_value = true) {
             auto toggle_container = display_settings.add_widget<GUI::Container>();
             auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
             toggle_layout.set_spacing(10);
@@ -303,6 +316,9 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
             toggle->set_active(true);
             toggle->set_alignment(GUI::Align::Center);
             toggle->on_change = std::move(on_change);
+            m_on_restore_defaults.push_back([toggle, default_value]() {
+                toggle->set_active(default_value);
+            });
             return toggle;
         };
 
@@ -347,16 +363,11 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     restore_defaults->set_alignment(GUI::Align::Center);
     restore_defaults->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
 
-    /*restore_defaults->on_click = [this, iterations_control, tick_length_control, fov_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
-        iterations_control->set_value(10);
-        tick_length_control->set_value(60 * 60 * 12);
-        fov_control->set_value(80);
-        show_labels_toggle->set_active(true);
-        show_grid_toggle->set_active(true);
-        show_trails_toggle->set_active(true);
-        this->m_simulation_view->toggle_label_visibility(true);
-        toggle_sphere_mode->set_index(0);
-    };*/
+    restore_defaults->on_click = [this]() {
+        for (auto& func : m_on_restore_defaults)
+            func();
+    };
+    restore_defaults->on_click();
 }
 
 void EssaGUI::m_recalculate_forward_simulation() {

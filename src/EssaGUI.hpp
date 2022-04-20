@@ -95,4 +95,6 @@ private:
     Vector3 m_new_object_pos;
     int m_saved_speed = 0;
     void m_recalculate_forward_simulation();
+
+    std::vector<std::function<void()>> m_on_restore_defaults;
 };
