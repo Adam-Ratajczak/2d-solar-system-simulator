@@ -134,18 +134,43 @@ public:
 
     Widget* find_widget_by_id(std::string_view) const;
     std::vector<Widget*> find_widget_by_class_name(std::string_view) const;
+    std::vector<Widget*> find_widget_by_class_name_recursively(std::string_view) const;
     Widget* find_widget_by_id_recursively(std::string_view) const;
 
     template<class T>
     requires(std::is_base_of_v<Widget, T>)
-        T* find_widget_of_type(std::string_view name) const {
+    T* find_widget_of_type_by_id(std::string_view name) const {
         return dynamic_cast<T*>(find_widget_by_id(name));
     }
 
     template<class T>
     requires(std::is_base_of_v<Widget, T>)
-        T* find_widget_of_type_recursively(std::string_view name) const {
+    T* find_widget_of_type_by_id_recursively(std::string_view name) const {
         return dynamic_cast<T*>(find_widget_by_id_recursively(name));
+    }
+
+    template<class T>
+    requires(std::is_base_of_v<Widget, T>)
+    std::vector<T*> find_widget_of_type_by_class_name(std::string_view name) const {
+        auto elements = find_widget_by_class_name(name);
+        std::vector<T*> result;
+        result.resize(elements.size());
+        for(unsigned i = 0; i < elements.size(); i++)
+            result[i] = dynamic_cast<T*>(elements[i]);
+            
+        return result;
+    }
+
+    template<class T>
+    requires(std::is_base_of_v<Widget, T>)
+    std::vector<T*> find_widget_of_type_by_class_name_recursively(std::string_view name) const {
+        auto elements = find_widget_by_class_name_recursively(name);
+        std::vector<T*> result;
+        result.resize(elements.size());
+        for(unsigned i = 0; i < elements.size(); i++)
+            result[i] = dynamic_cast<T*>(elements[i]);
+
+        return result;
     }
 
 protected:
@@ -174,6 +199,7 @@ protected:
 
 private:
     friend Layout;
+    void m_find_widget_by_class_name_recursively_helper(std::string_view class_name, std::vector<Widget*>& vec) const;
 
     std::unique_ptr<Layout> m_layout;
 };

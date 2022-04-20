@@ -12,7 +12,7 @@ add_executable(
 
     src/CanvasMode.cpp
     src/ConfigLoader.cpp
-    src/CreateObjectGUI.cpp
+    src/EssaCreateObject.cpp
     src/EssaGUI.cpp
     src/EssaSettings.cpp
     src/FocusedObjectGUI.cpp
