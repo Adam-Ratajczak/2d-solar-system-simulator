@@ -59,7 +59,11 @@ int Object::as_int() const {
     return PyLong_AsLong(m_object);
 }
 
-std::vector<Object> Object::as_list() const {
+std::optional<std::vector<Object>> Object::as_list() const {
+    if (!PyList_Check(m_object)) {
+        PyErr_SetString(PyExc_TypeError, "Object is not a list instance");
+        return {};
+    }
     Py_ssize_t size = PyList_Size(m_object);
     std::vector<Object> list;
     list.resize(size);
