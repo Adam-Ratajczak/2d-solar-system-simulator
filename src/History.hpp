@@ -4,18 +4,19 @@
 #include <vector>
 
 class History {
-    struct Entry{
+    struct Entry {
         Vector3 pos, vel;
     };
 
     struct Node {
-        Node* prev;
-        Node* next;
+        Node* prev = nullptr;
+        Node* next = nullptr;
 
         std::vector<Entry> entry;
-        int vector_pos, vector_size;
+        size_t vector_pos = 0;
+        size_t vector_size = 0;
 
-        Node(Node* _prev, Node* _next, unsigned _size) {
+        Node(Node* _prev, Node* _next, size_t _size) {
             prev = _prev;
             next = _next;
 
@@ -29,15 +30,15 @@ class History {
         Node(Node&&) = delete;
         Node& operator=(Node&&) = delete;
 
-        ~Node(){
-            if(next != nullptr)
+        ~Node() {
+            if (next != nullptr)
                 delete next;
         }
     };
 
-    Node* m_root;
-    Node* m_current;
-    int m_segments;
+    Node* m_root = nullptr;
+    Node* m_current = nullptr;
+    int m_segments = 0;
 
     bool m_edge = true;
     Entry m_first_entry;
@@ -52,7 +53,7 @@ public:
 
     bool move_forward();
     bool move_backward();
-    bool on_edge() const{return m_edge;}
+    bool on_edge() const { return m_edge; }
 
     Entry get_entry() const;
     void push_back(const Entry entry);
@@ -60,7 +61,7 @@ public:
     void reset();
     void reset_future_entries();
     void change_current(Entry entry);
-    Entry first_entry() const{return m_first_entry;}
+    Entry first_entry() const { return m_first_entry; }
 
     ~History();
 };
