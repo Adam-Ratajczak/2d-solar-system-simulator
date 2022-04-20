@@ -353,11 +353,46 @@ Object* SimulationView::focused_object() const {
 
 void SimulationView::setup_python_bindings(TypeSetup type_setup) {
     type_setup.add_method<&SimulationView::python_reset>("reset");
+    type_setup.add_attribute<&SimulationView::python_get_offset, nullptr>("offset");
+    type_setup.add_attribute<&SimulationView::python_get_fov, nullptr>("fov");
+    type_setup.add_attribute<&SimulationView::python_get_yaw, nullptr>("yaw");
+    type_setup.add_attribute<&SimulationView::python_get_pitch, nullptr>("pitch");
+    type_setup.add_attribute<&SimulationView::python_get_world, nullptr>("world");
+    type_setup.add_attribute<&SimulationView::python_get_zoom, nullptr>("zoom");
+    type_setup.add_attribute<&SimulationView::python_get_focused_object, nullptr>("focused_object");
 }
 
 PySSA::Object SimulationView::python_reset(PySSA::Object const&) {
     reset();
     return PySSA::Object::none();
+}
+
+PySSA::Object SimulationView::python_get_offset() const {
+    return PySSA::Object::create(m_offset);
+}
+
+PySSA::Object SimulationView::python_get_fov() const {
+    return PySSA::Object::create(m_fov.rad());
+}
+
+PySSA::Object SimulationView::python_get_yaw() const {
+    return PySSA::Object::create(m_yaw);
+}
+
+PySSA::Object SimulationView::python_get_pitch() const {
+    return PySSA::Object::create(m_pitch);
+}
+
+PySSA::Object SimulationView::python_get_world() const {
+    return m_world.wrap();
+}
+
+PySSA::Object SimulationView::python_get_zoom() const {
+    return PySSA::Object::create(m_zoom);
+}
+
+PySSA::Object SimulationView::python_get_focused_object() const {
+    return m_focused_object ? m_focused_object->wrap() : PySSA::Object::none();
 }
 
 static size_t s_world_draw_scope_recursion = 0;

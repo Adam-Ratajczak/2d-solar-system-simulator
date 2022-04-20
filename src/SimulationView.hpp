@@ -89,6 +89,14 @@ private:
 
     PySSA::Object python_reset(PySSA::Object const& args);
 
+    PySSA::Object python_get_offset() const;
+    PySSA::Object python_get_fov() const;
+    PySSA::Object python_get_yaw() const;
+    PySSA::Object python_get_pitch() const;
+    PySSA::Object python_get_world() const;
+    PySSA::Object python_get_zoom() const;
+    PySSA::Object python_get_focused_object() const;
+
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;
     double m_yaw = 0;
