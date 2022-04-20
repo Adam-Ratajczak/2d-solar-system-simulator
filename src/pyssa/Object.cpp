@@ -69,11 +69,17 @@ std::vector<Object> Object::as_list() const {
 }
 
 std::string Object::str() const {
-    return PyUnicode_AsUTF8(PyObject_Str(m_object));
+    Py_ssize_t size;
+    auto data = PyUnicode_AsUTF8AndSize(PyObject_Str(m_object), &size);
+    assert(size >= 0);
+    return std::string { data, static_cast<size_t>(size) };
 }
 
 std::string Object::repr() const {
-    return PyUnicode_AsUTF8(PyObject_Repr(m_object));
+    Py_ssize_t size;
+    auto data = PyUnicode_AsUTF8AndSize(PyObject_Repr(m_object), &size);
+    assert(size >= 0);
+    return std::string { data, static_cast<size_t>(size) };
 }
 
 }
