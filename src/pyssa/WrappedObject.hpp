@@ -2,8 +2,8 @@
 
 #include "Object.hpp"
 
+#include <set>
 #include <sstream>
-#include <vector>
 
 namespace PySSA {
 
@@ -45,7 +45,7 @@ public:
         auto& py_object = *(PythonType*)object.python_object();
         py_object.ptr = static_cast<T*>(this);
         py_object.owned_by_python = false;
-        m_wrappers.push_back((PythonType*)object.python_object());
+        m_wrappers.insert((PythonType*)object.python_object());
         return object;
     }
 
@@ -127,7 +127,7 @@ protected:
     };
 
 private:
-    std::vector<PythonType*> m_wrappers;
+    std::set<PythonType*> m_wrappers;
 
     static void setup_python_bindings_internal(PyTypeObject&);
 };
@@ -171,6 +171,7 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
         };
         type.tp_dealloc = [](PyObject* self) {
             auto object = (PythonType*)self;
+            object->ptr->m_wrappers.erase(object);
             if (object->owned_by_python)
                 delete object->ptr;
             Py_TYPE(self)->tp_free(self);
