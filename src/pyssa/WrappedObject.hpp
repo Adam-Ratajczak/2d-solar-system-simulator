@@ -15,12 +15,23 @@ template<class T>
 class WrappedObject {
 public:
     struct PythonType {
-        PyObject_HEAD
-            T* ptr;
+        PyObject_HEAD;
+
+        T* ptr;
 
         // Is the object created and should be removed by Python interpreter?
-        bool owned;
+        bool owned_by_python;
     };
+
+    virtual ~WrappedObject() {
+        // Ensure that no Python code will try to access already
+        // destructed object. The exception will be thrown in that
+        // case.
+        for (auto& wrapper : m_wrappers) {
+            if (wrapper && !wrapper->owned_by_python)
+                wrapper->ptr = nullptr;
+        }
+    }
 
     static constexpr bool CanBeCreatedFromPython = requires(Object const& o) {
         T::create_for_python(o, o);
@@ -33,7 +44,8 @@ public:
         auto object = Object::take(PyObject_New(PyObject, type));
         auto& py_object = *(PythonType*)object.python_object();
         py_object.ptr = static_cast<T*>(this);
-        py_object.owned = false;
+        py_object.owned_by_python = false;
+        m_wrappers.push_back((PythonType*)object.python_object());
         return object;
     }
 
@@ -66,21 +78,32 @@ protected:
         template<Method method>
         struct MethodWrapper {
             static PyObject* wrapper(PythonType* self, PyObject* args) {
-                return (self->ptr->*method)(Object::share(args)).leak_object();
+                auto that = self->ptr;
+                if (!that)
+                    return PyErr_Format(PyExc_ReferenceError, "This %s instance was already destructed", T::PythonClassName);
+                return (that->*method)(Object::share(args)).leak_object();
             }
         };
 
         template<Getter getter>
         struct GetterWrapper {
             static PyObject* wrapper(PythonType* self, void*) {
-                return (self->ptr->*getter)().leak_object();
+                auto that = self->ptr;
+                if (!that)
+                    return PyErr_Format(PyExc_ReferenceError, "This %s instance was already destructed", T::PythonClassName);
+                return (that->*getter)().leak_object();
             }
         };
 
         template<Setter setter>
         struct SetterWrapper {
             static int wrapper(PythonType* self, PyObject* value, void*) {
-                return (self->ptr->*setter)(Object::share(value)) ? 0 : 1;
+                auto that = self->ptr;
+                if (!that) {
+                    PyErr_Format(PyExc_ReferenceError, "This %s instance was already destructed", T::PythonClassName);
+                    return 1;
+                }
+                return (that->*setter)(Object::share(value)) ? 0 : 1;
             }
         };
 
@@ -104,6 +127,8 @@ protected:
     };
 
 private:
+    std::vector<PythonType*> m_wrappers;
+
     static void setup_python_bindings_internal(PyTypeObject&);
 };
 
@@ -141,12 +166,12 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
             object->ptr = T::create_for_python(Object::share(args), Object::share(kwargs));
             if (!object->ptr)
                 return -1;
-            object->owned = true;
+            object->owned_by_python = true;
             return 0;
         };
         type.tp_dealloc = [](PyObject* self) {
             auto object = (PythonType*)self;
-            if (object->owned)
+            if (object->owned_by_python)
                 delete object->ptr;
             Py_TYPE(self)->tp_free(self);
         };
