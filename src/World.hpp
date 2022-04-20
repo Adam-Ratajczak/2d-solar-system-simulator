@@ -55,7 +55,6 @@ private:
     std::list<std::unique_ptr<Object>> m_object_list;
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
     bool m_is_forward_simulated = false;
-    bool m_should_add_history_entry;
 
     // FIXME: (on WrappedObject side) Allow const-qualified members
     PySSA::Object python_get_object_by_name(PySSA::Object const& args);
