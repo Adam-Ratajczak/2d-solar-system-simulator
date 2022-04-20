@@ -9,9 +9,10 @@
 #include <iostream>
 
 Trail::Trail(size_t max_trail_size, sf::Color color)
-    // FIXME: Engine shouldn't limit user
-    : m_vertexes((max_trail_size == 0) ? 1000 : max_trail_size)
-    , m_color(color) { }
+    : m_vertexes(max_trail_size)
+    , m_color(color) {
+    assert(max_trail_size > 1);
+}
 
 void Trail::push_back(Vector3 pos) {
     m_vertexes[m_append_offset] = Vertex { .position = pos / AU, .color = m_color };
@@ -67,7 +68,7 @@ void Trail::draw() {
         glPopMatrix();
 }
 
-void Trail::change_current(Vector3 pos){
+void Trail::change_current(Vector3 pos) {
     m_vertexes[m_append_offset - 1].position = pos / AU;
 }
 
