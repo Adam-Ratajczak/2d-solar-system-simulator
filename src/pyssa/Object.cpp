@@ -63,8 +63,8 @@ std::vector<Object> Object::as_list() const {
     Py_ssize_t size = PyList_Size(m_object);
     std::vector<Object> list;
     list.resize(size);
-    for(Py_ssize_t s = 0; s < size; s++)
-        list[s] = Object::share(PyList_GetItem(m_object, s));
+    for (Py_ssize_t s = 0; s < size; s++)
+        list[s] = Object::share(PyList_GET_ITEM(m_object, s));
     return list;
 }
 
