@@ -275,14 +275,14 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
-        toggle_time_format->add_state("American format", Util::SimulationClock::Format::AMERICAN, sf::Color::Green);
-        toggle_time_format->add_state("Short format", Util::SimulationClock::Format::SHORT_TIME, sf::Color::Green);
-        toggle_time_format->add_state("Mid format", Util::SimulationClock::Format::MID_TIME, sf::Color::Green);
-        toggle_time_format->add_state("Long format", Util::SimulationClock::Format::LONG_TIME, sf::Color::Green);
-        toggle_time_format->add_state("No clock American format", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, sf::Color::Green);
-        toggle_time_format->add_state("No clock short format", Util::SimulationClock::Format::NO_CLOCK_SHORT, sf::Color::Green);
-        toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, sf::Color::Green);
-        toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, sf::Color::Green);
+        toggle_time_format->add_state("American format", Util::SimulationClock::Format::AMERICAN, sf::Color::Blue);
+        toggle_time_format->add_state("Short format", Util::SimulationClock::Format::SHORT_TIME, sf::Color::Blue);
+        toggle_time_format->add_state("Mid format", Util::SimulationClock::Format::MID_TIME, sf::Color::Blue);
+        toggle_time_format->add_state("Long format", Util::SimulationClock::Format::LONG_TIME, sf::Color::Blue);
+        toggle_time_format->add_state("No clock American format", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, sf::Color::Blue);
+        toggle_time_format->add_state("No clock short format", Util::SimulationClock::Format::NO_CLOCK_SHORT, sf::Color::Blue);
+        toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, sf::Color::Blue);
+        toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, sf::Color::Blue);
 
         toggle_time_format->on_change = [](Util::SimulationClock::Format state){
             Util::SimulationClock::time_format = state;
@@ -346,7 +346,7 @@ void EssaGUI::m_create_simulation_settings_gui(Container& container) {
     restore_defaults->set_toggleable(false);
     restore_defaults->set_alignment(GUI::Align::Center);
     restore_defaults->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
-    // TODO
+
     /*restore_defaults->on_click = [this, iterations_control, tick_length_control, fov_control, show_labels_toggle, show_grid_toggle, show_trails_toggle, toggle_sphere_mode]() {
         iterations_control->set_value(10);
         tick_length_control->set_value(60 * 60 * 12);
