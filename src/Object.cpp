@@ -245,12 +245,11 @@ std::ostream& operator<<(std::ostream& out, Object const& object) {
 
 void Object::setup_python_bindings(TypeSetup setup) {
     setup.add_method<&Object::python_attraction>("attraction");
-    setup.add_attribute<&Object::python_get_pos, nullptr>("pos");
-    setup.add_attribute<&Object::python_get_vel, nullptr>("vel");
-    setup.add_attribute<&Object::python_get_name, nullptr>("name");
-    setup.add_attribute<&Object::python_get_focused, nullptr>("focused");
-    setup.add_attribute<&Object::python_get_color, nullptr>("color");
-    setup.add_attribute<&Object::python_get_radius, nullptr>("radius");
+    setup.add_attribute<&Object::python_get_pos, &Object::python_set_pos>("pos");
+    setup.add_attribute<&Object::python_get_vel, &Object::python_set_vel>("vel");
+    setup.add_attribute<&Object::python_get_name, &Object::python_set_name>("name");
+    setup.add_attribute<&Object::python_get_color, &Object::python_set_color>("color");
+    setup.add_attribute<&Object::python_get_radius, &Object::python_set_radius>("radius");
 }
 
 Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs) {
@@ -301,22 +300,58 @@ PySSA::Object Object::python_get_pos() const {
     return PySSA::Object::create(m_pos);
 }
 
+bool Object::python_set_pos(PySSA::Object const& value) {
+    auto maybe_value = value.as_vector();
+    if (!maybe_value.has_value())
+        return false;
+    m_pos = maybe_value.value();
+    return true;
+}
+
 PySSA::Object Object::python_get_vel() const {
     return PySSA::Object::create(m_vel);
+}
+
+bool Object::python_set_vel(PySSA::Object const& value) {
+    auto maybe_value = value.as_vector();
+    if (!maybe_value.has_value())
+        return false;
+    m_vel = maybe_value.value();
+    return true;
 }
 
 PySSA::Object Object::python_get_name() const {
     return PySSA::Object::create(m_name);
 }
 
-PySSA::Object Object::python_get_focused() const {
-    return PySSA::Object::create(this == m_world.m_simulation_view->focused_object());
+bool Object::python_set_name(PySSA::Object const& value) {
+    auto maybe_value = value.as_string();
+    if (!maybe_value.has_value())
+        return false;
+    m_name = maybe_value.value();
+    return true;
 }
 
 PySSA::Object Object::python_get_color() const {
     return PySSA::Object::create(m_color);
 }
 
+bool Object::python_set_color(PySSA::Object const& value) {
+    auto maybe_value = value.as_color();
+    if (!maybe_value.has_value())
+        return false;
+    m_color = maybe_value.value();
+    return true;
+}
+
 PySSA::Object Object::python_get_radius() const {
     return PySSA::Object::create(m_radius);
+}
+
+bool Object::python_set_radius(PySSA::Object const& value) {
+    auto maybe_value = value.as_double();
+    if (!maybe_value.has_value())
+        return false;
+    m_radius = maybe_value.value();
+    return true;
 }

@@ -88,11 +88,15 @@ private:
     PySSA::Object python_attraction(PySSA::Object const& args);
 
     PySSA::Object python_get_pos() const;
+    bool python_set_pos(PySSA::Object const&);
     PySSA::Object python_get_vel() const;
+    bool python_set_vel(PySSA::Object const&);
     PySSA::Object python_get_name() const;
-    PySSA::Object python_get_focused() const;
+    bool python_set_name(PySSA::Object const&);
     PySSA::Object python_get_color() const;
+    bool python_set_color(PySSA::Object const&);
     PySSA::Object python_get_radius() const;
+    bool python_set_radius(PySSA::Object const&);
 
     double m_density;
     Trail m_trail;
