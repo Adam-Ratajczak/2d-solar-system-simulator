@@ -283,6 +283,7 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[2] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), 0 }, sf::Color::Red };
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Red };
         window.draw(lines);
+        break;
     }
     case Measure::Focus: {
         auto sizes = size();
