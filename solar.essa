@@ -1,1 +1,109 @@
-planet name=Sun mass=1.98892e30 radius=695700000 colorb=0
+planet name=Sun mass=1.98892e30 radius=695700000 colorb=0;
+
+orbitting_planet
+    around=Sun
+    mass=3.3e23
+    radius=2439000.0
+    apoapsis=0.307_AU
+    periapsis=0.466_AU
+    direction=left
+    orbit_position=170.5709
+    orbit_tilt=0.0
+    colorr=80 colorg=78 colorb=81
+    name=Mercury;
+
+orbitting_planet
+    around=Sun
+    mass=4.8465e24
+    radius=6051000.0
+    apoapsis=0.718_AU
+    periapsis=0.728_AU
+    direction=left
+    orbit_position=263.6570
+    orbit_tilt=0.0
+    colorr=255 colorg=255 colorb=255
+    name=Venus;
+
+orbitting_planet
+    around=Sun
+    mass=5.9742e24
+    radius=6371000.0
+    apoapsis=152100000.0_km
+    periapsis=149075000.0_km
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.0
+    colorr=100 colorg=149 colorb=237
+    name=Earth;
+
+orbitting_planet
+    around=Sun
+    mass=6.39e23
+    radius=3389000.0
+    apoapsis=1.382_AU
+    periapsis=1.666_AU
+    direction=left
+    orbit_position=290.6297
+    orbit_tilt=0.0
+    colorr=188 colorg=39 colorb=50
+    name=Mars;
+
+orbitting_planet
+    around=Sun
+    mass=1.8982e27
+    radius=69911000.0
+    apoapsis=4.95_AU
+    periapsis=5.4588_AU
+    direction=left
+    orbit_position=105.2543
+    orbit_tilt=0.0
+    colorr=207 colorg=82 colorb=63
+    name=Jupiter;
+
+orbitting_planet
+    around=Sun
+    mass=5.6836e26
+    radius=58232000.0
+    apoapsis=9.0412_AU
+    periapsis=10.1238_AU
+    direction=left
+    orbit_position=289.4523
+    orbit_tilt=0.0
+    colorr=207 colorg=186 colorb=178
+    name=Saturn;
+
+orbitting_planet
+    around=Sun
+    mass=8.6810e25
+    radius=25362000.0
+    apoapsis=18.2861_AU
+    periapsis=20.0965_AU
+    direction=left
+    orbit_position=276.7999
+    orbit_tilt=0.0
+    colorr=0 colorg=174 colorb=199
+    name=Uranus;
+
+orbitting_planet
+    around=Sun
+    mass=1.024e26
+    radius=24622000.0
+    apoapsis=29.81_AU
+    periapsis=30.33_AU
+    direction=left
+    orbit_position=282.7192
+    orbit_tilt=0.0
+    colorr=0 colorg=111 colorb=255
+    name=Neptune;
+
+orbitting_planet
+    around=Earth
+    mass=7.342e22
+    radius=1737000
+    apoapsis=405400.0_km
+    periapsis=362400.0_km
+    direction=left
+    orbit_position=108.0
+    orbit_tilt=0.0
+    colorr=127 colorg=127 colorb=127
+    name=Moon;
