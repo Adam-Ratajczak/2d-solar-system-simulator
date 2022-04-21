@@ -28,6 +28,9 @@ Environment::Environment(World& world, SimulationView& sv)
 
     m_globals = PyDict_New();
     m_locals = PyDict_New();
+
+    // Do "import pyssa"
+    PyDict_SetItemString(m_globals, "pyssa", PyImport_ImportModule("pyssa"));
 }
 
 Environment::~Environment() {
