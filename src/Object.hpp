@@ -48,6 +48,10 @@ public:
 
     std::unique_ptr<Object> clone_for_forward_simulation(World& new_world) const;
 
+    // Calculates velocity and direction so that the orbit passes through
+    // the given point.
+    void require_orbit_point(Vector3);
+
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
     Util::SimulationClock::time_point creation_date() const { return m_creation_date; }

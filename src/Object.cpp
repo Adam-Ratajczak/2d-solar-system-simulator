@@ -235,6 +235,10 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
     return object;
 }
 
+void Object::require_orbit_point(Vector3 pos) {
+    std::cout << "TODO: require_orbit_point " << pos << std::endl;
+}
+
 void Object::set_radius(double radius) {
     m_radius = radius;
 }

@@ -86,6 +86,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             m_create_object_from_params_container->set_visible(!state);
             m_create_object_from_orbit_container->set_visible(state);
             m_toggle_orbit_direction_button->set_visible(state);
+            m_require_orbit_point_button->set_visible(!state);
             m_automatic_orbit_calculation = state;
         };
 
@@ -98,6 +99,19 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             // TODO
         };
         m_toggle_orbit_direction_button->set_visible(false);
+
+        m_require_orbit_point_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/requireOrbitPointButton.png"));
+        m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
+        m_require_orbit_point_button->on_click = [this]() {
+            if (!m_new_object) {
+                std::cout << "You need to set initial coords of the object" << std::endl;
+                return;
+            }
+            m_simulation_view.start_coords_measure([this](Vector3 coords) {
+                assert(m_new_object);
+                m_new_object->require_orbit_point(coords);
+            });
+        };
 
         m_submit_container->add_widget<Widget>(); // spacer
 
