@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EssaCreateObject.hpp"
+#include "EssaSettings.hpp"
 #include "FocusedObjectGUI.hpp"
 #include "Object.hpp"
 #include "SimulationView.hpp"
@@ -45,18 +46,13 @@ private:
     virtual void relayout() override;
     virtual void update() override;
 
-    std::shared_ptr<GUI::ImageButton> m_toggle_camera_mode_at_focus;
-
-    std::shared_ptr<GUI::Button> m_home_button;
-    std::shared_ptr<GUI::Button> m_canvas_mode_button;
+    std::shared_ptr<SimulationView> m_simulation_view;
 
     std::shared_ptr<FocusedObjectGUI> m_focused_object_info;
 
-    std::shared_ptr<SimulationView> m_simulation_view;
-
     std::shared_ptr<EssaCreateObject> m_create_object_gui;
 
-    std::vector<std::shared_ptr<GUI::Textfield>> m_info_content;
+    std::shared_ptr<EssaSettings> m_settings_gui;
 
     int m_saved_speed = 0;
 

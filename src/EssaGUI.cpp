@@ -34,12 +34,12 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     m_focused_object_info->set_position({ 10.0_px_o, 10.0_px });
     m_focused_object_info->set_visible(false);
 
-    m_home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
-    m_home_button->set_position({ 10.0_px_o, 10.0_px_o });
-    m_home_button->on_click = [this]() {
+    auto home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
+    home_button->set_position({ 10.0_px_o, 10.0_px_o });
+    home_button->on_click = [this]() {
         m_simulation_view->reset();
     };
-    m_home_button->set_tooltip_text("Reset coordinates");
+    home_button->set_tooltip_text("Reset coordinates");
 
     auto python_repl = add_widget<GUI::PythonREPL>();
     python_repl->set_position({ 600.0_px, 10.0_px_o });
@@ -77,7 +77,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         settings.settings_container->set_size({500.0_px, 500.0_px});
-        settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
+        m_settings_gui = settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
     }
 }
 
