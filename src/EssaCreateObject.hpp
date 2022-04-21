@@ -46,8 +46,9 @@ private:
     std::shared_ptr<Container> m_create_object_from_params_container;
     std::shared_ptr<Container> m_create_object_from_orbit_container;
 
-    std::shared_ptr<GUI::ImageButton> m_toggle_orbit_direction_button;
     std::shared_ptr<GUI::ImageButton> m_toggle_unit_button;
+    std::shared_ptr<GUI::ImageButton> m_toggle_orbit_direction_button;
+    std::shared_ptr<GUI::ImageButton> m_require_orbit_point_button;
 
     std::shared_ptr<Container> m_submit_container;
 

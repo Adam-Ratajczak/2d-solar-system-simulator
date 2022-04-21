@@ -11,16 +11,6 @@
 EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation_view)
     : GUI::Container(c)
     , m_simulation_view(simulation_view) {
-    m_simulation_view.on_coord_measure = [&](Vector3 pos) {
-        m_add_object_button->set_visible(true);
-        m_forward_simulation_is_valid = false;
-        m_new_object_pos = pos;
-    };
-
-    m_simulation_view.on_focus_measure = [&](Object* focusing) {
-        m_add_object_button->set_visible(true);
-        m_focused = focusing;
-    };
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     m_create_object_gui(*this);
@@ -72,10 +62,19 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     {
         m_coords_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/coordsButton.png"));
         m_coords_button->on_click = [this]() {
-            if (m_automatic_orbit_calculation)
-                m_simulation_view.start_focus_measure();
-            else
-                m_simulation_view.start_coords_measure();
+            if (m_automatic_orbit_calculation) {
+                m_simulation_view.start_focus_measure([&](Object* focusing) {
+                    m_add_object_button->set_visible(true);
+                    m_focused = focusing;
+                });
+            }
+            else {
+                m_simulation_view.start_coords_measure([&](Vector3 pos) {
+                    m_add_object_button->set_visible(true);
+                    m_forward_simulation_is_valid = false;
+                    m_new_object_pos = pos;
+                });
+            }
         };
         m_coords_button->set_tooltip_text("Set position");
 
@@ -96,6 +95,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         m_toggle_orbit_direction_button->set_toggleable(true);
         m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
         m_toggle_orbit_direction_button->on_change = [](bool state) {
+            // TODO
         };
         m_toggle_orbit_direction_button->set_visible(false);
 

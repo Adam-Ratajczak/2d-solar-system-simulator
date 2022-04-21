@@ -12,13 +12,6 @@
 #include <optional>
 #include <sstream>
 
-void SimulationView::start_focus_measure() {
-    if (m_focused_object != nullptr) {
-        m_focused_object = nullptr;
-    }
-    m_focus_measure = true;
-}
-
 void SimulationView::handle_event(GUI::Event& event) {
     if (event.type() == sf::Event::MouseButtonPressed) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
@@ -34,22 +27,20 @@ void SimulationView::handle_event(GUI::Event& event) {
                     m_focused_object = &obj;
             });
 
-            if (m_coord_measure)
-                m_coord_measure = false;
-            if (m_focus_measure && m_focused_object != nullptr) {
-                m_focus_measure = false;
+            if (m_measure == Measure::Coords)
+                m_measure = Measure::None;
+            if (m_measure == Measure::Focus && m_focused_object != nullptr) {
+                m_measure = Measure::None;
                 m_measured = true;
-                if (on_focus_measure) {
-                    on_focus_measure(m_focused_object);
+                if (m_on_focus_measure) {
+                    m_on_focus_measure(m_focused_object);
                 }
                 m_focused_object = nullptr;
             }
             event.set_handled();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            m_coord_measure = false;
-            m_focus_measure = false;
-
+            m_measure = Measure::None;
             m_drag_mode = DragMode::Rotate;
         }
     }
@@ -97,7 +88,7 @@ void SimulationView::handle_event(GUI::Event& event) {
         }
 
         // COORD MEASURE
-        if (m_coord_measure) {
+        if (m_measure == Measure::Coords) {
             // FIXME: This doesn't work perfectly yet.
             Vector3 mouse_pos_in_clip_space { (mouse_pos.x - size().x / 2.0) * 2 / size().x, -(mouse_pos.y - size().y / 2.0) * 2 / size().y, 1, 1 };
             Math::Ray ray { {}, mouse_pos_in_clip_space };
@@ -113,8 +104,8 @@ void SimulationView::handle_event(GUI::Event& event) {
 
                 // Inform the client about measured position.
                 m_measured = true;
-                if (on_coord_measure) {
-                    on_coord_measure(object_pos_in_world_space * AU);
+                if (m_on_coord_measure) {
+                    m_on_coord_measure(object_pos_in_world_space * AU);
                 }
             }
         }
@@ -283,7 +274,8 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         draw_grid(window);
     m_world.draw(*this);
 
-    if (m_coord_measure) {
+    switch (m_measure) {
+    case Measure::Coords: {
         auto sizes = size();
         sf::VertexArray lines(sf::Lines, 4);
         lines[0] = sf::Vertex { { 0, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Red };
@@ -292,7 +284,7 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Red };
         window.draw(lines);
     }
-    else if (m_focus_measure) {
+    case Measure::Focus: {
         auto sizes = size();
         sf::VertexArray lines(sf::Lines, 4);
         lines[0] = sf::Vertex { { 0, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Green };
@@ -300,6 +292,10 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         lines[2] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), 0 }, sf::Color::Green };
         lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Green };
         window.draw(lines);
+        break;
+    }
+    default:
+        break;
     }
 
     std::ostringstream oss;

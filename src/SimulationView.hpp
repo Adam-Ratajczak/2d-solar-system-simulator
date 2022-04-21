@@ -43,11 +43,16 @@ public:
         reset_rotation();
     };
 
-    std::function<void(Vector3 pos)> on_coord_measure;
-    std::function<void(Object* focused)> on_focus_measure;
+    void start_coords_measure(std::function<void(Vector3)> handler) {
+        m_measure = Measure::Coords;
+        m_on_coord_measure = std::move(handler);
+    }
 
-    void start_coords_measure() { m_coord_measure = true; }
-    void start_focus_measure();
+    void start_focus_measure(std::function<void(Object*)> handler) {
+        m_measure = Measure::Focus;
+        m_on_focus_measure = std::move(handler);
+    }
+
     void toggle_label_visibility(bool visibility) { m_show_labels = visibility; }
     bool show_labels() const { return m_show_labels; }
     void set_show_grid(bool b) { m_show_grid = b; }
@@ -109,6 +114,9 @@ private:
     sf::Vector2f m_prev_mouse_pos;
     sf::Vector2f m_prev_drag_pos;
 
+    std::function<void(Vector3 pos)> m_on_coord_measure;
+    std::function<void(Object* focused)> m_on_focus_measure;
+
     enum class DragMode {
         None,
         Pan,    // left click
@@ -117,8 +125,13 @@ private:
     DragMode m_drag_mode {};
     bool m_is_dragging { false };
 
-    bool m_coord_measure = false;
-    bool m_focus_measure = false;
+    enum class Measure {
+        None,
+        Coords,
+        Focus
+    };
+
+    Measure m_measure = Measure::None;
 
     bool m_show_labels = true;
     bool m_show_grid = true;
