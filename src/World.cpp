@@ -5,7 +5,6 @@
 #include "Object.hpp"
 #include "SimulationView.hpp"
 #include "World.hpp"
-#include "gui/Date.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "util/SimulationClock.hpp"

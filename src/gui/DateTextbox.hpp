@@ -1,11 +1,11 @@
 #pragma once
 #include "Container.hpp"
-#include "Date.hpp"
+#include "../util/SimulationClock.hpp"
 
 namespace GUI {
 
 class DateTextbox : public Container{
-    Date m_date;
+    Util::SimulationClock m_date;
 public:
     explicit DateTextbox(Container& parent);
 };

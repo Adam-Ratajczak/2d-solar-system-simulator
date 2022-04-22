@@ -3,7 +3,7 @@
 #include "Textfield.hpp"
 
 namespace GUI {
-DateTextbox::DateTextbox(Container& parent) : Container(parent), m_date(0, 0, 0){
+DateTextbox::DateTextbox(Container& parent) : Container(parent){
     set_layout<HorizontalBoxLayout>().set_spacing(10);
     
     auto days = add_widget<Textbox>();

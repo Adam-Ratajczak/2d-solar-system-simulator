@@ -3,7 +3,6 @@
 #include "Constants.hpp"
 #include "Object.hpp"
 #include "ObjectHistory.hpp"
-#include "gui/Date.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
 #include "util/SimulationClock.hpp"
