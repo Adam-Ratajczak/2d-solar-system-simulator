@@ -1,5 +1,7 @@
 #include "Application.hpp"
 
+#include "../gfx/RoundedEdgeRectangleShape.hpp"
+
 #include <cassert>
 #include <iostream>
 
@@ -50,6 +52,31 @@ void Application::draw() {
 
         m_window.draw(text);
     }
+
+    double current_position = 0;
+    for (auto& notification : m_notifications) {
+        notification.remaining_ticks--;
+        draw_notification(notification, current_position);
+        current_position += 50;
+    }
+    std::erase_if(m_notifications, [](auto& n) { return n.remaining_ticks == 0; });
+}
+
+void Application::draw_notification(Notification const& notification, float y) const {
+    sf::Text text { notification.message, font, 15 };
+    auto text_bounds = text.getLocalBounds();
+    text.setPosition(m_window.getSize().x - text_bounds.width - 20, y + 20);
+
+    RoundedEdgeRectangleShape rs { { text_bounds.width + 20, text_bounds.height + 30 }, 10 };
+    rs.setPosition(text_bounds.left - 10 + text.getPosition().x, text_bounds.top - 15 + text.getPosition().y);
+    sf::Color rs_fill_color;
+    switch (notification.level) {
+    case NotificationLevel::Error:
+        rs_fill_color = { 155, 50, 50, 100 };
+    }
+    rs.setFillColor(rs_fill_color);
+    m_window.draw(rs);
+    m_window.draw(text);
 }
 
 void Application::remove_tooltip(Tooltip* t) {
@@ -62,6 +89,10 @@ void Application::handle_events() {
         Event gui_event(event);
         m_main_widget->do_handle_event(gui_event);
     }
+}
+
+void Application::spawn_notification(std::string message, NotificationLevel level) {
+    m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
 }
