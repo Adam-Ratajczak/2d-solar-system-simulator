@@ -26,6 +26,7 @@ void EssaGUI::m_create_cavas_mode_gui(Container& parent){
 
     auto date = left_panel->add_widget<GUI::DateTextbox>();
     date->set_size({Length::Auto, 40.0_px});
+    date->set_display_attributes(sf::Color::White, sf::Color::Blue, sf::Color::Black);
 
     auto simulation_panel = main_layout->add_widget<GUI::Container>();
     simulation_panel->set_layout<GUI::VerticalBoxLayout>().set_spacing(10);

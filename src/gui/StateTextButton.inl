@@ -28,7 +28,7 @@ std::pair<std::string, typename StateTextButton<T>::State> StateTextButton<T>::g
 
 template <typename T>
 void StateTextButton<T>::add_state(sf::String content, T state, sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
-    m_states[content] = {bg_color, fg_color, text_color, state};
+    m_states.push_back({content, {bg_color, fg_color, text_color, state}});
 }
 
 template <typename T>
@@ -71,6 +71,24 @@ void StateTextButton<T>::draw(sf::RenderWindow& window) const {
 template <typename T>
 T StateTextButton<T>::state() const{
     return get_element_from_index(m_index).second.state;
+}
+
+template <typename T>
+void StateTextButton<T>::set_bg_color(sf::Color color){
+    for(auto& state : m_states)
+        state.second.bg_color = color;
+}
+
+template <typename T>
+void StateTextButton<T>::set_fg_color(sf::Color color){
+    for(auto& state : m_states)
+        state.second.fg_color = color;
+}
+
+template <typename T>
+void StateTextButton<T>::set_text_color(sf::Color color){
+    for(auto& state : m_states)
+        state.second.text_color = color;
 }
 
 }

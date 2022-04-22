@@ -42,7 +42,7 @@ private:
     virtual void draw(sf::RenderWindow& window) const override;
     virtual void handle_event(Event& event) override;
 
-    std::map<std::string, State> m_states;
+    std::vector<std::pair<std::string, State>> m_states;
 
     unsigned m_font_size = 20, m_index = 0;
     Align m_alignment = Align::CenterLeft;
