@@ -42,7 +42,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         tick_length_control->set_name("Tick Length");
         tick_length_control->set_unit("s/t");
         m_on_restore_defaults.push_back([tick_length_control]() {
-            tick_length_control->set_value(60 * 60 * 12); // 12h / half a day
+            tick_length_control->set_value(600); // 10 minutes
         });
         tick_length_control->set_tooltip_text("Amount of simulation seconds per simulation tick (Affects accuracy)");
         tick_length_control->on_change = [this](double value) {
