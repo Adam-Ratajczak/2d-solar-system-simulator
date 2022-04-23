@@ -230,7 +230,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
             255
         };
     };
-    auto object = std::make_unique<Object>(new_world, mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 1000);
+    auto object = std::make_unique<Object>(new_world, mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 500);
     object->m_is_forward_simulated = true;
     return object;
 }
