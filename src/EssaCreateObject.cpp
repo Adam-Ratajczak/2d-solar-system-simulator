@@ -279,6 +279,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gu
     m_direction_xz_control->set_name("Direction X");
     m_direction_xz_control->set_unit("[deg]");
     m_direction_xz_control->set_class_name("Angle");
+    m_direction_xz_control->slider().set_wraparound(true);
     m_direction_xz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
@@ -287,6 +288,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gu
     m_direction_yz_control->set_name("Direction Y");
     m_direction_yz_control->set_unit("[deg]");
     m_direction_yz_control->set_class_name("Angle");
+    m_direction_yz_control->slider().set_wraparound(true);
     m_direction_yz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
@@ -326,6 +328,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
     m_orbit_angle_control->set_name("Angle");
     m_orbit_angle_control->set_unit("[deg]");
     m_orbit_angle_control->set_class_name("Angle");
+    m_orbit_angle_control->slider().set_wraparound(true);
     m_orbit_angle_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
@@ -334,6 +337,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
     m_orbit_tilt_control->set_name("Tilt");
     m_orbit_tilt_control->set_unit("[deg]");
     m_orbit_tilt_control->set_class_name("Angle");
+    m_orbit_tilt_control->slider().set_wraparound(true);
     m_orbit_tilt_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
