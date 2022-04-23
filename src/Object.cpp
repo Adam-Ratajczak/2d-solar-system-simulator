@@ -103,17 +103,15 @@ void Object::update(int speed) {
     else if (speed < 0)
         m_history.push_front();
 
-    if (!m_most_attracting_object || m_is_forward_simulated) {
+    if (m_world.m_simulation_view->offset_trails())
+        recalculate_trails_with_offset();
+    else{
         m_trail.recalculate_with_offset({});
         m_trail.push_back(m_pos);
-        return;
     }
 
-    if (m_most_attracting_object != m_old_most_attracting_object)
-        m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
-    else
-        m_trail.set_offset(m_most_attracting_object->m_pos);
-    m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
+    if(m_most_attracting_object == nullptr)
+        return;
 
     double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
     if (m_ap < distance_from_object) {
@@ -125,6 +123,20 @@ void Object::update(int speed) {
         m_pe = distance_from_object;
         m_pe_vel = m_vel.magnitude();
     }
+}
+
+void Object::recalculate_trails_with_offset(){
+    if (!m_most_attracting_object || m_is_forward_simulated) {
+        m_trail.recalculate_with_offset({});
+        m_trail.push_back(m_pos);
+        return;
+    }
+
+    if (m_most_attracting_object != m_old_most_attracting_object)
+        m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
+    else
+        m_trail.set_offset(m_most_attracting_object->m_pos);
+    m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
 }
 
 void Object::draw(SimulationView const& view) {

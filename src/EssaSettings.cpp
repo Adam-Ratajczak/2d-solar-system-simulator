@@ -155,6 +155,11 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         auto show_trails_toggle = add_toggle("Show trails", [this](bool state) {
             this->m_simulation_view.set_show_trails(state);
         });
+
+        auto offset_trails_toggle = add_toggle("Offset trails", [this](bool state) {
+            this->m_simulation_view.set_offset_trails(state);
+            this->m_simulation_view.world().reset_all_trails();
+        });
     }
 
     auto restore_sim_container = add_widget<GUI::Container>();

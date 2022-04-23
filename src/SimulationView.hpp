@@ -58,6 +58,8 @@ public:
     void set_show_grid(bool b) { m_show_grid = b; }
     void set_show_trails(bool b) { m_show_trails = b; }
     bool show_trails() const { return m_show_trails; }
+    void set_offset_trails(bool b) { m_offset_trail = b; }
+    bool offset_trails() const { return m_offset_trail; }
 
     void set_fov(Angle fov) { m_fov = fov; }
 
@@ -136,6 +138,7 @@ private:
     bool m_show_labels = true;
     bool m_show_grid = true;
     bool m_show_trails = true;
+    bool m_offset_trail = true;
 
     bool m_allow_change_speed = true;
 

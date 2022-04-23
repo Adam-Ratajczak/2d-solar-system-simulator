@@ -112,6 +112,7 @@ private:
 
     // NOTE: We only keep that for Python. It's not used anywhere.
     Vector3 attraction(const Object&);
+    void recalculate_trails_with_offset();
 
     Vector3 m_pos;
 
