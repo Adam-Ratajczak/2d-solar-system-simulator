@@ -98,6 +98,7 @@ void EssaGUI::draw(sf::RenderWindow& window) const {
     if (m_create_object_gui->new_object()) {
         {
             WorldDrawScope scope(*m_simulation_view);
+            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(*m_simulation_view);
             m_create_object_gui->new_object()->draw(*m_simulation_view);
         }
         // FIXME: This should be drawn above grid.

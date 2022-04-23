@@ -42,6 +42,8 @@ public:
     // Draw the GUI layer of the object (without world transform)
     void draw_gui(SimulationView const&);
 
+    void draw_closest_approaches(SimulationView const&);
+
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation = 0.0_rad);
@@ -89,6 +91,8 @@ public:
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);
 
+    void update_closest_approaches();
+
     PySSA::Object python_attraction(PySSA::Object const& args);
 
     PySSA::Object python_get_pos() const;
@@ -130,4 +134,12 @@ private:
     double m_max_attraction = 0;
     Object* m_old_most_attracting_object = nullptr;
     Object* m_most_attracting_object = nullptr;
+
+    struct ClosestApproachEntry
+    {
+        Vector3 this_position;
+        Vector3 other_object_position;
+        double distance {};
+    };
+    std::map<Object*, ClosestApproachEntry> m_closest_approaches;
 };

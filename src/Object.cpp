@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"
+#include "glwrapper/Vertex.hpp"
 #include "gui/Application.hpp"
 #include "gui/Units.hpp"
 #include "math/Transform.hpp"
@@ -94,6 +95,9 @@ void Object::update(int speed) {
         m_vel = entry.vel;
     }
 
+    if (m_is_forward_simulated)
+        update_closest_approaches();
+
     if (speed > 0)
         m_history.push_back({ m_pos, m_vel });
     else if (speed < 0)
@@ -133,6 +137,20 @@ void Object::draw(SimulationView const& view) {
 
     if (view.show_trails())
         m_trail.draw();
+}
+
+void Object::draw_closest_approaches(SimulationView const& view) {
+    WorldDrawScope::verify();
+
+    std::vector<Vertex> closest_approaches_vertexes;
+    for (auto& closest_approach_entry : m_closest_approaches) {
+        if (closest_approach_entry.second.distance > AU / 10)
+            continue;
+        closest_approaches_vertexes.push_back(Vertex { .position = closest_approach_entry.second.this_position / AU, .color = sf::Color(m_color.r, m_color.g, m_color.b, 100) });
+        sf::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
+        closest_approaches_vertexes.push_back(Vertex { .position = closest_approach_entry.second.other_object_position / AU, .color = other_color });
+    }
+    GL::draw_vertices(GL_LINES, closest_approaches_vertexes);
 }
 
 Object::Info Object::get_info() const {
@@ -237,6 +255,18 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
 
 void Object::require_orbit_point(Vector3 pos) {
     std::cout << "TODO: require_orbit_point " << pos << std::endl;
+}
+
+void Object::update_closest_approaches() {
+    m_world.for_each_object([this](Object& object) {
+        auto& closest_approach_entry = m_closest_approaches[&object];
+        auto distance = object.m_pos.distance_to(m_pos);
+        if (closest_approach_entry.distance == 0 || distance < closest_approach_entry.distance) {
+            closest_approach_entry.distance = distance;
+            closest_approach_entry.this_position = m_pos;
+            closest_approach_entry.other_object_position = object.m_pos;
+        }
+    });
 }
 
 void Object::set_radius(double radius) {

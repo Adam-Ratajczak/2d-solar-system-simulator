@@ -14,7 +14,8 @@ public:
     void recalculate_forward_simulation();
     void forward_simulation_state(bool state) { m_forward_simulation_is_valid = state; }
 
-    std::unique_ptr<Object>& new_object() { return m_new_object; }
+    Object* new_object() { return m_new_object.get(); }
+    Object* forward_simulated_new_object() { return m_forward_simulated_new_object; }
     World& forward_simulated_world() { return m_forward_simulated_world; }
 
     bool is_forward_simulation_valid() const { return m_forward_simulation_is_valid; }
@@ -54,6 +55,7 @@ private:
 
     World m_forward_simulated_world;
     std::unique_ptr<Object> m_new_object;
+    Object* m_forward_simulated_new_object = nullptr;
     Vector3 m_new_object_pos;
     int m_saved_speed = 0;
     bool m_forward_simulation_is_valid = true;

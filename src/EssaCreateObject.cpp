@@ -139,7 +139,9 @@ void EssaCreateObject::recalculate_forward_simulation() {
 
     // We need trail of the forward simulated object but
     // the object itself will be drawn at current position.
-    m_forward_simulated_world.add_object(m_new_object->clone_for_forward_simulation(m_forward_simulated_world));
+    auto forward_simulated_new_object = m_new_object->clone_for_forward_simulation(m_forward_simulated_world);
+    m_forward_simulated_new_object = forward_simulated_new_object.get();
+    m_forward_simulated_world.add_object(std::move(forward_simulated_new_object));
 
     m_forward_simulated_world.update(m_forward_simulation_ticks_control->value());
 
