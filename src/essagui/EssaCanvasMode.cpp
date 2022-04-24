@@ -1,3 +1,4 @@
+#include "EssaCanvasMode.hpp"
 #include "EssaGUI.hpp"
 #include "../gui/ArrowButton.hpp"
 #include "../gui/Container.hpp"
@@ -8,17 +9,15 @@
 #include <SFML/Graphics/Color.hpp>
 #include <memory>
 
-void EssaGUI::m_create_cavas_mode_gui(Container& parent) {
-    auto sizes = m_simulation_view->window().getSize();
-    parent.set_size({ { static_cast<float>(sizes.x - 100), Length::Px }, { static_cast<float>(sizes.y - 10), Length::Px } });
-    parent.set_layout<GUI::VerticalBoxLayout>().set_spacing(20);
+EssaCanvasMode::EssaCanvasMode(Container& c) : Container(c) {
+    set_layout<GUI::VerticalBoxLayout>().set_spacing(20);
 
-    auto main_label = parent.add_widget<GUI::Textfield>();
+    auto main_label = add_widget<GUI::Textfield>();
     main_label->set_content("Canvas Mode");
     main_label->set_alignment(GUI::Align::Center);
     main_label->set_size({ Length::Auto, 30.0_px });
 
-    auto main_layout = parent.add_widget<GUI::Container>();
+    auto main_layout = add_widget<GUI::Container>();
     main_layout->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
 
     auto left_panel = main_layout->add_widget<GUI::Container>();
@@ -50,6 +49,6 @@ void EssaGUI::m_create_cavas_mode_gui(Container& parent) {
     object_list_panel->set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
     object_list_panel->set_size({ 300.0_px, Length::Auto });
 
-    auto bottom_container = parent.add_widget<GUI::Container>();
+    auto bottom_container = add_widget<GUI::Container>();
     bottom_container->set_size({ Length::Auto, 100.0_px });
 }

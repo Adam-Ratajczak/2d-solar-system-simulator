@@ -2,6 +2,7 @@
 
 #include "EssaCreateObject.hpp"
 #include "EssaSettings.hpp"
+#include "EssaCanvasMode.hpp"
 #include "FocusedObjectGUI.hpp"
 #include "../Object.hpp"
 #include "../SimulationView.hpp"
@@ -50,10 +51,9 @@ private:
     FocusedObjectGUI* m_focused_object_info = nullptr;
     EssaCreateObject* m_create_object_gui = nullptr;
     EssaSettings* m_settings_gui = nullptr;
+    EssaCanvasMode* m_canvas_mode_gui = nullptr;
 
     int m_saved_speed = 0;
 
     void m_switch_info(bool state);
-
-    void m_create_cavas_mode_gui(Container& parent);
 };

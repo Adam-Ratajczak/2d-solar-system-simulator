@@ -57,7 +57,9 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
 
     {
         auto& canvas_mode = menu->add_entry(load_image("../assets/canvasMode.png"), "Canvas Mode");
-        m_create_cavas_mode_gui(*canvas_mode.settings_container);
+        canvas_mode.settings_container->set_layout<GUI::HorizontalBoxLayout>();
+        canvas_mode.settings_container->set_size({ 1820.0_px, 990.0_px });
+        m_canvas_mode_gui = canvas_mode.settings_container->add_widget<EssaCanvasMode>();
     }
 
     {
