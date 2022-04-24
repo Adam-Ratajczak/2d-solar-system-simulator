@@ -57,7 +57,6 @@ void DateTextbox::m_create_container(){
     auto century_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     century_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     auto left_century_arrow_btn = century_toggle_container->add_widget<ArrowButton>();
-    left_century_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     left_century_arrow_btn->set_arrow_size(10);
     left_century_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
     auto century_textfield = century_toggle_container->add_widget<Textfield>();
@@ -65,14 +64,12 @@ void DateTextbox::m_create_container(){
     century_textfield->set_alignment(Align::Center);
     century_textfield->set_display_attributes(sf::Color::White, sf::Color::White, sf::Color(200, 200, 200));
     auto right_century_arrow_btn = century_toggle_container->add_widget<ArrowButton>();
-    right_century_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     right_century_arrow_btn->set_arrow_size(10);
     right_century_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
 
     auto year_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     year_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     auto left_year_arrow_btn = year_toggle_container->add_widget<ArrowButton>();
-    left_year_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     left_year_arrow_btn->set_arrow_size(10);
     left_year_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
     auto year_textfield = year_toggle_container->add_widget<Textfield>();
@@ -80,14 +77,12 @@ void DateTextbox::m_create_container(){
     year_textfield->set_alignment(Align::Center);
     year_textfield->set_display_attributes(sf::Color::White, sf::Color::White, sf::Color(200, 200, 200));
     auto right_year_arrow_btn = year_toggle_container->add_widget<ArrowButton>();
-    right_year_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     right_year_arrow_btn->set_arrow_size(10);
     right_year_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
 
     auto month_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     month_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     auto left_month_arrow_btn = month_toggle_container->add_widget<ArrowButton>();
-    left_month_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     left_month_arrow_btn->set_arrow_size(10);
     left_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::LEFTARROW);
     auto month_textfield = month_toggle_container->add_widget<Textfield>();
@@ -95,7 +90,6 @@ void DateTextbox::m_create_container(){
     month_textfield->set_alignment(Align::Center);
     month_textfield->set_display_attributes(sf::Color::White, sf::Color::White, sf::Color(200, 200, 200));
     auto right_month_arrow_btn = month_toggle_container->add_widget<ArrowButton>();
-    right_month_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     right_month_arrow_btn->set_arrow_size(10);
     right_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
     
