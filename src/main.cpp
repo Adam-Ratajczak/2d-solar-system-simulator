@@ -1,7 +1,7 @@
 // keep first!
 #include <GL/glew.h>
 
-#include "EssaGUI.hpp"
+#include "essagui/EssaGUI.hpp"
 #include "World.hpp"
 #include "gui/Application.hpp"
 #include "math/Transform.hpp"

@@ -10,12 +10,7 @@ find_package(PythonLibs 3.5 REQUIRED)
 add_executable(
     out
 
-    src/CanvasMode.cpp
     src/ConfigLoader.cpp
-    src/EssaCreateObject.cpp
-    src/EssaGUI.cpp
-    src/EssaSettings.cpp
-    src/FocusedObjectGUI.cpp
     src/History.cpp
     src/Object.cpp
     src/ObjectHistory.cpp
@@ -24,6 +19,12 @@ add_executable(
     src/Trail.cpp
     src/World.cpp
     src/main.cpp
+    
+    src/essagui/CanvasMode.cpp
+    src/essagui/EssaCreateObject.cpp
+    src/essagui/EssaGUI.cpp
+    src/essagui/EssaSettings.cpp
+    src/essagui/FocusedObjectGUI.cpp
 
     src/gfx/RoundedEdgeRectangleShape.cpp
 

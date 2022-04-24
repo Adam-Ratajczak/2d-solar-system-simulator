@@ -1,13 +1,13 @@
 #include "EssaSettings.hpp"
-#include "World.hpp"
-#include "glwrapper/Sphere.hpp"
-#include "gui/Container.hpp"
-#include "gui/StateTextButton.hpp"
-#include "gui/TabWidget.hpp"
-#include "gui/Textbox.hpp"
-#include "gui/Textfield.hpp"
-#include "gui/ValueSlider.hpp"
-#include "util/SimulationClock.hpp"
+#include "../World.hpp"
+#include "../glwrapper/Sphere.hpp"
+#include "../gui/Container.hpp"
+#include "../gui/StateTextButton.hpp"
+#include "../gui/TabWidget.hpp"
+#include "../gui/Textbox.hpp"
+#include "../gui/Textfield.hpp"
+#include "../gui/ValueSlider.hpp"
+#include "../util/SimulationClock.hpp"
 
 EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
     : GUI::Container(c)

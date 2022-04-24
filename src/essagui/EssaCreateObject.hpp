@@ -1,10 +1,10 @@
 #pragma once
-#include "SimulationView.hpp"
-#include "World.hpp"
-#include "gui/ColorPicker.hpp"
-#include "gui/Container.hpp"
-#include "gui/ImageButton.hpp"
-#include "gui/ValueSlider.hpp"
+#include "../SimulationView.hpp"
+#include "../World.hpp"
+#include "../gui/ColorPicker.hpp"
+#include "../gui/Container.hpp"
+#include "../gui/ImageButton.hpp"
+#include "../gui/ValueSlider.hpp"
 
 class EssaCreateObject : public GUI::Container {
 public:

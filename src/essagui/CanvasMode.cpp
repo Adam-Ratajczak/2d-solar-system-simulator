@@ -1,10 +1,10 @@
 #include "EssaGUI.hpp"
-#include "gui/ArrowButton.hpp"
-#include "gui/Container.hpp"
-#include "gui/Datebox.hpp"
-#include "gui/TextAlign.hpp"
-#include "gui/Textfield.hpp"
-#include "util/Units.hpp"
+#include "../gui/ArrowButton.hpp"
+#include "../gui/Container.hpp"
+#include "../gui/Datebox.hpp"
+#include "../gui/TextAlign.hpp"
+#include "../gui/Textfield.hpp"
+#include "../util/Units.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <memory>
 

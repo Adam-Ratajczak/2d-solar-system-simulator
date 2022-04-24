@@ -1,20 +1,7 @@
 #include "EssaGUI.hpp"
 
 #include "EssaSettings.hpp"
-#include "Object.hpp"
-#include "SimulationView.hpp"
-#include "World.hpp"
-#include "glwrapper/Sphere.hpp"
-#include "gui/Button.hpp"
-#include "gui/Container.hpp"
-#include "gui/ImageButton.hpp"
-#include "gui/PythonREPL.hpp"
-#include "gui/StateTextButton.hpp"
-#include "gui/TabWidget.hpp"
-#include "gui/TextButton.hpp"
-#include "gui/Textbox.hpp"
-#include "gui/Textfield.hpp"
-#include "util/SimulationClock.hpp"
+#include "../gui/PythonREPL.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>

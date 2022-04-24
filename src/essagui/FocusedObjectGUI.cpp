@@ -1,7 +1,7 @@
 #include "FocusedObjectGUI.hpp"
 
-#include "Object.hpp"
-#include "util/UnitDisplay.hpp"
+#include "../Object.hpp"
+#include "../util/UnitDisplay.hpp"
 #include <cmath>
 #include <iomanip>
 

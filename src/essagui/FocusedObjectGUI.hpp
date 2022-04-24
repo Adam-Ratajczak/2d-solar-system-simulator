@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Object.hpp"
-#include "gui/Container.hpp"
-#include "gui/Textfield.hpp"
-#include "util/UnitDisplay.hpp"
+#include "../Object.hpp"
+#include "../gui/Container.hpp"
+#include "../gui/Textfield.hpp"
+#include "../util/UnitDisplay.hpp"
 
 class FocusedObjectGUI : public GUI::Container {
 public:
