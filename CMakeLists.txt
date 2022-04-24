@@ -33,6 +33,7 @@ add_executable(
     src/glwrapper/VertexBuffer.cpp
 
     src/gui/Application.cpp
+    src/gui/ArrowButton.cpp
     src/gui/Button.cpp
     src/gui/ColorPicker.cpp
     src/gui/Console.cpp

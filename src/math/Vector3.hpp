@@ -2,6 +2,7 @@
 
 #include <GL/gl.h>
 #include <SFML/System.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <cmath>
 #include <ostream>
 
@@ -57,6 +58,10 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Vector3& vec) {
         return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << ")";
+    }
+
+    operator sf::Vector2f(){
+        return sf::Vector2f(x, y);
     }
 };
 
