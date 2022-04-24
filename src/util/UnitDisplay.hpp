@@ -18,6 +18,8 @@ sf::String to_exponent_string(double value);
 struct UnitValue {
     sf::String value;
     sf::String unit;
+
+    sf::String to_string() const { return value + " " + unit; }
 };
 
 UnitValue unit_display(double value, Quantity);
