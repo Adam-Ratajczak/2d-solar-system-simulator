@@ -1,7 +1,7 @@
 #include "EssaGUI.hpp"
 #include "gui/ArrowButton.hpp"
 #include "gui/Container.hpp"
-#include "gui/DateTextbox.hpp"
+#include "gui/Datebox.hpp"
 #include "gui/TextAlign.hpp"
 #include "gui/Textfield.hpp"
 #include "gui/Units.hpp"
@@ -25,8 +25,7 @@ void EssaGUI::m_create_cavas_mode_gui(Container& parent){
     left_panel->set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
     left_panel->set_size({500.0_px, Length::Auto});
 
-    auto date = left_panel->add_widget<GUI::DateTextbox>();
-    date->set_size({Length::Auto, 40.0_px});
+    auto date = left_panel->add_widget<GUI::Datebox>();
     date->set_display_attributes(sf::Color::White, sf::Color::Blue, sf::Color::Black);
 
     auto arrow_box = left_panel->add_widget<GUI::Container>();
