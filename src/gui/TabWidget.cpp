@@ -62,7 +62,7 @@ void TabSelectWidget::add_button(std::string caption, size_t tab_index) {
     };
     button->set_toggleable(true);
     button->set_alignment(GUI::Align::Center);
-    m_buttons.push_back(button.get());
+    m_buttons.push_back(button);
 }
 
 void TabSelectWidget::switch_to_tab(size_t index) {
@@ -77,9 +77,9 @@ void TabSelectWidget::switch_to_tab(size_t index) {
 TabWidget::TabWidget(Container& c)
     : Container(c) {
     set_layout<VerticalBoxLayout>();
-    m_tab_select = add_widget<TabSelectWidget>().get();
+    m_tab_select = add_widget<TabSelectWidget>();
     m_tab_select->set_size({ Length::Auto, 30.0_px });
-    m_tab_container = add_widget<Container>().get();
+    m_tab_container = add_widget<Container>();
     m_tab_container->set_layout<BasicLayout>();
 }
 

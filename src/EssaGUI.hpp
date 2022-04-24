@@ -46,13 +46,10 @@ private:
     virtual void relayout() override;
     virtual void update() override;
 
-    std::shared_ptr<SimulationView> m_simulation_view;
-
-    std::shared_ptr<FocusedObjectGUI> m_focused_object_info;
-
-    std::shared_ptr<EssaCreateObject> m_create_object_gui;
-
-    std::shared_ptr<EssaSettings> m_settings_gui;
+    SimulationView* m_simulation_view = nullptr;
+    FocusedObjectGUI* m_focused_object_info = nullptr;
+    EssaCreateObject* m_create_object_gui = nullptr;
+    EssaSettings* m_settings_gui = nullptr;
 
     int m_saved_speed = 0;
 

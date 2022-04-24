@@ -58,16 +58,16 @@ void Datebox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_toggle_container_button->set_text_color(bg_color);
 }
 
-std::shared_ptr<TextButton> Datebox::m_create_calendar_button(Container& c) const {
+TextButton* Datebox::m_create_calendar_button(Container& c) const {
     auto btn = c.add_widget<TextButton>();
     btn->set_content("");
     btn->set_alignment(Align::Center);
     btn->set_display_attributes(sf::Color(220, 220, 220), sf::Color(220, 220, 220), sf::Color(180, 180, 180));
     btn->set_active_display_attributes(sf::Color(180, 180, 180), sf::Color(180, 180, 180), sf::Color(150, 150, 150));
 
-    btn->on_change = [btn = btn.get(), this](bool state) {
+    btn->on_change = [btn, this](bool state) {
         for (auto& field : m_calendar_contents) {
-            if (field.get() != btn)
+            if (field != btn)
                 field->set_active_without_action(false);
         }
     };

@@ -10,7 +10,7 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::Container& c)
     auto& layout = set_layout<GUI::VerticalBoxLayout>();
     layout.set_spacing(5);
 
-    m_title = add_widget<GUI::Textfield>().get();
+    m_title = add_widget<GUI::Textfield>();
     m_title->set_size({ Length::Auto, 45.0_px });
     m_title->set_alignment(GUI::Align::Center);
     m_title->set_font_size(30);
@@ -27,14 +27,14 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::Container& c)
         auto unit_label = subcontainer->add_widget<GUI::Textfield>();
         unit_label->set_alignment(GUI::Align::CenterRight);
         unit_label->set_size({ 50.0_px, Length::Auto });
-        return Field { .unit_textfield = unit_label.get(), .value_textfield = value_label.get() };
+        return Field { .unit_textfield = unit_label, .value_textfield = value_label };
     };
 
     m_mass_textfield = add_field("Mass", false);
     m_radius_textfield = add_field("Radius", false);
     m_absolute_velocity_textfield = add_field("Absolute velocity", false);
 
-    m_orbiting_title = add_widget<GUI::Textfield>().get();
+    m_orbiting_title = add_widget<GUI::Textfield>();
     m_orbiting_title->set_size({ Length::Auto, 35.0_px });
     m_orbiting_title->set_alignment(GUI::Align::Center);
     m_orbiting_title->set_font_size(20);

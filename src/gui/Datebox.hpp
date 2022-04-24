@@ -1,6 +1,6 @@
 #pragma once
-#include "Container.hpp"
 #include "../util/SimulationClock.hpp"
+#include "Container.hpp"
 #include "StateTextButton.hpp"
 #include "TextButton.hpp"
 #include "Textfield.hpp"
@@ -10,15 +10,18 @@
 
 namespace GUI {
 
-class Datebox : public Container{
+class Datebox : public Container {
     Util::SimulationClock::time_point m_date;
-    std::shared_ptr<Textfield> m_date_textfield, m_century_textfield, m_year_textfield, m_month_textfield;
-    std::shared_ptr<Container> m_calendar_container;
-    std::shared_ptr<StateTextButton<bool>> m_toggle_container_button;
-    std::vector<std::shared_ptr<TextButton>> m_calendar_contents;
+    Textfield* m_date_textfield = nullptr;
+    Textfield* m_century_textfield = nullptr;
+    Textfield* m_year_textfield = nullptr;
+    Textfield* m_month_textfield = nullptr;
+    Container* m_calendar_container = nullptr;
+    StateTextButton<bool>* m_toggle_container_button = nullptr;
+    std::vector<TextButton*> m_calendar_contents;
 
     void m_create_container();
-    std::shared_ptr<TextButton> m_create_calendar_button(Container& c) const;
+    TextButton* m_create_calendar_button(Container& c) const;
     void m_update_calendar();
 
 public:

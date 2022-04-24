@@ -27,10 +27,10 @@ public:
     std::function<void(sf::Color)> on_change;
 
 private:
-    std::shared_ptr<Slider> m_r_slider;
-    std::shared_ptr<Slider> m_g_slider;
-    std::shared_ptr<Slider> m_b_slider;
-    std::shared_ptr<ColorPickerDisplay> m_color_picker_display;
+    Slider* m_r_slider = nullptr;
+    Slider* m_g_slider = nullptr;
+    Slider* m_b_slider = nullptr;
+    ColorPickerDisplay* m_color_picker_display = nullptr;
 };
 
 }

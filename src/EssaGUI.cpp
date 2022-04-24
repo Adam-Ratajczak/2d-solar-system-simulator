@@ -45,7 +45,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     python_repl->set_position({ 600.0_px, 10.0_px_o });
     python_repl->set_size({ 700.0_px, 250.0_px });
 
-    m_world.m_simulation_view = m_simulation_view.get();
+    m_world.m_simulation_view = m_simulation_view;
 
     auto menu = add_widget<GUI::SettingsMenu>();
     menu->set_position({ 10.0_px, 10.0_px });

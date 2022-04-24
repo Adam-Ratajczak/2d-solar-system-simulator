@@ -19,12 +19,12 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     mode_specific_options_container->set_size({ Length::Auto, 150.0_px });
     mode_specific_options_container->set_layout<GUI::BasicLayout>();
 
-    m_create_object_from_params_container = m_create_object_from_params_gui(mode_specific_options_container);
+    m_create_object_from_params_container = m_create_object_from_params_gui(*mode_specific_options_container);
     m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_create_object_from_params_container->set_visible(true);
     mode_specific_options_container->add_created_widget(m_create_object_from_params_container);
 
-    m_create_object_from_orbit_container = m_create_object_from_orbit_gui(mode_specific_options_container);
+    m_create_object_from_orbit_container = m_create_object_from_orbit_gui(*mode_specific_options_container);
     m_create_object_from_orbit_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_create_object_from_orbit_container->set_visible(false);
     mode_specific_options_container->add_created_widget(m_create_object_from_orbit_container);
@@ -148,7 +148,7 @@ void EssaCreateObject::recalculate_forward_simulation() {
     m_forward_simulation_is_valid = true;
 }
 
-std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button() {
+GUI::ImageButton* EssaCreateObject::m_create_toggle_unit_button() {
     auto button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
@@ -264,8 +264,8 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
     }
 }
 
-std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gui(std::shared_ptr<GUI::Container> parent) {
-    auto container = std::make_shared<GUI::Container>(*parent);
+std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gui(GUI::Container& parent) {
+    auto container = std::make_shared<GUI::Container>(parent);
     container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
     m_velocity_control = container->add_widget<GUI::ValueSlider>(0, 50000);
@@ -304,8 +304,8 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gu
     return container;
 }
 
-std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui(std::shared_ptr<GUI::Container> parent) {
-    auto container = std::make_shared<GUI::Container>(*parent);
+std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui(GUI::Container& parent) {
+    auto container = std::make_shared<GUI::Container>(parent);
     container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
     m_apogee_control = container->add_widget<GUI::ValueSlider>(0, 0.05 * AU);

@@ -24,10 +24,10 @@ public:
 private:
     virtual LengthVector initial_size() const override { return { Length::Auto, 32.0_px }; }
 
-    std::shared_ptr<Textfield> m_name_textfield;
-    std::shared_ptr<Slider> m_slider;
-    std::shared_ptr<Textbox> m_textbox;
-    std::shared_ptr<Textfield> m_unit_textfield;
+    Textfield* m_name_textfield = nullptr;
+    Slider* m_slider = nullptr;
+    Textbox* m_textbox = nullptr;
+    Textfield* m_unit_textfield = nullptr;
 };
 
 }

@@ -11,7 +11,7 @@ PythonREPL::PythonREPL(Container& c)
     auto& layout = set_layout<VerticalBoxLayout>();
     layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
     // TODO: Make this window arbitrarily resizable.
-    m_hide_show_button = add_widget<ArrowButton>().get();
+    m_hide_show_button = add_widget<ArrowButton>();
     m_hide_show_button->set_arrow_type(ArrowButton::ArrowType::TOPARROW);
     m_hide_show_button->set_size({ Length::Auto, 20.0_px });
     m_hide_show_button->set_toggleable(true);
@@ -21,9 +21,9 @@ PythonREPL::PythonREPL(Container& c)
     };
     m_hide_show_button->set_display_attributes(sf::Color(80, 80, 80), {}, {});
     m_hide_show_button->set_active_display_attributes(sf::Color(80, 80, 80), {}, {});
-    m_console = add_widget<Console>().get();
+    m_console = add_widget<Console>();
     m_console->set_visible(false);
-    m_textbox = add_widget<Textbox>().get();
+    m_textbox = add_widget<Textbox>();
     m_textbox->set_size({ { 100, Length::Percent }, 40.0_px });
     m_textbox->set_position({ 0.0_px, 0.0_px_o });
     m_textbox->set_data_type(Textbox::Type::TEXT);

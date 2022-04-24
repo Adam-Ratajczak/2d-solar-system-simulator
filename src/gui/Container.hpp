@@ -97,13 +97,13 @@ public:
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Widget, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
-        std::shared_ptr<T> add_widget(Args&&... args) {
+        T* add_widget(Args&&... args) {
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         m_widgets.push_back(widget);
         if (m_layout)
             m_layout->m_multipliers.push_back(1);
         set_needs_relayout();
-        return widget;
+        return widget.get();
     }
 
     void add_created_widget(std::shared_ptr<Widget> widget) {
