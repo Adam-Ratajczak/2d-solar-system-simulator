@@ -271,6 +271,8 @@ void Object::require_orbit_point(Vector3 pos) {
 
 void Object::update_closest_approaches() {
     m_world.for_each_object([this](Object& object) {
+        if (&object == this)
+            return;
         auto& closest_approach_entry = m_closest_approaches[&object];
         auto distance = object.m_pos.distance_to(m_pos);
         if (closest_approach_entry.distance == 0 || distance < closest_approach_entry.distance) {
