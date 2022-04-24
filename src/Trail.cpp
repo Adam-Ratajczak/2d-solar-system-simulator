@@ -14,13 +14,13 @@ Trail::Trail(size_t max_trail_size, sf::Color color)
     assert(max_trail_size > 1);
 }
 
-void Trail::push_back(Vector3 pos, unsigned ticks) {
+void Trail::push_back(Vector3 pos) {
     m_vertexes[m_append_offset] = Vertex { .position = pos / AU, .color = m_color };
-    m_tick += ticks;
+    m_total_seconds += m_seconds_per_tick;
 
-    if(m_tick < 43200)
+    if(m_total_seconds <= 43200)
         return;
-    m_tick = 0;
+    m_total_seconds -= 43200;
     
     m_append_offset++;
     if (m_length < m_vertexes.size())
