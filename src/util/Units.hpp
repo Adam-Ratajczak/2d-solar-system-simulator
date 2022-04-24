@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../Constants.hpp"
+#include "Constants.hpp"
+
 #include <cmath>
 #include <ostream>
 #include <string>
@@ -70,8 +71,8 @@ public:
         return new_angle;
     }
 
-    friend std::ostream& operator<<(std::ostream& out, Angle alfa){
-        if(alfa.m_unit == Rad)
+    friend std::ostream& operator<<(std::ostream& out, Angle alfa) {
+        if (alfa.m_unit == Rad)
             return out << alfa.rad() << " [rad]";
         else
             return out << alfa.rad() << " [deg]";
@@ -113,17 +114,16 @@ public:
     constexpr Distance operator-() const { return { -m_value, m_unit }; }
     constexpr bool operator==(Distance const& other) const { return m_unit == other.m_unit && m_value == other.m_value; }
 
-    friend std::ostream& operator<<(std::ostream& out, Distance dist){
-        if(dist.m_unit == Meter)
+    friend std::ostream& operator<<(std::ostream& out, Distance dist) {
+        if (dist.m_unit == Meter)
             return out << dist.value() << " m";
-        else if(dist.m_unit == Kilometer)
+        else if (dist.m_unit == Kilometer)
             return out << dist.value() / 1000 << " km";
         else
             return out << dist.value() / AU << " AU";
     }
 
 private:
-
     Unit m_unit = Meter;
     float m_value = 0;
 };

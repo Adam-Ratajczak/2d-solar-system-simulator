@@ -4,7 +4,7 @@
 #include "SimulationView.hpp"
 #include "Trail.hpp"
 #include "glwrapper/Sphere.hpp"
-#include "gui/Units.hpp"
+#include "util/Units.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"

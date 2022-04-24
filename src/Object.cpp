@@ -5,12 +5,12 @@
 #include "glwrapper/Sphere.hpp"
 #include "glwrapper/Vertex.hpp"
 #include "gui/Application.hpp"
-#include "gui/Units.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
 #include "util/UnitDisplay.hpp"
+#include "util/Units.hpp"
 
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>

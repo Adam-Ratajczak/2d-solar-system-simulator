@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Constants.hpp"
 #include "Object.hpp"
 #include "ObjectHistory.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
+#include "util/Constants.hpp"
 #include "util/SimulationClock.hpp"
 
 #include <SFML/Graphics.hpp>

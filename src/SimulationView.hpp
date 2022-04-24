@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Constants.hpp"
 #include "gui/Widget.hpp"
 #include "math/Matrix.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
+#include "util/Constants.hpp"
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include <optional>

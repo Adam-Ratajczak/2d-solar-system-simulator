@@ -1,6 +1,6 @@
 #include "UnitDisplay.hpp"
 
-#include "../Constants.hpp"
+#include "Constants.hpp"
 
 #include <cmath>
 #include <iomanip>
