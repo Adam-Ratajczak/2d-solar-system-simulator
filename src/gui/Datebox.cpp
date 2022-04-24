@@ -39,8 +39,8 @@ Datebox::Datebox(Container& parent)
     m_toggle_container_button->on_change = [this](bool state) {
         m_calendar_container->set_visible(state);
         m_update_calendar();
-        if(state)
-            set_size({Length::Auto, 280.0_px});
+        if (state)
+            set_size({ Length::Auto, 280.0_px });
         else
             set_size({ Length::Auto, 30.0_px });
     };
@@ -79,13 +79,13 @@ void Datebox::m_create_container() {
     tm local_tm = *localtime(&clock);
 
     m_calendar_container = add_widget<Container>();
-    m_calendar_container->set_size({Length::Auto, 180.0_px});
+    m_calendar_container->set_size({ Length::Auto, 180.0_px });
     m_calendar_container->set_layout<VerticalBoxLayout>().set_spacing(2);
     m_calendar_container->set_background_color(sf::Color::White);
 
     auto century_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     century_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    century_toggle_container->set_size({Length::Auto, 20.0_px});
+    century_toggle_container->set_size({ Length::Auto, 20.0_px });
     auto left_century_arrow_btn = century_toggle_container->add_widget<ArrowButton>();
     left_century_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     left_century_arrow_btn->set_arrow_size(10);
@@ -100,7 +100,7 @@ void Datebox::m_create_container() {
 
     auto year_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     year_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    year_toggle_container->set_size({Length::Auto, 20.0_px});
+    year_toggle_container->set_size({ Length::Auto, 20.0_px });
     auto left_year_arrow_btn = year_toggle_container->add_widget<ArrowButton>();
     left_year_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     left_year_arrow_btn->set_arrow_size(10);
@@ -115,7 +115,7 @@ void Datebox::m_create_container() {
 
     auto month_toggle_container = m_calendar_container->add_widget<GUI::Container>();
     month_toggle_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    month_toggle_container->set_size({Length::Auto, 20.0_px});
+    month_toggle_container->set_size({ Length::Auto, 20.0_px });
     auto left_month_arrow_btn = month_toggle_container->add_widget<ArrowButton>();
     left_month_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     left_month_arrow_btn->set_arrow_size(10);
@@ -127,12 +127,12 @@ void Datebox::m_create_container() {
     right_month_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     right_month_arrow_btn->set_arrow_size(10);
     right_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
-    
-    for(unsigned i = 0; i < 6; i++){
+
+    for (unsigned i = 0; i < 6; i++) {
         m_final_row = m_calendar_container->add_widget<Container>();
         m_final_row->set_layout<HorizontalBoxLayout>().set_spacing(2);
-        m_final_row->set_size({Length::Auto, 15.0_px});
-        for(unsigned i = 0; i < 7; i++)
+        m_final_row->set_size({ Length::Auto, 15.0_px });
+        for (unsigned i = 0; i < 7; i++)
             m_calendar_contents.push_back(m_create_calendar_button(*m_final_row));
     }
 
@@ -196,21 +196,22 @@ void Datebox::m_update_calendar() {
     m_year_textfield->set_content(std::to_string(1900 + local_tm.tm_year));
     m_month_textfield->set_content(month_names[local_tm.tm_mon]);
 
-    int i = -local_tm.tm_wday;
+    int i = -local_tm.tm_wday-1;
     std::ostringstream str;
     str << m_date;
     m_date_textfield->set_content(str.str());
 
-    for(unsigned j = 0; j < m_calendar_contents.size(); j++){
+    for (unsigned j = 0; j < m_calendar_contents.size(); j++) {
         i++;
         Util::SimulationClock::time_point date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, i);
         auto t = date.time_since_epoch().count();
         tm temp_tm = *localtime(&t);
 
-        if(j == 35 && temp_tm.tm_mday <= 7){
+        if (j == 35 && temp_tm.tm_mday <= 7) {
             m_final_row->set_visible(false);
             return;
-        }else {
+        }
+        else {
             m_final_row->set_visible(true);
         }
 
