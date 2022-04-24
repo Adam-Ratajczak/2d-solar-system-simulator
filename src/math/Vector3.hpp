@@ -34,6 +34,8 @@ public:
         , y(_a.y)
         , z(0) { }
 
+    sf::Vector2f to_sfml_vector() const { return { static_cast<float>(x), static_cast<float>(y) }; }
+
     double magnitude() const;
     double magnitude_squared() const;
     double inverted_magnitude() const;
