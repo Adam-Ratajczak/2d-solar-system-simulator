@@ -10,6 +10,7 @@
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
+#include "util/UnitDisplay.hpp"
 
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
@@ -171,9 +172,8 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
         if (closest_approach_entry.second.distance > AU / 10)
             continue;
         auto position = (closest_approach_entry.second.this_position + closest_approach_entry.second.other_object_position) / (2 * AU);
-        // TODO: Serialize unit tools
         std::ostringstream oss;
-        oss << "CA with " << closest_approach_entry.first->name() << ": " << closest_approach_entry.second.distance / 1000 << " km";
+        oss << "CA with " << closest_approach_entry.first->name() << ": " << Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string().toAnsiString();
         draw_label(view, position, oss.str(), closest_approach_entry.first->m_color);
     }
 }
