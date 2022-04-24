@@ -21,7 +21,7 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
 }
 
 unsigned Textbox::m_character_pos_from_mouse(Event& event) {
-    if (m_content.getSize() == 0)
+    if (m_content.getSize() == 0 || (m_content == "0" && m_type == Type::NUMBER))
         return 0;
     auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
     if (delta.x < 0)
@@ -276,8 +276,6 @@ bool Textbox::can_insert_character(uint32_t ch) const {
     case TEXT:
         return isprint(ch);
     case NUMBER:
-        if(m_content == "0" && ch == '0')
-            return false;
         return isdigit(ch) || (ch == '.' && !m_has_decimal);
     }
     return false;
