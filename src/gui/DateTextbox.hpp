@@ -11,7 +11,12 @@ namespace GUI {
 class DateTextbox : public Container{
     Util::SimulationClock::time_point m_date;
     std::shared_ptr<Textfield> m_date_textfield;
+    std::shared_ptr<Container> m_calendar_container;
     std::shared_ptr<StateTextButton<bool>> m_toggle_container_button;
+
+    int m_century = 20, m_year = 70, m_month = 1;
+
+    void m_create_container();
 
 public:
     explicit DateTextbox(Container& parent);
