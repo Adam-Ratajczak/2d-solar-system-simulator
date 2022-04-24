@@ -37,7 +37,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     , m_name(name)
     , m_orbit_len(period)
     , m_creation_date(world.date()) {
-    m_trail.push_back(m_pos);
+    m_trail.push_back(m_pos, m_world.simulation_seconds_per_tick());
     m_sphere.set_color(m_color);
 }
 
@@ -111,7 +111,7 @@ void Object::update(int speed) {
         recalculate_trails_with_offset();
     else {
         m_trail.recalculate_with_offset({});
-        m_trail.push_back(m_pos);
+        m_trail.push_back(m_pos, m_world.simulation_seconds_per_tick());
     }
 
     if (m_most_attracting_object == nullptr)
@@ -132,7 +132,7 @@ void Object::update(int speed) {
 void Object::recalculate_trails_with_offset() {
     if (!m_most_attracting_object || m_is_forward_simulated) {
         m_trail.recalculate_with_offset({});
-        m_trail.push_back(m_pos);
+        m_trail.push_back(m_pos, m_world.simulation_seconds_per_tick());
         return;
     }
 
@@ -140,7 +140,7 @@ void Object::recalculate_trails_with_offset() {
         m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
     else
         m_trail.set_offset(m_most_attracting_object->m_pos);
-    m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
+    m_trail.push_back(m_pos - m_most_attracting_object->m_pos, m_world.simulation_seconds_per_tick());
 }
 
 void Object::draw(SimulationView const& view) {
