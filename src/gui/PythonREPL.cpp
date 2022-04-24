@@ -2,7 +2,7 @@
 
 #include "../pyssa/Environment.hpp"
 #include "Application.hpp"
-#include "HideShowButton.hpp"
+#include "ArrowButton.hpp"
 
 namespace GUI {
 
@@ -11,10 +11,13 @@ PythonREPL::PythonREPL(Container& c)
     auto& layout = set_layout<VerticalBoxLayout>();
     layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
     // TODO: Make this window arbitrarily resizable.
-    m_hide_show_button = add_widget<HideShowButton>().get();
+    m_hide_show_button = add_widget<ArrowButton>().get();
+    m_hide_show_button->set_arrow_type(ArrowButton::ArrowType::TOPARROW);
+    m_hide_show_button->set_size({ Length::Auto, 20.0_px });
     m_hide_show_button->set_toggleable(true);
     m_hide_show_button->on_change = [this](bool b) {
         m_console->set_visible(b);
+        m_hide_show_button->set_arrow_type(b ? ArrowButton::ArrowType::BOTTOMARROW : ArrowButton::ArrowType::TOPARROW);
     };
     m_hide_show_button->set_display_attributes(sf::Color(80, 80, 80), {}, {});
     m_hide_show_button->set_active_display_attributes(sf::Color(80, 80, 80), {}, {});

@@ -40,7 +40,6 @@ add_executable(
     src/gui/Container.cpp
     src/gui/DateTextbox.cpp
     src/gui/Frame.cpp
-    src/gui/HideShowButton.cpp
     src/gui/ImageButton.cpp
     src/gui/PythonREPL.cpp
     src/gui/SettingsMenu.cpp
