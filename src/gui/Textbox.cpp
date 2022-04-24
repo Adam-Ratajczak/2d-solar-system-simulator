@@ -268,10 +268,16 @@ void Textbox::draw(sf::RenderWindow& window) const {
 }
 
 bool Textbox::can_insert_character(uint32_t ch) const {
+    if(m_content.getSize() >= m_limit)
+        return false;
+
+    
     switch (m_type) {
     case TEXT:
         return isprint(ch);
     case NUMBER:
+        if(m_content == "0" && ch == '0')
+            return false;
         return isdigit(ch) || (ch == '.' && !m_has_decimal);
     }
     return false;

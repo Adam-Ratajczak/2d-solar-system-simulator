@@ -19,10 +19,10 @@ class Datebox : public Container {
     Container* m_calendar_container = nullptr;
     Container* m_final_row = nullptr;
     StateTextButton<bool>* m_toggle_container_button = nullptr;
-    std::vector<TextButton*> m_calendar_contents;
+    std::vector<std::pair<TextButton*, Util::SimulationClock::time_point>> m_calendar_contents;
 
     void m_create_container();
-    TextButton* m_create_calendar_button(Container& c) const;
+    TextButton* m_create_calendar_button(Container& c);
     void m_update_calendar();
 
 public:

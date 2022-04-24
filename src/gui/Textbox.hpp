@@ -40,7 +40,7 @@ public:
     virtual void draw(sf::RenderWindow& window) const override;
     void set_limit(unsigned limit) { m_limit = limit; }
 
-    sf::String get_content() const { return m_content; }
+    sf::String get_content() const { return  (m_type == Type::NUMBER && m_content.isEmpty()) ? "0" : m_content; }
     void set_content(sf::String content, NotifyUser = NotifyUser::Yes);
     void set_data_type(Type type) { m_type = type; }
     void set_placeholder(std::string placeholder) { m_placeholder = placeholder; }
