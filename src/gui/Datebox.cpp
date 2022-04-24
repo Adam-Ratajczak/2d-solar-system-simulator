@@ -197,7 +197,7 @@ void Datebox::m_update_calendar() {
     m_year_textfield->set_content(std::to_string(1900 + local_tm.tm_year));
     m_month_textfield->set_content(month_names[local_tm.tm_mon]);
 
-    int i = -local_tm.tm_wday-1;
+    int i = -local_tm.tm_wday - 1;
     std::ostringstream str;
     str << m_date;
     m_date_textfield->set_content(str.str());
@@ -218,6 +218,9 @@ void Datebox::m_update_calendar() {
 
         m_calendar_contents[j]->set_content(std::to_string(temp_tm.tm_mday));
         m_calendar_contents[j]->set_active_content(std::to_string(temp_tm.tm_mday));
+        m_calendar_contents[j]->set_display_attributes(
+            temp_tm.tm_mon == local_tm.tm_mon ? sf::Color(150, 150, 150) : sf::Color(200, 200, 200), {},
+            temp_tm.tm_mon == local_tm.tm_mon ? sf::Color::Black : sf::Color(50, 50, 50));
     }
 }
 
