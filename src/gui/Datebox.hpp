@@ -17,6 +17,7 @@ class Datebox : public Container {
     Textfield* m_year_textfield = nullptr;
     Textfield* m_month_textfield = nullptr;
     Container* m_calendar_container = nullptr;
+    Container* m_final_row = nullptr;
     StateTextButton<bool>* m_toggle_container_button = nullptr;
     std::vector<TextButton*> m_calendar_contents;
 
