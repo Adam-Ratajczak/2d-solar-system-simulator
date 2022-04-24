@@ -60,6 +60,7 @@ add_executable(
     src/pyssa/Object.cpp
 
     src/util/SimulationClock.cpp
+    src/util/UnitDisplay.cpp
 )
 
 target_link_libraries(
