@@ -16,10 +16,10 @@ const std::string month_names[] = {
 };
 
 namespace GUI {
+
 Datebox::Datebox(Container& parent)
     : Container(parent) {
     set_layout<VerticalBoxLayout>().set_spacing(10);
-    set_size({ Length::Auto, 30.0_px });
     auto main_container = add_widget<Container>();
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
     main_container->set_size({ Length::Auto, 30.0_px });
@@ -79,7 +79,6 @@ void Datebox::m_create_container() {
     tm local_tm = *localtime(&clock);
 
     m_calendar_container = add_widget<Container>();
-    m_calendar_container->set_size({ Length::Auto, 180.0_px });
     m_calendar_container->set_layout<VerticalBoxLayout>().set_spacing(2);
     m_calendar_container->set_background_color(sf::Color::White);
 
@@ -128,10 +127,12 @@ void Datebox::m_create_container() {
     right_month_arrow_btn->set_arrow_size(10);
     right_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
 
+    auto day_selection_container = m_calendar_container->add_widget<Container>();
+    day_selection_container->set_layout<VerticalBoxLayout>().set_spacing(2);
     for (unsigned i = 0; i < 6; i++) {
-        m_final_row = m_calendar_container->add_widget<Container>();
+        m_final_row = day_selection_container->add_widget<Container>();
         m_final_row->set_layout<HorizontalBoxLayout>().set_spacing(2);
-        m_final_row->set_size({ Length::Auto, 15.0_px });
+        m_final_row->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
         for (unsigned i = 0; i < 7; i++)
             m_calendar_contents.push_back(m_create_calendar_button(*m_final_row));
     }
