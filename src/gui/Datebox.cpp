@@ -18,38 +18,39 @@ const std::string month_names[] = {
 const unsigned seconds_in_a_day = 60 * 60 * 24;
 
 namespace GUI {
-Datebox::Datebox(Container& parent) : Container(parent){
+Datebox::Datebox(Container& parent)
+    : Container(parent) {
     set_layout<VerticalBoxLayout>().set_spacing(10);
-    set_size({Length::Auto, 30.0_px});
+    set_size({ Length::Auto, 30.0_px });
     auto main_container = add_widget<Container>();
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
-    main_container->set_size({Length::Auto, 30.0_px});
+    main_container->set_size({ Length::Auto, 30.0_px });
     m_date_textfield = main_container->add_widget<Textfield>();
     std::ostringstream str;
     str << m_date;
     m_date_textfield->set_content(str.str());
 
     m_toggle_container_button = main_container->add_widget<StateTextButton<bool>>();
-    m_toggle_container_button->set_size({50.0_px, Length::Auto});
+    m_toggle_container_button->set_size({ 50.0_px, Length::Auto });
     m_toggle_container_button->set_alignment(Align::Center);
     m_toggle_container_button->add_state("Show", 0, sf::Color::White);
     m_toggle_container_button->add_state("Hide", 1, sf::Color::White);
     m_date = Util::SimulationTime::create(1602, 7, 21);
     m_create_container();
 
-    m_toggle_container_button->on_change = [this](bool state){
+    m_toggle_container_button->on_change = [this](bool state) {
         m_calendar_container->set_visible(state);
         m_update_calendar();
-        if(state)
-            set_size({Length::Auto, 180.0_px});
+        if (state)
+            set_size({ Length::Auto, 180.0_px });
         else
-            set_size({Length::Auto, 30.0_px});
+            set_size({ Length::Auto, 30.0_px });
     };
 
     m_calendar_container->set_visible(false);
 }
 
-void Datebox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color){
+void Datebox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_date_textfield->set_display_attributes(bg_color, fg_color, text_color);
 
     m_toggle_container_button->set_bg_color(fg_color);
@@ -57,16 +58,16 @@ void Datebox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
     m_toggle_container_button->set_text_color(bg_color);
 }
 
-std::shared_ptr<TextButton> Datebox::m_create_calendar_button(Container& c) const{
+std::shared_ptr<TextButton> Datebox::m_create_calendar_button(Container& c) const {
     auto btn = c.add_widget<TextButton>();
     btn->set_content("");
     btn->set_alignment(Align::Center);
     btn->set_display_attributes(sf::Color(220, 220, 220), sf::Color(220, 220, 220), sf::Color(180, 180, 180));
     btn->set_active_display_attributes(sf::Color(180, 180, 180), sf::Color(180, 180, 180), sf::Color(150, 150, 150));
 
-    btn->on_change = [btn, this](bool state) mutable{
-        for(auto& field : m_calendar_contents){
-            if(field != btn)
+    btn->on_change = [btn = btn.get(), this](bool state) {
+        for (auto& field : m_calendar_contents) {
+            if (field.get() != btn)
                 field->set_active_without_action(false);
         }
     };
@@ -74,12 +75,12 @@ std::shared_ptr<TextButton> Datebox::m_create_calendar_button(Container& c) cons
     return btn;
 }
 
-void Datebox::m_create_container(){
+void Datebox::m_create_container() {
     time_t clock = m_date.time_since_epoch().count();
     tm local_tm = *localtime(&clock);
 
     m_calendar_container = add_widget<Container>();
-    m_calendar_container->set_size({Length::Auto, 120.0_px});
+    m_calendar_container->set_size({ Length::Auto, 120.0_px });
     m_calendar_container->set_layout<VerticalBoxLayout>().set_spacing(2);
     m_calendar_container->set_background_color(sf::Color::White);
 
@@ -124,15 +125,15 @@ void Datebox::m_create_container(){
     right_month_arrow_btn->set_arrow_color(sf::Color(200, 200, 200));
     right_month_arrow_btn->set_arrow_size(10);
     right_month_arrow_btn->set_arrow_type(ArrowButton::ArrowType::RIGHTARROW);
-    
-    for(unsigned i = 0; i < 5; i++){
+
+    for (unsigned i = 0; i < 5; i++) {
         auto row = m_calendar_container->add_widget<Container>();
         row->set_layout<HorizontalBoxLayout>().set_spacing(2);
-        for(unsigned i = 0; i < 7; i++)
+        for (unsigned i = 0; i < 7; i++)
             m_calendar_contents.push_back(m_create_calendar_button(*row));
     }
 
-    left_century_arrow_btn->on_click = [this]()mutable{
+    left_century_arrow_btn->on_click = [this]() mutable {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -140,7 +141,7 @@ void Datebox::m_create_container(){
         m_update_calendar();
     };
 
-    left_year_arrow_btn->on_click = [this]()mutable{
+    left_year_arrow_btn->on_click = [this]() mutable {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -148,7 +149,7 @@ void Datebox::m_create_container(){
         m_update_calendar();
     };
 
-    left_month_arrow_btn->on_click = [this]()mutable{
+    left_month_arrow_btn->on_click = [this]() mutable {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -156,7 +157,7 @@ void Datebox::m_create_container(){
         m_update_calendar();
     };
 
-    right_century_arrow_btn->on_click = [this]()mutable{
+    right_century_arrow_btn->on_click = [this]() mutable {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -164,7 +165,7 @@ void Datebox::m_create_container(){
         m_update_calendar();
     };
 
-    right_year_arrow_btn->on_click = [this]()mutable{
+    right_year_arrow_btn->on_click = [this]() mutable {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -172,7 +173,7 @@ void Datebox::m_create_container(){
         m_update_calendar();
     };
 
-    right_month_arrow_btn->on_click = [this]()mutable{
+    right_month_arrow_btn->on_click = [this]() mutable {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -181,11 +182,11 @@ void Datebox::m_create_container(){
     };
 }
 
-void Datebox::m_update_calendar(){
+void Datebox::m_update_calendar() {
     time_t clock = m_date.time_since_epoch().count();
     tm local_tm = *localtime(&clock);
 
-    if( local_tm.tm_year < 0)
+    if (local_tm.tm_year < 0)
         m_century_textfield->set_content(std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100)) + " - " + std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100) + 99));
     else
         m_century_textfield->set_content(std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100)) + " - " + std::to_string(1900 + (int)(local_tm.tm_year / 100 * 100) + 99));
