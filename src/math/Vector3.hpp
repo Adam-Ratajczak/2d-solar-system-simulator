@@ -21,15 +21,15 @@ public:
         , y(_y)
         , z(_z)
         , w(_w) { }
-    ALWAYS_INLINE Vector3(sf::Vector2f _a)
+    ALWAYS_INLINE explicit Vector3(sf::Vector2f _a)
         : x(_a.x)
         , y(_a.y)
         , z(0) { }
-    ALWAYS_INLINE Vector3(sf::Vector2u _a)
+    ALWAYS_INLINE explicit Vector3(sf::Vector2u _a)
         : x(_a.x)
         , y(_a.y)
         , z(0) { }
-    ALWAYS_INLINE Vector3(sf::Vector2i _a)
+    ALWAYS_INLINE explicit Vector3(sf::Vector2i _a)
         : x(_a.x)
         , y(_a.y)
         , z(0) { }
@@ -58,10 +58,6 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Vector3& vec) {
         return out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << ")";
-    }
-
-    operator sf::Vector2f(){
-        return sf::Vector2f(x, y);
     }
 };
 

@@ -4,7 +4,6 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <iostream>
-#include "../math/Vector3.hpp"
 
 namespace GUI {
 
@@ -13,7 +12,7 @@ void ArrowButton::draw(sf::RenderWindow& window) const {
     background.setFillColor(bg_color_for_state());
     window.draw(background);
 
-    const sf::Vector2f midpoint = size() / 2;
+    const sf::Vector2f midpoint = size() / 2.f;
 
     // std::cout << Vector3(midpoint) << "\n";
 

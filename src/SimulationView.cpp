@@ -22,7 +22,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             m_world.for_each_object([&](Object& obj) {
                 auto obj_pos_screen = world_to_screen(obj.render_position());
                 obj_pos_screen.z = 0;
-                auto distance = obj_pos_screen.distance_to(m_prev_mouse_pos);
+                auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
                 if (distance < 30)
                     m_focused_object = &obj;
             });
