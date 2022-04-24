@@ -29,7 +29,7 @@ public:
 private:
     sf::Color m_arrow_color = sf::Color(200, 200, 200);
     ArrowType m_arrow_type = ArrowType::TOPARROW;
-    double m_arrow_size = 7;
+    double m_arrow_size = 8;
     virtual void draw(sf::RenderWindow&) const override;
 };
 
