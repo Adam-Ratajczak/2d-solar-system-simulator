@@ -87,7 +87,6 @@ public:
     Info get_info() const;
 
     void reset_history();
-    void reset_future() { m_history.reset_future_entries(); }
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);

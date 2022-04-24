@@ -28,7 +28,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
     , m_sphere(radius / AU, 36, 18)
-    , m_history(std::max(1U, period), { pos, vel })
+    , m_history(1000, { pos, vel })
     , m_gravity_factor(mass * G)
     , m_radius(radius)
     , m_pos(pos)
@@ -83,27 +83,29 @@ void Object::update_forces_against(Object& object) {
 }
 
 void Object::update(int speed) {
-    if (m_history.on_edge()) {
+    
+    if (speed > 0){
         m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
+        m_pos += m_vel * m_world.simulation_seconds_per_tick();
+        auto val = m_history.move_forward({m_pos, m_vel});
 
-        if (speed > 0)
-            m_pos += m_vel * m_world.simulation_seconds_per_tick();
-        else if (speed < 0)
-            m_pos -= m_vel * m_world.simulation_seconds_per_tick();
-    }
-    else {
-        auto entry = m_history.get_entry();
-        m_pos = entry.pos;
-        m_vel = entry.vel;
+        if(val.has_value()){
+            m_pos = val.value().pos;
+            m_vel = val.value().vel;
+        }
+    }else if (speed < 0){
+        m_vel -= m_attraction_factor * m_world.simulation_seconds_per_tick();
+        m_pos -= m_vel * m_world.simulation_seconds_per_tick();
+        auto val = m_history.move_backward({m_pos, m_vel});
+
+        if(val.has_value()){
+            m_pos = val.value().pos;
+            m_vel = val.value().vel;
+        }
     }
 
     if (m_is_forward_simulated)
         update_closest_approaches();
-
-    if (speed > 0)
-        m_history.push_back({ m_pos, m_vel });
-    else if (speed < 0)
-        m_history.push_front();
 
     if (m_world.m_simulation_view->offset_trails())
         recalculate_trails_with_offset();
@@ -213,10 +215,6 @@ Object::Info Object::get_info() const {
 void Object::reset_history() {
     m_history.reset();
     m_trail.reset();
-
-    auto entry = m_history.first_entry();
-    m_pos = entry.pos;
-    m_vel = entry.vel;
 }
 
 void Object::draw_gui(SimulationView const& view) {

@@ -24,9 +24,9 @@ void World::add_object(std::unique_ptr<Object> object) {
     if (m_object_history.set_time(m_date))
         m_object_history.clear_history(m_object_history.get_pos());
 
-    for_each_object([](Object& obj) {
-        obj.reset_future();
-    });
+    // for_each_object([](Object& obj) {
+    //     obj.reset_history();
+    // });
 
     m_object_history.clear_history(m_object_history.get_pos());
 }
