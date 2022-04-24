@@ -1,7 +1,7 @@
 #include "EssaGUI.hpp"
 
-#include "Object.hpp"
 #include "EssaSettings.hpp"
+#include "Object.hpp"
 #include "SimulationView.hpp"
 #include "World.hpp"
 #include "glwrapper/Sphere.hpp"
@@ -64,7 +64,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
             }
         };
         create_menu.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        create_menu.settings_container->set_size({550.0_px, 680.0_px});
+        create_menu.settings_container->set_size({ 550.0_px, 680.0_px });
         m_create_object_gui = create_menu.settings_container->add_widget<EssaCreateObject>(*m_simulation_view);
     }
 
@@ -76,7 +76,7 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
     {
         auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        settings.settings_container->set_size({500.0_px, 500.0_px});
+        settings.settings_container->set_size({ 500.0_px, 500.0_px });
         m_settings_gui = settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
     }
 }
@@ -98,10 +98,11 @@ void EssaGUI::draw(sf::RenderWindow& window) const {
     if (m_create_object_gui->new_object()) {
         {
             WorldDrawScope scope(*m_simulation_view);
-            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(*m_simulation_view);
             m_create_object_gui->new_object()->draw(*m_simulation_view);
+            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(*m_simulation_view);
         }
         // FIXME: This should be drawn above grid.
+        m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches_gui(*m_simulation_view);
         m_create_object_gui->new_object()->draw_gui(*m_simulation_view);
         m_create_object_gui->forward_simulated_world().draw(*m_simulation_view);
     }

@@ -15,6 +15,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <utility>
@@ -105,12 +106,12 @@ void Object::update(int speed) {
 
     if (m_world.m_simulation_view->offset_trails())
         recalculate_trails_with_offset();
-    else{
+    else {
         m_trail.recalculate_with_offset({});
         m_trail.push_back(m_pos);
     }
 
-    if(m_most_attracting_object == nullptr)
+    if (m_most_attracting_object == nullptr)
         return;
 
     double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
@@ -125,7 +126,7 @@ void Object::update(int speed) {
     }
 }
 
-void Object::recalculate_trails_with_offset(){
+void Object::recalculate_trails_with_offset() {
     if (!m_most_attracting_object || m_is_forward_simulated) {
         m_trail.recalculate_with_offset({});
         m_trail.push_back(m_pos);
@@ -165,6 +166,30 @@ void Object::draw_closest_approaches(SimulationView const& view) {
     GL::draw_vertices(GL_LINES, closest_approaches_vertexes);
 }
 
+void Object::draw_closest_approaches_gui(SimulationView const& view) {
+    for (auto& closest_approach_entry : m_closest_approaches) {
+        if (closest_approach_entry.second.distance > AU / 10)
+            continue;
+        auto position = (closest_approach_entry.second.this_position + closest_approach_entry.second.other_object_position) / (2 * AU);
+        // TODO: Serialize unit tools
+        std::ostringstream oss;
+        oss << "CA with " << closest_approach_entry.first->name() << ": " << closest_approach_entry.second.distance / 1000 << " km";
+        draw_label(view, position, oss.str(), closest_approach_entry.first->m_color);
+    }
+}
+
+void Object::draw_label(SimulationView const& sv, Vector3 position, std::string string, sf::Color color) const {
+    auto screen_position = sv.world_to_screen(position);
+
+    // Don't draw labels of planets outside of clipping box
+    if (screen_position.z > 1 || screen_position.z < -1)
+        return;
+    sf::Text text(std::move(string), GUI::Application::the().font, 15);
+    text.setPosition({ std::roundf(screen_position.x), std::roundf(screen_position.y) });
+    text.setFillColor(color);
+    sv.window().draw(text);
+}
+
 Object::Info Object::get_info() const {
     Info info {
         .mass = mass(),
@@ -195,19 +220,10 @@ void Object::reset_history() {
 }
 
 void Object::draw_gui(SimulationView const& view) {
-    auto position = view.world_to_screen(render_position());
-
-    // Don't draw labels of planets outside of clipping box
-    if (position.z > 1 || position.z < -1)
-        return;
 
     if (!view.show_labels())
         return;
-    sf::Text text(m_name, GUI::Application::the().font, 15);
-    text.setPosition({ static_cast<float>(position.x), static_cast<float>(position.y) });
-    if (m_is_forward_simulated)
-        text.setFillColor(sf::Color(128, 128, 128));
-    view.window().draw(text);
+    draw_label(view, render_position(), m_name, m_is_forward_simulated ? sf::Color(128, 128, 128) : sf::Color::White);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
