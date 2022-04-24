@@ -38,6 +38,8 @@ void BoxLayout::run() {
         return vec;
     };
 
+    auto total_spacing_size = (m_spacing * (widgets().size() - 1));
+
     // 1. Compute widget size (in main axis) if it has fixed size
     for (auto& w : widgets()) {
         if (!w->is_visible())
@@ -52,7 +54,7 @@ void BoxLayout::run() {
             break;
         case Length::Percent:
             // std::cout << size << std::endl;
-            size = vec2f_main_coord_by_orientation(w->input_size()).value() * vec2f_main_coord_by_orientation(m_container.size()) / 100.0;
+            size = vec2f_main_coord_by_orientation(w->input_size()).value() * (vec2f_main_coord_by_orientation(m_container.size()) - total_spacing_size) / 100.0;
             break;
         case Length::Auto:
             size = 0;
