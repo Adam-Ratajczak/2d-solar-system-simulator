@@ -4,6 +4,7 @@
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include <SFML/Graphics/Color.hpp>
+#include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -18,7 +19,8 @@ const std::string month_names[] = {
 namespace GUI {
 
 Datebox::Datebox(Container& parent)
-    : Container(parent) {
+    : Container(parent)
+    , m_date(Util::SimulationTime::create(2022, 4, 24)) {
     set_layout<VerticalBoxLayout>().set_spacing(10);
     auto main_container = add_widget<Container>();
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
@@ -137,31 +139,31 @@ void Datebox::m_create_container() {
             m_calendar_contents.push_back(m_create_calendar_button(*m_final_row));
     }
 
-    left_century_arrow_btn->on_click = [this]() mutable {
+    left_century_arrow_btn->on_click = [this]() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year - 100, local_tm.tm_mon + 1, local_tm.tm_mday + 1);
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year - 100, local_tm.tm_mon + 1, local_tm.tm_mday);
         m_update_calendar();
     };
 
-    left_year_arrow_btn->on_click = [this]() mutable {
+    left_year_arrow_btn->on_click = [this]() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year - 1, local_tm.tm_mon + 1, local_tm.tm_mday + 1);
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year - 1, local_tm.tm_mon + 1, local_tm.tm_mday);
         m_update_calendar();
     };
 
-    left_month_arrow_btn->on_click = [this]() mutable {
+    left_month_arrow_btn->on_click = [this]() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
-        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon, local_tm.tm_mday + 1);
+        m_date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon, local_tm.tm_mday);
         m_update_calendar();
     };
 
-    right_century_arrow_btn->on_click = [this]() mutable {
+    right_century_arrow_btn->on_click = [this]() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -169,7 +171,7 @@ void Datebox::m_create_container() {
         m_update_calendar();
     };
 
-    right_year_arrow_btn->on_click = [this]() mutable {
+    right_year_arrow_btn->on_click = [this]() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -177,7 +179,7 @@ void Datebox::m_create_container() {
         m_update_calendar();
     };
 
-    right_month_arrow_btn->on_click = [this]() mutable {
+    right_month_arrow_btn->on_click = [this]() {
         time_t clock = m_date.time_since_epoch().count();
         tm local_tm = *localtime(&clock);
 
@@ -189,6 +191,8 @@ void Datebox::m_create_container() {
 void Datebox::m_update_calendar() {
     time_t clock = m_date.time_since_epoch().count();
     tm local_tm = *localtime(&clock);
+    local_tm.tm_mday = 1;
+    mktime(&local_tm);
 
     if (local_tm.tm_year < 0)
         m_century_textfield->set_content(std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100)) + " - " + std::to_string(1900 + (int)((local_tm.tm_year / 100 - 1) * 100) + 99));
@@ -197,14 +201,14 @@ void Datebox::m_update_calendar() {
     m_year_textfield->set_content(std::to_string(1900 + local_tm.tm_year));
     m_month_textfield->set_content(month_names[local_tm.tm_mon]);
 
-    int i = -local_tm.tm_wday - 1;
+    int current_month_day = -(local_tm.tm_wday == 0 ? 6 : local_tm.tm_wday - 1);
     std::ostringstream str;
     str << m_date;
     m_date_textfield->set_content(str.str());
 
     for (unsigned j = 0; j < m_calendar_contents.size(); j++) {
-        i++;
-        Util::SimulationClock::time_point date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, i);
+        current_month_day++;
+        Util::SimulationClock::time_point date = Util::SimulationTime::create(1900 + local_tm.tm_year, local_tm.tm_mon + 1, current_month_day);
         auto t = date.time_since_epoch().count();
         tm temp_tm = *localtime(&t);
 
