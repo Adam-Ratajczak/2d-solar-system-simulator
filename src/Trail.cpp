@@ -12,16 +12,21 @@ Trail::Trail(size_t max_trail_size, sf::Color color)
     : m_vertexes(max_trail_size)
     , m_color(color) {
     assert(max_trail_size > 1);
+    m_length++;
 }
 
-void Trail::push_back(Vector3 pos) {
-    m_vertexes[m_append_offset] = Vertex { .position = pos / AU, .color = m_color };
-    m_total_seconds += m_seconds_per_tick;
+static constexpr auto TrailMinStep = 60 * 60 * 12;
 
-    if(m_total_seconds <= 43200)
+void Trail::push_back(Vector3 pos) {
+    m_total_seconds += m_seconds_per_tick;
+    if (m_total_seconds <= TrailMinStep && m_length != 0) {
+        change_current(pos);
         return;
-    m_total_seconds -= 43200;
-    
+    }
+
+    m_total_seconds -= TrailMinStep;
+    m_vertexes[m_append_offset] = Vertex { .position = pos / AU, .color = m_color };
+
     m_append_offset++;
     if (m_length < m_vertexes.size())
         m_length++;
@@ -63,6 +68,9 @@ void Trail::draw() {
 }
 
 void Trail::change_current(Vector3 pos) {
+    assert(m_length > 0);
+    if (m_append_offset == 1)
+        m_vertexes[m_length - 1].position = pos / AU;
     m_vertexes[m_append_offset - 1].position = pos / AU;
 }
 
