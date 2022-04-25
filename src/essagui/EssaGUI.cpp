@@ -61,6 +61,19 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         canvas_mode.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         canvas_mode.settings_container->set_size({ 1820.0_px, 990.0_px });
         m_canvas_mode_gui = canvas_mode.settings_container->add_widget<EssaCanvasMode>();
+
+        canvas_mode.on_toggle = [this](bool state) {
+            m_simulation_view->change_speed(!state);
+            if (!state) {
+                m_create_object_gui->set_new_object(nullptr);
+                m_create_object_gui->forward_simulation_state(true);
+                m_simulation_view->set_speed(m_saved_speed);
+            }
+            else {
+                m_saved_speed = m_simulation_view->speed();
+                m_simulation_view->set_speed(0);
+            }
+        };
     }
 
     {
@@ -75,6 +88,19 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         modify.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         modify.settings_container->set_size({ 550.0_px, 700.0_px });
         m_modify_object_gui = modify.settings_container->add_widget<ModifyObject>();
+        
+        modify.on_toggle = [this](bool state) {
+            m_simulation_view->change_speed(!state);
+            if (!state) {
+                m_create_object_gui->set_new_object(nullptr);
+                m_create_object_gui->forward_simulation_state(true);
+                m_simulation_view->set_speed(m_saved_speed);
+            }
+            else {
+                m_saved_speed = m_simulation_view->speed();
+                m_simulation_view->set_speed(0);
+            }
+        };
     }
 }
 
