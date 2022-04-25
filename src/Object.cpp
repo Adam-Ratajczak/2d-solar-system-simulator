@@ -92,14 +92,18 @@ void Object::update(int speed) {
     if (speed > 0) {
         m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
         m_pos += m_vel * m_world.simulation_seconds_per_tick();
-        auto val = m_history.move_forward({ m_pos, m_vel });
 
-        if (val.has_value()) {
-            m_pos = val.value().pos;
-            m_vel = val.value().vel;
+        if (!m_is_forward_simulated) {
+            auto val = m_history.move_forward({ m_pos, m_vel });
+
+            if (val.has_value()) {
+                m_pos = val.value().pos;
+                m_vel = val.value().vel;
+            }
         }
     }
     else if (speed < 0) {
+        assert(!m_is_forward_simulated);
         m_vel -= m_attraction_factor * m_world.simulation_seconds_per_tick();
         m_pos -= m_vel * m_world.simulation_seconds_per_tick();
         auto val = m_history.move_backward({ m_pos, m_vel });
