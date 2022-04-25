@@ -137,11 +137,12 @@ void Datebox::m_create_container() {
     auto day_selection_container = m_calendar_container->add_widget<Container>();
     day_selection_container->set_layout<VerticalBoxLayout>().set_spacing(2);
     for (unsigned i = 0; i < 6; i++) {
-        m_final_row = day_selection_container->add_widget<Container>();
-        m_final_row->set_layout<HorizontalBoxLayout>().set_spacing(2);
-        m_final_row->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
+        auto row = day_selection_container->add_widget<Container>();
+        row->set_layout<HorizontalBoxLayout>().set_spacing(2);
+        row->set_size({ Length::Auto, { 100.0 / 6, Length::Percent } });
+        m_calendar_rows.push_back(row);
         for (unsigned i = 0; i < 7; i++)
-            m_calendar_contents.push_back({m_create_calendar_button(*m_final_row), {}});
+            m_calendar_contents.push_back({m_create_calendar_button(*row), {}});
     }
 
     auto daytime_container = m_calendar_container->add_widget<Container>();
@@ -270,12 +271,23 @@ void Datebox::m_update_calendar() {
         tm temp_tm = *localtime(&t);
         m_calendar_contents[j].second = date;
 
-        if (j == 35 && temp_tm.tm_mday <= 7) {
-            m_final_row->set_visible(false);
+        if (j == 28 && temp_tm.tm_mday <= 14) {
+            m_calendar_rows[4]->set_visible(false);
+            m_calendar_rows[5]->set_visible(false);
+
             return;
         }
         else {
-            m_final_row->set_visible(true);
+            m_calendar_rows[4]->set_visible(true);
+        }
+
+        if (j == 35 && temp_tm.tm_mday <= 7) {
+            m_calendar_rows[5]->set_visible(false);
+
+            return;
+        }
+        else {
+            m_calendar_rows[5]->set_visible(true);
         }
 
         m_calendar_contents[j].first->set_content(std::to_string(temp_tm.tm_mday));
