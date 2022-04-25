@@ -58,4 +58,5 @@ private:
     int m_saved_speed = 0;
 
     void m_switch_info(bool state);
+    void m_pause_simulation(bool state);
 };
