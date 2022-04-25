@@ -2,6 +2,7 @@
 
 #include "EssaSettings.hpp"
 #include "../gui/PythonREPL.hpp"
+#include "ModifyObject.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -67,6 +68,13 @@ EssaGUI::EssaGUI(GUI::Application& application, World& world)
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         settings.settings_container->set_size({ 500.0_px, 500.0_px });
         m_settings_gui = settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
+    }
+
+    {
+        auto& modify = menu->add_entry(load_image("../assets/modifyObject.png"), "Modify focused object");
+        modify.settings_container->set_layout<GUI::HorizontalBoxLayout>();
+        modify.settings_container->set_size({ 550.0_px, 700.0_px });
+        m_modify_object_gui = modify.settings_container->add_widget<ModifyObject>();
     }
 }
 
