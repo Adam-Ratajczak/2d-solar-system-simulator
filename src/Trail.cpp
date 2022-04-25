@@ -8,14 +8,25 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+static constexpr auto TrailMinStep = 60 * 60 * 12;
+static constexpr size_t TrailMaxAllocatedSpace = 0xfffff;
+
 Trail::Trail(size_t max_trail_size, sf::Color color)
-    : m_vertexes(max_trail_size)
-    , m_color(color) {
-    assert(max_trail_size > 1);
+    : m_color(color) {
+
+    // Trail must have at least the beginning, the end and the "glue" vertex
+    if (max_trail_size < 3) {
+        std::cout << "FIXME: Trail: Something is wrong! Trying to create trail of size < 3" << std::endl;
+        max_trail_size = 3;
+    }
+
+    if (max_trail_size > TrailMaxAllocatedSpace) {
+        std::cout << "FIXME: Trail: Something is wrong! Trying to create trail of size " << max_trail_size << ", max is " << TrailMaxAllocatedSpace << std::endl;
+        max_trail_size = TrailMaxAllocatedSpace;
+    }
+    m_vertexes.resize(max_trail_size);
     m_length++;
 }
-
-static constexpr auto TrailMinStep = 60 * 60 * 12;
 
 void Trail::push_back(Vector3 pos) {
     // Ensure that the trail always has the beginning
