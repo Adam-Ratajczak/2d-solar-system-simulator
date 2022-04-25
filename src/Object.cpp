@@ -85,29 +85,30 @@ void Object::update_forces_against(Object& object) {
 
 void Object::update(int speed) {
     m_trail.set_new_tickrate(m_world.simulation_seconds_per_tick());
-    
-    if (speed > 0){
+
+    if (m_is_forward_simulated)
+        update_closest_approaches();
+
+    if (speed > 0) {
         m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
         m_pos += m_vel * m_world.simulation_seconds_per_tick();
-        auto val = m_history.move_forward({m_pos, m_vel});
+        auto val = m_history.move_forward({ m_pos, m_vel });
 
-        if(val.has_value()){
-            m_pos = val.value().pos;
-            m_vel = val.value().vel;
-        }
-    }else if (speed < 0){
-        m_vel -= m_attraction_factor * m_world.simulation_seconds_per_tick();
-        m_pos -= m_vel * m_world.simulation_seconds_per_tick();
-        auto val = m_history.move_backward({m_pos, m_vel});
-
-        if(val.has_value()){
+        if (val.has_value()) {
             m_pos = val.value().pos;
             m_vel = val.value().vel;
         }
     }
+    else if (speed < 0) {
+        m_vel -= m_attraction_factor * m_world.simulation_seconds_per_tick();
+        m_pos -= m_vel * m_world.simulation_seconds_per_tick();
+        auto val = m_history.move_backward({ m_pos, m_vel });
 
-    if (m_is_forward_simulated)
-        update_closest_approaches();
+        if (val.has_value()) {
+            m_pos = val.value().pos;
+            m_vel = val.value().vel;
+        }
+    }
 
     if (m_world.m_simulation_view->offset_trails())
         recalculate_trails_with_offset();
