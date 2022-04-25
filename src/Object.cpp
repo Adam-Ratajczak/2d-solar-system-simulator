@@ -188,7 +188,7 @@ void Object::draw_label(SimulationView const& sv, Vector3 position, std::string 
     // Don't draw labels of planets outside of clipping box
     if (screen_position.z > 1 || screen_position.z < -1)
         return;
-    sf::Text text(std::move(string), GUI::Application::the().font, 15);
+    sf::Text text(std::move(string), GUI::Application::the().bold_font, 15);
     text.setPosition({ std::roundf(screen_position.x), std::roundf(screen_position.y) });
     text.setFillColor(color);
     sv.window().draw(text);
