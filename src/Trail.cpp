@@ -18,6 +18,14 @@ Trail::Trail(size_t max_trail_size, sf::Color color)
 static constexpr auto TrailMinStep = 60 * 60 * 12;
 
 void Trail::push_back(Vector3 pos) {
+    // Ensure that the trail always has the beginning
+    if (m_length == 1) {
+        assert(m_append_offset == 1);
+        m_vertexes[m_append_offset] = Vertex { .position = pos / AU, .color = m_color };
+        m_append_offset++;
+        m_length++;
+    }
+
     m_total_seconds += m_seconds_per_tick;
     if (m_total_seconds <= TrailMinStep && m_length != 0) {
         change_current(pos);
