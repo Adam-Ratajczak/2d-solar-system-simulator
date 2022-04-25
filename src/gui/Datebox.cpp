@@ -1,6 +1,7 @@
 #include "Datebox.hpp"
 #include "ArrowButton.hpp"
 #include "Container.hpp"
+#include "TextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
 #include <SFML/Graphics/Color.hpp>
@@ -30,11 +31,12 @@ Datebox::Datebox(Container& parent)
     str << m_date;
     m_date_textfield->set_content(str.str());
 
-    m_toggle_container_button = main_container->add_widget<StateTextButton<bool>>();
+    m_toggle_container_button = main_container->add_widget<TextButton>();
     m_toggle_container_button->set_size({ 50.0_px, Length::Auto });
     m_toggle_container_button->set_alignment(Align::Center);
-    m_toggle_container_button->add_state("Show", 0, sf::Color::White);
-    m_toggle_container_button->add_state("Hide", 1, sf::Color::White);
+    m_toggle_container_button->set_toggleable(true);
+    m_toggle_container_button->set_content("Show");
+    m_toggle_container_button->set_active_content("Hide");
     // m_date = Util::SimulationTime::create(1602, 7, 21);
     m_create_container();
 
@@ -53,9 +55,8 @@ Datebox::Datebox(Container& parent)
 void Datebox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf::Color text_color) {
     m_date_textfield->set_display_attributes(bg_color, fg_color, text_color);
 
-    m_toggle_container_button->set_bg_color(fg_color);
-    m_toggle_container_button->set_fg_color(fg_color);
-    m_toggle_container_button->set_text_color(bg_color);
+    m_toggle_container_button->set_display_attributes(fg_color, fg_color, bg_color);
+    m_toggle_container_button->set_active_display_attributes(fg_color, fg_color, bg_color);
 }
 
 TextButton* Datebox::m_create_calendar_button(Container& c) {
