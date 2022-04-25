@@ -67,12 +67,6 @@ void Trail::change_current(Vector3 pos) {
 }
 
 std::ostream& operator<<(std::ostream& out, Trail const& trail) {
-    out << "Trail(" << trail.m_length << "): ";
-    for (size_t s = 0; auto& t : trail.m_vertexes) {
-        out << t.position << ", ";
-        s++;
-        if (s > trail.m_length)
-            break;
-    }
+    out << "Trail(" << trail.m_length << " a@ " << trail.m_append_offset << ")";
     return out;
 }
