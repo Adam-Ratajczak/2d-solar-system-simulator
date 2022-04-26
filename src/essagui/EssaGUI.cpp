@@ -29,9 +29,9 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     };
     home_button->set_tooltip_text("Reset coordinates");
 
-    auto& python_repl_window = GUI::Application::the().open_tool_window();
+    auto& python_repl_window = GUI::Application::the().open_tool_window("PySSA");
     // TODO: Support moving ToolWindows
-    python_repl_window.set_position({ 600, 700 });
+    python_repl_window.set_position({ 600, 750 });
     python_repl_window.set_size({ 700, 250 });
     auto& python_repl = python_repl_window.set_main_widget<GUI::PythonREPL>();
 

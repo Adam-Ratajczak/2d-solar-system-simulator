@@ -29,7 +29,7 @@ public:
     };
     void spawn_notification(std::string message, NotificationLevel);
 
-    ToolWindow& open_tool_window();
+    ToolWindow& open_tool_window(sf::String title);
 
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
