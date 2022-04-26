@@ -57,7 +57,7 @@ void Trail::push_back(Vector3 pos) {
 
 void Trail::reset() {
     m_append_offset = 1;
-    m_length = 0;
+    m_length = 1;
 }
 
 void Trail::recalculate_with_offset(Vector3 offset) {
