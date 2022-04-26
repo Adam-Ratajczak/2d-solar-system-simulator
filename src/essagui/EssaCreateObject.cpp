@@ -1,7 +1,7 @@
 #include "EssaCreateObject.hpp"
-#include "EssaGUI.hpp"
 #include "../gui/ValueSlider.hpp"
 #include "../util/Units.hpp"
+#include "EssaGUI.hpp"
 #include <cmath>
 #include <memory>
 
@@ -109,7 +109,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
         m_require_orbit_point_button->on_click = [this]() {
             if (!m_new_object) {
-                application().spawn_notification("You need to specify initial coords of the object", GUI::Application::NotificationLevel::Error);
+                GUI::Application::the().spawn_notification("You need to specify initial coords of the object", GUI::Application::NotificationLevel::Error);
                 return;
             }
             m_simulation_view.start_coords_measure([this](Vector3 coords) {

@@ -11,8 +11,8 @@
 #include <memory>
 #include <string>
 
-EssaGUI::EssaGUI(GUI::Application& application, World& world)
-    : Container(application)
+EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
+    : Container(wtr)
     , m_world(world) {
     set_layout<GUI::BasicLayout>();
 

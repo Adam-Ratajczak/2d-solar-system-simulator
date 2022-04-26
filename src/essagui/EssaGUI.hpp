@@ -1,9 +1,5 @@
 #pragma once
 
-#include "EssaCreateObject.hpp"
-#include "EssaSettings.hpp"
-#include "EssaCanvasMode.hpp"
-#include "FocusedObjectGUI.hpp"
 #include "../Object.hpp"
 #include "../SimulationView.hpp"
 #include "../World.hpp"
@@ -18,6 +14,10 @@
 #include "../gui/Textfield.hpp"
 #include "../gui/ValueSlider.hpp"
 #include "../gui/Widget.hpp"
+#include "EssaCanvasMode.hpp"
+#include "EssaCreateObject.hpp"
+#include "EssaSettings.hpp"
+#include "FocusedObjectGUI.hpp"
 #include "ModifyObject.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -36,7 +36,7 @@ sf::Image load_image(std::string path);
 
 class EssaGUI : public GUI::Container {
 public:
-    explicit EssaGUI(GUI::Application& application, World& world);
+    explicit EssaGUI(GUI::WidgetTreeRoot&, World& world);
 
     virtual void handle_event(GUI::Event&) override;
     virtual void draw(sf::RenderWindow& window) const override;

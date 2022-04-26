@@ -49,7 +49,7 @@ void Console::draw(sf::RenderWindow& window) const {
 
     size_t s = 0;
     for (auto& line : m_lines) {
-        sf::Text text(line.text, application().fixed_width_font, 15);
+        sf::Text text(line.text, Application::the().fixed_width_font, 15);
         text.setPosition(PADDING, s * LINE_SPACING - m_scroll + PADDING);
         text.setFillColor(line.color);
         window.draw(text);

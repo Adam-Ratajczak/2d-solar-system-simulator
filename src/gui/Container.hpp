@@ -181,8 +181,8 @@ public:
     // clang-format on
 
 protected:
-    explicit Container(Application& application)
-        : Widget(application) { }
+    explicit Container(WidgetTreeRoot& wtr)
+        : Widget(wtr) { }
 
     virtual void relayout() override;
     virtual void handle_event(Event&) override;

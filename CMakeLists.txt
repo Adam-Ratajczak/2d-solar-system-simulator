@@ -54,6 +54,7 @@ add_executable(
     src/gui/Textfield.cpp
     src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
+    src/gui/WidgetTreeRoot.cpp
 
     src/math/Plane.cpp
     src/math/Ray.cpp

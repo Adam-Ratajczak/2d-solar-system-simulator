@@ -61,7 +61,7 @@ void StateTextButton<T>::draw(sf::RenderWindow& window) const {
     rect.setOutlineThickness(3);
     window.draw(rect);
 
-    sf::Text text(get_element_from_index(m_index).first, this->application().font, 15);
+    sf::Text text(get_element_from_index(m_index).first, Application::the().font, 15);
     text.setFillColor(get_element_from_index(m_index).second.text_color);
     align_text(m_alignment, size(), text);
 

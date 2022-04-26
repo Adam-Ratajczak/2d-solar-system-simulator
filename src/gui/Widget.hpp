@@ -2,13 +2,12 @@
 
 #include "../util/Units.hpp"
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
 namespace GUI {
 
-class Application;
 class Container;
 class Tooltip;
+class WidgetTreeRoot;
 
 struct LengthVector {
     Length x;
@@ -71,6 +70,7 @@ public:
 
     sf::Vector2f position() const { return m_pos; }
     sf::Vector2f size() const { return m_size; }
+    sf::FloatRect rect() const { return { m_pos, m_size }; }
     LengthVector input_position() const { return m_expected_pos; }
     LengthVector input_size() const { return m_input_size; }
 
@@ -109,10 +109,10 @@ public:
     void set_background_color(sf::Color const& color) { m_background_color = color; }
 
 protected:
-    explicit Widget(Application& application)
-        : m_application(application) { }
+    explicit Widget(WidgetTreeRoot& wtr)
+        : m_widget_tree_root(wtr) { }
 
-    Application& application() const { return m_application; }
+    WidgetTreeRoot& widget_tree_root() const { return m_widget_tree_root; }
 
     virtual void relayout() { }
     virtual bool is_mouse_over(sf::Vector2i) const;
@@ -129,7 +129,7 @@ private:
     virtual LengthVector initial_size() const { return LengthVector {}; }
 
     Container* m_parent = nullptr;
-    Application& m_application;
+    WidgetTreeRoot& m_widget_tree_root;
     sf::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
     Tooltip* m_tooltip = nullptr;

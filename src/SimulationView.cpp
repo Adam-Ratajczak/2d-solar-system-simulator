@@ -3,6 +3,7 @@
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
 #include "gui/Application.hpp"
+#include "gui/WidgetTreeRoot.hpp"
 #include "math/Ray.hpp"
 #include "math/Transform.hpp"
 
@@ -225,7 +226,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     window.draw(guide);
 
     // FIXME: UB on size_t conversion
-    sf::Text text { std::to_string((size_t)(spacing * AU) / 1000) + " km", application().font, 15 };
+    sf::Text text { std::to_string((size_t)(spacing * AU) / 1000) + " km", GUI::Application::the().font, 15 };
     text.setPosition(guide_start);
     auto bounds = text.getLocalBounds();
     text.setOrigin({ bounds.width, bounds.height + 10 });
@@ -310,12 +311,12 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         oss << ", Reversed";
     oss << ")";
 
-    sf::Text fps_text("FPS: " + std::to_string(m_fps), application().font, 25);
+    sf::Text fps_text("FPS: " + std::to_string(m_fps), GUI::Application::the().font, 25);
     fps_text.setFillColor(sf::Color::White);
     fps_text.setPosition(10, window.getSize().y - 65);
     window.draw(fps_text);
 
-    sf::Text date_text(oss.str(), application().font, 25);
+    sf::Text date_text(oss.str(), GUI::Application::the().font, 25);
     date_text.setFillColor(sf::Color::White);
     date_text.setPosition(10, window.getSize().y - 35);
     window.draw(date_text);
@@ -326,7 +327,7 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     debugoss << "s=" << scale() << std::endl;
     debugoss << "off=" << offset() << std::endl;
 
-    sf::Text debug_text(debugoss.str(), application().font, 15);
+    sf::Text debug_text(debugoss.str(), GUI::Application::the().font, 15);
     debug_text.setPosition(600, 10);
     window.draw(debug_text);
 }

@@ -224,7 +224,7 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
 
 sf::Text Textbox::generate_sf_text() const {
     // TODO: Cache the result
-    sf::Text text(m_content, application().fixed_width_font, 16);
+    sf::Text text(m_content, Application::the().fixed_width_font, 16);
     text.setFillColor(m_text_color);
     text.setPosition(5, 2 + size().y / 2 - 12);
     text.move(m_scroll, 0);

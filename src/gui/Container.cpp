@@ -190,7 +190,7 @@ void Container::handle_event(Event& event) {
 
 std::optional<size_t> Container::focused_widget_index(bool recursive) const {
     for (size_t c = 0; auto& w : m_widgets) {
-        if (application().focused_widget() == w.get())
+        if (widget_tree_root().focused_widget() == w.get())
             return c;
         if (recursive) {
             auto container = dynamic_cast<Container*>(w.get());

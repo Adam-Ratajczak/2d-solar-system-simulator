@@ -31,7 +31,7 @@ void TabButton::draw(sf::RenderWindow& window) const {
         rect.move(0, 4);
     window.draw(rect);
 
-    sf::Text text(content(), application().font, 15);
+    sf::Text text(content(), Application::the().font, 15);
     text.setFillColor(text_color_for_state());
     align_text(get_alignment(), size(), text);
 

@@ -1,5 +1,6 @@
 #include "Widget.hpp"
 
+#include "../gfx/ClipViewScope.hpp"
 #include "Application.hpp"
 #include "Container.hpp"
 
@@ -11,12 +12,12 @@ namespace GUI {
 
 Widget::Widget(Container& parent)
     : m_parent(&parent)
-    , m_application(parent.m_application) {
+    , m_widget_tree_root(parent.m_widget_tree_root) {
 }
 
 Widget::~Widget() {
-    if (m_application.focused_widget() == this)
-        m_application.set_focused_widget(nullptr);
+    if (m_widget_tree_root.focused_widget() == this)
+        m_widget_tree_root.set_focused_widget(nullptr);
 }
 
 bool Widget::is_mouse_over(sf::Vector2i mouse_pos) const {
@@ -31,14 +32,14 @@ void Widget::update() {
         if (m_hover) {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
-                m_tooltip = &m_application.add_tooltip(std::make_unique<Tooltip>(m_tooltip_text, this, position()));
+                m_tooltip = &m_widget_tree_root.add_tooltip(std::make_unique<Tooltip>(m_tooltip_text, this, position()));
                 // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
         }
         else if (m_tooltip_counter == 0) {
             // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
-            m_application.remove_tooltip(m_tooltip);
+            m_widget_tree_root.remove_tooltip(m_tooltip);
             m_tooltip = nullptr;
             m_tooltip_counter = -1;
         }
@@ -57,11 +58,11 @@ void Widget::do_update() {
 
 void Widget::set_focused() {
     assert(accepts_focus());
-    m_application.set_focused_widget(this);
+    m_widget_tree_root.set_focused_widget(this);
 }
 
 bool Widget::is_focused() const {
-    return m_application.focused_widget() == this;
+    return m_widget_tree_root.focused_widget() == this;
 }
 
 void Widget::focus_first_child_or_self() {
@@ -104,13 +105,7 @@ void Widget::draw(sf::RenderWindow& window) const {
 }
 
 void Widget::do_draw(sf::RenderWindow& window) const {
-    sf::View clip_view { sf::FloatRect { {}, size() } };
-    auto window_size = window.getSize();
-    clip_view.setViewport(sf::FloatRect {
-        position().x / window_size.x, position().y / window_size.y,
-        size().x / window_size.x, size().y / window_size.y });
-    window.setView(clip_view);
-
+    Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
     this->draw(window);
     Widget::draw(window);
 }
@@ -122,11 +117,11 @@ void Widget::do_relayout() {
 }
 
 void Widget::set_needs_relayout() {
-    m_application.set_needs_relayout();
+    m_widget_tree_root.set_needs_relayout();
 }
 
 sf::RenderWindow& Widget::window() const {
-    return m_application.window();
+    return m_widget_tree_root.window();
 }
 
 void Widget::dump(unsigned depth) {

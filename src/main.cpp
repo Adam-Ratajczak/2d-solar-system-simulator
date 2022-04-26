@@ -34,10 +34,7 @@ int main() {
     sf::Clock fps_clock;
     while (window.isOpen()) {
         application.handle_events();
-
         application.update();
-
-        application.set_view(sf::View(sf::FloatRect({ 0, 0 }, sf::Vector2f(window.getSize()))));
 
         window.clear();
         glClear(GL_DEPTH_BUFFER_BIT);
