@@ -27,6 +27,7 @@ add_executable(
     src/essagui/FocusedObjectGUI.cpp
     src/essagui/ModifyObject.cpp
 
+    src/gfx/ClipViewScope.cpp
     src/gfx/RoundedEdgeRectangleShape.cpp
 
     src/glwrapper/Helpers.cpp
