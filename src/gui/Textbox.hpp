@@ -16,7 +16,7 @@ class Textbox : public Widget {
     sf::Color m_fg_color = sf::Color(120, 120, 120);
     sf::Color m_text_color = sf::Color(30, 30, 30);
     sf::Color m_placeholder_color = sf::Color(80, 80, 80);
-    unsigned m_limit = 16;
+    unsigned m_limit = 1024;
     bool m_has_decimal = false;
     bool m_dragging = false;
     bool m_has_limit = false;
