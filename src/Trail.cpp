@@ -43,7 +43,7 @@ void Trail::push_back(Vector3 pos) {
         return;
     }
 
-    m_total_seconds -= TrailMinStep;
+    m_total_seconds -= TrailMinStep * (m_total_seconds / TrailMinStep);
     m_vertexes[m_append_offset] = Vertex { .position = pos / AU, .color = m_color };
 
     m_append_offset++;

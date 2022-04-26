@@ -39,6 +39,9 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
 
         m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
         m_color_control->set_size({ Length::Auto, 100.0_px });
+        m_color_control->on_change = [this](auto) {
+            m_forward_simulation_is_valid = false;
+        };
     }
     auto name_container = add_widget<Container>();
     auto& name_layout = name_container->set_layout<GUI::HorizontalBoxLayout>();
@@ -53,6 +56,9 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         m_name_textbox->set_limit(20);
         m_name_textbox->set_data_type(GUI::Textbox::TEXT);
         m_name_textbox->set_content("Planet");
+        m_name_textbox->on_change = [this](auto) {
+            m_forward_simulation_is_valid = false;
+        };
     }
     m_submit_container = add_widget<Container>();
     m_submit_container->set_size({ Length::Auto, 72.0_px });
@@ -94,8 +100,8 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         m_toggle_orbit_direction_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/orbitDirectionButton.png"));
         m_toggle_orbit_direction_button->set_toggleable(true);
         m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
-        m_toggle_orbit_direction_button->on_change = [](bool state) {
-            // TODO
+        m_toggle_orbit_direction_button->on_change = [this](bool state) {
+            m_forward_simulation_is_valid = false;
         };
         m_toggle_orbit_direction_button->set_visible(false);
 
