@@ -6,7 +6,7 @@
 
 namespace GUI {
 
-PythonREPL::PythonREPL(Container& c)
+PythonREPL::PythonREPL(WidgetTreeRoot& c)
     : Container(c) {
     auto& layout = set_layout<VerticalBoxLayout>();
     layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);

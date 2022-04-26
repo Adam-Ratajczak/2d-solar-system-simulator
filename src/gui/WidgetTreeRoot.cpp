@@ -12,12 +12,14 @@ void WidgetTreeRoot::set_focused_widget(Widget* w) {
 }
 
 void WidgetTreeRoot::draw() {
-    sf::View gui_view { sf::FloatRect(m_position, m_size) };
+    sf::View gui_view { sf::FloatRect(position(), size()) };
     m_window.setView(gui_view);
 
     if (m_needs_relayout) {
+        m_main_widget->set_size({ { size().x, Length::Unit::Px }, { size().y, Length::Unit::Px } });
+        m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
-        // m_main_widget->dump(0);
+        m_main_widget->dump(0);
         m_needs_relayout = false;
     }
     m_main_widget->do_draw(m_window);

@@ -87,10 +87,16 @@ void Widget::handle_event(Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
+        sf::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
+        m_hover = is_mouse_over(mouse_pos);
         if (m_hover && accepts_focus()) {
             set_focused();
             event.set_handled();
         }
+    }
+    else if (event.type() == sf::Event::MouseButtonReleased) {
+        sf::Vector2i mouse_pos { event.event().mouseButton.x, event.event().mouseButton.y };
+        m_hover = is_mouse_over(mouse_pos);
     }
     else if (event.type() == sf::Event::Resized)
         set_needs_relayout();
@@ -108,6 +114,10 @@ void Widget::do_draw(sf::RenderWindow& window) const {
     Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
     this->draw(window);
     Widget::draw(window);
+}
+
+sf::FloatRect Widget::rect() const {
+    return { position() + m_widget_tree_root.position(), size() };
 }
 
 void Widget::do_relayout() {

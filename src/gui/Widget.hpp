@@ -70,7 +70,7 @@ public:
 
     sf::Vector2f position() const { return m_pos; }
     sf::Vector2f size() const { return m_size; }
-    sf::FloatRect rect() const { return { m_pos, m_size }; }
+    sf::FloatRect rect() const;
     LengthVector input_position() const { return m_expected_pos; }
     LengthVector input_size() const { return m_input_size; }
 

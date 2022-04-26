@@ -4,6 +4,7 @@
 #include "Console.hpp"
 #include "Container.hpp"
 #include "Textbox.hpp"
+#include "Widget.hpp"
 
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
@@ -14,7 +15,7 @@ namespace GUI {
 
 class PythonREPL : public Container {
 public:
-    explicit PythonREPL(Container& c);
+    explicit PythonREPL(WidgetTreeRoot& c);
 
 private:
     virtual void handle_event(Event&) override;

@@ -1,8 +1,11 @@
 #include "Application.hpp"
 
+#include "../gfx/ClipViewScope.hpp"
 #include "../gfx/RoundedEdgeRectangleShape.hpp"
 #include "WidgetTreeRoot.hpp"
 
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -24,11 +27,66 @@ Application::Application(sf::RenderWindow& wnd)
     fixed_width_font.loadFromFile("../assets/fonts/SourceCodePro-Regular.otf");
 }
 
+sf::Event Application::transform_event(sf::Vector2f offset, sf::Event event) const {
+    if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
+        event.mouseButton.x -= offset.x;
+        event.mouseButton.y -= offset.y;
+    }
+    else if (event.type == sf::Event::MouseMoved) {
+        event.mouseMove.x -= offset.x;
+        event.mouseMove.y -= offset.y;
+    }
+
+    return event;
+}
+
 void Application::handle_events() {
     sf::Event event;
     while (window().pollEvent(event)) {
+        if (event.type == sf::Event::MouseButtonPressed) {
+            m_focused_tool_window = nullptr;
+            sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
+            for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
+                auto& tool_window = **it;
+                if (tool_window.rect().contains(position)) {
+                    m_focused_tool_window = &tool_window;
+                    break;
+                }
+            }
+        }
+
+        if (m_focused_tool_window) {
+            Event gui_event_relative_to_tool_window { transform_event(m_focused_tool_window->position(), event) };
+            m_focused_tool_window->handle_event(gui_event_relative_to_tool_window);
+            if (event.type != sf::Event::Closed)
+                continue;
+        }
+        for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
+            auto& tool_window = **it;
+            Event gui_event_relative_to_tool_window { transform_event(tool_window.position(), event) };
+            if (event.type == sf::Event::MouseMoved) {
+                tool_window.handle_event(gui_event_relative_to_tool_window);
+                break;
+            }
+        }
+
         Event gui_event(event);
         handle_event(gui_event);
+    }
+}
+
+void Application::draw() {
+    WidgetTreeRoot::draw();
+    for (auto& tool_window : m_tool_windows) {
+        sf::RectangleShape rs_border(tool_window->size());
+        rs_border.setPosition(tool_window->position());
+        rs_border.setFillColor(sf::Color::Transparent);
+        rs_border.setOutlineColor(tool_window.get() == m_focused_tool_window ? sf::Color::Green : sf::Color::Red);
+        rs_border.setOutlineThickness(-1);
+        window().draw(rs_border);
+
+        Gfx::ClipViewScope scope(window(), tool_window->rect(), Gfx::ClipViewScope::Mode::Override);
+        tool_window->draw();
     }
 }
 
@@ -51,6 +109,13 @@ void Application::draw_notification(Notification const& notification, float y) c
 
 void Application::spawn_notification(std::string message, NotificationLevel level) {
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
+}
+
+ToolWindow& Application::open_tool_window() {
+    auto tool_window = std::make_unique<ToolWindow>(window());
+    auto tool_window_ptr = tool_window.get();
+    m_tool_windows.push_back(std::move(tool_window));
+    return *tool_window_ptr;
 }
 
 }

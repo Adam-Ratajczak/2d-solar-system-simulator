@@ -27,6 +27,7 @@ public:
         auto widget = std::make_shared<T>(*this, std::forward<Args>(args)...);
         auto widget_ptr = widget.get();
         m_main_widget = std::move(widget);
+        m_needs_relayout = true;
         return *widget_ptr;
     }
 
@@ -38,25 +39,21 @@ public:
     }
     void remove_tooltip(Tooltip* t);
 
-    virtual void handle_event(Event&);
     virtual void draw();
+    void handle_event(Event&);
     void update() { m_main_widget->do_update(); }
 
-    sf::Vector2f position() const { return m_position; }
-    sf::Vector2f size() const { return m_size; }
+    virtual sf::Vector2f position() const = 0;
+    virtual sf::Vector2f size() const = 0;
+    sf::FloatRect rect() const { return { position(), size() }; }
 
 protected:
-    void set_position(sf::Vector2f position) { m_position = position; }
-    void set_size(sf::Vector2f size) { m_size = size; }
-
 private:
     sf::RenderWindow& m_window;
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
     std::list<std::unique_ptr<Tooltip>> m_tooltips;
-    sf::Vector2f m_position;
-    sf::Vector2f m_size;
 };
 
 }

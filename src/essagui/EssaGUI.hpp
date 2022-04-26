@@ -45,7 +45,6 @@ public:
 
 private:
     World& m_world;
-    virtual void relayout() override;
     virtual void update() override;
 
     SimulationView* m_simulation_view = nullptr;

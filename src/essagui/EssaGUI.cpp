@@ -1,7 +1,7 @@
 #include "EssaGUI.hpp"
 
-#include "EssaSettings.hpp"
 #include "../gui/PythonREPL.hpp"
+#include "EssaSettings.hpp"
 #include "ModifyObject.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -29,9 +29,11 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     };
     home_button->set_tooltip_text("Reset coordinates");
 
-    auto python_repl = add_widget<GUI::PythonREPL>();
-    python_repl->set_position({ 600.0_px, 10.0_px_o });
-    python_repl->set_size({ 700.0_px, 250.0_px });
+    auto& python_repl_window = GUI::Application::the().open_tool_window();
+    // TODO: Support moving ToolWindows
+    python_repl_window.set_position({ 600, 700 });
+    python_repl_window.set_size({ 700, 250 });
+    auto& python_repl = python_repl_window.set_main_widget<GUI::PythonREPL>();
 
     m_world.m_simulation_view = m_simulation_view;
 
@@ -77,12 +79,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     }
 }
 
-void EssaGUI::relayout() {
-    set_raw_size(sf::Vector2f(window().getSize()));
-    // std::cout << m_create_object_gui.get() << "\n";
-    Container::relayout();
-}
-
 void EssaGUI::update() {
     m_focused_object_info->update_from_object(m_simulation_view->focused_object());
 
@@ -111,7 +107,7 @@ void EssaGUI::handle_event(GUI::Event& event) {
     }
 }
 
-void EssaGUI::m_pause_simulation(bool state){
+void EssaGUI::m_pause_simulation(bool state) {
     m_simulation_view->change_speed(!state);
     if (!state) {
         m_create_object_gui->set_new_object(nullptr);
