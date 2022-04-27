@@ -30,6 +30,7 @@ public:
     void spawn_notification(std::string message, NotificationLevel);
 
     ToolWindow& open_tool_window(sf::String title);
+    ToolWindow* focused_tool_window() const { return m_focused_tool_window; }
 
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }

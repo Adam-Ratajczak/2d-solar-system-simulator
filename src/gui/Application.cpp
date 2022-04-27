@@ -90,31 +90,8 @@ void Application::handle_events() {
 
 void Application::draw() {
     WidgetTreeRoot::draw();
-    for (auto& tool_window : m_tool_windows) {
-        auto color = tool_window.get() == m_focused_tool_window ? sf::Color(160, 160, 160, 100) : sf::Color(127, 127, 127, 100);
-
-        RoundedEdgeRectangleShape rs_titlebar({ tool_window->size().x + 2, ToolWindow::TitleBarSize }, 5);
-        rs_titlebar.set_border_radius_bottom_left(0);
-        rs_titlebar.set_border_radius_bottom_right(0);
-        rs_titlebar.setPosition(tool_window->position() - sf::Vector2f(1, ToolWindow::TitleBarSize));
-        rs_titlebar.setFillColor(color);
-        window().draw(rs_titlebar);
-
-        sf::Text text(tool_window->title(), font, 15);
-        text.setPosition(tool_window->position() + sf::Vector2f(10, 4 - ToolWindow::TitleBarSize));
-        window().draw(text);
-
-        sf::RectangleShape rs_border(tool_window->size() - sf::Vector2f(0, 1));
-        rs_border.setPosition(tool_window->position() + sf::Vector2f(0, 1));
-        rs_border.setFillColor(sf::Color::Transparent);
-        rs_border.setOutlineColor(color);
-        rs_border.setOutlineThickness(1);
-        window().draw(rs_border);
-        {
-            Gfx::ClipViewScope scope(window(), tool_window->rect(), Gfx::ClipViewScope::Mode::Override);
-            tool_window->draw();
-        }
-    }
+    for (auto& tool_window : m_tool_windows)
+        tool_window->draw();
 }
 
 void Application::draw_notification(Notification const& notification, float y) const {

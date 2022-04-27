@@ -24,6 +24,7 @@ public:
     sf::FloatRect titlebar_rect() const { return { position() - sf::Vector2f(0, TitleBarSize), { size().x, TitleBarSize } }; }
 
     void handle_event(Event&);
+    virtual void draw() override;
 
 private:
     sf::Vector2f m_position;
