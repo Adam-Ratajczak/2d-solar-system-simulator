@@ -20,21 +20,20 @@ ToolWindow::ToolWindow(sf::RenderWindow& wnd)
 }
 
 void ToolWindow::handle_event(Event& event) {
+    sf::Vector2f mouse_position { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
+    mouse_position += position();
+    
     float titlebar_button_position_x = position().x + size().x - TitleBarSize;
     for (auto& button : m_titlebar_buttons) {
         sf::FloatRect rect { { titlebar_button_position_x, position().y - TitleBarSize }, { TitleBarSize, TitleBarSize } };
 
         if (event.type() == sf::Event::MouseButtonPressed) {
-            sf::Vector2f mouse_position { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
-            mouse_position += position();
             if (rect.contains(mouse_position)) {
                 button.mousedown = true;
                 button.hovered = true;
             }
         }
         else if (event.type() == sf::Event::MouseButtonReleased) {
-            sf::Vector2f mouse_position { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
-            mouse_position += position();
             button.mousedown = true;
             if (rect.contains(mouse_position)) {
                 assert(button.on_click);
@@ -42,8 +41,6 @@ void ToolWindow::handle_event(Event& event) {
             }
         }
         else if (event.type() == sf::Event::MouseMoved) {
-            sf::Vector2f mouse_position { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
-            mouse_position += position();
             button.hovered = rect.contains(mouse_position);
         }
 
@@ -51,8 +48,6 @@ void ToolWindow::handle_event(Event& event) {
     }
 
     if (event.type() == sf::Event::MouseButtonPressed) {
-        sf::Vector2f mouse_position { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
-        mouse_position += position();
         if (titlebar_rect().contains(mouse_position)) {
             m_dragging = true;
             m_drag_position = mouse_position;
