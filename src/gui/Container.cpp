@@ -1,6 +1,5 @@
 #include "Container.hpp"
 
-#include "../gfx/ClipViewScope.hpp"
 #include "Application.hpp"
 
 #include <cassert>
@@ -161,7 +160,6 @@ void Container::do_relayout() {
 
 void Container::do_draw(sf::RenderWindow& window) const {
     Widget::do_draw(window);
-    Gfx::ClipViewScope scope(window, rect(), Gfx::ClipViewScope::Mode::Intersect);
     for (auto const& w : m_widgets) {
         if (w->is_visible())
             w->do_draw(window);
