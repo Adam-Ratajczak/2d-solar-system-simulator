@@ -123,4 +123,16 @@ ToolWindow& Application::open_tool_window(sf::String title) {
     return *tool_window_ptr;
 }
 
+void Application::update() {
+    WidgetTreeRoot::update();
+    std::erase_if(m_tool_windows, [&](auto& wnd) {
+        if (wnd->is_closed()) {
+            if (wnd.get() == m_focused_tool_window)
+                m_focused_tool_window = nullptr;
+            return true;
+        }
+        return false;
+    });
+}
+
 }

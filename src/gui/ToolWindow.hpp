@@ -6,8 +6,7 @@ namespace GUI {
 
 class ToolWindow : public WidgetTreeRoot {
 public:
-    ToolWindow(sf::RenderWindow& wnd)
-        : WidgetTreeRoot(wnd) { }
+    explicit ToolWindow(sf::RenderWindow& wnd);
 
     static constexpr auto TitleBarSize = 28;
 
@@ -26,12 +25,24 @@ public:
     void handle_event(Event&);
     virtual void draw() override;
 
+    void close() { m_closed = true; }
+    bool is_closed() const { return m_closed; }
+
 private:
     sf::Vector2f m_position;
     sf::Vector2f m_size;
     sf::String m_string;
     bool m_dragging = false;
     sf::Vector2f m_drag_position;
+    bool m_closed = false;
+
+    struct TitlebarButton {
+        std::string text;
+        std::function<void()> on_click;
+        bool hovered = false;
+        bool mousedown = false;
+    };
+    std::vector<TitlebarButton> m_titlebar_buttons;
 };
 
 }

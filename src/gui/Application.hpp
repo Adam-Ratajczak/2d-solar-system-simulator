@@ -19,6 +19,7 @@ public:
 
     virtual void draw() override;
     void handle_events();
+    virtual void update() override;
 
     sf::Font font;
     sf::Font bold_font;

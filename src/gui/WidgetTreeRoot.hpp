@@ -41,7 +41,7 @@ public:
 
     virtual void draw();
     void handle_event(Event&);
-    void update() { m_main_widget->do_update(); }
+    virtual void update() { m_main_widget->do_update(); }
 
     virtual sf::Vector2f position() const = 0;
     virtual sf::Vector2f size() const = 0;
