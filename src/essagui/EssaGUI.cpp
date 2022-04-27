@@ -29,12 +29,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     };
     home_button->set_tooltip_text("Reset coordinates");
 
-    auto& python_repl_window = GUI::Application::the().open_tool_window("PySSA");
-    // TODO: Support moving ToolWindows
-    python_repl_window.set_position({ 600, 750 });
-    python_repl_window.set_size({ 700, 250 });
-    auto& python_repl = python_repl_window.set_main_widget<GUI::PythonREPL>();
-
     m_world.m_simulation_view = m_simulation_view;
 
     auto menu = add_widget<GUI::SettingsMenu>();
@@ -75,6 +69,17 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
         modify.on_toggle = [this](bool state) {
             m_pause_simulation(state);
+        };
+    }
+
+    {
+        auto& pyssa = menu->add_entry(load_image("../assets/python.png"), "PySSA (Python scripting)", GUI::SettingsMenu::Expandable::No);
+        pyssa.on_toggle = [](bool) {
+            auto& python_repl_window = GUI::Application::the().open_tool_window("PySSA");
+            // TODO: Support moving ToolWindows
+            python_repl_window.set_position({ 600, 750 });
+            python_repl_window.set_size({ 700, 250 });
+            auto& python_repl = python_repl_window.set_main_widget<GUI::PythonREPL>();
         };
     }
 }

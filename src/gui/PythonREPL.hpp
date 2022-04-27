@@ -20,7 +20,6 @@ public:
 private:
     virtual void handle_event(Event&) override;
     Console* m_console {};
-    ArrowButton* m_hide_show_button {};
     Textbox* m_textbox {};
 
     std::vector<std::string> m_commands;

@@ -9,20 +9,7 @@ namespace GUI {
 PythonREPL::PythonREPL(WidgetTreeRoot& c)
     : Container(c) {
     auto& layout = set_layout<VerticalBoxLayout>();
-    layout.set_content_alignment(BoxLayout::ContentAlignment::BoxEnd);
-    // TODO: Make this window arbitrarily resizable.
-    m_hide_show_button = add_widget<ArrowButton>();
-    m_hide_show_button->set_arrow_type(ArrowButton::ArrowType::TOPARROW);
-    m_hide_show_button->set_size({ Length::Auto, 20.0_px });
-    m_hide_show_button->set_toggleable(true);
-    m_hide_show_button->on_change = [this](bool b) {
-        m_console->set_visible(b);
-        m_hide_show_button->set_arrow_type(b ? ArrowButton::ArrowType::BOTTOMARROW : ArrowButton::ArrowType::TOPARROW);
-    };
-    m_hide_show_button->set_display_attributes(sf::Color(80, 80, 80), {}, {});
-    m_hide_show_button->set_active_display_attributes(sf::Color(80, 80, 80), {}, {});
     m_console = add_widget<Console>();
-    m_console->set_visible(false);
     m_textbox = add_widget<Textbox>();
     m_textbox->set_size({ { 100, Length::Percent }, 40.0_px });
     m_textbox->set_position({ 0.0_px, 0.0_px_o });
@@ -53,7 +40,6 @@ void PythonREPL::handle_event(Event& event) {
                 m_console->append_line({ .color = sf::Color(200, 200, 200), .text = result.repr() });
             }
             m_textbox->set_content("");
-            m_hide_show_button->set_active(true);
             event.set_handled();
         }
         else if (event.event().key.code == sf::Keyboard::Up) {
