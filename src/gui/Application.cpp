@@ -58,9 +58,14 @@ void Application::handle_events() {
         if (m_focused_tool_window) {
             Event gui_event_relative_to_tool_window { transform_event(m_focused_tool_window->position(), event) };
             m_focused_tool_window->handle_event(gui_event_relative_to_tool_window);
-            if (event.type != sf::Event::Closed)
+            bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
+                && !m_focused_tool_window->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+            if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || scroll_outside_window))
                 continue;
         }
+
+        bool should_pass_event_to_main_window = true;
+
         for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
             auto& tool_window = **it;
             Event gui_event_relative_to_tool_window { transform_event(tool_window.position(), event) };
@@ -68,10 +73,18 @@ void Application::handle_events() {
                 tool_window.handle_event(gui_event_relative_to_tool_window);
                 break;
             }
+
+            bool scroll_on_window = event.type == sf::Event::MouseWheelScrolled
+                && tool_window.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+
+            if (scroll_on_window)
+                should_pass_event_to_main_window = false;
         }
 
-        Event gui_event(event);
-        handle_event(gui_event);
+        if (should_pass_event_to_main_window) {
+            Event gui_event(event);
+            handle_event(gui_event);
+        }
     }
 }
 
