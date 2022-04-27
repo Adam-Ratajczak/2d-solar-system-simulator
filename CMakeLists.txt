@@ -52,6 +52,7 @@ add_executable(
     src/gui/Textbox.cpp
     src/gui/TextButton.cpp
     src/gui/Textfield.cpp
+    src/gui/ToolWindow.cpp
     src/gui/ValueSlider.cpp
     src/gui/Widget.cpp
     src/gui/WidgetTreeRoot.cpp
