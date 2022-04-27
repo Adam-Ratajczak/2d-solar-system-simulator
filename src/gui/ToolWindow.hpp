@@ -37,7 +37,6 @@ private:
     bool m_closed = false;
 
     struct TitlebarButton {
-        std::string text;
         std::function<void()> on_click;
         bool hovered = false;
         bool mousedown = false;

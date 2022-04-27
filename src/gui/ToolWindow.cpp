@@ -13,7 +13,7 @@ namespace GUI {
 
 ToolWindow::ToolWindow(sf::RenderWindow& wnd)
     : WidgetTreeRoot(wnd) {
-    m_titlebar_buttons.push_back(TitlebarButton { .text = "X",
+    m_titlebar_buttons.push_back(TitlebarButton {
         .on_click = [this]() {
             close();
         } });
@@ -97,18 +97,33 @@ void ToolWindow::draw() {
     rs_titlebar.setFillColor(color);
     window().draw(rs_titlebar);
 
-    sf::Text text(title(), Application::the().font, 15);
-    text.setPosition(position() + sf::Vector2f(10, 4 - ToolWindow::TitleBarSize));
-    window().draw(text);
+    sf::Text title_text(title(), Application::the().font, 15);
+    title_text.setPosition(position() + sf::Vector2f(10, 4 - ToolWindow::TitleBarSize));
+    window().draw(title_text);
 
-    float titlebar_button_position_x = position().x + size().x - TitleBarSize;
+    float titlebar_button_position_x = position().x + size().x - TitleBarSize + 1;
     for (auto& button : m_titlebar_buttons) {
-        sf::RectangleShape tbb_background {
-            { TitleBarSize, TitleBarSize }
+        // FIXME: For now, there is only a close button. If this becomes not
+        //        a case anymore, find a better place for this rendering code.
+        //        (And make it more generic)
+        RoundedEdgeRectangleShape tbb_background {
+            { TitleBarSize, TitleBarSize }, 0
         };
-        tbb_background.setFillColor(button.hovered ? sf::Color(160, 160, 160, 100) : sf::Color(color.r, color.g, color.b, 50));
+        tbb_background.set_border_radius_top_right(5);
+        tbb_background.setFillColor(button.hovered ? sf::Color(240, 80, 80, 100) : sf::Color(200, 50, 50, 100));
         tbb_background.setPosition(titlebar_button_position_x, position().y - TitleBarSize);
         window().draw(tbb_background);
+
+        sf::Vector2f button_center { titlebar_button_position_x + TitleBarSize / 2.f, position().y - TitleBarSize / 2.f };
+
+        sf::VertexArray varr(sf::Lines, 4);
+        sf::Color const CloseButtonColor { 200, 200, 200 };
+        varr[0] = sf::Vertex(button_center - sf::Vector2f(5, 5), CloseButtonColor);
+        varr[1] = sf::Vertex(button_center + sf::Vector2f(5, 5), CloseButtonColor);
+        varr[2] = sf::Vertex(button_center - sf::Vector2f(-5, 5), CloseButtonColor);
+        varr[3] = sf::Vertex(button_center + sf::Vector2f(-5, 5), CloseButtonColor);
+        window().draw(varr);
+
         titlebar_button_position_x -= TitleBarSize;
     }
 
