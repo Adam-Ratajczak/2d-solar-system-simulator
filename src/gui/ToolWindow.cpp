@@ -20,9 +20,18 @@ void ToolWindow::handle_event(Event& event) {
         mouse_position += position();
         if (m_dragging) {
             auto delta = mouse_position - m_drag_position;
-            std::cout << delta.x << "," << delta.y << std::endl;
             m_position += delta;
             m_drag_position = mouse_position;
+
+            if (m_position.y < TitleBarSize)
+                m_position.y = TitleBarSize;
+            if (m_position.y > window().getSize().y)
+                m_position.y = window().getSize().y;
+            if (m_position.x < -size().x + TitleBarSize)
+                m_position.x = -size().x + TitleBarSize;
+            if (m_position.x > window().getSize().x - TitleBarSize)
+                m_position.x = window().getSize().x - TitleBarSize;
+
             return;
         }
     }
