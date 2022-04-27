@@ -19,7 +19,7 @@ void WidgetTreeRoot::draw() {
         m_main_widget->set_size({ { size().x, Length::Unit::Px }, { size().y, Length::Unit::Px } });
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
-        m_main_widget->dump(0);
+        //m_main_widget->dump(0);
         m_needs_relayout = false;
     }
     m_main_widget->do_draw(m_window);
