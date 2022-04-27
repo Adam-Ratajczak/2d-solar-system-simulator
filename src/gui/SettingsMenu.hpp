@@ -14,9 +14,18 @@ public:
         ImageButton* button {};
         Container* settings_container {};
         std::function<void(bool)> on_toggle;
+
+        MenuEntry(ImageButton* button_, Container* container_)
+            : button(button_)
+            , settings_container(container_) { }
     };
 
-    MenuEntry& add_entry(sf::Image const& image, std::string tooltip);
+    enum class Expandable {
+        Yes,
+        No
+    };
+
+    MenuEntry& add_entry(sf::Image const& image, std::string tooltip, Expandable = Expandable::Yes);
 
 private:
     virtual bool isolated_focus() const override { return true; }
