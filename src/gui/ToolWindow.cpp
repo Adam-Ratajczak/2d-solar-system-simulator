@@ -8,8 +8,8 @@
 
 #include <SFML/Window/Cursor.hpp>
 #include <cassert>
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 namespace GUI {
 
@@ -22,127 +22,131 @@ ToolWindow::ToolWindow(sf::RenderWindow& wnd)
 }
 
 void ToolWindow::handle_event(Event& event) {
-    sf::Vector2f mouse_position { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
-    mouse_position += position();
+    if (event.is_mouse_related()) {
+        sf::Vector2f mouse_position = event.mouse_position();
+        mouse_position += position();
 
-    bool bottom = std::fabs(mouse_position.y - position().y - size().y) < ResizeRadius;
+        if (event.type() == sf::Event::MouseMoved) {
+            bool bottom = mouse_position.y > position().y + size().y - ResizeRadius;
+            bool is_in_window_y_range = mouse_position.y > position().y - TitleBarSize - ResizeRadius && mouse_position.y < position().y + size().y + ResizeRadius;
 
-    sf::Cursor cursor;
-    if(std::fabs(mouse_position.x - position().x) < ResizeRadius && bottom){
-        m_resize_mode = Resize::LEFTBOTTOM;
-        cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
+            sf::Cursor cursor;
+            if (std::fabs(mouse_position.x - position().x) < ResizeRadius && is_in_window_y_range) {
+                if (bottom) {
+                    m_resize_mode = Resize::LEFTBOTTOM;
+                    // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
+                    cursor.loadFromSystem(sf::Cursor::SizeAll);
+                }
+                else {
+                    m_resize_mode = Resize::LEFT;
+                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+                }
+            }
+            else if (std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius && is_in_window_y_range) {
+                if (bottom) {
+                    m_resize_mode = Resize::RIGHTBOTTOM;
+                    // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
+                    cursor.loadFromSystem(sf::Cursor::SizeAll);
+                }
+                else {
+                    m_resize_mode = Resize::RIGHT;
+                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+                }
+            }
+            else if (bottom) {
+                m_resize_mode = Resize::BOTTOM;
+                cursor.loadFromSystem(sf::Cursor::SizeVertical);
+            }
+            else {
+                m_resize_mode = Resize::DEFAULT;
+                cursor.loadFromSystem(sf::Cursor::Arrow);
+            }
+            window().setMouseCursor(cursor);
+        }
 
-        window().setMouseCursor(cursor);
-    }else if(std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius && bottom){
-        m_resize_mode = Resize::RIGHTBOTTOM;
-        cursor.loadFromSystem(sf::Cursor::SizeTopLeftBottomRight);
+        float titlebar_button_position_x = position().x + size().x - TitleBarSize;
+        for (auto& button : m_titlebar_buttons) {
+            sf::FloatRect rect { { titlebar_button_position_x, position().y - TitleBarSize }, { TitleBarSize, TitleBarSize } };
 
-        window().setMouseCursor(cursor);
-    }else if(std::fabs(mouse_position.x - position().x) < ResizeRadius){
-        m_resize_mode = Resize::LEFT;
-        cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+            if (event.type() == sf::Event::MouseButtonPressed) {
+                if (rect.contains(mouse_position)) {
+                    button.mousedown = true;
+                    button.hovered = true;
+                }
+            }
+            else if (event.type() == sf::Event::MouseButtonReleased) {
+                button.mousedown = true;
+                if (rect.contains(mouse_position)) {
+                    assert(button.on_click);
+                    button.on_click();
+                }
+            }
+            else if (event.type() == sf::Event::MouseMoved) {
+                button.hovered = rect.contains(mouse_position);
+            }
 
-        window().setMouseCursor(cursor);
-    }else if(bottom){
-        m_resize_mode = Resize::BOTTOM;
-        cursor.loadFromSystem(sf::Cursor::SizeVertical);
-
-        window().setMouseCursor(cursor);
-    }else if(std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius){
-        m_resize_mode = Resize::RIGHT;
-        cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-
-        window().setMouseCursor(cursor);
-    }else {
-        m_resize_mode = Resize::DEFAULT;
-        cursor.loadFromSystem(sf::Cursor::Arrow);
-
-        window().setMouseCursor(cursor);
-    }
-    mouse_position = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
-    mouse_position += position();
-    
-    float titlebar_button_position_x = position().x + size().x - TitleBarSize;
-    for (auto& button : m_titlebar_buttons) {
-        sf::FloatRect rect { { titlebar_button_position_x, position().y - TitleBarSize }, { TitleBarSize, TitleBarSize } };
+            titlebar_button_position_x -= TitleBarSize;
+        }
 
         if (event.type() == sf::Event::MouseButtonPressed) {
-            if (rect.contains(mouse_position)) {
-                button.mousedown = true;
-                button.hovered = true;
+            if (titlebar_rect().contains(mouse_position)) {
+                m_dragging = true;
+                m_drag_position = mouse_position;
+                return;
             }
-        }
-        else if (event.type() == sf::Event::MouseButtonReleased) {
-            button.mousedown = true;
-            if (rect.contains(mouse_position)) {
-                assert(button.on_click);
-                button.on_click();
+            else {
+                m_resizing = true;
             }
         }
         else if (event.type() == sf::Event::MouseMoved) {
-            button.hovered = rect.contains(mouse_position);
-        }
+            sf::Vector2f mouse_position { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+            mouse_position += position();
 
-        titlebar_button_position_x -= TitleBarSize;
-    }
+            if (m_dragging) {
+                auto delta = mouse_position - m_drag_position;
+                m_position += delta;
+                m_drag_position = mouse_position;
 
-    if (event.type() == sf::Event::MouseButtonPressed) {
-        if (titlebar_rect().contains(mouse_position)) {
-            m_dragging = true;
-            m_drag_position = mouse_position;
-            return;
-        }else {
-            m_resizing = true;
-        }
-    }
-    else if (event.type() == sf::Event::MouseMoved) {
-        sf::Vector2f mouse_position { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
-        mouse_position += position();
+                if (m_position.y < TitleBarSize)
+                    m_position.y = TitleBarSize;
+                if (m_position.y > window().getSize().y)
+                    m_position.y = window().getSize().y;
+                if (m_position.x < -size().x + TitleBarSize)
+                    m_position.x = -size().x + TitleBarSize;
+                if (m_position.x > window().getSize().x - TitleBarSize)
+                    m_position.x = window().getSize().x - TitleBarSize;
 
-        if (m_dragging) {
-            auto delta = mouse_position - m_drag_position;
-            m_position += delta;
-            m_drag_position = mouse_position;
-
-            if (m_position.y < TitleBarSize)
-                m_position.y = TitleBarSize;
-            if (m_position.y > window().getSize().y)
-                m_position.y = window().getSize().y;
-            if (m_position.x < -size().x + TitleBarSize)
-                m_position.x = -size().x + TitleBarSize;
-            if (m_position.x > window().getSize().x - TitleBarSize)
-                m_position.x = window().getSize().x - TitleBarSize;
-
-            return;
-        }else if(m_resizing){
-            sf::Cursor cursor;
-            switch (m_resize_mode) {
+                return;
+            }
+            else if (m_resizing) {
+                sf::Cursor cursor;
+                switch (m_resize_mode) {
                 case Resize::LEFT:
-                
-                break;
+
+                    break;
                 case Resize::LEFTBOTTOM:
-                
-                break;
+
+                    break;
                 case Resize::BOTTOM:
-                
-                break;
+
+                    break;
                 case Resize::RIGHTBOTTOM:
-                
-                break;
+
+                    break;
                 case Resize::RIGHT:
-                
-                break;
+
+                    break;
                 case Resize::DEFAULT:
 
-                break;
+                    break;
+                }
             }
         }
+        else if (event.type() == sf::Event::MouseButtonReleased) {
+            m_dragging = false;
+            m_resizing = false;
+        }
     }
-    else if (event.type() == sf::Event::MouseButtonReleased) {
-        m_dragging = false;
-        m_resizing = false;
-    }
-
     WidgetTreeRoot::handle_event(event);
 }
 
