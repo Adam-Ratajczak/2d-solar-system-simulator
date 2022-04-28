@@ -164,6 +164,7 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
         type.tp_init = [](PyObject* self, PyObject* args, PyObject* kwargs) {
             auto object = (PythonType*)self;
             object->ptr = T::create_for_python(Object::share(args), Object::share(kwargs));
+            object->ptr->m_wrappers.insert(object);
             if (!object->ptr)
                 return -1;
             object->owned_by_python = true;
