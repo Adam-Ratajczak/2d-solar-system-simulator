@@ -46,12 +46,20 @@ void Application::handle_events() {
         if (event.type == sf::Event::MouseButtonPressed) {
             m_focused_tool_window = nullptr;
             sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
+            decltype(m_tool_windows)::iterator new_focused_it = m_tool_windows.end();
             for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
                 auto& tool_window = **it;
                 if (tool_window.full_rect().contains(position)) {
                     m_focused_tool_window = &tool_window;
+                    new_focused_it = it.base();
                     break;
                 }
+            }
+            new_focused_it--;
+            if (new_focused_it != m_tool_windows.end()) {
+                auto ptr = std::move(*new_focused_it);
+                m_tool_windows.erase(new_focused_it);
+                m_tool_windows.push_back(std::move(ptr));
             }
         }
 
