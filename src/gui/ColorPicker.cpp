@@ -59,4 +59,10 @@ sf::Color ColorPicker::value() const {
     };
 }
 
+void ColorPicker::set_value(sf::Color color){
+    m_r_slider->set_value(color.r);
+    m_g_slider->set_value(color.g);
+    m_b_slider->set_value(color.b);
+}
+
 }

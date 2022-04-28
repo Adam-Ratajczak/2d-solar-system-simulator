@@ -19,7 +19,6 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_prev_drag_pos = m_prev_mouse_pos;
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             m_drag_mode = DragMode::Pan;
-            on_change_focus(nullptr);
 
             m_world.for_each_object([&](Object& obj) {
                 auto obj_pos_screen = world_to_screen(obj.render_position());
@@ -28,7 +27,10 @@ void SimulationView::handle_event(GUI::Event& event) {
                 if (distance < 30){
                     m_focused_object = &obj;
                     on_change_focus(m_focused_object);
+                    return;
                 }
+
+                on_change_focus(nullptr);
             });
 
             if (m_measure == Measure::Coords)

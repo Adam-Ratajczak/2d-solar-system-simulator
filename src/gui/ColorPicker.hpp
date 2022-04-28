@@ -23,6 +23,7 @@ public:
     explicit ColorPicker(Container& c);
 
     sf::Color value() const;
+    void set_value(sf::Color color);
 
     std::function<void(sf::Color)> on_change;
 

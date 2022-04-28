@@ -54,8 +54,9 @@ private:
     GUI::ImageButton* m_require_orbit_point_button = nullptr;
 
     World m_forward_simulated_world;
-    std::unique_ptr<Object> m_new_object;
     Vector3 m_new_object_pos;
+    
+    std::unique_ptr<Object> m_new_object;
     
     int m_saved_speed = 0;
     bool m_forward_simulation_is_valid = true;
@@ -72,7 +73,9 @@ private:
     std::shared_ptr<Container> m_create_object_from_orbit_gui(Container& parent);
     std::shared_ptr<Container> m_create_submit_container(Container& parent);
     std::shared_ptr<Container> m_modify_submit_container(Container& parent);
+
     void m_create_name_and_color_container();
+    void m_update_info_from_focused_object();
 
     std::unique_ptr<Object> m_create_object_from_params() const;
     std::unique_ptr<Object> m_create_object_from_orbit() const;

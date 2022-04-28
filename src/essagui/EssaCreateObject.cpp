@@ -6,6 +6,7 @@
 #include <memory>
 
 #include <iostream>
+#include <string>
 
 EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation_view)
     : GUI::Container(c)
@@ -45,14 +46,35 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     mode_specific_submit_container->add_created_widget(m_submit_modify_container);
 
     m_simulation_view.on_change_focus = [this](Object* obj){
-        if(obj == nullptr){
+        m_to_modify = obj;
+        if(obj == 0){
             m_submit_create_container->set_visible(true);
             m_submit_modify_container->set_visible(false);
         }else{
             m_submit_create_container->set_visible(false);
             m_submit_modify_container->set_visible(true);
+            
+            m_update_info_from_focused_object();
         }
     };
+}
+
+void EssaCreateObject::m_update_info_from_focused_object(){
+    m_radius_control->set_value(m_to_modify->radius() / 1000);
+    m_velocity_control->set_value(m_to_modify->vel().magnitude());
+
+    m_new_object_pos.x = m_to_modify->pos().x;
+    m_new_object_pos.y = m_to_modify->pos().y;
+    m_y_position_control->set_value(m_to_modify->pos().z);
+    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.x));
+    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z));
+
+    double mass = m_to_modify->mass();
+    m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));
+    m_mass_textbox->set_content(std::to_string(mass / std::pow(10, std::log10(mass))));
+
+    // m_color_control->set_value(m_new_object->color());
+    // m_name_textbox->set_content(m_new_object->name());
 }
 
 void EssaCreateObject::m_create_name_and_color_container(){
@@ -188,6 +210,9 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_modify_submit_container(GUI:
 }
 
 void EssaCreateObject::recalculate_forward_simulation() {
+    // if(m_to_modify != nullptr)
+    //     return;
+
     if (m_automatic_orbit_calculation)
         m_new_object = m_create_object_from_orbit();
     else

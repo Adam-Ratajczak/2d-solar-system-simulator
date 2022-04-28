@@ -57,6 +57,12 @@ public:
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
+
+    Vector3 vel() const {return m_vel;}
+    Vector3 pos() const {return m_pos;}
+
+    sf::Color color() const{return m_color;}
+    
     Util::SimulationClock::time_point creation_date() const { return m_creation_date; }
 
     static void setup_python_bindings(TypeSetup);
