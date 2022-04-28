@@ -141,6 +141,12 @@ void Textbox::handle_event(Event& event) {
 
                 event.set_handled();
             } break;
+            case sf::Keyboard::A: {
+                if (event.event().key.control) {
+                    m_cursor = m_content.getSize();
+                    m_selection_start = 0;
+                }
+            }
             default:
                 break;
             }
