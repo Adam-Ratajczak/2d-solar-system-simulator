@@ -46,12 +46,12 @@ private:
 
     std::shared_ptr<Container> m_create_object_from_params_container = nullptr;
     std::shared_ptr<Container> m_create_object_from_orbit_container = nullptr;
+    std::shared_ptr<Container> m_submit_create_container = nullptr;
+    std::shared_ptr<Container> m_submit_modify_container = nullptr;
 
     GUI::ImageButton* m_toggle_unit_button = nullptr;
     GUI::ImageButton* m_toggle_orbit_direction_button = nullptr;
     GUI::ImageButton* m_require_orbit_point_button = nullptr;
-
-    Container* m_submit_container = nullptr;
 
     World m_forward_simulated_world;
     std::unique_ptr<Object> m_new_object;
@@ -67,9 +67,12 @@ private:
 
     SimulationView& m_simulation_view;
 
-    GUI::ImageButton* m_create_toggle_unit_button();
+    GUI::ImageButton* m_create_toggle_unit_button(Container& parent);
     std::shared_ptr<Container> m_create_object_from_params_gui(Container& parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(Container& parent);
+    std::shared_ptr<Container> m_create_submit_container(Container& parent);
+    std::shared_ptr<Container> m_modify_submit_container(Container& parent);
+    void m_create_name_and_color_container();
 
     std::unique_ptr<Object> m_create_object_from_params() const;
     std::unique_ptr<Object> m_create_object_from_orbit() const;

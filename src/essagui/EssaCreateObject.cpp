@@ -28,6 +28,34 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     m_create_object_from_orbit_container->set_visible(false);
     mode_specific_options_container->add_created_widget(m_create_object_from_orbit_container);
 
+    m_create_name_and_color_container();
+
+    auto mode_specific_submit_container = add_widget<Container>();
+    mode_specific_submit_container->set_size({ Length::Auto, 72.0_px });
+    mode_specific_submit_container->set_layout<GUI::BasicLayout>();
+
+    m_submit_create_container = m_create_submit_container(*mode_specific_submit_container);
+    m_submit_create_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    m_submit_create_container->set_visible(true);
+    mode_specific_submit_container->add_created_widget(m_submit_create_container);
+
+    m_submit_modify_container = m_modify_submit_container(*mode_specific_submit_container);
+    m_submit_modify_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    m_submit_modify_container->set_visible(false);
+    mode_specific_submit_container->add_created_widget(m_submit_modify_container);
+
+    m_simulation_view.on_change_focus = [this](Object* obj){
+        if(obj == nullptr){
+            m_submit_create_container->set_visible(true);
+            m_submit_modify_container->set_visible(false);
+        }else{
+            m_submit_create_container->set_visible(false);
+            m_submit_modify_container->set_visible(true);
+        }
+    };
+}
+
+void EssaCreateObject::m_create_name_and_color_container(){
     auto main_color_container = add_widget<Container>();
     main_color_container->set_size({ Length::Auto, 150.0_px });
     auto& main_color_layout = main_color_container->set_layout<GUI::VerticalBoxLayout>();
@@ -60,12 +88,15 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             m_forward_simulation_is_valid = false;
         };
     }
-    m_submit_container = add_widget<Container>();
-    m_submit_container->set_size({ Length::Auto, 72.0_px });
-    auto& submit_layout = m_submit_container->set_layout<GUI::HorizontalBoxLayout>();
+}
+
+std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI::Container& parent){
+    auto container = std::make_shared<GUI::Container>(parent);
+    container->set_size({ Length::Auto, 72.0_px });
+    auto& submit_layout = container->set_layout<GUI::HorizontalBoxLayout>();
     submit_layout.set_spacing(10);
     {
-        m_coords_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/coordsButton.png"));
+        m_coords_button = container->add_widget<GUI::ImageButton>(load_image("../assets/coordsButton.png"));
         m_coords_button->on_click = [this]() {
             if (m_automatic_orbit_calculation) {
                 m_simulation_view.start_focus_measure([&](Object* focusing) {
@@ -83,7 +114,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         };
         m_coords_button->set_tooltip_text("Set position");
 
-        auto creative_mode_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
+        auto creative_mode_button = container->add_widget<GUI::ImageButton>(load_image("../assets/toggleCreativeModeButton.png"));
         creative_mode_button->set_toggleable(true);
         creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
@@ -95,9 +126,9 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             m_automatic_orbit_calculation = state;
         };
 
-        m_toggle_unit_button = m_create_toggle_unit_button();
+        m_toggle_unit_button = m_create_toggle_unit_button(*container);
 
-        m_toggle_orbit_direction_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/orbitDirectionButton.png"));
+        m_toggle_orbit_direction_button = container->add_widget<GUI::ImageButton>(load_image("../assets/orbitDirectionButton.png"));
         m_toggle_orbit_direction_button->set_toggleable(true);
         m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
         m_toggle_orbit_direction_button->on_change = [this](bool state) {
@@ -105,7 +136,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         };
         m_toggle_orbit_direction_button->set_visible(false);
 
-        m_require_orbit_point_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/requireOrbitPointButton.png"));
+        m_require_orbit_point_button = container->add_widget<GUI::ImageButton>(load_image("../assets/requireOrbitPointButton.png"));
         m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
         m_require_orbit_point_button->on_click = [this]() {
             if (!m_new_object) {
@@ -118,9 +149,9 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             });
         };
 
-        m_submit_container->add_widget<Widget>(); // spacer
+        container->add_widget<Widget>(); // spacer
 
-        m_add_object_button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
+        m_add_object_button = container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
             if (m_automatic_orbit_calculation)
                 m_simulation_view.world().add_object(m_create_object_from_orbit());
@@ -129,6 +160,31 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             m_simulation_view.m_measured = false;
         };
     }
+
+    return container;
+}
+
+std::shared_ptr<GUI::Container> EssaCreateObject::m_modify_submit_container(GUI::Container& parent){
+    auto container = std::make_shared<GUI::Container>(parent);
+    container->set_size({ Length::Auto, 72.0_px });
+    auto& submit_layout = container->set_layout<GUI::HorizontalBoxLayout>();
+    submit_layout.set_spacing(10);
+    {
+        auto trash_button = container->add_widget<GUI::ImageButton>(load_image("../assets/trashButton.png"));
+        trash_button->on_click = [this]() {
+
+        };
+        trash_button->set_tooltip_text("Delete object");
+
+        auto modify_button = container->add_widget<GUI::ImageButton>(load_image("../assets/modifyObject.png"));
+        modify_button->set_tooltip_text("Modify object");
+
+        modify_button->on_change = [this](bool state) {
+            
+        };
+    }
+
+    return container;
 }
 
 void EssaCreateObject::recalculate_forward_simulation() {
@@ -153,8 +209,8 @@ void EssaCreateObject::recalculate_forward_simulation() {
     m_forward_simulation_is_valid = true;
 }
 
-GUI::ImageButton* EssaCreateObject::m_create_toggle_unit_button() {
-    auto button = m_submit_container->add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
+GUI::ImageButton* EssaCreateObject::m_create_toggle_unit_button(GUI::Container& parent) {
+    auto button = parent.add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
         auto vel = m_velocity_control->value();

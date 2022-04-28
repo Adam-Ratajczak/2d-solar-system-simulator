@@ -53,6 +53,8 @@ public:
         m_on_focus_measure = std::move(handler);
     }
 
+    std::function<void(Object*)> on_change_focus;
+
     void toggle_label_visibility(bool visibility) { m_show_labels = visibility; }
     bool show_labels() const { return m_show_labels; }
     void set_show_grid(bool b) { m_show_grid = b; }
