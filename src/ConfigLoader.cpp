@@ -67,7 +67,7 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
     try {
         if (keyword == "planet") {
             // FIXME: This has no overflow checking etc...
-            return std::make_unique<Object>(world,
+            return std::make_unique<Object>(
                 read_double_property("mass", 1),
                 read_double_property("radius", 1000),
                 Vector3 { read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },

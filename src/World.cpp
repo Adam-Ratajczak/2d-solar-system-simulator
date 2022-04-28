@@ -1,10 +1,10 @@
 // keep first!
 #include <GL/glew.h>
 
-#include "essagui/EssaGUI.hpp"
 #include "Object.hpp"
 #include "SimulationView.hpp"
 #include "World.hpp"
+#include "essagui/EssaGUI.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "util/SimulationClock.hpp"
@@ -19,14 +19,12 @@ World::World()
     : m_date(Util::SimulationTime::create(1990, 4, 20)) { }
 
 void World::add_object(std::unique_ptr<Object> object) {
+    object->m_world = this;
+    object->m_creation_date = m_date;
     m_object_list.push_back(std::move(object));
 
     if (m_object_history.set_time(m_date))
         m_object_history.clear_history(m_object_history.get_pos());
-
-    // for_each_object([](Object& obj) {
-    //     obj.reset_history();
-    // });
 
     m_object_history.clear_history(m_object_history.get_pos());
 }
@@ -106,7 +104,7 @@ void World::clone_for_forward_simulation(World& new_world) const {
     new_world.m_is_forward_simulated = true;
     new_world.m_simulation_view = m_simulation_view;
     for (auto& object : m_object_list)
-        new_world.add_object(object->clone_for_forward_simulation(new_world));
+        new_world.add_object(object->clone_for_forward_simulation());
 }
 
 std::ostream& operator<<(std::ostream& out, World const& world) {

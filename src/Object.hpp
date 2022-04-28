@@ -4,11 +4,11 @@
 #include "SimulationView.hpp"
 #include "Trail.hpp"
 #include "glwrapper/Sphere.hpp"
-#include "util/Units.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"
 #include "util/SimulationClock.hpp"
+#include "util/Units.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
@@ -18,7 +18,7 @@
 
 class Object : public PySSA::WrappedObject<Object> {
 public:
-    Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
+    Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
 
@@ -49,7 +49,7 @@ public:
     std::unique_ptr<Object> create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
     void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation = 0.0_rad);
 
-    std::unique_ptr<Object> clone_for_forward_simulation(World& new_world) const;
+    std::unique_ptr<Object> clone_for_forward_simulation() const;
 
     // Calculates velocity and direction so that the orbit passes through
     // the given point.
@@ -89,6 +89,7 @@ public:
     void reset_history();
 
 private:
+    friend class World;
     friend std::ostream& operator<<(std::ostream& out, Object const&);
 
     void update_closest_approaches();
@@ -121,7 +122,7 @@ private:
 
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
-    World& m_world;
+    World* m_world = nullptr;
     Vector3 m_attraction_factor;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;

@@ -144,7 +144,7 @@ void EssaCreateObject::recalculate_forward_simulation() {
 
     // We need trail of the forward simulated object but
     // the object itself will be drawn at current position.
-    auto forward_simulated_new_object = m_new_object->clone_for_forward_simulation(m_forward_simulated_world);
+    auto forward_simulated_new_object = m_new_object->clone_for_forward_simulation();
     m_forward_simulated_new_object = forward_simulated_new_object.get();
     m_forward_simulated_world.add_object(std::move(forward_simulated_new_object));
 
@@ -371,7 +371,7 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
 
     std::string name = m_name_textbox->get_content();
 
-    return std::make_unique<Object>(m_simulation_view.world(), mass, radius, pos, vel, color, name, 1000);
+    return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
 }
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {

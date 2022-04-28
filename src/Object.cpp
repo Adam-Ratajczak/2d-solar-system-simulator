@@ -22,9 +22,8 @@
 #include <utility>
 #include <vector>
 
-Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
-    : m_world(world)
-    , m_trail(std::max(2U, period * 2), color)
+Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
+    : m_trail(std::max(2U, period * 2), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
     , m_sphere(radius / AU, 36, 18)
@@ -35,9 +34,7 @@ Object::Object(World& world, double mass, double radius, Vector3 pos, Vector3 ve
     , m_vel(vel)
     , m_color(color)
     , m_name(name)
-    , m_orbit_len(period)
-    , m_creation_date(world.date()) {
-    m_trail.set_new_tickrate(m_world.simulation_seconds_per_tick());
+    , m_orbit_len(period) {
     m_trail.push_back(m_pos);
     m_sphere.set_color(m_color);
 }
@@ -84,14 +81,14 @@ void Object::update_forces_against(Object& object) {
 }
 
 void Object::update(int speed) {
-    m_trail.set_new_tickrate(m_world.simulation_seconds_per_tick());
+    m_trail.set_new_tickrate(m_world->simulation_seconds_per_tick());
 
     if (m_is_forward_simulated)
         update_closest_approaches();
 
     if (speed > 0) {
-        m_vel += m_attraction_factor * m_world.simulation_seconds_per_tick();
-        m_pos += m_vel * m_world.simulation_seconds_per_tick();
+        m_vel += m_attraction_factor * m_world->simulation_seconds_per_tick();
+        m_pos += m_vel * m_world->simulation_seconds_per_tick();
 
         if (!m_is_forward_simulated) {
             auto val = m_history.move_forward({ m_pos, m_vel });
@@ -104,8 +101,8 @@ void Object::update(int speed) {
     }
     else if (speed < 0) {
         assert(!m_is_forward_simulated);
-        m_vel -= m_attraction_factor * m_world.simulation_seconds_per_tick();
-        m_pos -= m_vel * m_world.simulation_seconds_per_tick();
+        m_vel -= m_attraction_factor * m_world->simulation_seconds_per_tick();
+        m_pos -= m_vel * m_world->simulation_seconds_per_tick();
         auto val = m_history.move_backward({ m_pos, m_vel });
 
         if (val.has_value()) {
@@ -114,7 +111,7 @@ void Object::update(int speed) {
         }
     }
 
-    if (m_world.m_simulation_view->offset_trails())
+    if (m_world->m_simulation_view->offset_trails())
         recalculate_trails_with_offset();
     else {
         m_trail.recalculate_with_offset({});
@@ -244,7 +241,7 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(m_world, mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
     result->m_ap = apogee.value();
     result->m_pe = perigee.value();
 
@@ -269,10 +266,10 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
 }
 
 void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
-    m_world.add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
+    m_world->add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
 }
 
-std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) const {
+std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
     auto brightened_color = [](sf::Color const& color) {
         return sf::Color {
             (uint8_t)std::min(255, color.r + 60),
@@ -281,7 +278,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation(World& new_world) c
             255
         };
     };
-    auto object = std::make_unique<Object>(new_world, mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 500);
+    auto object = std::make_unique<Object>(mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 500);
     object->m_is_forward_simulated = true;
     return object;
 }
@@ -291,7 +288,7 @@ void Object::require_orbit_point(Vector3 pos) {
 }
 
 void Object::update_closest_approaches() {
-    m_world.for_each_object([this](Object& object) {
+    m_world->for_each_object([this](Object& object) {
         if (&object == this)
             return;
         auto& closest_approach_entry = m_closest_approaches[&object];
@@ -332,7 +329,6 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
     unsigned period = 1;
 
     static char const* keywords[] = {
-        "world",
         "mass",
         "radius",
         "pos",
@@ -343,9 +339,7 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
         nullptr
     };
 
-    if (!PyArg_ParseTupleAndKeywords(args.python_object(), kwargs.python_object(), "O!|$dd(ddd)(ddd)(bbb)su", (char**)keywords,
-            &World::type_object(),
-            &world,
+    if (!PyArg_ParseTupleAndKeywords(args.python_object(), kwargs.python_object(), "|$dd(ddd)(ddd)(bbb)su", (char**)keywords,
             &mass,
             &radius,
             &pos.x, &pos.y, &pos.z,
@@ -355,7 +349,7 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
             &period))
         return {};
 
-    return new Object(*World::get(PySSA::Object::share(world)), mass, radius, pos, vel, color, name, period);
+    return new Object(mass, radius, pos, vel, color, name, period);
 }
 
 PySSA::Object Object::python_attraction(PySSA::Object const& args) {
