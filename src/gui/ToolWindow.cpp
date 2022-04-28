@@ -28,11 +28,12 @@ void ToolWindow::handle_event(Event& event) {
 
         if (event.type() == sf::Event::MouseMoved) {
             bool bottom = mouse_position.y > position().y + size().y - ResizeRadius;
-            bool is_in_window_y_range = mouse_position.y > position().y - TitleBarSize - ResizeRadius && mouse_position.y < position().y + size().y + ResizeRadius;
+            bool is_in_window_x_range = mouse_position.x > position().x - ResizeRadius && mouse_position.x < position().x + size().x + ResizeRadius;
+            bool is_in_window_y_range = mouse_position.y > position().y + TitleBarSize - ResizeRadius && mouse_position.y < position().y + size().y + ResizeRadius;
 
             sf::Cursor cursor;
             if (std::fabs(mouse_position.x - position().x) < ResizeRadius && is_in_window_y_range) {
-                if (bottom) {
+                if (bottom && is_in_window_x_range) {
                     m_resize_mode = Resize::LEFTBOTTOM;
                     // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
                     cursor.loadFromSystem(sf::Cursor::SizeAll);
@@ -43,7 +44,7 @@ void ToolWindow::handle_event(Event& event) {
                 }
             }
             else if (std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius && is_in_window_y_range) {
-                if (bottom) {
+                if (bottom && is_in_window_x_range) {
                     m_resize_mode = Resize::RIGHTBOTTOM;
                     // FIXME: Arch Linux / SFML moment? (doesn't load diagonal size cursors)
                     cursor.loadFromSystem(sf::Cursor::SizeAll);
@@ -53,7 +54,7 @@ void ToolWindow::handle_event(Event& event) {
                     cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
                 }
             }
-            else if (bottom) {
+            else if (bottom && is_in_window_y_range && is_in_window_x_range) {
                 m_resize_mode = Resize::BOTTOM;
                 cursor.loadFromSystem(sf::Cursor::SizeVertical);
             }
@@ -89,13 +90,12 @@ void ToolWindow::handle_event(Event& event) {
         }
 
         if (event.type() == sf::Event::MouseButtonPressed) {
-            if (titlebar_rect().contains(mouse_position)) {
+            if(m_resize_mode != Resize::DEFAULT)
+                m_resizing = true;
+            else if (titlebar_rect().contains(mouse_position)) {
                 m_dragging = true;
                 m_drag_position = mouse_position;
                 return;
-            }
-            else {
-                m_resizing = true;
             }
         }
         else if (event.type() == sf::Event::MouseMoved) {
