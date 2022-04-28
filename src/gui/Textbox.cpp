@@ -5,6 +5,7 @@
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <cassert>
 #include <cctype>
 #include <cmath>
@@ -23,7 +24,7 @@ void Textbox::set_display_attributes(sf::Color bg_color, sf::Color fg_color, sf:
 unsigned Textbox::m_character_pos_from_mouse(Event& event) {
     if (m_content.getSize() == 0 || (m_content == "0" && m_type == Type::NUMBER))
         return 0;
-    auto delta = sf::Vector2f(event.event().mouseButton.x, event.event().mouseButton.y) - position();
+    auto delta = event.mouse_position() - position();
     if (delta.x < 0)
         return 0;
 
@@ -40,6 +41,7 @@ unsigned Textbox::m_character_pos_from_mouse(Event& event) {
 void Textbox::set_content(sf::String content, NotifyUser notify_user) {
     m_content = std::move(content);
     m_cursor = m_content.getSize();
+    m_selection_start = m_cursor;
     m_has_decimal = false;
 
     if (m_content.find(".") != sf::String::InvalidPos)
@@ -48,11 +50,14 @@ void Textbox::set_content(sf::String content, NotifyUser notify_user) {
         on_change(m_content);
 }
 
-void Textbox::set_cursor(unsigned cursor) {
+void Textbox::interactive_set_cursor(unsigned cursor, ExtendSelection extend_selection) {
     if (cursor > m_content.getSize())
         m_cursor = m_content.getSize();
     else
         m_cursor = cursor;
+
+    if (extend_selection == ExtendSelection::No || !m_shift_pressed)
+        m_selection_start = m_cursor;
 
     auto new_cursor_position = calculate_cursor_position();
     if (new_cursor_position.x < 2)
@@ -67,18 +72,22 @@ void Textbox::handle_event(Event& event) {
         if (is_focused()) {
             auto codepoint = event.event().text.unicode;
             if (codepoint == '\b') {
-                if (m_cursor != 0) {
-                    m_content.erase(m_cursor - 1);
-                    set_cursor(m_cursor - 1);
-                    if (m_type == NUMBER && m_content.isEmpty())
-                        m_content = "0";
-                    if (on_change)
-                        on_change(m_content);
+                if (m_cursor == m_selection_start) {
+                    if (m_cursor != 0) {
+                        m_content.erase(m_cursor - 1);
+                        interactive_set_cursor(m_cursor - 1, ExtendSelection::No);
+                    }
                 }
+                else
+                    erase_selected_text();
+                if (m_type == NUMBER && m_content.isEmpty())
+                    m_content = "0";
+                if (on_change)
+                    on_change(m_content);
             }
             else if (codepoint == 0x7f) {
                 if (m_cursor != m_content.getSize()) {
-                    m_content.erase(m_cursor);
+                    erase_selected_text();
                     if (m_type == NUMBER && m_content.isEmpty())
                         m_content = "0";
                     if (on_change)
@@ -88,16 +97,19 @@ void Textbox::handle_event(Event& event) {
             else if (can_insert_character(codepoint)) {
                 if (m_type == NUMBER && m_content == "0")
                     m_content = "";
+                if (m_cursor != m_selection_start)
+                    erase_selected_text();
                 m_content.insert(m_cursor, codepoint);
                 if (on_change)
                     on_change(m_content);
-                set_cursor(m_cursor + 1);
+                interactive_set_cursor(m_cursor + 1, ExtendSelection::No);
             }
 
             event.set_handled();
         }
     }
     else if (event.type() == sf::Event::KeyPressed) {
+        m_shift_pressed = event.event().key.shift;
         if (is_focused()) {
             // FIXME: Focus check should be handled at Widget level.
             switch (event.event().key.code) {
@@ -105,7 +117,13 @@ void Textbox::handle_event(Event& event) {
                 if (event.event().key.control)
                     move_cursor_by_word(CursorDirection::Left);
                 else if (m_cursor > 0)
-                    set_cursor(m_cursor - 1);
+                    interactive_set_cursor(m_cursor - 1);
+                else if (!m_shift_pressed) {
+                    if (m_cursor < m_selection_start)
+                        m_selection_start = m_cursor;
+                    else
+                        m_cursor = m_selection_start;
+                }
 
                 event.set_handled();
             } break;
@@ -113,7 +131,13 @@ void Textbox::handle_event(Event& event) {
                 if (event.event().key.control)
                     move_cursor_by_word(CursorDirection::Right);
                 else if (m_cursor < m_content.getSize())
-                    set_cursor(m_cursor + 1);
+                    interactive_set_cursor(m_cursor + 1);
+                else if (!m_shift_pressed) {
+                    if (m_cursor > m_selection_start)
+                        m_selection_start = m_cursor;
+                    else
+                        m_cursor = m_selection_start;
+                }
 
                 event.set_handled();
             } break;
@@ -124,32 +148,44 @@ void Textbox::handle_event(Event& event) {
     }
     else if (event.type() == sf::Event::MouseButtonPressed) {
         if (is_hover()) {
-            m_cursor = m_character_pos_from_mouse(event);
+            interactive_set_cursor(m_character_pos_from_mouse(event));
+            m_selection_start = m_cursor;
             m_dragging = true;
         }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
     }
+    else if (event.type() == sf::Event::MouseMoved) {
+        if (m_dragging)
+            m_selection_start = m_character_pos_from_mouse(event);
+    }
 
     if (m_type == NUMBER && m_has_limit)
         m_fit_in_range();
 }
 
-std::string Textbox::m_fix_content(std::string content) const{
+void Textbox::erase_selected_text() {
+    auto start = std::min(m_cursor, m_selection_start);
+    m_content.erase(start, std::max(m_cursor, m_selection_start) - start);
+    m_selection_start = std::min((unsigned)m_content.getSize(), m_selection_start);
+    m_cursor = std::min((unsigned)m_content.getSize(), m_cursor);
+}
+
+std::string Textbox::m_fix_content(std::string content) const {
     unsigned i = content.size();
     while (i > 0 && content[i - 1] == '0')
         i--;
 
-    if(content[i - 1] == '.')
+    if (content[i - 1] == '.')
         return content.substr(0, i) + '0';
     return content.substr(0, std::min(m_limit, i));
 }
 
 void Textbox::m_fit_in_range() {
-    if(is_focused())
+    if (is_focused())
         return;
-        
+
     try {
         double val = std::stod(m_content.toAnsiString());
         std::ostringstream oss;
@@ -181,19 +217,20 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
         return (direction == CursorDirection::Left && offset > 0) || (direction == CursorDirection::Right && offset < m_content.getSize());
     };
 
-    while (state != State::Done && is_in_range(m_cursor)) {
-        auto next = m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor + 1];
+    auto new_cursor = m_cursor;
+    while (state != State::Done && is_in_range(new_cursor)) {
+        auto next = m_content[direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1];
         // std::cout << "'" << (char)next << "' " << (int)state << " : " << ispunct(next) << std::endl;
         switch (state) {
         case State::Start:
             if (ispunct(next))
                 state = State::PendingCharactersOfType;
             else if (!isspace(next)) {
-                if (is_in_range(m_cursor - 2) && ispunct(m_content[direction == CursorDirection::Left ? m_cursor - 1 : m_cursor + 1]))
+                if (is_in_range(new_cursor - 2) && ispunct(m_content[direction == CursorDirection::Left ? new_cursor - 1 : new_cursor + 1]))
                     state = State::PendingPunctuation;
                 else
                     state = State::PendingCharactersOfType;
-                m_cursor++;
+                new_cursor++;
             }
             break;
         case State::PendingPunctuation:
@@ -205,7 +242,7 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
             if (next_type != last_character_type && last_character_type != Util::CharacterType::Unknown) {
                 state = State::Done;
                 if (direction == CursorDirection::Left)
-                    m_cursor++;
+                    new_cursor++;
             }
             last_character_type = next_type;
             break;
@@ -215,11 +252,11 @@ void Textbox::move_cursor_by_word(CursorDirection direction) {
             break;
         }
         if (direction == CursorDirection::Left)
-            m_cursor--;
-        else if (m_cursor < m_content.getSize())
-            m_cursor++;
+            new_cursor--;
+        else if (new_cursor < m_content.getSize())
+            new_cursor++;
     }
-    // std::cout << "DONE" << std::endl;
+    interactive_set_cursor(new_cursor);
 }
 
 sf::Text Textbox::generate_sf_text() const {
@@ -254,12 +291,20 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     window.draw(rect);
 
+    auto const cursor_height = std::min(size().y - 6, 30.f);
     auto text = generate_sf_text();
+    auto text_bounds = text.getGlobalBounds();
+    auto selection_start_pos = text.findCharacterPos(std::min(m_selection_start, m_cursor)).x;
+    auto selection_end_pos = text.findCharacterPos(std::max(m_selection_start, m_cursor)).x;
+    sf::RectangleShape selected_rect({ selection_end_pos - selection_start_pos, cursor_height });
+    selected_rect.setFillColor(is_focused() ? sf::Color(160, 160, 255) : sf::Color(160, 160, 160));
+    selected_rect.setPosition({ selection_start_pos, size().y / 2 - selected_rect.getSize().y / 2 });
+    window.draw(selected_rect);
     window.draw(text);
 
     if (is_focused()) {
         // std::cout << m_cursor << std::endl;
-        sf::RectangleShape cursor(sf::Vector2f(2, std::min(size().y - 6, 30.f)));
+        sf::RectangleShape cursor(sf::Vector2f(2, cursor_height));
         auto position = calculate_cursor_position();
         cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
         cursor.setFillColor(sf::Color::Black);
@@ -268,10 +313,9 @@ void Textbox::draw(sf::RenderWindow& window) const {
 }
 
 bool Textbox::can_insert_character(uint32_t ch) const {
-    if(m_content.getSize() >= m_limit)
+    if (m_content.getSize() >= m_limit)
         return false;
 
-    
     switch (m_type) {
     case TEXT:
         return isprint(ch);
