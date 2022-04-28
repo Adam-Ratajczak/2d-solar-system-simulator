@@ -9,6 +9,7 @@ public:
     explicit ToolWindow(sf::RenderWindow& wnd);
 
     static constexpr auto TitleBarSize = 28;
+    static constexpr auto MinSize = 50;
 
     virtual sf::Vector2f position() const override { return m_position; }
     void set_position(sf::Vector2f position) { m_position = position; }
@@ -29,10 +30,20 @@ public:
     bool is_closed() const { return m_closed; }
 
 private:
+    enum class Resize{
+        LEFT, 
+        LEFTBOTTOM, 
+        BOTTOM, 
+        RIGHTBOTTOM, 
+        RIGHT,
+        DEFAULT
+    };
+    Resize m_resize_mode;
+
     sf::Vector2f m_position;
     sf::Vector2f m_size;
     sf::String m_string;
-    bool m_dragging = false;
+    bool m_dragging = false, m_resizing = false;
     sf::Vector2f m_drag_position;
     bool m_closed = false;
 

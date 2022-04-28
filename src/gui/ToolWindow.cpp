@@ -6,8 +6,10 @@
 #include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
 
+#include <SFML/Window/Cursor.hpp>
 #include <cassert>
 #include <iostream>
+#include <cmath>
 
 namespace GUI {
 
@@ -48,6 +50,14 @@ void ToolWindow::handle_event(Event& event) {
     }
 
     if (event.type() == sf::Event::MouseButtonPressed) {
+        if(std::fabs(mouse_position.x - position().x) > 5){
+            m_resize_mode = Resize::LEFT;
+            m_resizing = true;
+            return;
+        }else {
+            m_resize_mode = Resize::DEFAULT;
+        }
+
         if (titlebar_rect().contains(mouse_position)) {
             m_dragging = true;
             m_drag_position = mouse_position;
@@ -73,10 +83,48 @@ void ToolWindow::handle_event(Event& event) {
                 m_position.x = window().getSize().x - TitleBarSize;
 
             return;
+        }else if(m_resizing){
+            sf::Cursor cursor;
+            switch (m_resize_mode) {
+                case Resize::LEFT:
+                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+
+                    window().setMouseCursor(cursor);
+                break;
+                case Resize::LEFTBOTTOM:
+                    cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
+
+                    window().setMouseCursor(cursor);
+                break;
+                case Resize::BOTTOM:
+                    cursor.loadFromSystem(sf::Cursor::SizeVertical);
+
+                    window().setMouseCursor(cursor);
+                break;
+                case Resize::RIGHTBOTTOM:
+                    cursor.loadFromSystem(sf::Cursor::SizeTopLeftBottomRight);
+
+                    window().setMouseCursor(cursor);
+                break;
+                case Resize::RIGHT:
+                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+
+                    window().setMouseCursor(cursor);
+                break;
+                case Resize::DEFAULT:
+
+                break;
+            }
+        }else{
+        sf::Cursor cursor;
+        cursor.loadFromSystem(sf::Cursor::Arrow);
+
+        window().setMouseCursor(cursor);
         }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
         m_dragging = false;
+        m_resizing = false;
     }
 
     WidgetTreeRoot::handle_event(event);
