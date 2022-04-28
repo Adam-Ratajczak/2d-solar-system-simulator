@@ -310,6 +310,9 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     if (is_focused()) {
         // std::cout << m_cursor << std::endl;
+        if((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0)
+            return;
+
         sf::RectangleShape cursor(sf::Vector2f(2, cursor_height));
         auto position = calculate_cursor_position();
         cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });

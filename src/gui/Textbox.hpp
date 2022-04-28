@@ -4,6 +4,7 @@
 #include "Widget.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <limits>
 #include <string>
@@ -70,6 +71,7 @@ private:
     std::string m_fix_content(std::string content) const;
     void erase_selected_text();
     virtual bool accepts_focus() const override { return true; }
+    sf::Clock m_cursor_clock;
 
     enum class CursorDirection {
         Left,
