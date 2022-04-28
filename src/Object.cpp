@@ -310,12 +310,12 @@ std::ostream& operator<<(std::ostream& out, Object const& object) {
 }
 
 void Object::setup_python_bindings(TypeSetup setup) {
-    setup.add_method<&Object::python_attraction>("attraction");
-    setup.add_attribute<&Object::python_get_pos, &Object::python_set_pos>("pos");
-    setup.add_attribute<&Object::python_get_vel, &Object::python_set_vel>("vel");
-    setup.add_attribute<&Object::python_get_name, &Object::python_set_name>("name");
-    setup.add_attribute<&Object::python_get_color, &Object::python_set_color>("color");
-    setup.add_attribute<&Object::python_get_radius, &Object::python_set_radius>("radius");
+    setup.add_method<&Object::python_attraction>("attraction", "Returns gravity of this object to object given as argument, as acceleration (vector, in m/tick^2)");
+    setup.add_attribute<&Object::python_get_pos, &Object::python_set_pos>("pos", "Object position (vector, in m)");
+    setup.add_attribute<&Object::python_get_vel, &Object::python_set_vel>("vel", "Object velocity (vector, in m/tick)");
+    setup.add_attribute<&Object::python_get_name, &Object::python_set_name>("name", "Object name (to be used with world.get_object_by_name())");
+    setup.add_attribute<&Object::python_get_color, &Object::python_set_color>("color", "Object sphere and trail color (RGB)");
+    setup.add_attribute<&Object::python_get_radius, &Object::python_set_radius>("radius", "Object radius (in meters)");
 }
 
 Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs) {

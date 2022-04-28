@@ -113,10 +113,10 @@ std::ostream& operator<<(std::ostream& out, World const& world) {
 }
 
 void World::setup_python_bindings(TypeSetup adder) {
-    std::cout << "setup_python_bindings!!" << std::endl;
-    adder.add_method<&World::python_get_object_by_name>("get_object_by_name");
-    adder.add_method<&World::python_add_object>("add_object");
-    adder.add_attribute<&World::python_get_simulation_seconds_per_tick, &World::python_set_simulation_seconds_per_tick>("simulation_seconds_per_tick");
+    adder.add_method<&World::python_get_object_by_name>("get_object_by_name", "Returns an object that has the name given in argument.");
+    adder.add_method<&World::python_add_object>("add_object", "Adds an object to the World.");
+    adder.add_attribute<&World::python_get_simulation_seconds_per_tick, &World::python_set_simulation_seconds_per_tick>("simulation_seconds_per_tick",
+        "Sets how much simulation seconds passes per tick");
 }
 
 PySSA::Object World::python_add_object(PySSA::Object const& args) {
