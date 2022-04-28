@@ -7,6 +7,7 @@
 #include "essagui/EssaGUI.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
+#include "pyssa/TupleParser.hpp"
 #include "util/SimulationClock.hpp"
 
 #include <GL/gl.h>
@@ -114,7 +115,17 @@ std::ostream& operator<<(std::ostream& out, World const& world) {
 void World::setup_python_bindings(TypeSetup adder) {
     std::cout << "setup_python_bindings!!" << std::endl;
     adder.add_method<&World::python_get_object_by_name>("get_object_by_name");
+    adder.add_method<&World::python_add_object>("add_object");
     adder.add_attribute<&World::python_get_simulation_seconds_per_tick, &World::python_set_simulation_seconds_per_tick>("simulation_seconds_per_tick");
+}
+
+PySSA::Object World::python_add_object(PySSA::Object const& args) {
+    Object* object = nullptr;
+    if (!PySSA::parse_arguments(args, "O!", PySSA::Arg::CheckedType<Object> { object }))
+        return {};
+    object->python_stop_owning();
+    add_object(std::unique_ptr<Object>(object));
+    return PySSA::Object::none();
 }
 
 PySSA::Object World::python_get_object_by_name(PySSA::Object const& args) {
