@@ -39,6 +39,7 @@ public:
     };
 
     static PyTypeObject& type_object();
+
     Object wrap() {
         auto type = &type_object();
         auto object = Object::take(PyObject_New(PyObject, type));
@@ -47,6 +48,12 @@ public:
         py_object.owned_by_python = false;
         m_wrappers.insert((PythonType*)object.python_object());
         return object;
+    }
+
+    void python_stop_owning() {
+        for (auto& wrapper : m_wrappers) {
+            wrapper->owned_by_python = false;
+        }
     }
 
     static T* get(Object const& object) {
