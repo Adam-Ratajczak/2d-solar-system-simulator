@@ -115,16 +115,17 @@ protected:
         };
 
         template<Method method>
-        void add_method(char const* name) const {
-            m_funcs.methods.push_back(PyMethodDef { .ml_name = name, .ml_meth = (PyCFunction)MethodWrapper<method>::wrapper, .ml_flags = METH_VARARGS });
+        void add_method(char const* name, char const* doc = "") const {
+            m_funcs.methods.push_back(PyMethodDef { .ml_name = name, .ml_meth = (PyCFunction)MethodWrapper<method>::wrapper, .ml_flags = METH_VARARGS, .ml_doc = doc });
         }
 
         template<Getter getter, Setter setter>
-        void add_attribute(const char* attr) const {
+        void add_attribute(const char* attr, char const* doc = "") const {
             m_funcs.getters_setters.push_back(PyGetSetDef {
                 .name = attr,
                 .get = (::getter)GetterWrapper<getter>::wrapper,
                 .set = setter != nullptr ? (::setter)SetterWrapper<setter>::wrapper : nullptr,
+                .doc = doc,
                 .closure = nullptr });
         }
 
