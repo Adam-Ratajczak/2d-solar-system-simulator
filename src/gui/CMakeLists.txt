@@ -1,0 +1,27 @@
+add_library(essa-gui
+    Application.cpp
+    ArrowButton.cpp
+    Button.cpp
+    ColorPicker.cpp
+    Console.cpp
+    Container.cpp
+    Datebox.cpp
+    Frame.cpp
+    ImageButton.cpp
+    SettingsMenu.cpp
+    SelectWidget.cpp
+    Slider.cpp
+    TabWidget.cpp
+    Textbox.cpp
+    TextButton.cpp
+    Textfield.cpp
+    ToolWindow.cpp
+    ValueSlider.cpp
+    Widget.cpp
+    WidgetTreeRoot.cpp
+)
+
+target_link_libraries(
+    essa-gui
+    sfml-graphics
+)

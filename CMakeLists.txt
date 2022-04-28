@@ -26,6 +26,7 @@ add_executable(
     src/essagui/EssaSettings.cpp
     src/essagui/FocusedObjectGUI.cpp
     src/essagui/ModifyObject.cpp
+    src/essagui/PythonREPL.cpp
 
     src/gfx/ClipViewScope.cpp
     src/gfx/RoundedEdgeRectangleShape.cpp
@@ -34,28 +35,6 @@ add_executable(
     src/glwrapper/Sphere.cpp
     src/glwrapper/Triangle.cpp
     src/glwrapper/VertexBuffer.cpp
-
-    src/gui/Application.cpp
-    src/gui/ArrowButton.cpp
-    src/gui/Button.cpp
-    src/gui/ColorPicker.cpp
-    src/gui/Console.cpp
-    src/gui/Container.cpp
-    src/gui/Datebox.cpp
-    src/gui/Frame.cpp
-    src/gui/ImageButton.cpp
-    src/gui/PythonREPL.cpp
-    src/gui/SettingsMenu.cpp
-    src/gui/SelectWidget.cpp
-    src/gui/Slider.cpp
-    src/gui/TabWidget.cpp
-    src/gui/Textbox.cpp
-    src/gui/TextButton.cpp
-    src/gui/Textfield.cpp
-    src/gui/ToolWindow.cpp
-    src/gui/ValueSlider.cpp
-    src/gui/Widget.cpp
-    src/gui/WidgetTreeRoot.cpp
 
     src/math/Plane.cpp
     src/math/Ray.cpp
@@ -68,21 +47,19 @@ add_executable(
     src/util/UnitDisplay.cpp
 )
 
-target_link_libraries(
-    out
-    sfml-graphics
-    sfml-window
-)
-target_compile_options(out PUBLIC -Werror=non-virtual-dtor)
-target_link_options(out PUBLIC -lGLEW -lGLU -lGL)
+function(setup_target targetname)
+    target_compile_options(${targetname} PUBLIC -Werror=non-virtual-dtor)
 
-target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address)
+        target_link_options(${targetname} PUBLIC -fsanitize=undefined,address)
+    else()
+        target_compile_options(${targetname} PUBLIC -O3)
+    endif()
+endfunction()
+
+target_link_libraries(out essa-gui GLEW GLU GL)
 target_link_libraries(out ${PYTHON_LIBRARIES})
+target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    target_compile_options(out PUBLIC -fsanitize=undefined,address)
-    target_link_options(out PUBLIC -fsanitize=undefined,address)
-
-else()
-    target_compile_options(out PUBLIC -O3)
-endif()
+add_subdirectory(src/gui)

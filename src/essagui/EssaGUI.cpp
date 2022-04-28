@@ -1,8 +1,8 @@
 #include "EssaGUI.hpp"
 
-#include "../gui/PythonREPL.hpp"
 #include "EssaSettings.hpp"
 #include "ModifyObject.hpp"
+#include "PythonREPL.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -79,7 +79,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             // TODO: Support moving ToolWindows
             python_repl_window.set_position({ 600, 750 });
             python_repl_window.set_size({ 700, 250 });
-            auto& python_repl = python_repl_window.set_main_widget<GUI::PythonREPL>();
+            auto& python_repl = python_repl_window.set_main_widget<PythonREPL>();
         };
     }
 }

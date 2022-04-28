@@ -1,23 +1,21 @@
 #include "PythonREPL.hpp"
 
+#include "../gui/Application.hpp"
+#include "../gui/ArrowButton.hpp"
 #include "../pyssa/Environment.hpp"
-#include "Application.hpp"
-#include "ArrowButton.hpp"
 
-namespace GUI {
-
-PythonREPL::PythonREPL(WidgetTreeRoot& c)
+PythonREPL::PythonREPL(GUI::WidgetTreeRoot& c)
     : Container(c) {
-    auto& layout = set_layout<VerticalBoxLayout>();
-    m_console = add_widget<Console>();
-    m_textbox = add_widget<Textbox>();
+    auto& layout = set_layout<GUI::VerticalBoxLayout>();
+    m_console = add_widget<GUI::Console>();
+    m_textbox = add_widget<GUI::Textbox>();
     m_textbox->set_size({ { 100, Length::Percent }, 40.0_px });
     m_textbox->set_position({ 0.0_px, 0.0_px_o });
-    m_textbox->set_data_type(Textbox::Type::TEXT);
+    m_textbox->set_data_type(GUI::Textbox::Type::TEXT);
     m_textbox->set_placeholder("PySSA Command");
 }
 
-void PythonREPL::handle_event(Event& event) {
+void PythonREPL::handle_event(GUI::Event& event) {
     switch (event.type()) {
     case sf::Event::KeyPressed:
         if (!m_textbox->is_focused())
@@ -66,6 +64,4 @@ void PythonREPL::handle_event(Event& event) {
     default:
         break;
     }
-}
-
 }
