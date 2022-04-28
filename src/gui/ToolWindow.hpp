@@ -30,20 +30,21 @@ public:
     bool is_closed() const { return m_closed; }
 
 private:
-    enum class Resize{
-        LEFT, 
-        LEFTBOTTOM, 
-        BOTTOM, 
-        RIGHTBOTTOM, 
+    enum class Resize {
+        LEFT,
+        LEFTBOTTOM,
+        BOTTOM,
+        RIGHTBOTTOM,
         RIGHT,
         DEFAULT
     };
-    Resize m_resize_mode;
+    Resize m_resize_mode = Resize::DEFAULT;
 
     sf::Vector2f m_position;
     sf::Vector2f m_size;
     sf::String m_string;
-    bool m_dragging = false, m_resizing = false;
+    bool m_dragging = false;
+    bool m_resizing = false;
     sf::Vector2f m_drag_position;
     bool m_closed = false;
 
