@@ -2,6 +2,7 @@
 
 #include "../util/Units.hpp"
 #include <SFML/Graphics.hpp>
+#include <cassert>
 
 namespace GUI {
 
@@ -32,6 +33,19 @@ public:
     void set_seen() { m_seen = true; }
 
     sf::Event::EventType type() const { return m_event.type; }
+
+    bool is_mouse_related() const {
+        return m_event.type == sf::Event::MouseMoved || m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased;
+    }
+
+    sf::Vector2f mouse_position() const {
+        assert(is_mouse_related());
+        if (m_event.type == sf::Event::MouseMoved)
+            return { static_cast<float>(m_event.mouseMove.x), static_cast<float>(m_event.mouseMove.y) };
+        if (m_event.type == sf::Event::MouseButtonPressed || m_event.type == sf::Event::MouseButtonReleased)
+            return { static_cast<float>(m_event.mouseButton.x), static_cast<float>(m_event.mouseButton.y) };
+        __builtin_unreachable();
+    }
 
 private:
     sf::Event m_event;
