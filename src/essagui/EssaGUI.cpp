@@ -1,7 +1,6 @@
 #include "EssaGUI.hpp"
 
 #include "EssaSettings.hpp"
-#include "ModifyObject.hpp"
 #include "PythonREPL.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -59,17 +58,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         settings.settings_container->set_size({ 500.0_px, 500.0_px });
         m_settings_gui = settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
-    }
-
-    {
-        auto& modify = menu->add_entry(load_image("../assets/modifyObject.png"), "Modify focused object");
-        modify.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        modify.settings_container->set_size({ 550.0_px, 700.0_px });
-        m_modify_object_gui = modify.settings_container->add_widget<ModifyObject>();
-
-        modify.on_toggle = [this](bool state) {
-            m_pause_simulation(state);
-        };
     }
 
     {

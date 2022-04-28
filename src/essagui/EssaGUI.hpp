@@ -18,7 +18,6 @@
 #include "EssaCreateObject.hpp"
 #include "EssaSettings.hpp"
 #include "FocusedObjectGUI.hpp"
-#include "ModifyObject.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
@@ -52,7 +51,6 @@ private:
     EssaCreateObject* m_create_object_gui = nullptr;
     EssaSettings* m_settings_gui = nullptr;
     EssaCanvasMode* m_canvas_mode_gui = nullptr;
-    ModifyObject* m_modify_object_gui = nullptr;
 
     int m_saved_speed = 0;
 

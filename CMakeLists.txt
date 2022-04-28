@@ -25,7 +25,6 @@ add_executable(
     src/essagui/EssaGUI.cpp
     src/essagui/EssaSettings.cpp
     src/essagui/FocusedObjectGUI.cpp
-    src/essagui/ModifyObject.cpp
     src/essagui/PythonREPL.cpp
 
     src/gfx/ClipViewScope.cpp

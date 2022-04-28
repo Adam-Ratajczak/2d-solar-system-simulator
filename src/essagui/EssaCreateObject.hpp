@@ -55,12 +55,16 @@ private:
 
     World m_forward_simulated_world;
     std::unique_ptr<Object> m_new_object;
-    Object* m_forward_simulated_new_object = nullptr;
     Vector3 m_new_object_pos;
+    
     int m_saved_speed = 0;
     bool m_forward_simulation_is_valid = true;
     bool m_automatic_orbit_calculation = false;
+
     Object* m_focused = nullptr;
+    Object* m_forward_simulated_new_object = nullptr;
+    Object* m_to_modify = nullptr;
+
     SimulationView& m_simulation_view;
 
     GUI::ImageButton* m_create_toggle_unit_button();
