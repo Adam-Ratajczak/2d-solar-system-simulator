@@ -10,6 +10,7 @@ public:
 
     static constexpr auto TitleBarSize = 28;
     static constexpr auto MinSize = 50;
+    static constexpr auto ResizeRadius = 20;
 
     virtual sf::Vector2f position() const override { return m_position; }
     void set_position(sf::Vector2f position) { m_position = position; }

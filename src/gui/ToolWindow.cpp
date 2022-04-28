@@ -22,7 +22,44 @@ ToolWindow::ToolWindow(sf::RenderWindow& wnd)
 }
 
 void ToolWindow::handle_event(Event& event) {
-    sf::Vector2f mouse_position { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
+    sf::Vector2f mouse_position { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+    mouse_position += position();
+
+    bool bottom = std::fabs(mouse_position.y - position().y - size().y) < ResizeRadius;
+
+    sf::Cursor cursor;
+    if(std::fabs(mouse_position.x - position().x) < ResizeRadius && bottom){
+        m_resize_mode = Resize::LEFTBOTTOM;
+        cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
+
+        window().setMouseCursor(cursor);
+    }else if(std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius && bottom){
+        m_resize_mode = Resize::RIGHTBOTTOM;
+        cursor.loadFromSystem(sf::Cursor::SizeTopLeftBottomRight);
+
+        window().setMouseCursor(cursor);
+    }else if(std::fabs(mouse_position.x - position().x) < ResizeRadius){
+        m_resize_mode = Resize::LEFT;
+        cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+
+        window().setMouseCursor(cursor);
+    }else if(bottom){
+        m_resize_mode = Resize::BOTTOM;
+        cursor.loadFromSystem(sf::Cursor::SizeVertical);
+
+        window().setMouseCursor(cursor);
+    }else if(std::fabs(mouse_position.x - position().x - size().x) < ResizeRadius){
+        m_resize_mode = Resize::RIGHT;
+        cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
+
+        window().setMouseCursor(cursor);
+    }else {
+        m_resize_mode = Resize::DEFAULT;
+        cursor.loadFromSystem(sf::Cursor::Arrow);
+
+        window().setMouseCursor(cursor);
+    }
+    mouse_position = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
     mouse_position += position();
     
     float titlebar_button_position_x = position().x + size().x - TitleBarSize;
@@ -50,18 +87,12 @@ void ToolWindow::handle_event(Event& event) {
     }
 
     if (event.type() == sf::Event::MouseButtonPressed) {
-        if(std::fabs(mouse_position.x - position().x) > 5){
-            m_resize_mode = Resize::LEFT;
-            m_resizing = true;
-            return;
-        }else {
-            m_resize_mode = Resize::DEFAULT;
-        }
-
         if (titlebar_rect().contains(mouse_position)) {
             m_dragging = true;
             m_drag_position = mouse_position;
             return;
+        }else {
+            m_resizing = true;
         }
     }
     else if (event.type() == sf::Event::MouseMoved) {
@@ -87,39 +118,24 @@ void ToolWindow::handle_event(Event& event) {
             sf::Cursor cursor;
             switch (m_resize_mode) {
                 case Resize::LEFT:
-                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-
-                    window().setMouseCursor(cursor);
+                
                 break;
                 case Resize::LEFTBOTTOM:
-                    cursor.loadFromSystem(sf::Cursor::SizeBottomLeftTopRight);
-
-                    window().setMouseCursor(cursor);
+                
                 break;
                 case Resize::BOTTOM:
-                    cursor.loadFromSystem(sf::Cursor::SizeVertical);
-
-                    window().setMouseCursor(cursor);
+                
                 break;
                 case Resize::RIGHTBOTTOM:
-                    cursor.loadFromSystem(sf::Cursor::SizeTopLeftBottomRight);
-
-                    window().setMouseCursor(cursor);
+                
                 break;
                 case Resize::RIGHT:
-                    cursor.loadFromSystem(sf::Cursor::SizeHorizontal);
-
-                    window().setMouseCursor(cursor);
+                
                 break;
                 case Resize::DEFAULT:
 
                 break;
             }
-        }else{
-        sf::Cursor cursor;
-        cursor.loadFromSystem(sf::Cursor::Arrow);
-
-        window().setMouseCursor(cursor);
         }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
