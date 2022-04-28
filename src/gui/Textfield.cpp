@@ -1,5 +1,4 @@
 #include "Textfield.hpp"
-#include "../World.hpp"
 #include "Application.hpp"
 #include "TextAlign.hpp"
 #include <SFML/System/Vector2.hpp>
