@@ -25,7 +25,7 @@ void SimulationView::handle_event(GUI::Event& event) {
                 auto obj_pos_screen = world_to_screen(obj.render_position());
                 obj_pos_screen.z = 0;
                 auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
-                if (distance < 30){
+                if (distance < 30) {
                     m_focused_object = &obj;
                     return;
                 }
@@ -347,25 +347,27 @@ void SimulationView::update() {
         m_world.update(m_speed * m_iterations);
 
     // Handle focus
-    if (m_focused_object){
+    if (m_focused_object) {
         set_offset(-m_focused_object->render_position());
 
-        if(m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus){
+        if (m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus) {
             Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
             m_pitch = std::fabs(std::atan2(a.y, a.z)) + m_manual_pitch;
             m_yaw = std::fabs(std::atan2(a.y, a.x)) - M_PI / 2 + m_manual_yaw;
-        }else {
+        }
+        else {
             m_manual_pitch = m_pitch;
             m_manual_yaw = m_yaw;
         }
     }
-        
-    if(m_focused_object != m_prev_focused_object){
-        on_change_focus(m_focused_object);
+
+    if (m_focused_object != m_prev_focused_object) {
+        if (on_change_focus)
+            on_change_focus(m_focused_object);
         m_prev_focused_object = m_focused_object;
     }
 
-    if(m_focused_object != nullptr)
+    if (m_focused_object != nullptr && if_focused)
         if_focused();
 }
 
