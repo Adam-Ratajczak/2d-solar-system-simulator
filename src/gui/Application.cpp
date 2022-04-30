@@ -40,6 +40,15 @@ sf::Event Application::transform_event(sf::Vector2f offset, sf::Event event) con
     return event;
 }
 
+void Application::focus_window(WindowList::iterator new_focused_it) {
+    if (new_focused_it == m_tool_windows.end())
+        return;
+    m_focused_tool_window = new_focused_it->get();
+    auto ptr = std::move(*new_focused_it);
+    m_tool_windows.erase(new_focused_it);
+    m_tool_windows.push_back(std::move(ptr));
+}
+
 void Application::handle_events() {
     sf::Event event;
     while (window().pollEvent(event)) {
@@ -47,20 +56,15 @@ void Application::handle_events() {
             m_focused_tool_window = nullptr;
             sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
             decltype(m_tool_windows)::iterator new_focused_it = m_tool_windows.end();
-            for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
-                auto& tool_window = **it;
+            for (auto it = m_tool_windows.end(); it != m_tool_windows.begin();) {
+                auto it2 = --it;
+                auto& tool_window = **it2;
                 if (tool_window.full_rect().contains(position)) {
-                    m_focused_tool_window = &tool_window;
-                    new_focused_it = it.base();
+                    new_focused_it = it2;
                     break;
                 }
             }
-            new_focused_it--;
-            if (new_focused_it != m_tool_windows.end()) {
-                auto ptr = std::move(*new_focused_it);
-                m_tool_windows.erase(new_focused_it);
-                m_tool_windows.push_back(std::move(ptr));
-            }
+            focus_window(new_focused_it);
         }
 
         if (m_focused_tool_window) {
@@ -123,12 +127,23 @@ void Application::spawn_notification(std::string message, NotificationLevel leve
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
-ToolWindow& Application::open_tool_window(sf::String title) {
-    auto tool_window = std::make_unique<ToolWindow>(window());
+ToolWindow& Application::open_tool_window(sf::String title, std::string id) {
+    auto tool_window = std::make_unique<ToolWindow>(window(), std::move(id));
     auto tool_window_ptr = tool_window.get();
     tool_window_ptr->set_title(std::move(title));
     m_tool_windows.push_back(std::move(tool_window));
     return *tool_window_ptr;
+}
+
+ToolWindow& Application::open_or_focus_tool_window(sf::String title, std::string id) {
+    for (auto it = m_tool_windows.begin(); it != m_tool_windows.end(); it++) {
+        auto& window = *it;
+        if (window->id() == id) {
+            focus_window(it);
+            return *window;
+        }
+    }
+    return open_tool_window(std::move(title), std::move(id));
 }
 
 void Application::update() {

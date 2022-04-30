@@ -30,7 +30,8 @@ public:
     };
     void spawn_notification(std::string message, NotificationLevel);
 
-    ToolWindow& open_tool_window(sf::String title);
+    ToolWindow& open_tool_window(sf::String title, std::string id = "ToolWindow");
+    ToolWindow& open_or_focus_tool_window(sf::String title, std::string id);
     ToolWindow* focused_tool_window() const { return m_focused_tool_window; }
 
     virtual sf::Vector2f position() const override { return {}; }
@@ -46,7 +47,11 @@ private:
     void draw_notification(Notification const&, float y) const;
     sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
 
-    std::list<std::unique_ptr<ToolWindow>> m_tool_windows;
+    using WindowList = std::list<std::unique_ptr<ToolWindow>>;
+
+    void focus_window(WindowList::iterator);
+
+    WindowList m_tool_windows;
     ToolWindow* m_focused_tool_window = nullptr;
     std::vector<Notification> m_notifications;
 };
