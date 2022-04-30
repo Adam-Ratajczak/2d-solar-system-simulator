@@ -13,8 +13,9 @@
 
 namespace GUI {
 
-ToolWindow::ToolWindow(sf::RenderWindow& wnd)
-    : WidgetTreeRoot(wnd) {
+ToolWindow::ToolWindow(sf::RenderWindow& wnd, std::string id)
+    : WidgetTreeRoot(wnd)
+    , m_id(std::move(id)) {
     m_titlebar_buttons.push_back(TitlebarButton {
         .on_click = [this]() {
             close();
@@ -90,7 +91,7 @@ void ToolWindow::handle_event(Event& event) {
         }
 
         if (event.type() == sf::Event::MouseButtonPressed) {
-            if(m_resize_mode != Resize::DEFAULT)
+            if (m_resize_mode != Resize::DEFAULT)
                 m_resizing = true;
             else if (titlebar_rect().contains(mouse_position)) {
                 m_dragging = true;

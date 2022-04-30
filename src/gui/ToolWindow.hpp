@@ -6,7 +6,7 @@ namespace GUI {
 
 class ToolWindow : public WidgetTreeRoot {
 public:
-    explicit ToolWindow(sf::RenderWindow& wnd);
+    explicit ToolWindow(sf::RenderWindow& wnd, std::string id);
 
     static constexpr auto TitleBarSize = 28;
     static constexpr auto MinSize = 50;
@@ -30,7 +30,11 @@ public:
     void close() { m_closed = true; }
     bool is_closed() const { return m_closed; }
 
+    std::string id() const { return m_id; }
+
 private:
+    std::string m_id;
+
     enum class Resize {
         LEFT,
         LEFTBOTTOM,
