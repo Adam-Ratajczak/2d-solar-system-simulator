@@ -83,6 +83,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
         auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
         sphere_mode_label->set_content("Toggle Sphere mode: ");
+        sphere_mode_label->set_size({{60, Length::Percent}, Length::Auto});
 
         auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
         toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
@@ -105,6 +106,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
         auto toggle_time_format_label = toggle_time_format_container->add_widget<GUI::Textfield>();
         toggle_time_format_label->set_content("Toggle time format: ");
+        toggle_time_format_label->set_size({{60, Length::Percent}, Length::Auto});
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
@@ -132,7 +134,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             toggle_container->set_size({ Length::Auto, 30.0_px });
             auto button_label = toggle_container->add_widget<GUI::Textfield>();
             button_label->set_content(title + ": ");
-            button_label->set_size({ Length::Auto, 30.0_px });
+            button_label->set_size({ {60, Length::Percent}, 30.0_px });
             auto toggle = toggle_container->add_widget<GUI::TextButton>();
             toggle->set_content("Off");
             toggle->set_active_content("On");
