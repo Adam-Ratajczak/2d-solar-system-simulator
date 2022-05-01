@@ -28,33 +28,31 @@ SettingsMenu::MenuEntry& SettingsMenu::add_entry(sf::Image const& image, std::st
         button->set_toggleable(true);
         button->on_change = [this, button](bool state) {
             for (auto& entry : m_entries) {
-                if (!entry.settings_container)
+                if (!entry->settings_container)
                     continue;
-                if (entry.button == button) {
-                    entry.settings_container->set_visible(state);
-                    if (entry.on_toggle)
-                        entry.on_toggle(state);
-                    entry.button->set_active(state, NotifyUser::No);
+                if (entry->button == button) {
+                    entry->settings_container->set_visible(state);
+                    if (entry->on_toggle)
+                        entry->on_toggle(state);
+                    entry->button->set_active(state, NotifyUser::No);
                 }
                 else {
-                    entry.settings_container->set_visible(false);
-                    if (entry.button->is_active() && entry.on_toggle)
-                        entry.on_toggle(false);
-                    entry.button->set_active(false, NotifyUser::No);
+                    entry->settings_container->set_visible(false);
+                    if (entry->button->is_active() && entry->on_toggle)
+                        entry->on_toggle(false);
+                    entry->button->set_active(false, NotifyUser::No);
                 }
             }
         };
         auto settings_container = m_settings_container->add_widget<Frame>();
         settings_container->set_visible(false);
-        return m_entries.emplace_back(button, settings_container);
+        return *m_entries.emplace_back(std::make_unique<MenuEntry>(button, settings_container));
     }
-    else {
-        auto& entry = m_entries.emplace_back(button, nullptr);
-        button->on_click = [&entry]() {
-            entry.on_toggle(true);
-        };
-    }
-    return m_entries.back();
+    auto entry = m_entries.emplace_back(std::make_unique<MenuEntry>(button, nullptr)).get();
+    button->on_click = [entry]() {
+        entry->on_toggle(true);
+    };
+    return *m_entries.back();
 }
 
 }

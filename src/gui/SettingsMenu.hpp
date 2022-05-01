@@ -30,7 +30,7 @@ public:
 private:
     virtual bool isolated_focus() const override { return true; }
 
-    std::vector<MenuEntry> m_entries;
+    std::vector<std::unique_ptr<MenuEntry>> m_entries;
     Container* m_buttons_container {};
     Container* m_settings_container {};
 };
