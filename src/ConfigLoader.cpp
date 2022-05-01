@@ -74,7 +74,7 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
                 Vector3 { read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
                 sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                 properties["name"],
-                read_double_property("trail_length", 1000));
+                read_double_property("trail_length", 1000 * 3600 * 24));
         }
         else if (keyword == "orbitting_planet") {
             auto around = properties["around"];

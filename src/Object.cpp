@@ -23,7 +23,7 @@
 #include <vector>
 
 Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
-    : m_trail(std::max(2U, period * 2), color)
+    : m_trail(std::max(2U, period / (3600 * 24) * 2), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
     , m_sphere(radius / AU, 36, 18)
@@ -210,12 +210,12 @@ Object::Info Object::get_info() const {
     };
 
     if (m_most_attracting_object) {
-        info.distance_from_most_massive_object = get_distance(this->m_pos, m_most_attracting_object->m_pos) / AU;
-        info.apogee = m_ap / AU;
+        info.distance_from_most_massive_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
+        info.apogee = m_ap;
         info.apogee_velocity = m_ap_vel;
-        info.perigee = m_pe / AU;
+        info.perigee = m_pe;
         info.perigee_velocity = m_pe_vel;
-        info.orbit_period = m_orbit_len / 365.25;
+        info.orbit_period = m_orbit_len;
         info.orbit_eccencrity = eccencrity;
     }
 
@@ -247,7 +247,7 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T);
     result->m_ap = apogee.value();
     result->m_pe = perigee.value();
 

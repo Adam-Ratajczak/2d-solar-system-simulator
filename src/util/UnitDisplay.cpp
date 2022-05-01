@@ -28,7 +28,7 @@ static const std::map<Quantity, std::vector<Unit>> s_units {
     { Quantity::Mass,
         {
             { "kg", 1 },
-            { "T", 1000 },
+            { "Tons", 1000 },
         } },
     { Quantity::Velocity,
         {
@@ -41,8 +41,8 @@ static const std::map<Quantity, std::vector<Unit>> s_units {
             { "s", 1 },
             { "m", 60 },
             { "h", 3600 },
-            { "d", 3600 * 24 },
-            { "y", Year },
+            { "days", 3600 * 24 },
+            { "years", Year },
         } }
 };
 
