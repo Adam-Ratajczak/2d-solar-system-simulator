@@ -164,6 +164,10 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         auto pause_on_creation_toggle = add_toggle("Pause when creative mode", [this](bool state) {
             m_pause_simulation_on_creative_mode = state;
         });
+
+        auto fix_rotation_on_focused_object = add_toggle("fix rotation on focused object", [this](bool state) {
+            m_simulation_view.set_fixed_rotation_on_focus(state);
+        });
     }
 
     auto restore_sim_container = add_widget<GUI::Container>();

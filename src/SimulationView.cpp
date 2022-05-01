@@ -6,6 +6,7 @@
 #include "gui/WidgetTreeRoot.hpp"
 #include "math/Ray.hpp"
 #include "math/Transform.hpp"
+#include "math/Vector3.hpp"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -82,8 +83,11 @@ void SimulationView::handle_event(GUI::Event& event) {
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
-                m_yaw += drag_delta.x / sizes.x * M_PI;
-                m_pitch -= drag_delta.y / sizes.y * M_PI;
+                m_manual_yaw += drag_delta.x / sizes.x * M_PI;
+                m_manual_pitch -= drag_delta.y / sizes.y * M_PI;
+
+                m_yaw = m_manual_yaw;
+                m_pitch = m_manual_pitch;
                 break;
             }
             default:
@@ -343,8 +347,18 @@ void SimulationView::update() {
         m_world.update(m_speed * m_iterations);
 
     // Handle focus
-    if (m_focused_object)
+    if (m_focused_object){
         set_offset(-m_focused_object->render_position());
+
+        if(m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus){
+            Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
+            m_pitch = std::fabs(std::atan2(a.y, a.z)) + m_manual_pitch;
+            m_yaw = std::fabs(std::atan2(a.y, a.x)) - M_PI / 2 + m_manual_yaw;
+        }else {
+            m_manual_pitch = m_pitch;
+            m_manual_yaw = m_yaw;
+        }
+    }
         
     if(m_focused_object != m_prev_focused_object){
         on_change_focus(m_focused_object);

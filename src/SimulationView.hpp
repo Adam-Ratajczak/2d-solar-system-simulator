@@ -63,6 +63,8 @@ public:
     bool show_trails() const { return m_show_trails; }
     void set_offset_trails(bool b) { m_offset_trail = b; }
     bool offset_trails() const { return m_offset_trail; }
+    void set_fixed_rotation_on_focus(bool b){m_fixed_rotation_on_focus = b;}
+    bool set_fixed_rotation_on_focus()const{return m_fixed_rotation_on_focus;}
 
     void set_fov(Angle fov) { m_fov = fov; }
 
@@ -109,8 +111,8 @@ private:
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;
-    double m_yaw = 0;
-    double m_pitch = 0;
+    double m_yaw = 0, m_manual_yaw = 0;
+    double m_pitch = 0, m_manual_pitch = 0.7;
 
     World& m_world;
     double m_zoom = 1;
@@ -143,6 +145,7 @@ private:
     bool m_show_grid = true;
     bool m_show_trails = true;
     bool m_offset_trail = true;
+    bool m_fixed_rotation_on_focus = true;
 
     bool m_allow_change_speed = true;
 
