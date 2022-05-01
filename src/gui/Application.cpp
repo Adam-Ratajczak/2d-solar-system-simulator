@@ -137,7 +137,7 @@ ToolWindow& Application::open_tool_window(sf::String title, std::string id) {
 
 ToolWindow& Application::open_or_focus_tool_window(sf::String title, std::string id) {
     for (auto it = m_tool_windows.begin(); it != m_tool_windows.end(); it++) {
-        auto& window = *it;
+        auto window = it->get();
         if (window->id() == id) {
             focus_window(it);
             return *window;
