@@ -9,8 +9,7 @@
 
 class EssaCreateObject : public GUI::Container {
 public:
-    explicit EssaCreateObject(GUI::WidgetTreeRoot&, SimulationView& simulation_view);
-    virtual ~EssaCreateObject() override;
+    explicit EssaCreateObject(GUI::Container& container, SimulationView& simulation_view);
 
     void set_new_object(std::unique_ptr<Object> new_obj) { m_new_object = std::move(new_obj); }
     void recalculate_forward_simulation();
