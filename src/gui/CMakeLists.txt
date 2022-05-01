@@ -25,3 +25,5 @@ target_link_libraries(
     essa-gui
     sfml-graphics
 )
+
+setup_target(essa-gui)
