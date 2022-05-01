@@ -32,6 +32,8 @@ public:
 
     std::string id() const { return m_id; }
 
+    std::function<void()> on_close;
+
 private:
     std::string m_id;
 
