@@ -110,6 +110,15 @@ void World::delete_object_by_ptr(Object* ptr){m_object_list.remove_if([ptr](std:
     }
 }
 
+std::unique_ptr<Object>& World::find_object_by_ptr(Object* ptr){
+    for(auto& o : m_object_list){
+        if(o.get() == ptr)
+            return o;
+    }
+
+    return m_object_list.back();
+}
+
 void World::clone_for_forward_simulation(World& new_world) const {
     new_world = World();
     new_world.m_is_forward_simulated = true;

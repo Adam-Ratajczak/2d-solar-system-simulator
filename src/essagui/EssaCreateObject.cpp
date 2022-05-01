@@ -55,10 +55,10 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             m_submit_create_container->set_visible(true);
             m_submit_modify_container->set_visible(false);
 
-            if(m_automatic_orbit_calculation){
-                m_create_object_from_params_container->set_visible(false);
-                m_create_object_from_orbit_container->set_visible(true);
-            }
+            m_create_object_from_params_container->set_visible(!m_automatic_orbit_calculation);
+            m_create_object_from_orbit_container->set_visible(m_automatic_orbit_calculation);
+
+            m_toggle_unit_button->set_active(m_prev_unit_state);
         }else{
             m_submit_create_container->set_visible(false);
             m_submit_modify_container->set_visible(true);
@@ -66,12 +66,14 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
             m_create_object_from_params_container->set_visible(true);
             m_create_object_from_orbit_container->set_visible(false);
 
+            m_toggle_unit_button->set_active(false);
+
             m_update_info_from_focused_object();
         }
     };
 
     m_simulation_view.if_focused = [this](){
-        if(is_visible())
+        if(is_visible() && m_simulation_view.speed() != 0)
             m_update_info_from_focused_object();
     };
 }
@@ -218,7 +220,9 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_modify_submit_container(GUI:
         modify_button->set_tooltip_text("Modify object");
 
         modify_button->on_change = [this](bool state) {
-            
+            m_simulation_view.world().delete_object_by_ptr(m_to_modify);
+            m_to_modify = m_new_object.get();
+            m_simulation_view.world().add_object(std::move(m_new_object));
         };
     }
 
@@ -226,8 +230,8 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_modify_submit_container(GUI:
 }
 
 void EssaCreateObject::recalculate_forward_simulation() {
-    // if(m_to_modify != nullptr)
-    //     return;
+    if(m_to_modify != nullptr)
+        return;
 
     if (m_automatic_orbit_calculation)
         m_new_object = m_create_object_from_orbit();
@@ -254,6 +258,8 @@ std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(
     auto button = std::make_shared<GUI::ImageButton>(*parent.add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png")));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
+        m_prev_unit_state = state;
+
         auto vel = m_velocity_control->value();
         auto dist = find_widgets_of_type_by_class_name_recursively<GUI::ValueSlider>("Dist");
         auto angle = find_widgets_of_type_by_class_name_recursively<GUI::ValueSlider>("Angle");

@@ -50,6 +50,7 @@ public:
     static constexpr char const* PythonClassName = "World";
 
     void delete_object_by_ptr(Object* ptr);
+    std::unique_ptr<Object>& find_object_by_ptr(Object* ptr);
 
 private:
     Util::SimulationClock::time_point m_date;

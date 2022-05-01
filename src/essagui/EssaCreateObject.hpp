@@ -61,7 +61,7 @@ private:
     
     int m_saved_speed = 0;
     bool m_forward_simulation_is_valid = true;
-    bool m_automatic_orbit_calculation = false;
+    bool m_automatic_orbit_calculation = false, m_prev_unit_state = false;
 
     Object* m_focused = nullptr;
     Object* m_forward_simulated_new_object = nullptr;
