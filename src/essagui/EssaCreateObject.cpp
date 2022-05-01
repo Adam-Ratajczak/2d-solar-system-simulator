@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation_view)
+EssaCreateObject::EssaCreateObject(GUI::WidgetTreeRoot& c, SimulationView& simulation_view)
     : GUI::Container(c)
     , m_simulation_view(simulation_view) {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
@@ -76,6 +76,11 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
         if(is_visible() && m_simulation_view.speed() != 0)
             m_update_info_from_focused_object();
     };
+}
+
+EssaCreateObject::~EssaCreateObject() {
+    m_simulation_view.if_focused = {};
+    m_simulation_view.on_change_focus = {};
 }
 
 void EssaCreateObject::m_update_info_from_focused_object(){

@@ -33,15 +33,19 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     auto menu = add_widget<GUI::SettingsMenu>();
     menu->set_position({ 10.0_px, 10.0_px });
     {
-        auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
-        create_menu.on_toggle = [this](bool state) {
-            if(m_settings_gui->pause_simulation_on_creative_mode())
-                m_pause_simulation(state);
-            m_draw_forward_simulation = state;
+        auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object", GUI::SettingsMenu::Expandable::No);
+        create_menu.on_toggle = [this](bool) {
+            m_pause_simulation(true);
+            m_draw_forward_simulation = true;
+            auto& create_object_window = GUI::Application::the().open_or_focus_tool_window("Create object", "create-object");
+            create_object_window.set_size({ 550, 680 });
+            create_object_window.on_close = [this]() {
+                m_pause_simulation(false);
+                m_draw_forward_simulation = false;
+                m_create_object_gui = nullptr;
+            };
+            m_create_object_gui = &create_object_window.set_main_widget<EssaCreateObject>(*m_simulation_view);
         };
-        create_menu.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        create_menu.settings_container->set_size({ 550.0_px, 680.0_px });
-        m_create_object_gui = create_menu.settings_container->add_widget<EssaCreateObject>(*m_simulation_view);
     }
 
     {
@@ -76,12 +80,12 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 void EssaGUI::update() {
     m_focused_object_info->update_from_object(m_simulation_view->focused_object());
 
-    if (!m_create_object_gui->is_forward_simulation_valid())
+    if (m_create_object_gui && !m_create_object_gui->is_forward_simulation_valid())
         m_create_object_gui->recalculate_forward_simulation();
 }
 
 void EssaGUI::draw(sf::RenderWindow& window) const {
-    if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
+    if (m_create_object_gui && m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
             WorldDrawScope scope(*m_simulation_view);
             m_create_object_gui->new_object()->draw(*m_simulation_view);
@@ -102,8 +106,11 @@ void EssaGUI::handle_event(GUI::Event& event) {
 }
 
 void EssaGUI::m_pause_simulation(bool state) {
+    if ((m_simulation_view->speed() == 0) == state)
+        return;
     m_simulation_view->change_speed(!state);
     if (!state) {
+        assert(m_create_object_gui);
         m_create_object_gui->set_new_object(nullptr);
         m_create_object_gui->forward_simulation_state(true);
         m_simulation_view->set_speed(m_saved_speed);
