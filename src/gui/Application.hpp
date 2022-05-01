@@ -52,6 +52,7 @@ private:
     void focus_window(WindowList::iterator);
 
     WindowList m_tool_windows;
+    sf::Vector2f m_next_tool_window_position { 10, 10 + ToolWindow::TitleBarSize };
     ToolWindow* m_focused_tool_window = nullptr;
     std::vector<Notification> m_notifications;
 };

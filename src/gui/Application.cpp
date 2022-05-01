@@ -2,6 +2,7 @@
 
 #include "../gfx/ClipViewScope.hpp"
 #include "../gfx/RoundedEdgeRectangleShape.hpp"
+#include "ToolWindow.hpp"
 #include "WidgetTreeRoot.hpp"
 
 #include <SFML/Graphics/Color.hpp>
@@ -131,6 +132,10 @@ ToolWindow& Application::open_tool_window(sf::String title, std::string id) {
     auto tool_window = std::make_unique<ToolWindow>(window(), std::move(id));
     auto tool_window_ptr = tool_window.get();
     tool_window_ptr->set_title(std::move(title));
+    tool_window_ptr->set_position(m_next_tool_window_position);
+    m_next_tool_window_position += sf::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
+    if (m_next_tool_window_position.x > size().x - ToolWindow::TitleBarSize || m_next_tool_window_position.y > size().y - ToolWindow::TitleBarSize)
+        m_next_tool_window_position = { 10, 10 };
     m_tool_windows.push_back(std::move(tool_window));
     return *tool_window_ptr;
 }
