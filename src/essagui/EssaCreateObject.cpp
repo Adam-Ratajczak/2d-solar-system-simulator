@@ -71,7 +71,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     };
 
     m_simulation_view.if_focused = [this](){
-        if(!is_visible())
+        if(is_visible())
             m_update_info_from_focused_object();
     };
 }
@@ -83,8 +83,8 @@ void EssaCreateObject::m_update_info_from_focused_object(){
     m_new_object_pos.x = m_to_modify->pos().x;
     m_new_object_pos.y = m_to_modify->pos().y;
     m_y_position_control->set_value(m_to_modify->pos().z);
-    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.x));
-    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z));
+    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.x) / M_PI * 180 - 90);
+    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z) / M_PI * 180 - 90);
 
     double mass = m_to_modify->mass();
     m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));

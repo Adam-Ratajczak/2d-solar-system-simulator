@@ -160,6 +160,10 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             this->m_simulation_view.set_offset_trails(state);
             this->m_simulation_view.world().reset_all_trails();
         });
+
+        auto pause_on_creation_toggle = add_toggle("Pause when creative mode", [this](bool state) {
+            m_pause_simulation_on_creative_mode = state;
+        });
     }
 
     auto restore_sim_container = add_widget<GUI::Container>();

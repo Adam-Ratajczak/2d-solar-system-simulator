@@ -35,7 +35,9 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
         create_menu.on_toggle = [this](bool state) {
-            m_pause_simulation(state);
+            if(m_settings_gui->pause_simulation_on_creative_mode())
+                m_pause_simulation(state);
+            m_draw_forward_simulation = state;
         };
         create_menu.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         create_menu.settings_container->set_size({ 550.0_px, 680.0_px });
@@ -56,7 +58,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        settings.settings_container->set_size({ 500.0_px, 500.0_px });
+        settings.settings_container->set_size({ 500.0_px, 600.0_px });
         m_settings_gui = settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
     }
 
@@ -80,7 +82,7 @@ void EssaGUI::update() {
 }
 
 void EssaGUI::draw(sf::RenderWindow& window) const {
-    if (m_create_object_gui->new_object()) {
+    if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
             WorldDrawScope scope(*m_simulation_view);
             m_create_object_gui->new_object()->draw(*m_simulation_view);
