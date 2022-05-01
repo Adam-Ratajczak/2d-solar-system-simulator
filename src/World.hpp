@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include <cstdint>
 #include <list>
+#include <memory>
 #include <string>
 
 class SimulationView;
@@ -47,6 +48,8 @@ public:
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "World";
+
+    void delete_object_by_ptr(Object* ptr);
 
 private:
     Util::SimulationClock::time_point m_date;

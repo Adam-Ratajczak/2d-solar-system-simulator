@@ -194,7 +194,8 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_modify_submit_container(GUI:
     {
         auto trash_button = container->add_widget<GUI::ImageButton>(load_image("../assets/trashButton.png"));
         trash_button->on_click = [this]() {
-
+            m_simulation_view.world().delete_object_by_ptr(m_to_modify);
+            m_to_modify = nullptr;
         };
         trash_button->set_tooltip_text("Delete object");
 

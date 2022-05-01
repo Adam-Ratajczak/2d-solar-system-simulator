@@ -100,6 +100,16 @@ void World::reset_all_trails() {
     for_each_object([](Object& o) { o.trail().reset(); });
 }
 
+void World::delete_object_by_ptr(Object* ptr){m_object_list.remove_if([ptr](std::unique_ptr<Object>& obj){
+    return obj.get() == ptr;}); 
+    m_simulation_view->set_focused(nullptr);
+
+    for(auto& o : m_object_list){
+        if(o->most_attracting_object() == ptr)
+            o->delete_most_attracting_object();
+    }
+}
+
 void World::clone_for_forward_simulation(World& new_world) const {
     new_world = World();
     new_world.m_is_forward_simulated = true;

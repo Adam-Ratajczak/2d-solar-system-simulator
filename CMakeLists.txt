@@ -46,16 +46,19 @@ add_executable(
     src/util/UnitDisplay.cpp
 )
 
-function(setup_target targetname)
-    target_compile_options(${targetname} PUBLIC -Werror=non-virtual-dtor)
+target_compile_options(out PUBLIC -fsanitize=undefined,address)
+target_link_options(out PUBLIC -fsanitize=undefined,address)
 
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address)
-        target_link_options(${targetname} PUBLIC -fsanitize=undefined,address)
-    else()
-        target_compile_options(${targetname} PUBLIC -O3)
-    endif()
-endfunction()
+# function(setup_target targetname)
+#     target_compile_options(${targetname} PUBLIC -Werror=non-virtual-dtor)
+
+#     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+#         target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address)
+#         target_link_options(${targetname} PUBLIC -fsanitize=undefined,address)
+#     else()
+#         target_compile_options(${targetname} PUBLIC -O3)
+#     endif()
+# endfunction()
 
 target_link_libraries(out essa-gui GLEW GLU GL)
 target_link_libraries(out ${PYTHON_LIBRARIES})

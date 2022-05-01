@@ -74,6 +74,7 @@ public:
     Sphere& sphere() { return m_sphere; }
 
     Object* most_attracting_object() const { return m_most_attracting_object; }
+    void delete_most_attracting_object();
 
     struct Info {
         double mass;

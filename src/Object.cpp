@@ -147,6 +147,12 @@ void Object::recalculate_trails_with_offset() {
     m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
 }
 
+void Object::delete_most_attracting_object(){
+    m_most_attracting_object = nullptr;
+    m_trail.recalculate_with_offset({});
+    m_trail.reset();
+}
+
 void Object::draw(SimulationView const& view) {
 
     auto scaled_pos = render_position();

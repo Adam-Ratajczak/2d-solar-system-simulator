@@ -29,8 +29,6 @@ void SimulationView::handle_event(GUI::Event& event) {
                     on_change_focus(m_focused_object);
                     return;
                 }
-
-                on_change_focus(nullptr);
             });
 
             if (m_measure == Measure::Coords)
@@ -42,7 +40,9 @@ void SimulationView::handle_event(GUI::Event& event) {
                     m_on_focus_measure(m_focused_object);
                 }
                 m_focused_object = nullptr;
+                on_change_focus(nullptr);
             }
+
             event.set_handled();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
