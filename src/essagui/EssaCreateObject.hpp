@@ -5,6 +5,7 @@
 #include "../gui/Container.hpp"
 #include "../gui/ImageButton.hpp"
 #include "../gui/ValueSlider.hpp"
+#include <memory>
 
 class EssaCreateObject : public GUI::Container {
 public:
@@ -49,7 +50,7 @@ private:
     std::shared_ptr<Container> m_submit_create_container = nullptr;
     std::shared_ptr<Container> m_submit_modify_container = nullptr;
 
-    GUI::ImageButton* m_toggle_unit_button = nullptr;
+    std::shared_ptr<GUI::ImageButton> m_toggle_unit_button = nullptr;
     GUI::ImageButton* m_toggle_orbit_direction_button = nullptr;
     GUI::ImageButton* m_require_orbit_point_button = nullptr;
 
@@ -68,7 +69,7 @@ private:
 
     SimulationView& m_simulation_view;
 
-    GUI::ImageButton* m_create_toggle_unit_button(Container& parent);
+    std::shared_ptr<GUI::ImageButton> m_create_toggle_unit_button(Container& parent);
     std::shared_ptr<Container> m_create_object_from_params_gui(Container& parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(Container& parent);
     std::shared_ptr<Container> m_create_submit_container(Container& parent);

@@ -34,28 +34,45 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     auto mode_specific_submit_container = add_widget<Container>();
     mode_specific_submit_container->set_size({ Length::Auto, 72.0_px });
     mode_specific_submit_container->set_layout<GUI::BasicLayout>();
+    m_toggle_unit_button = m_create_toggle_unit_button(*mode_specific_submit_container);
 
     m_submit_create_container = m_create_submit_container(*mode_specific_submit_container);
     m_submit_create_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_submit_create_container->set_visible(true);
+    m_submit_create_container->add_created_widget(m_toggle_unit_button);
     mode_specific_submit_container->add_created_widget(m_submit_create_container);
 
     m_submit_modify_container = m_modify_submit_container(*mode_specific_submit_container);
     m_submit_modify_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_submit_modify_container->set_visible(false);
+    m_submit_modify_container->add_created_widget(m_toggle_unit_button);
     mode_specific_submit_container->add_created_widget(m_submit_modify_container);
+
 
     m_simulation_view.on_change_focus = [this](Object* obj){
         m_to_modify = obj;
-        if(obj == 0){
+        if(obj == nullptr){
             m_submit_create_container->set_visible(true);
             m_submit_modify_container->set_visible(false);
+
+            if(m_automatic_orbit_calculation){
+                m_create_object_from_params_container->set_visible(false);
+                m_create_object_from_orbit_container->set_visible(true);
+            }
         }else{
             m_submit_create_container->set_visible(false);
             m_submit_modify_container->set_visible(true);
-            
+
+            m_create_object_from_params_container->set_visible(true);
+            m_create_object_from_orbit_container->set_visible(false);
+
             m_update_info_from_focused_object();
         }
+    };
+
+    m_simulation_view.if_focused = [this](){
+        if(!is_visible())
+            m_update_info_from_focused_object();
     };
 }
 
@@ -73,8 +90,8 @@ void EssaCreateObject::m_update_info_from_focused_object(){
     m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));
     m_mass_textbox->set_content(std::to_string(mass / std::pow(10, std::log10(mass))));
 
-    // m_color_control->set_value(m_new_object->color());
-    // m_name_textbox->set_content(m_new_object->name());
+    m_color_control->set_value(m_to_modify->color());
+    m_name_textbox->set_content(m_to_modify->name());
 }
 
 void EssaCreateObject::m_create_name_and_color_container(){
@@ -147,8 +164,6 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
             m_require_orbit_point_button->set_visible(!state);
             m_automatic_orbit_calculation = state;
         };
-
-        m_toggle_unit_button = m_create_toggle_unit_button(*container);
 
         m_toggle_orbit_direction_button = container->add_widget<GUI::ImageButton>(load_image("../assets/orbitDirectionButton.png"));
         m_toggle_orbit_direction_button->set_toggleable(true);
@@ -235,8 +250,8 @@ void EssaCreateObject::recalculate_forward_simulation() {
     m_forward_simulation_is_valid = true;
 }
 
-GUI::ImageButton* EssaCreateObject::m_create_toggle_unit_button(GUI::Container& parent) {
-    auto button = parent.add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png"));
+std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(GUI::Container& parent) {
+    auto button = std::make_shared<GUI::ImageButton>(*parent.add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png")));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
         auto vel = m_velocity_control->value();

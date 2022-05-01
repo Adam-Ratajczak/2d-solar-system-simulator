@@ -26,7 +26,6 @@ void SimulationView::handle_event(GUI::Event& event) {
                 auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
                 if (distance < 30){
                     m_focused_object = &obj;
-                    on_change_focus(m_focused_object);
                     return;
                 }
             });
@@ -346,6 +345,14 @@ void SimulationView::update() {
     // Handle focus
     if (m_focused_object)
         set_offset(-m_focused_object->render_position());
+        
+    if(m_focused_object != m_prev_focused_object){
+        on_change_focus(m_focused_object);
+        m_prev_focused_object = m_focused_object;
+    }
+
+    if(m_focused_object != nullptr)
+        if_focused();
 }
 
 Object* SimulationView::focused_object() const {

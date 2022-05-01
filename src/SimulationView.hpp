@@ -54,6 +54,7 @@ public:
     }
 
     std::function<void(Object*)> on_change_focus;
+    std::function<void()> if_focused;
 
     void toggle_label_visibility(bool visibility) { m_show_labels = visibility; }
     bool show_labels() const { return m_show_labels; }
@@ -114,6 +115,7 @@ private:
     World& m_world;
     double m_zoom = 1;
     Object* m_focused_object = nullptr;
+    Object* m_prev_focused_object = nullptr;
     unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;
     sf::Vector2f m_prev_drag_pos;
