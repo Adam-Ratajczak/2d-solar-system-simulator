@@ -27,7 +27,9 @@ public:
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
         m_pitch = -0.7;
+        m_manual_pitch = -0.7;
         m_yaw = 0;
+        m_manual_yaw = 0;
     }
 
     Vector3 screen_to_world(Vector3 v) const;
@@ -112,7 +114,7 @@ private:
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;
     double m_yaw = 0, m_manual_yaw = 0;
-    double m_pitch = 0, m_manual_pitch = 0.7;
+    double m_pitch = 0, m_manual_pitch = 0;
 
     World& m_world;
     double m_zoom = 1;
