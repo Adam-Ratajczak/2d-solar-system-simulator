@@ -7,7 +7,7 @@ void ObjectHistory::clear_history(unsigned long to_index) {
 }
 
 bool ObjectHistory::set_time(Util::SimulationClock::time_point time) {
-    m_pos = m_entries.size();
+    m_pos = 0;
 
     for (auto& e : m_entries) {
         if (e->creation_date() > time)

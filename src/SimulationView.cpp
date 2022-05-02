@@ -352,12 +352,15 @@ void SimulationView::update() {
 
         if (m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus) {
             Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
-            m_pitch = std::fabs(std::atan2(a.y, a.z)) + m_manual_pitch;
-            m_yaw = std::fabs(std::atan2(a.y, a.x)) - M_PI / 2 + m_manual_yaw;
-        }
-        else {
-            m_manual_pitch = m_pitch;
-            m_manual_yaw = m_yaw;
+            double mag = a.magnitude();
+
+            m_pitch = std::acos(a.z / mag) + m_manual_pitch + 1.4;
+            m_yaw = std::acos(a.x / mag);
+            
+            m_yaw -= M_PI / 2;
+            m_yaw += m_manual_yaw;
+            
+            // std::cout << m_yaw << "\n";
         }
     }
 

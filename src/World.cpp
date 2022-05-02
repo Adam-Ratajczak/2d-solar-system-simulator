@@ -26,8 +26,6 @@ void World::add_object(std::unique_ptr<Object> object) {
 
     if (m_object_history.set_time(m_date))
         m_object_history.clear_history(m_object_history.get_pos());
-
-    m_object_history.clear_history(m_object_history.get_pos());
 }
 
 void World::update(int steps) {
