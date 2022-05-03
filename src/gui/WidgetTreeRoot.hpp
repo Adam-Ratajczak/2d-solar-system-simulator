@@ -31,6 +31,14 @@ public:
         return *widget_ptr;
     }
 
+    template<class T, class... Args>
+    auto& set_created_main_widget(std::shared_ptr<T> w) {
+        auto widget_ptr = w.get();
+        m_main_widget = std::move(w);
+        m_needs_relayout = true;
+        return *widget_ptr;
+    }
+
     Tooltip& add_tooltip(std::unique_ptr<Tooltip> t) {
         // std::cout << t->owner << " ADDED TOOLTIP" << std::endl;
         auto t_ptr = t.get();

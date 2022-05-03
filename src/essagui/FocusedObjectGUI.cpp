@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iomanip>
+#include <memory>
 
 FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, World& w)
     : GUI::Container(c)
@@ -179,9 +180,48 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     remove_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
     modify_button->set_alignment(GUI::Align::Center);
     remove_button->on_click = [&](){
-        m_world.delete_object_by_ptr(m_focused);
-        m_focused = nullptr;
+        auto& prompt_window = GUI::Application::the().open_tool_window("Are you sure?");
+        prompt_window.set_position({ 850, 400 });
+        prompt_window.set_size({ 400, 150 });
+        auto& prompt_container = prompt_window.set_main_widget<GUI::Container>();
+        prompt_container.set_background_color(sf::Color::White);
+
+        auto prompt_container_layout = prompt_container.set_layout<GUI::VerticalBoxLayout>();
+        prompt_container_layout.set_spacing(10);
+        prompt_container_layout.set_padding(10);
+
+        auto prompt_text = prompt_container.add_widget<GUI::Textfield>();
+        prompt_text->set_content("Are you sure you want to delete object \"" + m_focused->name() + "\"?");
+        prompt_text->set_alignment(GUI::Align::Center);
+        prompt_text->set_display_attributes(sf::Color::Transparent, sf::Color::Transparent, sf::Color::Black);
+
+        auto remove_button_container = prompt_container.add_widget<GUI::Container>();
+        remove_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+        remove_button_container->set_size({Length::Auto, 30.0_px});
+        
+        auto yes_button = remove_button_container->add_widget<GUI::TextButton>();
+        yes_button->set_alignment(GUI::Align::Center);
+        yes_button->set_content("Yes");
+        yes_button->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
+        yes_button->on_click = [&](){
+            m_world.delete_object_by_ptr(m_focused);
+            m_focused = nullptr;
+            prompt_window.close();
+        };
+        
+        auto no_button = remove_button_container->add_widget<GUI::TextButton>();
+        no_button->set_alignment(GUI::Align::Center);
+        no_button->set_content("No");
+        no_button->set_display_attributes(sf::Color(50, 50, 50), sf::Color(50, 50, 50), sf::Color::White);
+        no_button->on_click = [&](){
+            prompt_window.close();
+        };
+        
+        auto filler_container = prompt_container.add_widget<GUI::Container>();
+        filler_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+        filler_container->set_size({Length::Auto, 30.0_px});
     };
+
 }
 
 std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {

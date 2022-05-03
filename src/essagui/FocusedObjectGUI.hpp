@@ -2,11 +2,13 @@
 
 #include "../Object.hpp"
 #include "../World.hpp"
-#include "../gui/Container.hpp"
+#include "../gui/Application.hpp"
 #include "../gui/ColorPicker.hpp"
+#include "../gui/Container.hpp"
 #include "../gui/Textfield.hpp"
 #include "../gui/ValueSlider.hpp"
 #include "../util/UnitDisplay.hpp"
+#include <memory>
 
 class FocusedObjectGUI : public GUI::Container {
 public:
@@ -57,5 +59,6 @@ private:
 
     void m_create_info_gui(GUI::Container& info);
     void m_create_modify_gui(GUI::Container& modify);
+
     std::unique_ptr<Object> m_create_object_from_params() const;
 };

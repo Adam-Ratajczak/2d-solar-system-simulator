@@ -94,6 +94,9 @@ class Container : public Widget {
 public:
     explicit Container(Container& parent)
         : Widget(parent) { }
+        
+    explicit Container(WidgetTreeRoot& parent)
+        : Widget(parent) { }
 
     template<class T, class... Args>
     requires(std::is_base_of_v<Widget, T>&& requires(Container& c, Args&&... args) { T(c, args...); })
@@ -181,8 +184,6 @@ public:
     // clang-format on
 
 protected:
-    explicit Container(WidgetTreeRoot& wtr)
-        : Widget(wtr) { }
 
     virtual void relayout() override;
     virtual void handle_event(Event&) override;

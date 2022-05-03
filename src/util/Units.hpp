@@ -27,7 +27,6 @@ public:
     constexpr Unit unit() const { return m_unit; }
     constexpr float value() const { return m_value; }
 
-    constexpr Length operator-() const { return { -m_value, m_unit }; }
     constexpr bool operator==(Length const& other) const { return m_unit == other.m_unit && m_value == other.m_value; }
 
 private:
@@ -40,6 +39,7 @@ private:
 constexpr Length operator""_px(long double v) {
     return Length(v, Length::Px);
 }
+
 
 constexpr Length operator""_px_o(long double v) {
     return Length(v, Length::PxOtherSide);
