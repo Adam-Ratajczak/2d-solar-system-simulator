@@ -2,22 +2,31 @@
 
 #include "../Object.hpp"
 #include "../util/UnitDisplay.hpp"
+#include "../gui/TabWidget.hpp"
+#include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iomanip>
 
 FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
     : GUI::Container(c)
     , m_focused(o) {
-    auto& layout = set_layout<GUI::VerticalBoxLayout>();
-    layout.set_spacing(5);
+    set_layout<GUI::VerticalBoxLayout>();
+    add_widget<GUI::Container>()->set_size({Length::Auto, 10.0_px});
+    set_background_color(sf::Color(192, 192, 192, 30));
 
-    m_title = add_widget<GUI::Textfield>();
-    m_title->set_size({ Length::Auto, 45.0_px });
+    auto tab_widget = add_widget<GUI::TabWidget>();
+
+    auto& info = tab_widget->add_tab("General info");
+    info.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+
+    m_title = info.add_widget<GUI::Textfield>();
+    m_title->set_size({ Length::Auto, 30.0_px });
     m_title->set_alignment(GUI::Align::Center);
     m_title->set_font_size(30);
+    m_title->set_content("General information");
 
     auto add_field = [&](std::string name, bool is_most_massive_data) -> Field {
-        auto subcontainer = add_widget<GUI::Container>();
+        auto subcontainer = info.add_widget<GUI::Container>();
         subcontainer->set_size({ Length::Auto, 30.0_px });
         if (is_most_massive_data)
             subcontainer->set_class_name("most_massive_data");
@@ -35,7 +44,7 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
     m_radius_textfield = add_field("Radius", false);
     m_absolute_velocity_textfield = add_field("Absolute velocity", false);
 
-    m_orbiting_title = add_widget<GUI::Textfield>();
+    m_orbiting_title = info.add_widget<GUI::Textfield>();
     m_orbiting_title->set_size({ Length::Auto, 35.0_px });
     m_orbiting_title->set_alignment(GUI::Align::Center);
     m_orbiting_title->set_font_size(20);
@@ -48,6 +57,8 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
     m_perigee_velocity_textfield = add_field("Perigee velocity", true);
     m_orbit_period_textfield = add_field("Orbit period", true);
     m_orbit_eccencrity_textfield = add_field("Orbit eccencrity", true);
+
+    auto& modify = tab_widget->add_tab("Modify object");
 }
 
 void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
