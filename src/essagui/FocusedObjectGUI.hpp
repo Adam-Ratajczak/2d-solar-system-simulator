@@ -16,8 +16,11 @@ public:
     FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolWindow* wnd, World& w);
 
     virtual void update() override;
+
 private:
     void set_most_massive_data_visible(bool);
+
+    virtual float intrinsic_padding() const override { return 5; }
 
     Object* m_focused = nullptr;
     GUI::ToolWindow* m_window = nullptr;

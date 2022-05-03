@@ -24,15 +24,21 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolW
     };
 
     auto& info = tab_widget->add_tab("General info");
-    info.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+    auto& info_layout = info.set_layout<GUI::VerticalBoxLayout>();
+    info_layout.set_spacing(5);
+    info_layout.set_padding(10);
     m_create_info_gui(info);
 
     auto& modify = tab_widget->add_tab("Modify object");
-    modify.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+    auto& modify_layout = modify.set_layout<GUI::VerticalBoxLayout>();
+    modify_layout.set_spacing(5);
+    modify_layout.set_padding(10);
     m_create_modify_gui(modify);
 
     auto& view = tab_widget->add_tab("View options");
-    view.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+    auto& view_layout = view.set_layout<GUI::VerticalBoxLayout>();
+    view_layout.set_spacing(5);
+    view_layout.set_padding(10);
     m_create_view_gui(view);
 }
 
@@ -54,7 +60,7 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
         unit_label->set_alignment(GUI::Align::CenterRight);
         unit_label->set_size({ 50.0_px, Length::Auto });
 
-        if(is_most_massive_data)
+        if (is_most_massive_data)
             m_fields.push_back(subcontainer);
         return Field { .unit_textfield = unit_label, .value_textfield = value_label };
     };
@@ -236,7 +242,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     };
 }
 
-void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent){
+void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
     auto title = parent.add_widget<GUI::Textfield>();
     title->set_size({ Length::Auto, 30.0_px });
     title->set_alignment(GUI::Align::Center);
@@ -245,8 +251,8 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent){
 
     auto default_view_button_container = parent.add_widget<GUI::Container>();
     default_view_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    default_view_button_container->set_size({Length::Auto, 30.0_px});
-    
+    default_view_button_container->set_size({ Length::Auto, 30.0_px });
+
     auto default_view_textfield = default_view_button_container->add_widget<GUI::Textfield>();
     default_view_textfield->set_content("Hide focused object window");
     auto default_view_button = default_view_button_container->add_widget<GUI::TextButton>();
@@ -254,7 +260,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent){
     default_view_button->set_content("Hide");
     default_view_button->set_alignment(GUI::Align::Center);
 
-    default_view_button->on_click = [&](){
+    default_view_button->on_click = [&]() {
         m_window->close();
         m_world.m_simulation_view->set_focused(m_focused);
     };
@@ -321,7 +327,7 @@ void FocusedObjectGUI::update() {
     m_orbit_period_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_period, Util::Quantity::Time));
     m_orbit_eccencrity_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_eccencrity, Util::Quantity::None));
 
-    for(auto& f : m_fields)
+    for (auto& f : m_fields)
         f->set_visible(m_focused->most_attracting_object() != nullptr);
     m_orbiting_title->set_visible(m_focused->most_attracting_object() != nullptr);
 
