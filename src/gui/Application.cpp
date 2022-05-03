@@ -73,7 +73,7 @@ void Application::handle_events() {
             m_focused_tool_window->handle_event(gui_event_relative_to_tool_window);
             bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
                 && !m_focused_tool_window->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
-            if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || scroll_outside_window))
+            if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window))
                 continue;
         }
 
