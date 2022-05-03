@@ -31,7 +31,11 @@ public:
     void spawn_notification(std::string message, NotificationLevel);
 
     ToolWindow& open_tool_window(sf::String title, std::string id = "ToolWindow");
-    ToolWindow& open_or_focus_tool_window(sf::String title, std::string id);
+    struct OpenOrFocusResult {
+        ToolWindow* window {};
+        bool opened {};
+    };
+    OpenOrFocusResult open_or_focus_tool_window(sf::String title, std::string id);
     ToolWindow* focused_tool_window() const { return m_focused_tool_window; }
 
     virtual sf::Vector2f position() const override { return {}; }

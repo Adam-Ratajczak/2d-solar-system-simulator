@@ -140,15 +140,15 @@ ToolWindow& Application::open_tool_window(sf::String title, std::string id) {
     return *tool_window_ptr;
 }
 
-ToolWindow& Application::open_or_focus_tool_window(sf::String title, std::string id) {
+Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String title, std::string id) {
     for (auto it = m_tool_windows.begin(); it != m_tool_windows.end(); it++) {
         auto window = it->get();
         if (window->id() == id) {
             focus_window(it);
-            return *window;
+            return { .window = window, .opened = false };
         }
     }
-    return open_tool_window(std::move(title), std::move(id));
+    return { .window = &open_tool_window(std::move(title), std::move(id)), .opened = true };
 }
 
 void Application::update() {
