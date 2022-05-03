@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Object.hpp"
+#include "../World.hpp"
 #include "../gui/Container.hpp"
 #include "../gui/ColorPicker.hpp"
 #include "../gui/Textfield.hpp"
@@ -9,7 +10,7 @@
 
 class FocusedObjectGUI : public GUI::Container {
 public:
-    FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, SimulationView& s);
+    FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, World& w);
 
     virtual void update() override;
 
@@ -17,7 +18,7 @@ private:
     void set_most_massive_data_visible(bool);
 
     Object* m_focused = nullptr;
-    SimulationView& m_simulation_view;
+    World& m_world;
 
     GUI::Textfield* m_orbiting_title = nullptr;
 
@@ -56,4 +57,5 @@ private:
 
     void m_create_info_gui(GUI::Container& info);
     void m_create_modify_gui(GUI::Container& modify);
+    std::unique_ptr<Object> m_create_object_from_params() const;
 };

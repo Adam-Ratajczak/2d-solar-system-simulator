@@ -7,10 +7,10 @@
 #include <cmath>
 #include <iomanip>
 
-FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, SimulationView& s)
+FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, World& w)
     : GUI::Container(c)
     , m_focused(o)
-    , m_simulation_view(s) {
+    , m_world(w) {
     set_layout<GUI::VerticalBoxLayout>();
     add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
     set_background_color(sf::Color(192, 192, 192, 30));
@@ -18,7 +18,7 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, Simulation
     auto tab_widget = add_widget<GUI::TabWidget>();
 
     tab_widget->on_tab_switch = [&](unsigned index){
-        m_simulation_view.pause_simulation(index);
+        m_world.m_simulation_view->pause_simulation(index);
     };
 
     auto& info = tab_widget->add_tab("General info");
@@ -159,6 +159,51 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
         m_name_textbox->set_data_type(GUI::Textbox::TEXT);
         m_name_textbox->set_content("Planet");
     }
+
+    auto button_container = modify.add_widget<GUI::Container>();
+    button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+    button_container->set_size({ Length::Auto, 30.0_px });
+
+    auto modify_button = button_container->add_widget<GUI::TextButton>();
+    modify_button->set_content("Modify object");
+    modify_button->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
+    modify_button->set_alignment(GUI::Align::Center);
+    modify_button->on_click = [&](){
+        m_world.delete_object_by_ptr(m_focused);
+        m_world.add_object(m_create_object_from_params());
+        m_focused = m_world.last_object().get();
+    };
+
+    auto remove_button = button_container->add_widget<GUI::TextButton>();
+    remove_button->set_content("Remove object");
+    remove_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
+    modify_button->set_alignment(GUI::Align::Center);
+    remove_button->on_click = [&](){
+        m_world.delete_object_by_ptr(m_focused);
+        m_focused = nullptr;
+    };
+}
+
+std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
+    double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+    double radius = m_radius_control->value() * 1000;
+    double theta = m_direction_xz_control->value();
+    double alpha = m_direction_yz_control->value();
+    double velocity = m_velocity_control->value();
+
+    theta = theta / 180 * M_PI;
+    alpha = alpha / 180 * M_PI;
+
+    Vector3 vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
+
+    auto pos = m_new_object_pos;
+    pos.z = m_y_position_control->value();
+
+    sf::Color color = m_color_control->value();
+
+    std::string name = m_name_textbox->get_content();
+
+    return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
 }
 
 void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
@@ -178,7 +223,7 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
 }
 
 void FocusedObjectGUI::update() {
-    if(m_simulation_view.speed() == 0)
+    if(m_world.m_simulation_view->speed() == 0 || m_focused == nullptr)
         return;
     
     set_visible(true);
