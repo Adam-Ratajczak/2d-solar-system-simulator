@@ -25,7 +25,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
         auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(obj->name(), "FocusedGUI-" + obj->name());
         if (focused_object_window.opened) {
-            focused_object_window.window->set_position({ 800, 100 });
+            focused_object_window.window->set_position({ size().x - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
             focused_object_window.window->set_main_widget<FocusedObjectGUI>(obj, focused_object_window.window, world);
             focused_object_window.window->on_close = [&]() {
