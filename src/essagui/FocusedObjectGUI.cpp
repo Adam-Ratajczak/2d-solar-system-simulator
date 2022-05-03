@@ -1,20 +1,25 @@
 #include "FocusedObjectGUI.hpp"
 
 #include "../Object.hpp"
-#include "../util/UnitDisplay.hpp"
 #include "../gui/TabWidget.hpp"
+#include "../util/UnitDisplay.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iomanip>
 
-FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
+FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, SimulationView& s)
     : GUI::Container(c)
-    , m_focused(o) {
+    , m_focused(o)
+    , m_simulation_view(s) {
     set_layout<GUI::VerticalBoxLayout>();
-    add_widget<GUI::Container>()->set_size({Length::Auto, 10.0_px});
+    add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
     set_background_color(sf::Color(192, 192, 192, 30));
 
     auto tab_widget = add_widget<GUI::TabWidget>();
+
+    tab_widget->on_tab_switch = [&](unsigned index){
+        m_simulation_view.pause_simulation(index);
+    };
 
     auto& info = tab_widget->add_tab("General info");
     info.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
@@ -25,7 +30,7 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
     m_create_modify_gui(modify);
 }
 
-void FocusedObjectGUI::m_create_info_gui(GUI::Container& info){
+void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     auto title = info.add_widget<GUI::Textfield>();
     title->set_size({ Length::Auto, 30.0_px });
     title->set_alignment(GUI::Align::Center);
@@ -66,14 +71,14 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info){
     m_orbit_eccencrity_textfield = add_field("Orbit eccencrity", true);
 }
 
-void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify){
+void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
     m_radius_control = modify.add_widget<GUI::ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
 
     auto mass_container = modify.add_widget<GUI::Container>();
-    mass_container->set_size({Length::Auto, 30.0_px});
+    mass_container->set_size({ Length::Auto, 30.0_px });
     {
         auto& mass_layout = mass_container->set_layout<GUI::HorizontalBoxLayout>();
         mass_layout.set_spacing(10);
@@ -142,7 +147,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify){
     }
     auto name_container = modify.add_widget<Container>();
     name_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    name_container->set_size({Length::Auto, 30.0_px});
+    name_container->set_size({ Length::Auto, 30.0_px });
     {
         auto name_textfield = name_container->add_widget<GUI::Textfield>();
         name_textfield->set_size({ 150.0_px, Length::Auto });
@@ -173,6 +178,9 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
 }
 
 void FocusedObjectGUI::update() {
+    if(m_simulation_view.speed() == 0)
+        return;
+    
     set_visible(true);
     set_most_massive_data_visible(m_focused->most_attracting_object());
 

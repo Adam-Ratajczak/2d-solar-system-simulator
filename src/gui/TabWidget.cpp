@@ -85,6 +85,11 @@ TabWidget::TabWidget(Container& c)
 
 void TabWidget::switch_to_tab(size_t index) {
     assert(index < m_tabs.size());
+
+    if(on_tab_switch)
+        on_tab_switch(index);
+    m_index = index;
+    
     for (size_t s = 0; s < m_tabs.size(); s++)
         m_tabs[s]->set_visible(s == index);
     m_tab_select->switch_to_tab(index);

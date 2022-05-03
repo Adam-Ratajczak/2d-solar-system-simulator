@@ -88,6 +88,7 @@ public:
     void set_focused(Object* obj) { m_focused_object = obj; }
 
     void change_speed(bool state) { m_allow_change_speed = state; }
+    void pause_simulation(bool state);
 
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "SimulationView";
@@ -155,7 +156,7 @@ private:
 
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
-    int m_speed = 1;
+    int m_speed = 1, m_saved_speed = 0;
 
     // FIXME: This should be in GUI.
     float m_fps = 60;

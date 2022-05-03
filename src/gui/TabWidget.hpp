@@ -2,6 +2,7 @@
 
 #include "Container.hpp"
 #include "TextButton.hpp"
+#include <functional>
 
 namespace GUI {
 
@@ -30,8 +31,12 @@ public:
     }
 
     void switch_to_tab(size_t index);
+    unsigned index() const{return m_index;}
+
+    std::function<void(unsigned)> on_tab_switch;
 
 private:
+    unsigned m_index = 0;
     void setup_tab(std::string caption, Container* tab);
 
     TabSelectWidget* m_tab_select {};

@@ -27,7 +27,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         focused_object_window.set_position({ 800, 100 });
         focused_object_window.set_size({ 500, 600 });
 
-        auto focused_info = &focused_object_window.set_main_widget<FocusedObjectGUI>(obj);
+        auto focused_info = &focused_object_window.set_main_widget<FocusedObjectGUI>(obj, *m_simulation_view);
         m_focused_object_gui.push_back(focused_info);
 
         focused_object_window.on_close = [&](){
@@ -51,8 +51,11 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
         create_menu.on_toggle = [this](bool state) {
-            if(m_settings_gui->pause_simulation_on_creative_mode())
-                m_pause_simulation(state);
+            if(m_settings_gui->pause_simulation_on_creative_mode()){
+                m_create_object_gui->set_new_object(nullptr);
+                m_create_object_gui->forward_simulation_state(true);
+                m_simulation_view->pause_simulation(state);
+            }
             m_draw_forward_simulation = state;
         };
         create_menu.settings_container->set_layout<GUI::HorizontalBoxLayout>();
@@ -67,7 +70,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         m_canvas_mode_gui = canvas_mode.settings_container->add_widget<EssaCanvasMode>();
 
         canvas_mode.on_toggle = [this](bool state) {
-            m_pause_simulation(state);
+                m_simulation_view->pause_simulation(state);
         };
     }
 
@@ -116,18 +119,5 @@ void EssaGUI::handle_event(GUI::Event& event) {
     if (event.type() == sf::Event::Closed) {
         window().close();
         event.set_handled();
-    }
-}
-
-void EssaGUI::m_pause_simulation(bool state) {
-    m_simulation_view->change_speed(!state);
-    if (!state) {
-        m_create_object_gui->set_new_object(nullptr);
-        m_create_object_gui->forward_simulation_state(true);
-        m_simulation_view->set_speed(m_saved_speed);
-    }
-    else {
-        m_saved_speed = m_simulation_view->speed();
-        m_simulation_view->set_speed(0);
     }
 }

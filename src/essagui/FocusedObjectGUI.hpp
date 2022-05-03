@@ -9,7 +9,7 @@
 
 class FocusedObjectGUI : public GUI::Container {
 public:
-    explicit FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o);
+    FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, SimulationView& s);
 
     virtual void update() override;
 
@@ -17,6 +17,7 @@ private:
     void set_most_massive_data_visible(bool);
 
     Object* m_focused = nullptr;
+    SimulationView& m_simulation_view;
 
     GUI::Textfield* m_orbiting_title = nullptr;
 

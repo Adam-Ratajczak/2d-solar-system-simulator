@@ -339,6 +339,15 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     window.draw(debug_text);
 }
 
+void SimulationView::pause_simulation(bool state) {
+    if (!state) {
+        m_speed = m_saved_speed;
+    }else {
+        m_saved_speed = m_speed;
+        m_speed = 0;
+    }
+}
+
 void SimulationView::update() {
     // FIXME: This doesn't quite match here like speed (The same
     //        comment about Simulation object)

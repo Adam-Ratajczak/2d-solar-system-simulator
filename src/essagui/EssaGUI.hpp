@@ -52,9 +52,7 @@ private:
     EssaSettings* m_settings_gui = nullptr;
     EssaCanvasMode* m_canvas_mode_gui = nullptr;
 
-    int m_saved_speed = 0;
     bool m_draw_forward_simulation = false;
 
     void m_switch_info(bool state);
-    void m_pause_simulation(bool state);
 };
