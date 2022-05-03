@@ -47,7 +47,6 @@ private:
     virtual void update() override;
 
     SimulationView* m_simulation_view = nullptr;
-    std::list<FocusedObjectGUI*> m_focused_object_gui;
     EssaCreateObject* m_create_object_gui = nullptr;
     EssaSettings* m_settings_gui = nullptr;
     EssaCanvasMode* m_canvas_mode_gui = nullptr;

@@ -19,25 +19,22 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
 
-    m_simulation_view->on_change_focus = [&](Object* obj){
-        if(obj == nullptr)
+    m_simulation_view->on_change_focus = [&](Object* obj) {
+        if (obj == nullptr)
             return;
-        
-        auto& focused_object_window = GUI::Application::the().open_tool_window(obj->name());
-        focused_object_window.set_position({ 800, 100 });
-        focused_object_window.set_size({ 500, 600 });
 
-        auto focused_info = &focused_object_window.set_main_widget<FocusedObjectGUI>(obj, &focused_object_window, world);
-        m_focused_object_gui.push_back(focused_info);
+        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(obj->name(), "FocusedGUI-" + obj->name());
+        if (focused_object_window.opened) {
+            focused_object_window.window->set_position({ 800, 100 });
+            focused_object_window.window->set_size({ 500, 600 });
+            focused_object_window.window->set_main_widget<FocusedObjectGUI>(obj, focused_object_window.window, world);
+            focused_object_window.window->on_close = [&]() {
+                if (m_settings_gui->unfocus_on_wnd_close())
+                    m_simulation_view->set_focused(nullptr);
 
-        focused_object_window.on_close = [&](){
-            if(m_settings_gui->unfocus_on_wnd_close())
-                m_simulation_view->set_focused(nullptr);
-            
-            m_simulation_view->pause_simulation(false);
-            
-            m_focused_object_gui.clear();
-        };
+                m_simulation_view->pause_simulation(false);
+            };
+        }
     };
 
     auto home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
@@ -54,7 +51,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& create_menu = menu->add_entry(load_image("../assets/createButton.png"), "Create new object");
         create_menu.on_toggle = [this](bool state) {
-            if(m_settings_gui->pause_simulation_on_creative_mode()){
+            if (m_settings_gui->pause_simulation_on_creative_mode()) {
                 m_create_object_gui->set_new_object(nullptr);
                 m_create_object_gui->forward_simulation_state(true);
                 m_simulation_view->pause_simulation(state);
@@ -73,7 +70,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         m_canvas_mode_gui = canvas_mode.settings_container->add_widget<EssaCanvasMode>();
 
         canvas_mode.on_toggle = [this](bool state) {
-                m_simulation_view->pause_simulation(state);
+            m_simulation_view->pause_simulation(state);
         };
     }
 
@@ -96,10 +93,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 }
 
 void EssaGUI::update() {
-    for(auto& v : m_focused_object_gui){
-        v->update();
-    }
-
     if (!m_create_object_gui->is_forward_simulation_valid())
         m_create_object_gui->recalculate_forward_simulation();
 }
