@@ -2,7 +2,9 @@
 
 #include "../Object.hpp"
 #include "../gui/Container.hpp"
+#include "../gui/ColorPicker.hpp"
 #include "../gui/Textfield.hpp"
+#include "../gui/ValueSlider.hpp"
 #include "../util/UnitDisplay.hpp"
 
 class FocusedObjectGUI : public GUI::Container {
@@ -16,7 +18,6 @@ private:
 
     Object* m_focused = nullptr;
 
-    GUI::Textfield* m_title = nullptr;
     GUI::Textfield* m_orbiting_title = nullptr;
 
     struct Field {
@@ -37,4 +38,21 @@ private:
     Field m_perigee_velocity_textfield;
     Field m_orbit_period_textfield;
     Field m_orbit_eccencrity_textfield;
+
+    GUI::ValueSlider* m_radius_control = nullptr;
+    GUI::ValueSlider* m_velocity_control = nullptr;
+    GUI::ValueSlider* m_direction_xz_control = nullptr;
+    GUI::ValueSlider* m_direction_yz_control = nullptr;
+    GUI::ValueSlider* m_y_position_control = nullptr;
+
+    GUI::Textbox* m_mass_textbox = nullptr;
+    GUI::Textbox* m_mass_exponent_textbox = nullptr;
+    GUI::Textbox* m_name_textbox = nullptr;
+
+    GUI::ColorPicker* m_color_control = nullptr;
+
+    Vector3 m_new_object_pos;
+
+    void m_create_info_gui(GUI::Container& info);
+    void m_create_modify_gui(GUI::Container& modify);
 };

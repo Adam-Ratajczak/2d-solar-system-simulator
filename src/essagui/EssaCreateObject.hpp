@@ -73,10 +73,8 @@ private:
     std::shared_ptr<Container> m_create_object_from_params_gui(Container& parent);
     std::shared_ptr<Container> m_create_object_from_orbit_gui(Container& parent);
     std::shared_ptr<Container> m_create_submit_container(Container& parent);
-    std::shared_ptr<Container> m_modify_submit_container(Container& parent);
 
     void m_create_name_and_color_container();
-    void m_update_info_from_focused_object();
 
     std::unique_ptr<Object> m_create_object_from_params() const;
     std::unique_ptr<Object> m_create_object_from_orbit() const;

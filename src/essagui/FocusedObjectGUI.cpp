@@ -18,12 +18,19 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
 
     auto& info = tab_widget->add_tab("General info");
     info.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+    m_create_info_gui(info);
 
-    m_title = info.add_widget<GUI::Textfield>();
-    m_title->set_size({ Length::Auto, 30.0_px });
-    m_title->set_alignment(GUI::Align::Center);
-    m_title->set_font_size(30);
-    m_title->set_content("General information");
+    auto& modify = tab_widget->add_tab("Modify object");
+    modify.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+    m_create_modify_gui(modify);
+}
+
+void FocusedObjectGUI::m_create_info_gui(GUI::Container& info){
+    auto title = info.add_widget<GUI::Textfield>();
+    title->set_size({ Length::Auto, 30.0_px });
+    title->set_alignment(GUI::Align::Center);
+    title->set_font_size(30);
+    title->set_content("General information");
 
     auto add_field = [&](std::string name, bool is_most_massive_data) -> Field {
         auto subcontainer = info.add_widget<GUI::Container>();
@@ -57,8 +64,96 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
     m_perigee_velocity_textfield = add_field("Perigee velocity", true);
     m_orbit_period_textfield = add_field("Orbit period", true);
     m_orbit_eccencrity_textfield = add_field("Orbit eccencrity", true);
+}
 
-    auto& modify = tab_widget->add_tab("Modify object");
+void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify){
+
+    m_radius_control = modify.add_widget<GUI::ValueSlider>(0, 500000);
+    m_radius_control->set_name("Radius");
+    m_radius_control->set_unit("km");
+
+    auto mass_container = modify.add_widget<GUI::Container>();
+    mass_container->set_size({Length::Auto, 30.0_px});
+    {
+        auto& mass_layout = mass_container->set_layout<GUI::HorizontalBoxLayout>();
+        mass_layout.set_spacing(10);
+
+        auto mass_textfield = mass_container->add_widget<GUI::Textfield>();
+        mass_textfield->set_size({ 150.0_px, Length::Auto });
+        mass_textfield->set_content("Mass: ");
+        mass_textfield->set_alignment(GUI::Align::CenterLeft);
+
+        m_mass_textbox = mass_container->add_widget<GUI::Textbox>();
+        m_mass_textbox->set_limit(6);
+        m_mass_textbox->set_content("1.0");
+        m_mass_textbox->set_min_max_values(1, 9.9);
+
+        auto mass_value_container = mass_container->add_widget<GUI::Container>();
+        mass_value_container->set_layout<GUI::HorizontalBoxLayout>();
+        {
+            auto mass_exponent_textfield = mass_value_container->add_widget<GUI::Textfield>();
+            mass_exponent_textfield->set_content(" * 10 ^ ");
+            mass_exponent_textfield->set_alignment(GUI::Align::CenterLeft);
+
+            m_mass_exponent_textbox = mass_value_container->add_widget<GUI::Textbox>();
+            m_mass_exponent_textbox->set_limit(2);
+            m_mass_exponent_textbox->set_content("1");
+            m_mass_exponent_textbox->set_min_max_values(1, 40);
+
+            auto mass_unit_textfield = mass_value_container->add_widget<GUI::Textfield>();
+            mass_unit_textfield->set_content(" kg ");
+            mass_unit_textfield->set_alignment(GUI::Align::Center);
+        }
+        mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
+    }
+
+    m_velocity_control = modify.add_widget<GUI::ValueSlider>(0, 50000);
+    m_velocity_control->set_name("Velocity");
+    m_velocity_control->set_unit("m/s");
+
+    m_direction_xz_control = modify.add_widget<GUI::ValueSlider>(0, 360, 1);
+    m_direction_xz_control->set_name("Direction X");
+    m_direction_xz_control->set_unit("[deg]");
+    m_direction_xz_control->set_class_name("Angle");
+    m_direction_xz_control->slider().set_wraparound(true);
+
+    m_direction_yz_control = modify.add_widget<GUI::ValueSlider>(-90, 90, 1);
+    m_direction_yz_control->set_name("Direction Y");
+    m_direction_yz_control->set_unit("[deg]");
+    m_direction_yz_control->set_class_name("Angle");
+    m_direction_yz_control->slider().set_wraparound(true);
+
+    m_y_position_control = modify.add_widget<GUI::ValueSlider>(-0.05 * AU, 0.05 * AU);
+    m_y_position_control->set_name("Y position");
+    m_y_position_control->set_unit("km");
+    m_y_position_control->set_class_name("Dist");
+
+    auto main_color_container = modify.add_widget<Container>();
+    main_color_container->set_size({ Length::Auto, 150.0_px });
+    auto& main_color_layout = main_color_container->set_layout<GUI::VerticalBoxLayout>();
+    main_color_layout.set_spacing(10);
+    {
+        auto color_label_textfield = main_color_container->add_widget<GUI::Textfield>();
+        color_label_textfield->set_content("COLOR");
+        color_label_textfield->set_alignment(GUI::Align::Center);
+
+        m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
+        m_color_control->set_size({ Length::Auto, 100.0_px });
+    }
+    auto name_container = modify.add_widget<Container>();
+    name_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+    name_container->set_size({Length::Auto, 30.0_px});
+    {
+        auto name_textfield = name_container->add_widget<GUI::Textfield>();
+        name_textfield->set_size({ 150.0_px, Length::Auto });
+        name_textfield->set_content("Name: ");
+        name_textfield->set_alignment(GUI::Align::CenterLeft);
+
+        m_name_textbox = name_container->add_widget<GUI::Textbox>();
+        m_name_textbox->set_limit(20);
+        m_name_textbox->set_data_type(GUI::Textbox::TEXT);
+        m_name_textbox->set_content("Planet");
+    }
 }
 
 void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
@@ -81,7 +176,6 @@ void FocusedObjectGUI::update() {
     set_visible(true);
     set_most_massive_data_visible(m_focused->most_attracting_object());
 
-    m_title->set_content(m_focused->name());
     if (m_focused->most_attracting_object())
         m_orbiting_title->set_content("Orbiting around: " + m_focused->most_attracting_object()->name());
 
@@ -97,4 +191,20 @@ void FocusedObjectGUI::update() {
     m_perigee_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.perigee_velocity, Util::Quantity::Velocity));
     m_orbit_period_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_period, Util::Quantity::Time));
     m_orbit_eccencrity_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_eccencrity, Util::Quantity::None));
+
+    m_radius_control->set_value(m_focused->radius() / 1000);
+    m_velocity_control->set_value(m_focused->vel().magnitude());
+
+    m_new_object_pos.x = m_focused->pos().x;
+    m_new_object_pos.y = m_focused->pos().y;
+    m_y_position_control->set_value(m_focused->pos().z);
+    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.x) / M_PI * 180 - 90);
+    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z) / M_PI * 180 - 90);
+
+    double mass = m_focused->mass();
+    m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));
+    m_mass_textbox->set_content(std::to_string(mass / std::pow(10, std::log10(mass))));
+
+    m_color_control->set_value(m_focused->color());
+    m_name_textbox->set_content(m_focused->name());
 }

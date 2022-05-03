@@ -41,59 +41,6 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     m_submit_create_container->set_visible(true);
     m_submit_create_container->add_created_widget(m_toggle_unit_button);
     mode_specific_submit_container->add_created_widget(m_submit_create_container);
-
-    m_submit_modify_container = m_modify_submit_container(*mode_specific_submit_container);
-    m_submit_modify_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
-    m_submit_modify_container->set_visible(false);
-    m_submit_modify_container->add_created_widget(m_toggle_unit_button);
-    mode_specific_submit_container->add_created_widget(m_submit_modify_container);
-
-
-    // m_simulation_view.on_change_focus = [this](Object* obj){
-    //     m_to_modify = obj;
-    //     if(obj == nullptr){
-    //         m_submit_create_container->set_visible(true);
-    //         m_submit_modify_container->set_visible(false);
-
-    //         m_create_object_from_params_container->set_visible(!m_automatic_orbit_calculation);
-    //         m_create_object_from_orbit_container->set_visible(m_automatic_orbit_calculation);
-
-    //         m_toggle_unit_button->set_active(m_prev_unit_state);
-    //     }else{
-    //         m_submit_create_container->set_visible(false);
-    //         m_submit_modify_container->set_visible(true);
-
-    //         m_create_object_from_params_container->set_visible(true);
-    //         m_create_object_from_orbit_container->set_visible(false);
-
-    //         m_toggle_unit_button->set_active(false);
-
-    //         m_update_info_from_focused_object();
-    //     }
-    // };
-
-    // m_simulation_view.if_focused = [this](){
-    //     if(is_visible() && m_simulation_view.speed() != 0)
-    //         m_update_info_from_focused_object();
-    // };
-}
-
-void EssaCreateObject::m_update_info_from_focused_object(){
-    m_radius_control->set_value(m_to_modify->radius() / 1000);
-    m_velocity_control->set_value(m_to_modify->vel().magnitude());
-
-    m_new_object_pos.x = m_to_modify->pos().x;
-    m_new_object_pos.y = m_to_modify->pos().y;
-    m_y_position_control->set_value(m_to_modify->pos().z);
-    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.x) / M_PI * 180 - 90);
-    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z) / M_PI * 180 - 90);
-
-    double mass = m_to_modify->mass();
-    m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));
-    m_mass_textbox->set_content(std::to_string(mass / std::pow(10, std::log10(mass))));
-
-    m_color_control->set_value(m_to_modify->color());
-    m_name_textbox->set_content(m_to_modify->name());
 }
 
 void EssaCreateObject::m_create_name_and_color_container(){
@@ -197,32 +144,6 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
             else
                 m_simulation_view.world().add_object(m_create_object_from_params());
             m_simulation_view.m_measured = false;
-        };
-    }
-
-    return container;
-}
-
-std::shared_ptr<GUI::Container> EssaCreateObject::m_modify_submit_container(GUI::Container& parent){
-    auto container = std::make_shared<GUI::Container>(parent);
-    container->set_size({ Length::Auto, 72.0_px });
-    auto& submit_layout = container->set_layout<GUI::HorizontalBoxLayout>();
-    submit_layout.set_spacing(10);
-    {
-        auto trash_button = container->add_widget<GUI::ImageButton>(load_image("../assets/trashButton.png"));
-        trash_button->on_click = [this]() {
-            m_simulation_view.world().delete_object_by_ptr(m_to_modify);
-            m_to_modify = nullptr;
-        };
-        trash_button->set_tooltip_text("Delete object");
-
-        auto modify_button = container->add_widget<GUI::ImageButton>(load_image("../assets/modifyObject.png"));
-        modify_button->set_tooltip_text("Modify object");
-
-        modify_button->on_change = [this](bool state) {
-            m_simulation_view.world().delete_object_by_ptr(m_to_modify);
-            m_to_modify = m_new_object.get();
-            m_simulation_view.world().add_object(std::move(m_new_object));
         };
     }
 
