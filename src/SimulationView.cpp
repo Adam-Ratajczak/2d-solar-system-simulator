@@ -27,6 +27,8 @@ void SimulationView::handle_event(GUI::Event& event) {
                 auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
                 if (distance < 30) {
                     m_focused_object = &obj;
+                    if(on_change_focus && m_prev_focused_object == m_focused_object)
+                        on_change_focus(m_focused_object);
                     return;
                 }
             });

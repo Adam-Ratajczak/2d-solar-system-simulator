@@ -12,14 +12,14 @@
 
 class FocusedObjectGUI : public GUI::Container {
 public:
-    FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, World& w);
+    FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolWindow* wnd, World& w);
 
     virtual void update() override;
-
 private:
     void set_most_massive_data_visible(bool);
 
     Object* m_focused = nullptr;
+    GUI::ToolWindow* m_window = nullptr;
     World& m_world;
 
     GUI::Textfield* m_orbiting_title = nullptr;
@@ -59,6 +59,7 @@ private:
 
     void m_create_info_gui(GUI::Container& info);
     void m_create_modify_gui(GUI::Container& modify);
+    void m_create_view_gui(GUI::Container& parent);
 
     std::unique_ptr<Object> m_create_object_from_params() const;
 };

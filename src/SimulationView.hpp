@@ -121,7 +121,6 @@ private:
     double m_zoom = 1;
     Object* m_focused_object = nullptr;
     Object* m_prev_focused_object = nullptr;
-    unsigned m_clicks = 0;
     sf::Vector2f m_prev_mouse_pos;
     sf::Vector2f m_prev_drag_pos;
 
@@ -156,7 +155,7 @@ private:
 
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
-    int m_speed = 1, m_saved_speed = 0;
+    int m_speed = 1, m_saved_speed = 1;
 
     // FIXME: This should be in GUI.
     float m_fps = 60;

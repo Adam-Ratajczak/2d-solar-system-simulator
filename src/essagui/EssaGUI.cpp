@@ -27,11 +27,13 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         focused_object_window.set_position({ 800, 100 });
         focused_object_window.set_size({ 500, 600 });
 
-        auto focused_info = &focused_object_window.set_main_widget<FocusedObjectGUI>(obj, world);
+        auto focused_info = &focused_object_window.set_main_widget<FocusedObjectGUI>(obj, &focused_object_window, world);
         m_focused_object_gui.push_back(focused_info);
 
         focused_object_window.on_close = [&](){
-            m_simulation_view->set_focused(nullptr);
+            if(m_settings_gui->unfocus_on_wnd_close())
+                m_simulation_view->set_focused(nullptr);
+            
             m_simulation_view->pause_simulation(false);
             
             m_focused_object_gui.clear();

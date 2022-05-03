@@ -170,6 +170,10 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         auto fix_rotation_on_focused_object = add_toggle("fix rotation on focused object", [this](bool state) {
             m_simulation_view.set_fixed_rotation_on_focus(state);
         });
+
+        auto unfocus_after_obj_wnd_closed  = add_toggle("unfocus when object window closed", [this](bool state) {
+            m_unfocus_on_wnd_close = state;
+        }, false);
     }
 
     auto restore_sim_container = add_widget<GUI::Container>();

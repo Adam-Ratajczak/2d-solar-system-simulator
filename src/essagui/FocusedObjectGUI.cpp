@@ -8,18 +8,19 @@
 #include <iomanip>
 #include <memory>
 
-FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, World& w)
+FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolWindow* wnd, World& w)
     : GUI::Container(c)
     , m_focused(o)
-    , m_world(w) {
+    , m_world(w)
+    , m_window(wnd) {
     set_layout<GUI::VerticalBoxLayout>();
     add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
     set_background_color(sf::Color(192, 192, 192, 30));
 
     auto tab_widget = add_widget<GUI::TabWidget>();
 
-    tab_widget->on_tab_switch = [&](unsigned index){
-        m_world.m_simulation_view->pause_simulation(index);
+    tab_widget->on_tab_switch = [&](unsigned index) {
+        m_world.m_simulation_view->pause_simulation(index == 1);
     };
 
     auto& info = tab_widget->add_tab("General info");
@@ -29,6 +30,10 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, World& w)
     auto& modify = tab_widget->add_tab("Modify object");
     modify.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
     m_create_modify_gui(modify);
+
+    auto& view = tab_widget->add_tab("View options");
+    view.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+    m_create_view_gui(view);
 }
 
 void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
@@ -73,6 +78,11 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
 }
 
 void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
+    auto title = modify.add_widget<GUI::Textfield>();
+    title->set_size({ Length::Auto, 30.0_px });
+    title->set_alignment(GUI::Align::Center);
+    title->set_font_size(30);
+    title->set_content("Modify object");
 
     m_radius_control = modify.add_widget<GUI::ValueSlider>(0, 500000);
     m_radius_control->set_name("Radius");
@@ -169,17 +179,18 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_content("Modify object");
     modify_button->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
     modify_button->set_alignment(GUI::Align::Center);
-    modify_button->on_click = [&](){
+    modify_button->on_click = [&]() {
         m_world.delete_object_by_ptr(m_focused);
         m_world.add_object(m_create_object_from_params());
         m_focused = m_world.last_object().get();
+        m_window->set_title(m_focused->name());
     };
 
     auto remove_button = button_container->add_widget<GUI::TextButton>();
     remove_button->set_content("Remove object");
     remove_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
     modify_button->set_alignment(GUI::Align::Center);
-    remove_button->on_click = [&](){
+    remove_button->on_click = [&]() {
         auto& prompt_window = GUI::Application::the().open_tool_window("Are you sure?");
         prompt_window.set_position({ 850, 400 });
         prompt_window.set_size({ 400, 150 });
@@ -197,31 +208,55 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
         auto remove_button_container = prompt_container.add_widget<GUI::Container>();
         remove_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-        remove_button_container->set_size({Length::Auto, 30.0_px});
-        
+        remove_button_container->set_size({ Length::Auto, 30.0_px });
+
         auto yes_button = remove_button_container->add_widget<GUI::TextButton>();
         yes_button->set_alignment(GUI::Align::Center);
         yes_button->set_content("Yes");
         yes_button->set_display_attributes(sf::Color::Blue, sf::Color::Blue, sf::Color::White);
-        yes_button->on_click = [&](){
+        yes_button->on_click = [&]() {
             m_world.delete_object_by_ptr(m_focused);
             m_focused = nullptr;
             prompt_window.close();
+            m_window->close();
         };
-        
+
         auto no_button = remove_button_container->add_widget<GUI::TextButton>();
         no_button->set_alignment(GUI::Align::Center);
         no_button->set_content("No");
         no_button->set_display_attributes(sf::Color(50, 50, 50), sf::Color(50, 50, 50), sf::Color::White);
-        no_button->on_click = [&](){
+        no_button->on_click = [&]() {
             prompt_window.close();
         };
-        
+
         auto filler_container = prompt_container.add_widget<GUI::Container>();
         filler_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-        filler_container->set_size({Length::Auto, 30.0_px});
+        filler_container->set_size({ Length::Auto, 30.0_px });
     };
+}
 
+void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent){
+    auto title = parent.add_widget<GUI::Textfield>();
+    title->set_size({ Length::Auto, 30.0_px });
+    title->set_alignment(GUI::Align::Center);
+    title->set_font_size(30);
+    title->set_content("Change object view");
+
+    auto default_view_button_container = parent.add_widget<GUI::Container>();
+    default_view_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+    default_view_button_container->set_size({Length::Auto, 30.0_px});
+    
+    auto default_view_textfield = default_view_button_container->add_widget<GUI::Textfield>();
+    default_view_textfield->set_content("Hide focused object window");
+    auto default_view_button = default_view_button_container->add_widget<GUI::TextButton>();
+    default_view_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
+    default_view_button->set_content("Hide");
+    default_view_button->set_alignment(GUI::Align::Center);
+
+    default_view_button->on_click = [&](){
+        m_window->close();
+        m_world.m_simulation_view->set_focused(m_focused);
+    };
 }
 
 std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
@@ -263,9 +298,9 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
 }
 
 void FocusedObjectGUI::update() {
-    if(m_world.m_simulation_view->speed() == 0 || m_focused == nullptr)
+    if (m_world.m_simulation_view->speed() == 0 || m_focused == nullptr)
         return;
-    
+
     set_visible(true);
     set_most_massive_data_visible(m_focused->most_attracting_object());
 
