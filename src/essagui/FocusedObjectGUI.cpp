@@ -46,8 +46,6 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     auto add_field = [&](std::string name, bool is_most_massive_data) -> Field {
         auto subcontainer = info.add_widget<GUI::Container>();
         subcontainer->set_size({ Length::Auto, 30.0_px });
-        if (is_most_massive_data)
-            subcontainer->set_class_name("most_massive_data");
         subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
         subcontainer->add_widget<GUI::Textfield>()->set_content(name + ": ");
         auto value_label = subcontainer->add_widget<GUI::Textfield>();
@@ -55,6 +53,9 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
         auto unit_label = subcontainer->add_widget<GUI::Textfield>();
         unit_label->set_alignment(GUI::Align::CenterRight);
         unit_label->set_size({ 50.0_px, Length::Auto });
+
+        if(is_most_massive_data)
+            m_fields.push_back(subcontainer);
         return Field { .unit_textfield = unit_label, .value_textfield = value_label };
     };
 
@@ -319,6 +320,10 @@ void FocusedObjectGUI::update() {
     m_perigee_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.perigee_velocity, Util::Quantity::Velocity));
     m_orbit_period_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_period, Util::Quantity::Time));
     m_orbit_eccencrity_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_eccencrity, Util::Quantity::None));
+
+    for(auto& f : m_fields)
+        f->set_visible(m_focused->most_attracting_object() != nullptr);
+    m_orbiting_title->set_visible(m_focused->most_attracting_object() != nullptr);
 
     m_radius_control->set_value(m_focused->radius() / 1000);
     m_velocity_control->set_value(m_focused->vel().magnitude());

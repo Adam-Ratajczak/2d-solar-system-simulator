@@ -370,6 +370,9 @@ void SimulationView::update() {
                 m_pitch -= M_PI;
             }
         }
+    }else {
+        m_manual_pitch = m_pitch;
+        m_manual_yaw = m_yaw;
     }
 
     if (m_focused_object != m_prev_focused_object) {

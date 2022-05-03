@@ -9,6 +9,7 @@
 #include "../gui/ValueSlider.hpp"
 #include "../util/UnitDisplay.hpp"
 #include <memory>
+#include <vector>
 
 class FocusedObjectGUI : public GUI::Container {
 public:
@@ -34,6 +35,8 @@ private:
     Field m_mass_textfield;
     Field m_radius_textfield;
     Field m_absolute_velocity_textfield;
+
+    std::vector<Container*> m_fields;
 
     Field m_distance_from_most_massive_object_textfield;
     Field m_apogee_textfield;
