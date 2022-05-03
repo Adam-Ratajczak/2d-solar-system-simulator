@@ -17,6 +17,7 @@
 void SimulationView::handle_event(GUI::Event& event) {
     if (event.type() == sf::Event::MouseButtonPressed) {
         m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
+        // std::cout << "SV MouseButtonPressed " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
         m_prev_drag_pos = m_prev_mouse_pos;
         if (event.event().mouseButton.button == sf::Mouse::Left) {
             m_drag_mode = DragMode::Pan;
@@ -27,7 +28,7 @@ void SimulationView::handle_event(GUI::Event& event) {
                 auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
                 if (distance < 30) {
                     m_focused_object = &obj;
-                    if(on_change_focus && m_prev_focused_object == m_focused_object)
+                    if (on_change_focus && m_prev_focused_object == m_focused_object)
                         on_change_focus(m_focused_object);
                     return;
                 }
@@ -62,6 +63,7 @@ void SimulationView::handle_event(GUI::Event& event) {
     else if (event.type() == sf::Event::MouseMoved) {
         sf::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
         m_prev_mouse_pos = mouse_pos;
+        // std::cout << "SV MouseMoved " << Vector3 { m_prev_mouse_pos } << std::endl;
 
         // DRAG
         auto drag_delta = m_prev_drag_pos - mouse_pos;
@@ -121,6 +123,7 @@ void SimulationView::handle_event(GUI::Event& event) {
         }
     }
     else if (event.type() == sf::Event::MouseButtonReleased) {
+        // std::cout << "SV MouseButtonReleased " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
         m_is_dragging = false;
         m_drag_mode = DragMode::None;
     }
@@ -344,7 +347,8 @@ void SimulationView::draw(sf::RenderWindow& window) const {
 void SimulationView::pause_simulation(bool state) {
     if (!state) {
         m_speed = m_saved_speed;
-    }else {
+    }
+    else {
         m_saved_speed = m_speed;
         m_speed = 0;
     }
@@ -366,7 +370,7 @@ void SimulationView::update() {
             m_pitch = std::atan2(a.y, a.z) + m_manual_pitch + 1.4;
             m_yaw = std::atan2(a.y, a.x) - M_PI / 2 + m_manual_yaw;
 
-            if(a.y < 0){
+            if (a.y < 0) {
                 m_pitch -= M_PI;
             }
         }
