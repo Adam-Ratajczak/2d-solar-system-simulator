@@ -1,6 +1,7 @@
 #include "EssaGUI.hpp"
 
 #include "EssaSettings.hpp"
+#include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -17,9 +18,23 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
-    m_focused_object_info = add_widget<FocusedObjectGUI>();
-    m_focused_object_info->set_position({ 10.0_px_o, 10.0_px });
-    m_focused_object_info->set_visible(false);
+
+    m_simulation_view->on_change_focus = [this](Object* obj){
+        if(obj == nullptr)
+            return;
+        
+        auto& focused_object_window = GUI::Application::the().open_tool_window(obj->name());
+        focused_object_window.set_position({ 800, 100 });
+        focused_object_window.set_size({ 500, 600 });
+
+        auto focused_info = &focused_object_window.set_main_widget<FocusedObjectGUI>(obj);
+        m_focused_object_gui.push_back(focused_info);
+
+        focused_object_window.on_close = [&](){
+            m_simulation_view->set_focused(nullptr);
+            m_focused_object_gui.clear();
+        };
+    };
 
     auto home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));
     home_button->set_position({ 10.0_px_o, 10.0_px_o });
@@ -74,7 +89,9 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 }
 
 void EssaGUI::update() {
-    m_focused_object_info->update_from_object(m_simulation_view->focused_object());
+    for(auto& v : m_focused_object_gui){
+        v->update();
+    }
 
     if (!m_create_object_gui->is_forward_simulation_valid())
         m_create_object_gui->recalculate_forward_simulation();

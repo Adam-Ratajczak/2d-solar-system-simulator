@@ -49,33 +49,33 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     mode_specific_submit_container->add_created_widget(m_submit_modify_container);
 
 
-    m_simulation_view.on_change_focus = [this](Object* obj){
-        m_to_modify = obj;
-        if(obj == nullptr){
-            m_submit_create_container->set_visible(true);
-            m_submit_modify_container->set_visible(false);
+    // m_simulation_view.on_change_focus = [this](Object* obj){
+    //     m_to_modify = obj;
+    //     if(obj == nullptr){
+    //         m_submit_create_container->set_visible(true);
+    //         m_submit_modify_container->set_visible(false);
 
-            m_create_object_from_params_container->set_visible(!m_automatic_orbit_calculation);
-            m_create_object_from_orbit_container->set_visible(m_automatic_orbit_calculation);
+    //         m_create_object_from_params_container->set_visible(!m_automatic_orbit_calculation);
+    //         m_create_object_from_orbit_container->set_visible(m_automatic_orbit_calculation);
 
-            m_toggle_unit_button->set_active(m_prev_unit_state);
-        }else{
-            m_submit_create_container->set_visible(false);
-            m_submit_modify_container->set_visible(true);
+    //         m_toggle_unit_button->set_active(m_prev_unit_state);
+    //     }else{
+    //         m_submit_create_container->set_visible(false);
+    //         m_submit_modify_container->set_visible(true);
 
-            m_create_object_from_params_container->set_visible(true);
-            m_create_object_from_orbit_container->set_visible(false);
+    //         m_create_object_from_params_container->set_visible(true);
+    //         m_create_object_from_orbit_container->set_visible(false);
 
-            m_toggle_unit_button->set_active(false);
+    //         m_toggle_unit_button->set_active(false);
 
-            m_update_info_from_focused_object();
-        }
-    };
+    //         m_update_info_from_focused_object();
+    //     }
+    // };
 
-    m_simulation_view.if_focused = [this](){
-        if(is_visible() && m_simulation_view.speed() != 0)
-            m_update_info_from_focused_object();
-    };
+    // m_simulation_view.if_focused = [this](){
+    //     if(is_visible() && m_simulation_view.speed() != 0)
+    //         m_update_info_from_focused_object();
+    // };
 }
 
 void EssaCreateObject::m_update_info_from_focused_object(){

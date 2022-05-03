@@ -5,8 +5,9 @@
 #include <cmath>
 #include <iomanip>
 
-FocusedObjectGUI::FocusedObjectGUI(GUI::Container& c)
-    : GUI::Container(c) {
+FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o)
+    : GUI::Container(c)
+    , m_focused(o) {
     auto& layout = set_layout<GUI::VerticalBoxLayout>();
     layout.set_spacing(5);
 
@@ -65,19 +66,15 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
     value_textfield->set_content(value.value);
 }
 
-void FocusedObjectGUI::update_from_object(Object* focused) {
-    if (!focused) {
-        set_visible(false);
-        return;
-    }
+void FocusedObjectGUI::update() {
     set_visible(true);
-    set_most_massive_data_visible(focused->most_attracting_object());
+    set_most_massive_data_visible(m_focused->most_attracting_object());
 
-    m_title->set_content(focused->name());
-    if (focused->most_attracting_object())
-        m_orbiting_title->set_content("Orbiting around: " + focused->most_attracting_object()->name());
+    m_title->set_content(m_focused->name());
+    if (m_focused->most_attracting_object())
+        m_orbiting_title->set_content("Orbiting around: " + m_focused->most_attracting_object()->name());
 
-    auto info = focused->get_info();
+    auto info = m_focused->get_info();
 
     m_mass_textfield.set_content_from_unit_value(Util::unit_display(info.mass, Util::Quantity::Mass));
     m_radius_textfield.set_content_from_unit_value(Util::unit_display(info.radius, Util::Quantity::Length));

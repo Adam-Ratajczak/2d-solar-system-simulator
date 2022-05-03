@@ -40,7 +40,6 @@ void SimulationView::handle_event(GUI::Event& event) {
                     m_on_focus_measure(m_focused_object);
                 }
                 m_focused_object = nullptr;
-                on_change_focus(nullptr);
             }
 
             event.set_handled();
