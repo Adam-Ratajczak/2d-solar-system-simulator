@@ -44,6 +44,12 @@ public:
     OpenOrFocusResult open_or_focus_tool_window(sf::String title, std::string id);
     ToolWindow* focused_tool_window() const { return m_focused_tool_window; }
 
+    template<class Callback>
+    void for_each_tool_window(Callback&& callback) {
+        for (auto& wnd : m_tool_windows)
+            callback(*wnd);
+    }
+
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
 
