@@ -153,8 +153,6 @@ Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String
 
 void Application::update() {
     WidgetTreeRoot::update();
-    for (auto& tool_window : m_tool_windows)
-        tool_window->update();
     std::erase_if(m_tool_windows, [&](auto& wnd) {
         if (wnd->is_closed()) {
             if (wnd->on_close)
@@ -165,6 +163,8 @@ void Application::update() {
         }
         return false;
     });
+    for (auto& tool_window : m_tool_windows)
+        tool_window->update();
 }
 
 }
