@@ -134,7 +134,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             toggle_container->set_size({ Length::Auto, 30.0_px });
             auto button_label = toggle_container->add_widget<GUI::Textfield>();
             button_label->set_content(title + ": ");
-            button_label->set_size({ {60, Length::Percent}, 30.0_px });
+            button_label->set_size({ {70, Length::Percent}, 30.0_px });
             auto toggle = toggle_container->add_widget<GUI::TextButton>();
             toggle->set_content("Off");
             toggle->set_active_content("On");
@@ -167,11 +167,11 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             m_pause_simulation_on_creative_mode = state;
         });
 
-        auto fix_rotation_on_focused_object = add_toggle("fix rotation on focused object", [this](bool state) {
+        auto fix_rotation_on_focused_object = add_toggle("Fix rotation on focused object", [this](bool state) {
             m_simulation_view.set_fixed_rotation_on_focus(state);
-        });
+        }, false);
 
-        auto unfocus_after_obj_wnd_closed  = add_toggle("unfocus when object window closed", [this](bool state) {
+        auto unfocus_after_obj_wnd_closed  = add_toggle("Unfocus when object window closed", [this](bool state) {
             m_unfocus_on_wnd_close = state;
         }, false);
     }
