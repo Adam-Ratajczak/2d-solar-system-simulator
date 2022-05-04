@@ -342,7 +342,7 @@ void FocusedObjectGUI::update() {
 
     double mass = m_focused->mass();
     m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));
-    m_mass_textbox->set_content(std::to_string(mass / std::pow(10, std::log10(mass))));
+    m_mass_textbox->set_content(std::to_string(mass / std::pow(10, (int)std::log10(mass))));
 
     m_color_control->set_value(m_focused->color());
     m_name_textbox->set_content(m_focused->name());

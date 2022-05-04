@@ -14,6 +14,7 @@
 #include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 World::World()
@@ -35,18 +36,25 @@ void World::update(int steps) {
     for (unsigned i = 0; i < std::abs(steps); i++) {
         if (!m_is_forward_simulated) {
             m_object_history.set_time(m_date);
+            std::unique_ptr<Object>& last_created = m_object_list.back();
+
             if (!reverse) {
                 m_date += Util::SimulationClock::duration(m_simulation_seconds_per_tick);
 
-                if (m_object_history.size() > 0 && m_object_history.back()->creation_date() < m_date)
-                    m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
+                if(m_object_history.size() > 0){
+                    if (last_created->creation_date() <= m_date){
+                        m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
+                    }
+                }
             }
             else {
                 m_date -= Util::SimulationClock::duration(m_simulation_seconds_per_tick);
-
-                if (m_object_list.size() > 0 && m_object_list.back()->creation_date() > m_date) {
-                    m_object_history.push_to_entry(std::move(m_object_list.back()));
-                    m_object_list.pop_back();
+                
+                if(m_object_history.size() > 0){
+                    if (last_created->creation_date() > m_date){
+                        m_object_history.push_to_entry(std::move(m_object_list.back()));
+                        m_object_list.pop_back();
+                    }
                 }
             }
         }

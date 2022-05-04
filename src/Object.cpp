@@ -202,6 +202,11 @@ void Object::draw_label(SimulationView const& sv, Vector3 position, std::string 
     sv.window().draw(text);
 }
 
+void Object::delete_object(){
+    m_deletion_date = m_world->date();
+    m_deleted = true;
+}
+
 Object::Info Object::get_info() const {
     Info info {
         .mass = mass(),

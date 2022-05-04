@@ -65,6 +65,10 @@ public:
     
     Util::SimulationClock::time_point creation_date() const { return m_creation_date; }
 
+    Util::SimulationClock::time_point deletion_date() const { return m_deletion_date; }
+    bool deleted()const{return m_deleted;}
+    void delete_object();
+
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "Object";
 
@@ -127,6 +131,8 @@ private:
 
     Vector3 m_pos;
 
+    bool m_deleted = false;
+
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
     World* m_world = nullptr;
@@ -138,7 +144,7 @@ private:
 
     bool m_is_forward_simulated = false;
     Sphere m_sphere;
-    Util::SimulationClock::time_point m_creation_date;
+    Util::SimulationClock::time_point m_creation_date, m_deletion_date;
     Vector3 m_vel;
     std::string m_name;
     sf::Color m_color;
