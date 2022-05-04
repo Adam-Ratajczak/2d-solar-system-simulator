@@ -291,6 +291,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
     };
     auto object = std::make_unique<Object>(mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 500 * (3600 * 24) * 2);
     object->m_is_forward_simulated = true;
+    object->trail().set_enable_min_step(false);
     return object;
 }
 
