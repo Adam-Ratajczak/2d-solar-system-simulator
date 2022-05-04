@@ -83,7 +83,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
         auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
         sphere_mode_label->set_content("Toggle Sphere mode: ");
-        sphere_mode_label->set_size({{60, Length::Percent}, Length::Auto});
+        sphere_mode_label->set_size({ { 60, Length::Percent }, Length::Auto });
 
         auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
         toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
@@ -106,7 +106,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
         auto toggle_time_format_label = toggle_time_format_container->add_widget<GUI::Textfield>();
         toggle_time_format_label->set_content("Toggle time format: ");
-        toggle_time_format_label->set_size({{60, Length::Percent}, Length::Auto});
+        toggle_time_format_label->set_size({ { 60, Length::Percent }, Length::Auto });
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
@@ -134,7 +134,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             toggle_container->set_size({ Length::Auto, 30.0_px });
             auto button_label = toggle_container->add_widget<GUI::Textfield>();
             button_label->set_content(title + ": ");
-            button_label->set_size({ {70, Length::Percent}, 30.0_px });
+            button_label->set_size({ { 70, Length::Percent }, 30.0_px });
             auto toggle = toggle_container->add_widget<GUI::TextButton>();
             toggle->set_content("Off");
             toggle->set_active_content("On");
@@ -167,13 +167,17 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             m_pause_simulation_on_creative_mode = state;
         });
 
-        auto fix_rotation_on_focused_object = add_toggle("Fix rotation on focused object", [this](bool state) {
-            m_simulation_view.set_fixed_rotation_on_focus(state);
-        }, false);
+        auto fix_rotation_on_focused_object = add_toggle(
+            "Fix rotation on focused object", [this](bool state) {
+                m_simulation_view.set_fixed_rotation_on_focus(state);
+            },
+            false);
 
-        auto unfocus_after_obj_wnd_closed  = add_toggle("Unfocus when object window closed", [this](bool state) {
-            m_unfocus_on_wnd_close = state;
-        }, false);
+        auto unfocus_after_obj_wnd_closed = add_toggle(
+            "Unfocus when object window closed", [this](bool state) {
+                m_unfocus_on_wnd_close = state;
+            },
+            false);
     }
 
     auto restore_sim_container = add_widget<GUI::Container>();
@@ -191,6 +195,14 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
     restore_sim->set_tooltip_text("Restore Simulation to state from the beginning");
     restore_sim->on_click = [world = &m_simulation_view.world()]() {
         world->reset();
+        // FIXME: This seems like a hacky fix for FocusedObjectGUI UAF, but
+        //        I don't know any better solution.
+        //        (Doesn't cover Python and any other path that removes objects,
+        //        when these are added)
+        GUI::Application::the().for_each_tool_window([](GUI::ToolWindow& wnd) {
+            if (wnd.id().starts_with("FocusedGUI-"))
+                wnd.close();
+        });
     };
 
     auto restore_defaults_container = add_widget<GUI::Container>();
