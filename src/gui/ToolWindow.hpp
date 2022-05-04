@@ -6,7 +6,7 @@ namespace GUI {
 
 class ToolWindow : public WidgetTreeRoot {
 public:
-    explicit ToolWindow(sf::RenderWindow& wnd, std::string id);
+    explicit ToolWindow(sf::RenderWindow& wnd, std::string id = "ToolWindow");
 
     static constexpr auto TitleBarSize = 28;
     static constexpr auto MinSize = 50;
