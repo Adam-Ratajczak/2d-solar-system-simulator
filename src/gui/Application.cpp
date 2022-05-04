@@ -128,10 +128,8 @@ void Application::spawn_notification(std::string message, NotificationLevel leve
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
-ToolWindow& Application::open_tool_window(sf::String title, std::string id) {
-    auto tool_window = std::make_unique<ToolWindow>(window(), std::move(id));
+ToolWindow& Application::open_tool_window_impl(std::unique_ptr<ToolWindow> tool_window) {
     auto tool_window_ptr = tool_window.get();
-    tool_window_ptr->set_title(std::move(title));
     tool_window_ptr->set_position(m_next_tool_window_position);
     m_next_tool_window_position += sf::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
     if (m_next_tool_window_position.x > size().x - ToolWindow::TitleBarSize || m_next_tool_window_position.y > size().y - ToolWindow::TitleBarSize)
@@ -148,7 +146,9 @@ Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String
             return { .window = window, .opened = false };
         }
     }
-    return { .window = &open_tool_window(std::move(title), std::move(id)), .opened = true };
+    OpenOrFocusResult result = { .window = &open_tool_window(std::move(id)), .opened = true };
+    result.window->set_title(std::move(title));
+    return result;
 }
 
 void Application::update() {

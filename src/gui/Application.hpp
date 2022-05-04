@@ -30,11 +30,17 @@ public:
     };
     void spawn_notification(std::string message, NotificationLevel);
 
-    ToolWindow& open_tool_window(sf::String title, std::string id = "ToolWindow");
+    template<class T = ToolWindow, class... Args>
+    requires(std::is_base_of_v<ToolWindow, T>)
+        T& open_tool_window(Args&&... args) {
+        return static_cast<T&>(open_tool_window_impl(std::make_unique<T>(window(), std::forward<Args>(args)...)));
+    }
+
     struct OpenOrFocusResult {
         ToolWindow* window {};
         bool opened {};
     };
+    // FIXME: Generalize it like normal open_tool_window
     OpenOrFocusResult open_or_focus_tool_window(sf::String title, std::string id);
     ToolWindow* focused_tool_window() const { return m_focused_tool_window; }
 
@@ -50,6 +56,7 @@ private:
 
     void draw_notification(Notification const&, float y) const;
     sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
+    ToolWindow& open_tool_window_impl(std::unique_ptr<ToolWindow>);
 
     using WindowList = std::list<std::unique_ptr<ToolWindow>>;
 
