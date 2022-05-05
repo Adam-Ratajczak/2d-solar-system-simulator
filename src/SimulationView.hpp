@@ -27,7 +27,7 @@ public:
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
         m_pitch = -0.7;
-        m_manual_pitch = -0.7;
+        m_manual_pitch = 0;
         m_yaw = 0;
         m_manual_yaw = 0;
     }

@@ -86,11 +86,14 @@ void SimulationView::handle_event(GUI::Event& event) {
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
+                m_yaw -= m_manual_yaw;
+                m_pitch += m_manual_pitch;
+
                 m_manual_yaw += drag_delta.x / sizes.x * M_PI;
                 m_manual_pitch -= drag_delta.y / sizes.y * M_PI;
 
-                m_yaw = m_manual_yaw;
-                m_pitch = m_manual_pitch;
+                m_yaw += m_manual_yaw;
+                m_pitch -= m_manual_pitch;
                 break;
             }
             default:
@@ -367,16 +370,13 @@ void SimulationView::update() {
         if (m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus) {
             Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
 
-            m_pitch = std::atan2(a.y, a.z) + m_manual_pitch + 1.4;
+            m_pitch = std::atan2(a.y, a.z) + 0.7 - m_manual_pitch;
             m_yaw = std::atan2(a.y, a.x) - M_PI / 2 + m_manual_yaw;
 
             if (a.y < 0) {
                 m_pitch -= M_PI;
             }
         }
-    }else {
-        m_manual_pitch = m_pitch;
-        m_manual_yaw = m_yaw;
     }
 
     if (m_focused_object != m_prev_focused_object) {
