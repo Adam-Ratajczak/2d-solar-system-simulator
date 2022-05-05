@@ -68,6 +68,7 @@ private:
     sf::Vector2f calculate_cursor_position() const;
     sf::Text generate_sf_text() const;
     void m_fit_in_range();
+    bool find_decimal()const;
     std::string m_fix_content(std::string content) const;
     void erase_selected_text();
     virtual bool accepts_focus() const override { return true; }

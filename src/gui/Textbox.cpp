@@ -66,6 +66,14 @@ void Textbox::interactive_set_cursor(unsigned cursor, ExtendSelection extend_sel
         m_scroll += size().x - new_cursor_position.x - 4;
 }
 
+bool Textbox::find_decimal()const{
+    for(const auto& c : m_content){
+        if(c == '.')
+            return true;
+    }
+    return false;
+}
+
 void Textbox::handle_event(Event& event) {
     auto pos = sf::Mouse::getPosition();
     if (event.type() == sf::Event::TextEntered) {
@@ -84,6 +92,8 @@ void Textbox::handle_event(Event& event) {
                     m_content = "0";
                 if (on_change)
                     on_change(m_content);
+                
+                m_has_decimal = find_decimal();
             }
             else if (codepoint == 0x7f) {
                 if (m_cursor != m_content.getSize()) {
