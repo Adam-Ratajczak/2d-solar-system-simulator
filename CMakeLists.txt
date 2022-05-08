@@ -46,8 +46,7 @@ add_executable(
     src/util/UnitDisplay.cpp
 )
 
-target_compile_options(out PUBLIC -fsanitize=undefined,address -fdiagnostics-color=always)
-target_link_options(out PUBLIC -fsanitize=undefined,address)
+target_compile_options(out PUBLIC -fdiagnostics-color=always)
 
 function(setup_target targetname)
     target_compile_options(${targetname} PUBLIC -Werror=non-virtual-dtor)
