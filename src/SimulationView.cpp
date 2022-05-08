@@ -44,6 +44,8 @@ void SimulationView::handle_event(GUI::Event& event) {
                     m_on_focus_measure(m_focused_object);
                 }
                 m_focused_object = nullptr;
+                m_yaw += m_yaw_from_object;
+                m_pitch = m_pitch_from_object;
             }
 
             event.set_handled();
@@ -82,19 +84,13 @@ void SimulationView::handle_event(GUI::Event& event) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
                 Vector3 qad_delta { -drag_delta.x, drag_delta.y, 0 };
-                set_offset(offset() + (Transform::rotation_around_z(-m_yaw) * qad_delta * scale() / 320));
+                set_offset(offset() + (Transform::rotation_around_z(-real_yaw()) * qad_delta * scale() / 320));
                 break;
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
-                m_yaw -= m_manual_yaw;
-                m_pitch += m_manual_pitch;
-
-                m_manual_yaw += drag_delta.x / sizes.x * M_PI;
-                m_manual_pitch -= drag_delta.y / sizes.y * M_PI;
-
-                m_yaw += m_manual_yaw;
-                m_pitch -= m_manual_pitch;
+                m_yaw += drag_delta.x / sizes.x * M_PI;
+                m_pitch -= drag_delta.y / sizes.y * M_PI;
                 break;
             }
             default:
@@ -265,8 +261,8 @@ Matrix4x4d SimulationView::projection_matrix() const {
 Matrix4x4d SimulationView::modelview_matrix() const {
     Matrix4x4d matrix = Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
-    matrix = matrix * Transform::rotation_around_z(m_yaw);
-    matrix = matrix * Transform::rotation_around_x(m_pitch);
+    matrix = matrix * Transform::rotation_around_z(real_yaw());
+    matrix = matrix * Transform::rotation_around_x(real_pitch());
     matrix = matrix * Transform::translation({ 0, 0, -scale() });
     return matrix;
 }
@@ -342,6 +338,8 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
     debugoss << "s=" << scale() << std::endl;
     debugoss << "off=" << offset() << std::endl;
+    debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
+    debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
 
     sf::Text debug_text(debugoss.str(), GUI::Application::the().font, 15);
     debug_text.setPosition(600, 10);
@@ -371,12 +369,8 @@ void SimulationView::update() {
         if (m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus) {
             Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
 
-            m_pitch = std::atan2(a.y, a.z) + 0.7 - m_manual_pitch;
-            m_yaw = std::atan2(a.y, a.x) - M_PI / 2 + m_manual_yaw;
-
-            if (a.y < 0) {
-                m_pitch -= M_PI;
-            }
+            m_pitch_from_object = std::atan2(a.y, a.z) - M_PI / 2;
+            m_yaw_from_object = std::atan2(a.y, a.x) - M_PI / 2;
         }
     }
 

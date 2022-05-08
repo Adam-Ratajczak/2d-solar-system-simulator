@@ -27,10 +27,13 @@ public:
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
         m_pitch = -0.7;
-        m_manual_pitch = 0;
+        m_pitch_from_object = 0;
         m_yaw = 0;
-        m_manual_yaw = 0;
+        m_yaw_from_object = 0;
     }
+
+    double real_yaw() const { return m_yaw + m_yaw_from_object; }
+    double real_pitch() const { return m_pitch + m_pitch_from_object; }
 
     Vector3 screen_to_world(Vector3 v) const;
     Vector3 world_to_screen(Vector3 v) const;
@@ -65,8 +68,8 @@ public:
     bool show_trails() const { return m_show_trails; }
     void set_offset_trails(bool b) { m_offset_trail = b; }
     bool offset_trails() const { return m_offset_trail; }
-    void set_fixed_rotation_on_focus(bool b){m_fixed_rotation_on_focus = b;}
-    bool set_fixed_rotation_on_focus()const{return m_fixed_rotation_on_focus;}
+    void set_fixed_rotation_on_focus(bool b) { m_fixed_rotation_on_focus = b; }
+    bool set_fixed_rotation_on_focus() const { return m_fixed_rotation_on_focus; }
 
     void set_fov(Angle fov) { m_fov = fov; }
 
@@ -114,8 +117,11 @@ private:
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;
-    double m_yaw = 0, m_manual_yaw = 0;
-    double m_pitch = 0, m_manual_pitch = 0;
+
+    double m_yaw = 0;
+    double m_pitch = 0;
+    double m_yaw_from_object = 0;
+    double m_pitch_from_object = 0;
 
     World& m_world;
     double m_zoom = 1;
