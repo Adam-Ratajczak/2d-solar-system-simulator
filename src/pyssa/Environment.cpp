@@ -44,7 +44,7 @@ bool Environment::run_script(std::string const& path) {
     std::cout << "!!!" << path << "!!!" << std::endl;
     std::ifstream file(path);
     if (!file.good()) {
-        std::cerr << "failed to open file" << std::endl;
+        std::cout << "failed to open file" << std::endl;
         return false;
     }
 
@@ -52,7 +52,7 @@ bool Environment::run_script(std::string const& path) {
     std::string script;
     script.resize(filesize);
     if (!file.read(script.data(), filesize)) {
-        std::cerr << "failed to read file" << std::endl;
+        std::cout << "failed to read file" << std::endl;
         return false;
     }
 
