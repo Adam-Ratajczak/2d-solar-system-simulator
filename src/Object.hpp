@@ -107,7 +107,7 @@ private:
     // Draws label in at 3d position but not projected (in GUI layer).
     void draw_label(SimulationView const&, Vector3 position, std::string, sf::Color) const;
 
-    PySSA::Object python_attraction(PySSA::Object const& args);
+    PySSA::Object python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs);
 
     PySSA::Object python_get_pos() const;
     bool python_set_pos(PySSA::Object const&);

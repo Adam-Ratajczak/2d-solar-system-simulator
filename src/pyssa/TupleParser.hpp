@@ -15,6 +15,16 @@ struct CheckedType {
     UnderlyingT*& result;
 };
 
+template<class T>
+requires(!std::is_reference_v<T>) struct Arg {
+    char const* keyword = "";
+    T arg;
+
+    Arg(T arg_, char const* keyword_ = "")
+        : arg(std::forward<T>(arg_))
+        , keyword(keyword_) { }
+};
+
 };
 
 namespace Detail {
@@ -39,8 +49,7 @@ struct GetArg {
 template<class CppType>
 concept IsConvertibleToPython = requires(ConvertToPy<CppType> ctp, CppType cppt) {
     ctp.PyArgCount;
-    GetArg<CppType, 0>::get(ctp);
-    //ctp.write_arg(cppt);
+    // ctp.write_arg(cppt);
 };
 
 // Specializations of ConvertToPy for every supported type.
@@ -49,8 +58,18 @@ requires(std::is_base_of_v<WrappedObject<UnderlyingT>, UnderlyingT>) struct Conv
     PyObject* pyobject;
     static constexpr size_t PyArgCount = 2;
 
-    constexpr void write_arg(Arg::CheckedType<UnderlyingT> ut) const {
+    void write_arg(Arg::CheckedType<UnderlyingT> ut) const {
         ut.result = UnderlyingT::get(Object::share(pyobject));
+    }
+};
+
+template<>
+struct ConvertToPy<std::string*> {
+    const char* data;
+    static constexpr size_t PyArgCount = 1;
+
+    void write_arg(std::string* ut) const {
+        *ut = data;
     }
 };
 
@@ -66,6 +85,13 @@ template<class UT>
 struct GetArg<Arg::CheckedType<UT>, 1> {
     static constexpr auto get(auto& ctp) {
         return &ctp.pyobject;
+    }
+};
+
+template<>
+struct GetArg<std::string*, 0> {
+    static constexpr auto get(auto& ctp) {
+        return &ctp.data;
     }
 };
 
@@ -137,15 +163,15 @@ struct CallPyArgImpl {
 
 template<size_t... Is, class... Ts>
 struct CallPyArgImpl<std::index_sequence<Is...>, Ts...> {
-    static bool run(PyObject* args_object, char const* format, ConvertToPyAll<Ts...>& py_args) {
-        return PyArg_ParseTuple(args_object, format,
+    static bool run(PyObject* args_object, PyObject* kwargs_object, char const* format, ConvertToPyAll<Ts...>& py_args, const char* keywords[]) {
+        return PyArg_ParseTupleAndKeywords(args_object, kwargs_object, format, const_cast<char**>(keywords),
             get_arg_for_pyarg_parsetuple<Is>(py_args)...);
     }
 };
 
 template<class... Ts>
-bool call_pyarg_parsetuple(PyObject* args_object, const char* format, ConvertToPyAll<Ts...>& py_args) {
-    return CallPyArgImpl<std::make_index_sequence<count_py_args<Ts...>()>, Ts...>::run(args_object, format, py_args);
+bool call_pyarg_parsetuple(PyObject* args_object, PyObject* kwargs_object, const char* format, ConvertToPyAll<Ts...>& py_args, const char* keywords[]) {
+    return CallPyArgImpl<std::make_index_sequence<count_py_args<Ts...>()>, Ts...>::run(args_object, kwargs_object, format, py_args, keywords);
 }
 
 // Set user output to values returned by PyArg_ParseTuple and stored in ConvertToPyAll.
@@ -168,12 +194,21 @@ void write_args(ConvertToPyAll<Ts...> const& py_args, Ts... out) {
 }
 
 template<class... Types>
-bool parse_arguments(Object const& args_object, char const* format, Types... out) {
+bool parse_arguments(Object const& args_object, Object const& kwargs_object, char const* format, Arg::Arg<Types>... out) {
     Detail::ConvertToPyAll<Types...> py_args;
-    auto result = Detail::call_pyarg_parsetuple(args_object.python_object(), format, py_args);
-    if(!result)
+    const char* keywords[] {
+        out.keyword...,
+        nullptr
+    };
+    auto result = Detail::call_pyarg_parsetuple(
+        args_object.python_object(),
+        kwargs_object.python_object(),
+        format,
+        py_args,
+        keywords);
+    if (!result)
         return false;
-    Detail::write_args(py_args, out...);
+    Detail::write_args(py_args, out.arg...);
     return true;
 }
 

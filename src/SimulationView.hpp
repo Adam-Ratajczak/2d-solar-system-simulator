@@ -105,7 +105,7 @@ private:
 
     void draw_grid(sf::RenderWindow&) const;
 
-    PySSA::Object python_reset(PySSA::Object const& args);
+    PySSA::Object python_reset(PySSA::Object const& args, PySSA::Object const& kwargs);
 
     PySSA::Object python_get_offset() const;
     bool python_set_offset(PySSA::Object const&);

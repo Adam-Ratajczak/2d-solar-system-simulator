@@ -59,8 +59,8 @@ void World::update(int steps) {
             }
         }
 
-        for (auto& p : m_object_list){
-            if(!p->deleted())
+        for (auto& p : m_object_list) {
+            if (!p->deleted())
                 p->setup_update_forces();
         }
 
@@ -68,8 +68,8 @@ void World::update(int steps) {
             auto it2 = it;
             auto& this_object = **it;
             it2++;
-            for (; it2 != m_object_list.end(); it2++){
-                if(!this_object.deleted() && !(*it2)->deleted())
+            for (; it2 != m_object_list.end(); it2++) {
+                if (!this_object.deleted() && !(*it2)->deleted())
                     this_object.update_forces_against(**it2);
             }
         }
@@ -152,21 +152,21 @@ void World::setup_python_bindings(TypeSetup adder) {
         "Sets how much simulation seconds passes per tick");
 }
 
-PySSA::Object World::python_add_object(PySSA::Object const& args) {
+PySSA::Object World::python_add_object(PySSA::Object const& args, PySSA::Object const& kwargs) {
     Object* object = nullptr;
-    if (!PySSA::parse_arguments(args, "O!", PySSA::Arg::CheckedType<Object> { object }))
+    if (!PySSA::parse_arguments(args, kwargs, "O!", PySSA::Arg::Arg { PySSA::Arg::CheckedType<Object> { object }, "object" }))
         return {};
     object->python_stop_owning();
     add_object(std::unique_ptr<Object>(object));
     return PySSA::Object::none();
 }
 
-PySSA::Object World::python_get_object_by_name(PySSA::Object const& args) {
-    const char* name_arg;
-    if (!PyArg_ParseTuple(args.python_object(), "s", &name_arg))
+PySSA::Object World::python_get_object_by_name(PySSA::Object const& args, PySSA::Object const& kwargs) {
+    std::string name = "test";
+    if (!PySSA::parse_arguments(args, kwargs, "s", PySSA::Arg::Arg { &name, "name" }))
         return {};
 
-    auto object = get_object_by_name(name_arg);
+    auto object = get_object_by_name(name);
     if (object)
         return object->wrap();
     return PySSA::Object::none();

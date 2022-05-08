@@ -379,9 +379,9 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
     return new Object(mass, radius, pos, vel, color, name, period);
 }
 
-PySSA::Object Object::python_attraction(PySSA::Object const& args) {
+PySSA::Object Object::python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs) {
     Object* other {};
-    if (!PySSA::parse_arguments(args, "O!", PySSA::Arg::CheckedType<Object> { other }))
+    if (!PySSA::parse_arguments(args, kwargs, "O!", PySSA::Arg::Arg { PySSA::Arg::CheckedType<Object> { other }, "other" }))
         return {};
     return PySSA::Object::create(attraction(*other));
 }

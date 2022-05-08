@@ -78,17 +78,17 @@ protected:
             : m_funcs(funcs)
             , m_type_object(type_object) { }
 
-        using Method = Object (T::*)(Object const& args);
+        using Method = Object (T::*)(Object const& args, Object const& kwargs);
         using Getter = Object (T::*)() const;
         using Setter = bool (T::*)(Object const&);
 
         template<Method method>
         struct MethodWrapper {
-            static PyObject* wrapper(PythonType* self, PyObject* args) {
+            static PyObject* wrapper(PythonType* self, PyObject* args, PyObject* kwargs) {
                 auto that = self->ptr;
                 if (!that)
                     return PyErr_Format(PyExc_ReferenceError, "This %s instance was already destructed", T::PythonClassName);
-                return (that->*method)(Object::share(args)).leak_object();
+                return (that->*method)(Object::share(args), Object::share(kwargs)).leak_object();
             }
         };
 
@@ -116,7 +116,11 @@ protected:
 
         template<Method method>
         void add_method(char const* name, char const* doc = "") const {
-            m_funcs.methods.push_back(PyMethodDef { .ml_name = name, .ml_meth = (PyCFunction)MethodWrapper<method>::wrapper, .ml_flags = METH_VARARGS, .ml_doc = doc });
+            m_funcs.methods.push_back(PyMethodDef {
+                .ml_name = name,
+                .ml_meth = (PyCFunction)MethodWrapper<method>::wrapper,
+                .ml_flags = METH_VARARGS | METH_KEYWORDS,
+                .ml_doc = doc });
         }
 
         template<Getter getter, Setter setter>

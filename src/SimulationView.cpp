@@ -403,7 +403,7 @@ void SimulationView::setup_python_bindings(TypeSetup type_setup) {
     type_setup.add_attribute<&SimulationView::python_get_focused_object, nullptr>("focused_object");
 }
 
-PySSA::Object SimulationView::python_reset(PySSA::Object const&) {
+PySSA::Object SimulationView::python_reset(PySSA::Object const&, PySSA::Object const&) {
     reset();
     return PySSA::Object::none();
 }
