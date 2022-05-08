@@ -391,9 +391,9 @@ Object* SimulationView::focused_object() const {
 }
 
 void SimulationView::setup_python_bindings(TypeSetup type_setup) {
-    type_setup.add_method<&SimulationView::python_reset>("reset");
+    type_setup.add_method<&SimulationView::python_reset>("reset", "Reset view transform");
     type_setup.add_attribute<&SimulationView::python_get_offset, nullptr>("offset");
-    type_setup.add_attribute<&SimulationView::python_get_fov, nullptr>("fov");
+    type_setup.add_attribute<&SimulationView::python_get_fov, nullptr>("fov", "Field of view");
     type_setup.add_attribute<&SimulationView::python_get_yaw, nullptr>("yaw");
     type_setup.add_attribute<&SimulationView::python_get_pitch, nullptr>("pitch");
     type_setup.add_attribute<&SimulationView::python_get_world, nullptr>("world");
