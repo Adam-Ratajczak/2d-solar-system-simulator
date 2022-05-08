@@ -41,17 +41,17 @@ void World::update(int steps) {
             if (!reverse) {
                 m_date += Util::SimulationClock::duration(m_simulation_seconds_per_tick);
 
-                if(m_object_history.size() > 0){
-                    if (last_created->creation_date() <= m_date){
+                if (m_object_history.size() > 0) {
+                    if (last_created->creation_date() <= m_date) {
                         m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
                     }
                 }
             }
             else {
                 m_date -= Util::SimulationClock::duration(m_simulation_seconds_per_tick);
-                
-                if(m_object_history.size() > 0){
-                    if (last_created->creation_date() > m_date){
+
+                if (m_object_history.size() > 0) {
+                    if (last_created->creation_date() > m_date) {
                         m_object_history.push_to_entry(std::move(m_object_list.back()));
                         m_object_list.pop_back();
                     }
@@ -59,31 +59,39 @@ void World::update(int steps) {
             }
         }
 
-        for (auto& p : m_object_list)
-            p->setup_update_forces();
+        for (auto& p : m_object_list){
+            if(!p->deleted())
+                p->setup_update_forces();
+        }
 
         for (auto it = m_object_list.begin(); it != m_object_list.end(); it++) {
             auto it2 = it;
             auto& this_object = **it;
             it2++;
-            for (; it2 != m_object_list.end(); it2++)
-                this_object.update_forces_against(**it2);
+            for (; it2 != m_object_list.end(); it2++){
+                if(!this_object.deleted() && !(*it2)->deleted())
+                    this_object.update_forces_against(**it2);
+            }
         }
 
-        for (auto& p : m_object_list)
-            p->update(steps);
+        for (auto& p : m_object_list) {
+            if (!p->deleted())
+                p->update(steps);
+        }
     }
 }
 
 void World::draw(SimulationView const& view) const {
-
     {
         WorldDrawScope scope { view, WorldDrawScope::ClearDepth::Yes };
-        for (auto& p : m_object_list)
-            p->draw(view);
+        for (auto& p : m_object_list) {
+            if (!p->deleted())
+                p->draw(view);
+        }
     }
     for (auto& p : m_object_list)
-        p->draw_gui(view);
+        if (!p->deleted())
+            p->draw_gui(view);
 }
 
 Object* World::get_object_by_name(std::string const& name) {
@@ -106,19 +114,19 @@ void World::reset_all_trails() {
     for_each_object([](Object& o) { o.trail().reset(); });
 }
 
-void World::delete_object_by_ptr(Object* ptr){m_object_list.remove_if([ptr](std::unique_ptr<Object>& obj){
-    return obj.get() == ptr;}); 
+void World::delete_object_by_ptr(Object* ptr) {
+    m_object_list.remove_if([ptr](std::unique_ptr<Object>& obj) { return obj.get() == ptr; });
     m_simulation_view->set_focused(nullptr);
 
-    for(auto& o : m_object_list){
-        if(o->most_attracting_object() == ptr)
+    for (auto& o : m_object_list) {
+        if (o->most_attracting_object() == ptr)
             o->delete_most_attracting_object();
     }
 }
 
-std::unique_ptr<Object>& World::find_object_by_ptr(Object* ptr){
-    for(auto& o : m_object_list){
-        if(o.get() == ptr)
+std::unique_ptr<Object>& World::find_object_by_ptr(Object* ptr) {
+    for (auto& o : m_object_list) {
+        if (o.get() == ptr)
             return o;
     }
 

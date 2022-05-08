@@ -188,7 +188,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
-        m_world.delete_object_by_ptr(m_focused);
+        m_focused->delete_object();
         m_world.add_object(m_create_object_from_params());
         m_focused = m_world.last_object().get();
         m_window->set_title(m_focused->name());
@@ -202,7 +202,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
         auto& msgbox = GUI::Application::the().open_tool_window<GUI::MessageBox>("Are you sure you want to delete object \"" + m_focused->name() + "\"?", "Delete object", GUI::MessageBox::Buttons::YesNo);
         msgbox.on_finish = [&](GUI::MessageBox::ButtonRole btn) {
             if (btn == GUI::MessageBox::ButtonRole::Yes) {
-                m_world.delete_object_by_ptr(m_focused);
+                m_focused->delete_object();
                 m_focused = nullptr;
                 m_window->close();
             }

@@ -66,7 +66,7 @@ public:
     Util::SimulationClock::time_point creation_date() const { return m_creation_date; }
 
     Util::SimulationClock::time_point deletion_date() const { return m_deletion_date; }
-    bool deleted()const{return m_deleted;}
+    bool deleted()const;
     void delete_object();
 
     static void setup_python_bindings(TypeSetup);

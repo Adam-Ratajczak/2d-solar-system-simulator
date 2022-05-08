@@ -52,6 +52,10 @@ void Object::setup_update_forces() {
     m_max_attraction = 0;
 }
 
+bool Object::deleted() const{
+    return (m_deleted && m_deletion_date <= m_world->date()) || m_creation_date > m_world->date();
+}
+
 void Object::update_forces_against(Object& object) {
     // TODO: Collisions
     Vector3 dist = this->m_pos - object.m_pos;
