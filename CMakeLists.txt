@@ -46,7 +46,7 @@ add_executable(
     src/util/UnitDisplay.cpp
 )
 
-target_compile_options(out PUBLIC -fsanitize=undefined,address)
+target_compile_options(out PUBLIC -fsanitize=undefined,address -fdiagnostics-color=always)
 target_link_options(out PUBLIC -fsanitize=undefined,address)
 
 function(setup_target targetname)
