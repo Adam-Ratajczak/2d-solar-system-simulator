@@ -7,6 +7,7 @@
 #include "math/Ray.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
+#include "util/UnitDisplay.hpp"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -229,7 +230,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     // guide
     sf::Vector2f guide_start { size().x - 200.f, size().y - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
-    sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * scale() * 100, 0);
+    sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * 300 / scale(), 0);
     sf::VertexArray guide { sf::Lines, 6 };
     sf::Color const guide_color { 127, 127, 127 };
     guide[0] = sf::Vertex({ guide_start, guide_color });
@@ -241,7 +242,7 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
     window.draw(guide);
 
     // FIXME: UB on size_t conversion
-    sf::Text text { std::to_string((size_t)(spacing * AU) / 1000) + " km", GUI::Application::the().font, 15 };
+    sf::Text text { Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(), GUI::Application::the().font, 15 };
     text.setPosition(guide_start);
     auto bounds = text.getLocalBounds();
     text.setOrigin({ bounds.width, bounds.height + 10 });
