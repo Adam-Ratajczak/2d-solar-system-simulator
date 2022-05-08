@@ -253,7 +253,8 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
 
     std::string name = m_name_textbox->get_content();
 
-    return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
+    // FIXME: Trails should be calculated in realtime somehow
+    return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000000);
 }
 
 void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
