@@ -35,6 +35,7 @@ public:
     void update_forces_against(Object&);
     void update(int speed);
     Trail& trail() { return m_trail; }
+    static Sphere& sphere();
 
     // Draw the object in world's coordinates.
     void draw(SimulationView const&);
@@ -58,15 +59,15 @@ public:
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
 
-    Vector3 vel() const {return m_vel;}
-    Vector3 pos() const {return m_pos;}
+    Vector3 vel() const { return m_vel; }
+    Vector3 pos() const { return m_pos; }
 
-    sf::Color color() const{return m_color;}
-    
+    sf::Color color() const { return m_color; }
+
     Util::SimulationClock::time_point creation_date() const { return m_creation_date; }
 
     Util::SimulationClock::time_point deletion_date() const { return m_deletion_date; }
-    bool deleted()const;
+    bool deleted() const;
     void delete_object();
 
     static void setup_python_bindings(TypeSetup);
@@ -74,8 +75,6 @@ public:
 
     double radius() const { return m_radius; }
     void set_radius(double radius);
-
-    Sphere& sphere() { return m_sphere; }
 
     Object* most_attracting_object() const { return m_most_attracting_object; }
     void delete_most_attracting_object();
@@ -143,7 +142,6 @@ private:
     double m_radius {};
 
     bool m_is_forward_simulated = false;
-    Sphere m_sphere;
     Util::SimulationClock::time_point m_creation_date, m_deletion_date;
     Vector3 m_vel;
     std::string m_name;

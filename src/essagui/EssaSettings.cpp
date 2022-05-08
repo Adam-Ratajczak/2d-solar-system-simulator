@@ -95,7 +95,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         });
         toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode) {
             this->m_simulation_view.world().for_each_object([mode](Object& object) {
-                object.sphere().set_draw_mode(mode);
+                Object::sphere().set_draw_mode(mode);
             });
         };
 

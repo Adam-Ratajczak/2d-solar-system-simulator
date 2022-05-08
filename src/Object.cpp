@@ -9,6 +9,7 @@
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
+#include "util/DelayedInit.hpp"
 #include "util/UnitDisplay.hpp"
 #include "util/Units.hpp"
 
@@ -22,11 +23,12 @@
 #include <utility>
 #include <vector>
 
+static Util::DelayedInit<Sphere> s_sphere;
+
 Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
     : m_trail(std::max(2U, period / (3600 * 24) * 2), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
-    , m_sphere(36, 18)
     , m_history(1000, { pos, vel })
     , m_gravity_factor(mass * G)
     , m_radius(radius)
@@ -36,7 +38,14 @@ Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color c
     , m_name(name)
     , m_orbit_len(period) {
     m_trail.push_back(m_pos);
-    m_sphere.set_color(m_color);
+
+    if (!s_sphere.is_initialized()) {
+        s_sphere.construct();
+    }
+}
+
+Sphere& Object::sphere() {
+    return *s_sphere;
 }
 
 Vector3 Object::attraction(const Object& other) {
@@ -52,7 +61,7 @@ void Object::setup_update_forces() {
     m_max_attraction = 0;
 }
 
-bool Object::deleted() const{
+bool Object::deleted() const {
     return (m_deleted && m_deletion_date <= m_world->date()) || m_creation_date > m_world->date();
 }
 
@@ -151,7 +160,7 @@ void Object::recalculate_trails_with_offset() {
     m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
 }
 
-void Object::delete_most_attracting_object(){
+void Object::delete_most_attracting_object() {
     m_most_attracting_object = nullptr;
     m_trail.recalculate_with_offset({});
     m_trail.reset();
@@ -162,8 +171,10 @@ void Object::draw(SimulationView const& view) {
     auto scaled_pos = render_position();
     auto& target = view.window();
 
-    m_sphere.set_position(scaled_pos);
-    m_sphere.draw();
+    s_sphere->set_radius(m_radius / AU);
+    s_sphere->set_position(scaled_pos);
+    s_sphere->set_color(m_color);
+    s_sphere->draw();
 
     if (view.show_trails())
         m_trail.draw();
@@ -206,7 +217,7 @@ void Object::draw_label(SimulationView const& sv, Vector3 position, std::string 
     sv.window().draw(text);
 }
 
-void Object::delete_object(){
+void Object::delete_object() {
     m_deletion_date = m_world->date();
     m_deleted = true;
 }
