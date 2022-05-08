@@ -17,8 +17,12 @@
 #include <memory>
 #include <sstream>
 
+using namespace std::chrono_literals;
+
 World::World()
-    : m_date(Util::SimulationTime::create(1990, 4, 20)) { }
+    : m_date(Util::SimulationTime::create(1990, 4, 20)) {
+    m_start_date = m_date;
+}
 
 void World::add_object(std::unique_ptr<Object> object) {
     object->m_world = this;
@@ -50,35 +54,39 @@ void World::set_forces() {
     }
 }
 
+void World::update_history_and_date(bool reverse) {
+    if (!m_is_forward_simulated) {
+        m_object_history.set_time(m_date);
+        std::unique_ptr<Object>& last_created = m_object_list.back();
+
+        if (!reverse) {
+            m_date += Util::SimulationClock::duration(m_simulation_seconds_per_tick);
+
+            if (m_object_history.size() > 0) {
+                if (last_created->creation_date() <= m_date) {
+                    m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
+                }
+            }
+        }
+        else {
+            m_date -= Util::SimulationClock::duration(m_simulation_seconds_per_tick);
+
+            if (m_object_history.size() > 0) {
+                if (last_created->creation_date() > m_date) {
+                    m_object_history.push_to_entry(std::move(m_object_list.back()));
+                    m_object_list.pop_back();
+                }
+            }
+        }
+    }
+}
+
 void World::update(int steps) {
     assert(steps != 0);
     bool reverse = steps < 0;
 
     for (unsigned i = 0; i < std::abs(steps); i++) {
-        if (!m_is_forward_simulated) {
-            m_object_history.set_time(m_date);
-            std::unique_ptr<Object>& last_created = m_object_list.back();
-
-            if (!reverse) {
-                m_date += Util::SimulationClock::duration(m_simulation_seconds_per_tick);
-
-                if (m_object_history.size() > 0) {
-                    if (last_created->creation_date() <= m_date) {
-                        m_object_list.push_back(std::move(m_object_history.pop_from_entries()));
-                    }
-                }
-            }
-            else {
-                m_date -= Util::SimulationClock::duration(m_simulation_seconds_per_tick);
-
-                if (m_object_history.size() > 0) {
-                    if (last_created->creation_date() > m_date) {
-                        m_object_history.push_to_entry(std::move(m_object_list.back()));
-                        m_object_list.pop_back();
-                    }
-                }
-            }
-        }
+        update_history_and_date(reverse);
 
         // The algorithm used is Leapfrog KDK
         // http://courses.physics.ucsd.edu/2019/Winter/physics141/Lectures/Lecture2/volker.pdf
@@ -106,6 +114,13 @@ void World::update(int steps) {
             obj->set_vel(obj->vel() + halfStep * obj->acc());
 
             obj->update(m_simulation_seconds_per_tick);
+    
+            std::cerr << m_date.time_since_epoch().count() << ";" << obj->name() << ";" << obj->pos() << ";" << obj->vel() << ";" << std::endl;
+        }
+
+        if ((m_date - m_start_date).count() > 24 * 60 * 60 * 50) {
+            std::cout << "FINISHED" << std::endl;
+            _exit(0);
         }
     }
 }

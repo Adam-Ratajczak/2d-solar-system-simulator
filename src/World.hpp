@@ -56,11 +56,14 @@ public:
     void set_forces();
 
 private:
+    Util::SimulationClock::time_point m_start_date;
     Util::SimulationClock::time_point m_date;
     ObjectHistory m_object_history;
     std::list<std::unique_ptr<Object>> m_object_list;
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
     bool m_is_forward_simulated = false;
+
+    void update_history_and_date(bool reverse);
 
     // FIXME: (on WrappedObject side) Allow const-qualified members
     PySSA::Object python_add_object(PySSA::Object const& args, PySSA::Object const& kwargs);
