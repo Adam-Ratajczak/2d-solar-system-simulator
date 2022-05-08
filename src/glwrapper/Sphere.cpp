@@ -14,11 +14,39 @@
 const int MIN_SECTOR_COUNT = 3;
 const int MIN_STACK_COUNT = 2;
 
-Sphere::Sphere(double radius, int sectors, int stacks)
-    : m_radius(radius)
-    , m_sectors(sectors)
+sf::Shader s_shader;
+bool m_shader_loaded = false;
+
+static char const s_vertex_shader[] = R"~~~(
+#version 110
+
+void main()
+{
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+}
+)~~~";
+
+static char const s_fragment_shader[] = R"~~~(
+#version 110
+
+uniform vec4 color;
+
+void main()
+{
+    gl_FragColor = color;
+}
+)~~~";
+
+Sphere::Sphere(int sectors, int stacks)
+    : m_sectors(sectors)
     , m_stacks(stacks) {
     gen_sphere();
+    if (!m_shader_loaded) {
+        m_shader_loaded = true;
+        std::cout << "Loading shader" << std::endl;
+        s_shader.loadFromMemory(s_vertex_shader, sf::Shader::Vertex);
+        s_shader.loadFromMemory(s_fragment_shader, sf::Shader::Fragment);
+    }
 }
 
 void Sphere::gen_sphere() {
@@ -50,8 +78,6 @@ void Sphere::gen_sphere() {
     // std::cout << "----------------------" << std::endl;
     // for (auto& i : m_indices)
     //     std::cout << m_vertices[i].position << std::endl;
-
-    change_colours();
 }
 
 unsigned Sphere::vertex_index(unsigned stack, unsigned sector) const {
@@ -61,27 +87,19 @@ unsigned Sphere::vertex_index(unsigned stack, unsigned sector) const {
     return stack * m_sectors + (sector % m_sectors);
 }
 
-void Sphere::set_color(Color color) {
-    for (auto& vert : m_vertices)
-        vert.color = color;
-}
-
 void Sphere::draw() const {
     WorldDrawScope::verify();
 
+    sf::Shader::bind(&s_shader);
+    s_shader.setUniform("color", sf::Glsl::Vec4 { m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f, m_color.a / 255.f });
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     Transform::translation(m_pos).gl_mult();
     Transform::scale({ m_radius, m_radius, m_radius }).gl_mult();
-    if(m_mode == DrawMode::Full)
+    if (m_mode == DrawMode::Full)
         GL::draw_indexed_vertices(GL_TRIANGLES, m_vertices, m_indices);
-    else if(m_mode == DrawMode::Grid)
+    else if (m_mode == DrawMode::Grid)
         GL::draw_indexed_vertices(GL_LINES, m_vertices, m_indices);
+    sf::Shader::bind(nullptr);
     glPopMatrix();
-}
-
-void Sphere::change_colours() {
-    for (const auto& i : m_indices) {
-        m_vertices[i].color *= (float)i / m_indices.size();
-    }
 }

@@ -26,7 +26,7 @@ Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color c
     : m_trail(std::max(2U, period / (3600 * 24) * 2), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
-    , m_sphere(radius / AU, 36, 18)
+    , m_sphere(36, 18)
     , m_history(1000, { pos, vel })
     , m_gravity_factor(mass * G)
     , m_radius(radius)
