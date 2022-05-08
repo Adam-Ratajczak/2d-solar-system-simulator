@@ -164,7 +164,7 @@ private:
 
     bool m_allow_change_speed = true;
 
-    int m_iterations = 10;
+    int m_iterations = 1;
 
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
