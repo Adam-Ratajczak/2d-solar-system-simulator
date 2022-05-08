@@ -392,12 +392,11 @@ Object* SimulationView::focused_object() const {
 
 void SimulationView::setup_python_bindings(TypeSetup type_setup) {
     type_setup.add_method<&SimulationView::python_reset>("reset", "Reset view transform");
-    type_setup.add_attribute<&SimulationView::python_get_offset, nullptr>("offset");
-    type_setup.add_attribute<&SimulationView::python_get_fov, nullptr>("fov", "Field of view");
-    type_setup.add_attribute<&SimulationView::python_get_yaw, nullptr>("yaw");
-    type_setup.add_attribute<&SimulationView::python_get_pitch, nullptr>("pitch");
-    type_setup.add_attribute<&SimulationView::python_get_world, nullptr>("world");
-    type_setup.add_attribute<&SimulationView::python_get_zoom, nullptr>("zoom");
+    type_setup.add_attribute<&SimulationView::python_get_offset, &SimulationView::python_set_offset>("offset");
+    type_setup.add_attribute<&SimulationView::python_get_fov, &SimulationView::python_set_fov>("fov", "Field of view");
+    type_setup.add_attribute<&SimulationView::python_get_yaw, &SimulationView::python_set_yaw>("yaw");
+    type_setup.add_attribute<&SimulationView::python_get_pitch, &SimulationView::python_set_pitch>("pitch");
+    type_setup.add_attribute<&SimulationView::python_get_zoom, &SimulationView::python_set_zoom>("zoom");
     type_setup.add_attribute<&SimulationView::python_get_focused_object, nullptr>("focused_object");
 }
 
@@ -410,16 +409,48 @@ PySSA::Object SimulationView::python_get_offset() const {
     return PySSA::Object::create(m_offset);
 }
 
+bool SimulationView::python_set_offset(PySSA::Object const& object) {
+    auto v = object.as_vector();
+    if (!v)
+        return false;
+    m_offset = *v;
+    return true;
+}
+
 PySSA::Object SimulationView::python_get_fov() const {
     return PySSA::Object::create(m_fov.rad());
+}
+
+bool SimulationView::python_set_fov(PySSA::Object const& object) {
+    auto v = object.as_double();
+    if (!v)
+        return false;
+    m_fov = Angle(*v, Angle::Unit::Deg);
+    return true;
 }
 
 PySSA::Object SimulationView::python_get_yaw() const {
     return PySSA::Object::create(m_yaw);
 }
 
+bool SimulationView::python_set_yaw(PySSA::Object const& object) {
+    auto v = object.as_double();
+    if (!v)
+        return false;
+    m_yaw = *v;
+    return true;
+}
+
 PySSA::Object SimulationView::python_get_pitch() const {
     return PySSA::Object::create(m_pitch);
+}
+
+bool SimulationView::python_set_pitch(PySSA::Object const& object) {
+    auto v = object.as_double();
+    if (!v)
+        return false;
+    m_pitch = *v;
+    return true;
 }
 
 PySSA::Object SimulationView::python_get_world() const {
@@ -428,6 +459,14 @@ PySSA::Object SimulationView::python_get_world() const {
 
 PySSA::Object SimulationView::python_get_zoom() const {
     return PySSA::Object::create(m_zoom);
+}
+
+bool SimulationView::python_set_zoom(PySSA::Object const& object) {
+    auto v = object.as_double();
+    if (!v)
+        return false;
+    m_zoom = *v;
+    return true;
 }
 
 PySSA::Object SimulationView::python_get_focused_object() const {

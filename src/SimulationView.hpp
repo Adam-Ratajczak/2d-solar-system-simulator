@@ -108,12 +108,19 @@ private:
     PySSA::Object python_reset(PySSA::Object const& args);
 
     PySSA::Object python_get_offset() const;
+    bool python_set_offset(PySSA::Object const&);
     PySSA::Object python_get_fov() const;
+    bool python_set_fov(PySSA::Object const&);
     PySSA::Object python_get_yaw() const;
+    bool python_set_yaw(PySSA::Object const&);
     PySSA::Object python_get_pitch() const;
+    bool python_set_pitch(PySSA::Object const&);
     PySSA::Object python_get_world() const;
+    // No setter for world
     PySSA::Object python_get_zoom() const;
+    bool python_set_zoom(PySSA::Object const&);
     PySSA::Object python_get_focused_object() const;
+    //bool python_set_focused_object(PySSA::Object const&); // TODO
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;
