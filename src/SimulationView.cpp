@@ -370,7 +370,10 @@ void SimulationView::update() {
             Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
 
             m_pitch_from_object = std::atan2(a.y, a.z) - M_PI / 2;
-            m_yaw_from_object = std::atan2(a.y, a.x) - M_PI / 2;
+            m_yaw_from_object = std::atan2(a.y, a.x) + M_PI / 2;
+
+            if(a.y < 0)
+                m_pitch_from_object -= M_PI;
         }
     }
 
