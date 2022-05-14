@@ -274,9 +274,13 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
 }
 
 void FocusedObjectGUI::update() {
-    if (m_world.m_simulation_view->speed() == 0 || m_focused == nullptr)
+    if (m_focused == nullptr)
         return;
 
+    update_params();
+}
+
+void FocusedObjectGUI::update_params(){
     set_visible(true);
     set_most_massive_data_visible(m_focused->most_attracting_object());
 

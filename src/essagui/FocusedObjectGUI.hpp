@@ -15,7 +15,8 @@ class FocusedObjectGUI : public GUI::Container {
 public:
     FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolWindow* wnd, World& w);
 
-    virtual void update() override;
+    void update() override;
+    void update_params();
 
 private:
     void set_most_massive_data_visible(bool);
