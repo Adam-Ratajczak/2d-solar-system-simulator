@@ -1,2 +1,2 @@
-planet name=Sun mass=1e31 radius=100000 colorb=0 posx=1e10 vely=1e5;
-planet name=Sun mass=1e31 radius=100000 colorb=0 posx=-1e10 vely=-1e5;
+planet name=Sun mass=1e31 radius=100000 colorb=0 posx=1e10 posz=1e10 vely=1e5;
+planet name=Sun mass=1e31 radius=100000 colorb=0 posx=-1e10 posx=1e10  vely=-1e5;

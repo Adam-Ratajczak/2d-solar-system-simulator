@@ -69,6 +69,7 @@ void Trail::push_back(Vector3 pos) {
 
     last_xy_angle = std::atan2(pos.y, pos.x);
     last_yz_angle = std::atan2(pos.y, pos.z);
+
 }
 
 void Trail::reset() {

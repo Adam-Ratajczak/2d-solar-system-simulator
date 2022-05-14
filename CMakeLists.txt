@@ -32,8 +32,6 @@ add_executable(
 
     src/glwrapper/Helpers.cpp
     src/glwrapper/Sphere.cpp
-    src/glwrapper/Triangle.cpp
-    src/glwrapper/VertexBuffer.cpp
 
     src/math/Plane.cpp
     src/math/Ray.cpp

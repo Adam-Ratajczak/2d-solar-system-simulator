@@ -1,0 +1,8 @@
+planet name=p1 mass=1e31 radius=100000 colorb=0 posx=1e10 posy=1e10 posz=1e10 velx=1e5 vely=1e5 velz=1e5;
+planet name=p2 mass=1e31 radius=100000 colorb=0 posx=1e10 posy=1e10 -posz=1e10 velx=1e5 vely=1e5 velz=-1e5;
+planet name=p3 mass=1e31 radius=100000 colorb=0 posx=1e10 posy=-1e10 posz=1e10 velx=1e5 vely=-1e5 velz=1e5;
+planet name=p4 mass=1e31 radius=100000 colorb=0 posx=1e10 posy=-1e10 -posz=1e10 velx=1e5 vely=-1e5 velz=-1e5;
+planet name=p5 mass=1e31 radius=100000 colorb=0 posx=-1e10 posy=1e10 posz=1e10 velx=-1e5 vely=1e5 velz=1e5;
+planet name=p6 mass=1e31 radius=100000 colorb=0 posx=-1e10 posy=1e10 -posz=1e10 velx=-1e5 vely=1e5 velz=-1e5;
+planet name=p7 mass=1e31 radius=100000 colorb=0 posx=-1e10 posy=-1e10 posz=1e10 velx=-1e5 vely=-1e5 velz=1e5;
+planet name=p8 mass=1e31 radius=100000 colorb=0 posx=-1e10 posy=-1e10 -posz=1e10 velx=-1e5 vely=-1e5 velz=-1e5;
