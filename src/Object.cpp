@@ -94,8 +94,6 @@ void Object::update_forces_against(Object& object) {
 }
 
 void Object::update(int speed) {
-    m_trail.set_new_tickrate(m_world->simulation_seconds_per_tick());
-
     if (m_is_forward_simulated)
         update_closest_approaches();
 

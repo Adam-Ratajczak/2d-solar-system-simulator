@@ -2,6 +2,7 @@
 
 #include "Object.hpp"
 #include "WrappedObject.hpp"
+#include "pyport.h"
 #include <string>
 #include <type_traits>
 #include <utility>
