@@ -119,17 +119,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     }
 
     {
-        auto& canvas_mode = menu->add_entry(load_image("../assets/canvasMode.png"), "Canvas Mode");
-        canvas_mode.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        canvas_mode.settings_container->set_size({ 1820.0_px, 990.0_px });
-        m_canvas_mode_gui = canvas_mode.settings_container->add_widget<EssaCanvasMode>();
-
-        canvas_mode.on_toggle = [this](bool state) {
-            m_simulation_view->pause_simulation(state);
-        };
-    }
-
-    {
         auto& settings = menu->add_entry(load_image("../assets/simulationSettings.png"), "Simulation Settings");
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         settings.settings_container->set_size({ 500.0_px, 600.0_px });

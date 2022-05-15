@@ -19,7 +19,6 @@ add_executable(
     src/World.cpp
     src/main.cpp
     
-    src/essagui/EssaCanvasMode.cpp
     src/essagui/EssaCreateObject.cpp
     src/essagui/EssaGUI.cpp
     src/essagui/EssaSettings.cpp

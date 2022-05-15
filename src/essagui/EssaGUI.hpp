@@ -14,7 +14,6 @@
 #include "../gui/Textfield.hpp"
 #include "../gui/ValueSlider.hpp"
 #include "../gui/Widget.hpp"
-#include "EssaCanvasMode.hpp"
 #include "EssaCreateObject.hpp"
 #include "EssaSettings.hpp"
 #include "FocusedObjectGUI.hpp"
@@ -49,7 +48,6 @@ private:
     SimulationView* m_simulation_view = nullptr;
     EssaCreateObject* m_create_object_gui = nullptr;
     EssaSettings* m_settings_gui = nullptr;
-    EssaCanvasMode* m_canvas_mode_gui = nullptr;
 
     bool m_draw_forward_simulation = false;
 
