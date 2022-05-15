@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EventLoop.hpp"
 #include "Tooltip.hpp"
 #include "Widget.hpp"
 
@@ -9,7 +10,7 @@
 
 namespace GUI {
 
-class WidgetTreeRoot {
+class WidgetTreeRoot : public EventLoop {
 public:
     explicit WidgetTreeRoot(sf::RenderWindow& wnd)
         : m_window(wnd) { }
@@ -48,14 +49,24 @@ public:
     void remove_tooltip(Tooltip* t);
 
     virtual void draw();
-    void handle_event(Event&);
+    virtual void handle_event(sf::Event);
+    virtual void handle_events() {}
     virtual void update() { m_main_widget->do_update(); }
 
     virtual sf::Vector2f position() const = 0;
     virtual sf::Vector2f size() const = 0;
     sf::FloatRect rect() const { return { position(), size() }; }
 
+    // The rect that the WidgetTreeRoot should consume events from. For
+    // ToolWindows, it is content + titlebar.
+    virtual sf::FloatRect full_rect() const { return rect(); }
+
 protected:
+    virtual void tick() override;
+
+    bool pass_event_to_window_if_needed(WidgetTreeRoot& wtr, sf::Event event);
+    sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
+
 private:
     sf::RenderWindow& m_window;
     Widget* m_focused_widget {};

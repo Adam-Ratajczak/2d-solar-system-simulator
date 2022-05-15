@@ -155,6 +155,8 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
                     prompt_window->close();
                 };
             }
+
+            prompt_window.run();
         };
     }
 

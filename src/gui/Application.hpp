@@ -17,10 +17,12 @@ public:
 
     static Application& the();
 
+    // TODO: Find a way for this to be private
     virtual void draw() override;
-    void handle_events();
-    virtual void update() override;
 
+    virtual void handle_event(sf::Event) override;
+
+    // TODO: Move it to some specialized class
     sf::Font font;
     sf::Font bold_font;
     sf::Font fixed_width_font;
@@ -54,6 +56,9 @@ public:
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
 
 private:
+    virtual void handle_events() override;
+    virtual void update() override;
+
     struct Notification {
         int remaining_ticks = 120;
         std::string message;

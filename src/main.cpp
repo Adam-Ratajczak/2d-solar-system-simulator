@@ -1,8 +1,8 @@
 // keep first!
 #include <GL/glew.h>
 
-#include "essagui/EssaGUI.hpp"
 #include "World.hpp"
+#include "essagui/EssaGUI.hpp"
 #include "gui/Application.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
@@ -31,19 +31,6 @@ int main() {
     // Save clean OpenGL state which we will use for world rendering
     window.pushGLStates();
 
-    sf::Clock fps_clock;
-    while (window.isOpen()) {
-        application.handle_events();
-        application.update();
-
-        window.clear();
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        gui.simulation_view().set_fps(1.f / fps_clock.restart().asSeconds());
-        application.draw();
-
-        window.display();
-    }
-
+    application.run();
     return EXIT_SUCCESS;
 }

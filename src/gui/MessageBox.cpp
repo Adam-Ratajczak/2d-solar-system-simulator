@@ -34,8 +34,7 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
         button->set_content(std::move(label));
         button->set_display_attributes(bg_color, sf::Color::Blue, sf::Color::White);
         button->on_click = [this, button_role]() {
-            if(on_finish)
-                on_finish(button_role);
+            m_clicked_button = button_role;
             close();
         };
     };

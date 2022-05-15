@@ -22,13 +22,13 @@ public:
     void set_title(sf::String string) { m_string = std::move(string); }
     sf::String title() const { return m_string; }
 
-    sf::FloatRect full_rect() const { return { position() - sf::Vector2f(0, TitleBarSize), size() + sf::Vector2f(0, TitleBarSize) }; }
+    virtual sf::FloatRect full_rect() const override { return { position() - sf::Vector2f(0, TitleBarSize), size() + sf::Vector2f(0, TitleBarSize) }; }
     sf::FloatRect titlebar_rect() const { return { position() - sf::Vector2f(0, TitleBarSize), { size().x, TitleBarSize } }; }
 
-    void handle_event(Event&);
+    virtual void handle_event(sf::Event) override;
     virtual void draw() override;
 
-    void close() { m_closed = true; }
+    void close() { m_closed = true; quit(); }
     bool is_closed() const { return m_closed; }
 
     std::string id() const { return m_id; }
@@ -36,6 +36,8 @@ public:
     std::function<void()> on_close;
 
 private:
+    virtual void handle_events() override;
+
     std::string m_id;
 
     enum class Resize {

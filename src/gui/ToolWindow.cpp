@@ -22,12 +22,13 @@ ToolWindow::ToolWindow(sf::RenderWindow& wnd, std::string id)
         } });
 }
 
-void ToolWindow::handle_event(Event& event) {
-    if (event.is_mouse_related()) {
-        sf::Vector2f mouse_position = event.mouse_position();
+void ToolWindow::handle_event(sf::Event event) {
+    Event gui_event { event };
+    if (gui_event.is_mouse_related()) {
+        sf::Vector2f mouse_position = gui_event.mouse_position();
         mouse_position += position();
 
-        if (event.type() == sf::Event::MouseMoved) {
+        if (event.type == sf::Event::MouseMoved) {
             bool bottom = mouse_position.y > position().y + size().y - ResizeRadius;
             bool is_in_window_x_range = mouse_position.x > position().x - ResizeRadius && mouse_position.x < position().x + size().x + ResizeRadius;
             bool is_in_window_y_range = mouse_position.y > position().y + TitleBarSize - ResizeRadius && mouse_position.y < position().y + size().y + ResizeRadius;
@@ -70,27 +71,27 @@ void ToolWindow::handle_event(Event& event) {
         for (auto& button : m_titlebar_buttons) {
             sf::FloatRect rect { { titlebar_button_position_x, position().y - TitleBarSize }, { TitleBarSize, TitleBarSize } };
 
-            if (event.type() == sf::Event::MouseButtonPressed) {
+            if (event.type == sf::Event::MouseButtonPressed) {
                 if (rect.contains(mouse_position)) {
                     button.mousedown = true;
                     button.hovered = true;
                 }
             }
-            else if (event.type() == sf::Event::MouseButtonReleased) {
+            else if (event.type == sf::Event::MouseButtonReleased) {
                 button.mousedown = true;
                 if (rect.contains(mouse_position)) {
                     assert(button.on_click);
                     button.on_click();
                 }
             }
-            else if (event.type() == sf::Event::MouseMoved) {
+            else if (event.type == sf::Event::MouseMoved) {
                 button.hovered = rect.contains(mouse_position);
             }
 
             titlebar_button_position_x -= TitleBarSize;
         }
 
-        if (event.type() == sf::Event::MouseButtonPressed) {
+        if (event.type == sf::Event::MouseButtonPressed) {
             if (m_resize_mode != Resize::DEFAULT)
                 m_resizing = true;
             else if (titlebar_rect().contains(mouse_position)) {
@@ -99,8 +100,8 @@ void ToolWindow::handle_event(Event& event) {
                 return;
             }
         }
-        else if (event.type() == sf::Event::MouseMoved) {
-            sf::Vector2f mouse_position { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+        else if (event.type == sf::Event::MouseMoved) {
+            sf::Vector2f mouse_position { static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) };
             mouse_position += position();
 
             if (m_dragging) {
@@ -143,7 +144,7 @@ void ToolWindow::handle_event(Event& event) {
                 }
             }
         }
-        else if (event.type() == sf::Event::MouseButtonReleased) {
+        else if (event.type == sf::Event::MouseButtonReleased) {
             m_dragging = false;
             m_resizing = false;
         }
@@ -151,7 +152,24 @@ void ToolWindow::handle_event(Event& event) {
     WidgetTreeRoot::handle_event(event);
 }
 
+void ToolWindow::handle_events() {
+    // This event handler just takes all the events
+    // (except global events) and passes the to the
+    // underlying  main_widget. This is used for modal
+    // windows.
+    // FIXME: Support moving other ToolWindows even
+    //        if other modal window is open.
+    sf::Event event;
+    while (window().pollEvent(event)) {
+        handle_event(transform_event(position(), event));
+        if (event.type == sf::Event::Resized || event.type == sf::Event::Closed)
+            Application::the().handle_event(event);
+    }
+}
+
 void ToolWindow::draw() {
+    // FIXME: Add some graphical indication that there is
+    //        modal window opened now
     auto color = Application::the().focused_tool_window() == this ? sf::Color(160, 160, 160, 150) : sf::Color(127, 127, 127, 150);
 
     RoundedEdgeRectangleShape rs_titlebar({ size().x + 2, TitleBarSize }, 5);

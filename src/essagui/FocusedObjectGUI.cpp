@@ -207,12 +207,11 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     remove_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
     remove_button->on_click = [&]() {
         auto& msgbox = GUI::Application::the().open_tool_window<GUI::MessageBox>("Are you sure you want to delete object \"" + m_focused->name() + "\"?", "Delete object", GUI::MessageBox::Buttons::YesNo);
-        msgbox.on_finish = [&](GUI::MessageBox::ButtonRole btn) {
-            if (btn == GUI::MessageBox::ButtonRole::Yes) {
-                m_focused->delete_object();
-                m_focused = nullptr;
-                m_window->close();
-            }
+        auto result = msgbox.exec();
+        if (result == GUI::MessageBox::ButtonRole::Yes) {
+            m_focused->delete_object();
+            m_focused = nullptr;
+            m_window->close();
         };
     };
 }
@@ -287,7 +286,7 @@ void FocusedObjectGUI::update() {
     update_params();
 }
 
-void FocusedObjectGUI::update_params(){
+void FocusedObjectGUI::update_params() {
     set_visible(true);
     set_most_massive_data_visible(m_focused->most_attracting_object());
 

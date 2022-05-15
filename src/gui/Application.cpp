@@ -50,55 +50,63 @@ void Application::focus_window(WindowList::iterator new_focused_it) {
     m_tool_windows.push_back(std::move(ptr));
 }
 
-void Application::handle_events() {
-    sf::Event event;
-    while (window().pollEvent(event)) {
-        if (event.type == sf::Event::MouseButtonPressed) {
-            m_focused_tool_window = nullptr;
-            sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
-            decltype(m_tool_windows)::iterator new_focused_it = m_tool_windows.end();
-            for (auto it = m_tool_windows.end(); it != m_tool_windows.begin();) {
-                auto it2 = --it;
-                auto& tool_window = **it2;
-                if (tool_window.full_rect().contains(position)) {
-                    new_focused_it = it2;
-                    break;
-                }
-            }
-            focus_window(new_focused_it);
-        }
+void Application::handle_event(sf::Event event) {
+    if (event.type == sf::Event::Closed) {
+        // TODO: Allow user to override it.
+        quit();
+        return;
+    }
 
-        if (m_focused_tool_window) {
-            Event gui_event_relative_to_tool_window { transform_event(m_focused_tool_window->position(), event) };
-            m_focused_tool_window->handle_event(gui_event_relative_to_tool_window);
-            bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
-                && !m_focused_tool_window->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
-            if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window))
-                continue;
-        }
-
-        bool should_pass_event_to_main_window = true;
-
-        for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
-            auto& tool_window = **it;
-            Event gui_event_relative_to_tool_window { transform_event(tool_window.position(), event) };
-            if (event.type == sf::Event::MouseMoved) {
-                tool_window.handle_event(gui_event_relative_to_tool_window);
+    // Focus window if mouse button pressed
+    if (event.type == sf::Event::MouseButtonPressed) {
+        m_focused_tool_window = nullptr;
+        sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
+        decltype(m_tool_windows)::iterator new_focused_it = m_tool_windows.end();
+        for (auto it = m_tool_windows.end(); it != m_tool_windows.begin();) {
+            auto it2 = --it;
+            auto& tool_window = **it2;
+            if (tool_window.full_rect().contains(position)) {
+                new_focused_it = it2;
                 break;
             }
-
-            bool scroll_on_window = event.type == sf::Event::MouseWheelScrolled
-                && tool_window.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
-
-            if (scroll_on_window)
-                should_pass_event_to_main_window = false;
         }
-
-        if (should_pass_event_to_main_window) {
-            Event gui_event(event);
-            handle_event(gui_event);
-        }
+        focus_window(new_focused_it);
     }
+
+    // Pass events to focused tool window
+    if (m_focused_tool_window) {
+        m_focused_tool_window->handle_event(transform_event(m_focused_tool_window->position(), event));
+        bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
+            && !m_focused_tool_window->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+        if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window))
+            return;
+    }
+
+    bool should_pass_event_to_main_window = true;
+
+    // Pass mouse moves to all tool windows + capture all scrolls
+    for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
+        auto& tool_window = **it;
+        if (event.type == sf::Event::MouseMoved) {
+            tool_window.handle_event(transform_event(tool_window.position(), event));
+            break;
+        }
+
+        bool scroll_on_window = event.type == sf::Event::MouseWheelScrolled
+            && tool_window.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+
+        if (scroll_on_window)
+            should_pass_event_to_main_window = false;
+    }
+
+    if (should_pass_event_to_main_window)
+        WidgetTreeRoot::handle_event(event);
+}
+
+void Application::handle_events() {
+    sf::Event event;
+    while (window().pollEvent(event))
+        handle_event(event);
 }
 
 void Application::draw() {

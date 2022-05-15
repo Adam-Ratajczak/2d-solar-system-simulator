@@ -4,25 +4,28 @@
 
 namespace GUI {
 
-// FIXME: This should be a modal dialog.
 class MessageBox : public ToolWindow {
 public:
-    enum class Buttons
-    {
+    enum class Buttons {
         YesNo,
         Ok
     };
 
     explicit MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String title, Buttons buttons);
 
-    enum class ButtonRole
-    {
+    enum class ButtonRole {
         Yes,
         No,
         Ok
     };
 
-    std::function<void(ButtonRole)> on_finish;
+    ButtonRole exec() {
+        run();
+        return m_clicked_button;
+    }
+
+private:
+    ButtonRole m_clicked_button {};
 };
 
 }
