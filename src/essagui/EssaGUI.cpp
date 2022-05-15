@@ -65,6 +65,60 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     }
 
     {
+        auto& load_world = menu->add_entry(load_image("../assets/loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
+        load_world.on_toggle = [this](bool) {
+            // TODO: Add TextPrompt or something like this (like MessageBox)
+            //       Or preferably a full FilePicker
+            auto& prompt_window = GUI::Application::the().open_tool_window();
+            prompt_window.set_title("Load world");
+            prompt_window.set_size({ 500, 100 });
+            prompt_window.center_on_screen();
+
+            auto& container = prompt_window.set_main_widget<GUI::Container>();
+            auto& container_layout = container.set_layout<GUI::VerticalBoxLayout>();
+            container_layout.set_padding(20);
+            container_layout.set_spacing(10);
+
+            auto input_container = container.add_widget<GUI::Container>();
+            input_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
+            input_container->set_size({ Length::Auto, 30.0_px });
+
+            {
+                auto label = input_container->add_widget<GUI::Textfield>();
+                label->set_size({ 150.0_px, Length::Auto });
+                label->set_content("File name:");
+            }
+            auto input = input_container->add_widget<GUI::Textbox>();
+            // FIXME: Why textboxes are numeric by default
+            input->set_data_type(GUI::Textbox::TEXT);
+            input->set_placeholder("e.g solar.essa");
+
+            // FIXME: Also, why buttons are red by default?
+            auto button_container = container.add_widget<GUI::Container>();
+            button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
+            button_container->set_size({ Length::Auto, 30.0_px });
+            {
+
+                auto cancel_button = button_container->add_widget<GUI::TextButton>();
+                cancel_button->set_alignment(GUI::Align::Center);
+                cancel_button->set_content("Cancel");
+                cancel_button->on_click = [prompt_window = &prompt_window]() {
+                    prompt_window->close();
+                };
+
+                auto ok_button = button_container->add_widget<GUI::TextButton>();
+                ok_button->set_alignment(GUI::Align::Center);
+                ok_button->set_content("OK");
+                ok_button->on_click = [this, prompt_window = &prompt_window, input]() {
+                    m_settings_gui->set_world_file(input->get_content());
+                    m_settings_gui->reset_simulation();
+                    prompt_window->close();
+                };
+            }
+        };
+    }
+
+    {
         auto& canvas_mode = menu->add_entry(load_image("../assets/canvasMode.png"), "Canvas Mode");
         canvas_mode.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         canvas_mode.settings_container->set_size({ 1820.0_px, 990.0_px });

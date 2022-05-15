@@ -1,4 +1,5 @@
 #include "EssaSettings.hpp"
+
 #include "../World.hpp"
 #include "../glwrapper/Sphere.hpp"
 #include "../gui/Container.hpp"
@@ -8,6 +9,8 @@
 #include "../gui/Textfield.hpp"
 #include "../gui/ValueSlider.hpp"
 #include "../util/SimulationClock.hpp"
+
+#include <fstream>
 
 EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
     : GUI::Container(c)
@@ -193,16 +196,8 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
     restore_sim->set_alignment(GUI::Align::Center);
     restore_sim->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
     restore_sim->set_tooltip_text("Restore Simulation to state from the beginning");
-    restore_sim->on_click = [world = &m_simulation_view.world()]() {
-        world->reset();
-        // FIXME: This seems like a hacky fix for FocusedObjectGUI UAF, but
-        //        I don't know any better solution.
-        //        (Doesn't cover Python and any other path that removes objects,
-        //        when these are added)
-        GUI::Application::the().for_each_tool_window([](GUI::ToolWindow& wnd) {
-            if (wnd.id().starts_with("FocusedGUI-"))
-                wnd.close();
-        });
+    restore_sim->on_click = [this]() {
+        reset_simulation();
     };
 
     auto restore_defaults_container = add_widget<GUI::Container>();
@@ -223,4 +218,24 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             func();
     };
     restore_defaults->on_click();
+}
+
+void EssaSettings::reset_simulation() {
+
+    std::ifstream file_in("../worlds/" + m_world_file);
+    if (!file_in.good()) {
+        // TODO: Display msgbox and abort loading
+        std::cout << "Failed to load world file " << m_world_file << std::endl;
+    }
+    ConfigLoader loader { file_in };
+    m_simulation_view.world().reset(&loader);
+
+    // FIXME: This seems like a hacky fix for FocusedObjectGUI UAF, but
+    //        I don't know any better solution.
+    //        (Doesn't cover Python and any other path that removes objects,
+    //        when these are added)
+    GUI::Application::the().for_each_tool_window([](GUI::ToolWindow& wnd) {
+        if (wnd.id().starts_with("FocusedGUI-"))
+            wnd.close();
+    });
 }

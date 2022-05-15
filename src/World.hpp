@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ConfigLoader.hpp"
 #include "Object.hpp"
 #include "ObjectHistory.hpp"
 #include "math/Vector3.hpp"
@@ -28,7 +29,7 @@ public:
     void update(int steps);
     void draw(SimulationView const& view) const;
     void add_object(std::unique_ptr<Object>);
-    void reset();
+    void reset(ConfigLoader* loader);
     Object* get_object_by_name(std::string const& name);
 
     Util::SimulationClock::time_point date() const { return m_date; }
@@ -73,5 +74,3 @@ private:
 
     friend std::ostream& operator<<(std::ostream& out, World const&);
 };
-
-void prepare_solar(World& world);

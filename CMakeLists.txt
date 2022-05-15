@@ -15,7 +15,6 @@ add_executable(
     src/Object.cpp
     src/ObjectHistory.cpp
     src/SimulationView.cpp
-    src/SolarSystem.cpp
     src/Trail.cpp
     src/World.cpp
     src/main.cpp

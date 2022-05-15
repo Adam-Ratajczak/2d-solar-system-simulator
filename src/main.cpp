@@ -20,7 +20,7 @@ int main() {
     GUI::Application application { window };
     auto& gui = application.set_main_widget<EssaGUI>(world);
 
-    world.reset();
+    world.reset(nullptr);
 
     // PySSA test
     PySSA::Environment env(world, gui.simulation_view());

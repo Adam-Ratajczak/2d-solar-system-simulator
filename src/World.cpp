@@ -1,6 +1,7 @@
 // keep first!
 #include <GL/glew.h>
 
+#include "ConfigLoader.hpp"
 #include "Object.hpp"
 #include "SimulationView.hpp"
 #include "World.hpp"
@@ -148,12 +149,13 @@ Object* World::get_object_by_name(std::string const& name) {
     return nullptr;
 }
 
-void World::reset() {
+void World::reset(ConfigLoader* loader) {
     m_object_list.clear();
     m_simulation_view->set_focused(nullptr);
     m_date = Util::SimulationTime::create(1990, 4, 20);
     m_object_history.clear_history(0);
-    prepare_solar(*this);
+    if(loader)
+        loader->load(*this);
 }
 
 void World::reset_all_trails() {

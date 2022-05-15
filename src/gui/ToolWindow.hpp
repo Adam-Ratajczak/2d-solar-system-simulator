@@ -14,6 +14,7 @@ public:
 
     virtual sf::Vector2f position() const override { return m_position; }
     void set_position(sf::Vector2f position) { m_position = position; }
+    void center_on_screen() { m_position = sf::Vector2f(window().getSize() / 2u) - m_size / 2.f; }
 
     virtual sf::Vector2f size() const override { return m_size; }
     void set_size(sf::Vector2f size) { m_size = size; }
