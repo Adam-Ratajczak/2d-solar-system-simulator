@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EventLoop.hpp"
-#include "Tooltip.hpp"
 #include "Widget.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>

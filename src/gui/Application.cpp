@@ -3,6 +3,7 @@
 #include "../gfx/ClipViewScope.hpp"
 #include "../gfx/RoundedEdgeRectangleShape.hpp"
 #include "ToolWindow.hpp"
+#include "Widget.hpp"
 #include "WidgetTreeRoot.hpp"
 
 #include <SFML/Graphics/Color.hpp>
@@ -41,7 +42,7 @@ sf::Event Application::transform_event(sf::Vector2f offset, sf::Event event) con
     return event;
 }
 
-void Application::focus_window(WindowList::iterator new_focused_it) {
+void Application::focus_window(OverlayList::iterator new_focused_it) {
     if (new_focused_it == m_overlays.end())
         return;
     m_focused_overlay = new_focused_it->get();
@@ -113,24 +114,6 @@ void Application::draw() {
     WidgetTreeRoot::draw();
     for (auto& overlay : m_overlays)
         overlay->draw();
-
-    sf::View gui_view { sf::FloatRect(position(), size()) };
-    window().setView(gui_view);
-    for (auto& tooltip : m_tooltips) {
-        sf::Text text(tooltip->text, Application::the().font, 15);
-        text.setFillColor(sf::Color::Black);
-        text.setPosition(tooltip->position);
-
-        auto bounds = text.getGlobalBounds();
-
-        sf::RectangleShape bg { { bounds.width + 10, bounds.height + 10 } };
-        auto x_pos = std::min(window().getSize().x - bg.getSize().x, bounds.left - 5);
-        bg.setPosition(x_pos, bounds.top - 5);
-        text.setPosition(x_pos + 5, text.getPosition().y);
-        window().draw(bg);
-
-        window().draw(text);
-    }
 }
 
 void Application::draw_notification(Notification const& notification, float y) const {
@@ -154,9 +137,8 @@ void Application::spawn_notification(std::string message, NotificationLevel leve
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
-ToolWindow& Application::open_overlay_impl(std::unique_ptr<ToolWindow> overlay) {
+Overlay& Application::open_overlay_impl(std::unique_ptr<Overlay> overlay) {
     auto overlay_ptr = overlay.get();
-    overlay_ptr->set_position(m_next_overlay_position);
     m_next_overlay_position += sf::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
     if (m_next_overlay_position.x > size().x - ToolWindow::TitleBarSize || m_next_overlay_position.y > size().y - ToolWindow::TitleBarSize)
         m_next_overlay_position = { 10, 10 };
@@ -167,9 +149,9 @@ ToolWindow& Application::open_overlay_impl(std::unique_ptr<ToolWindow> overlay) 
 Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String title, std::string id) {
     for (auto it = m_overlays.begin(); it != m_overlays.end(); it++) {
         auto window = it->get();
-        if (window->id() == id) {
+        if (window->id() == id && dynamic_cast<ToolWindow*>(window)) {
             focus_window(it);
-            return { .window = window, .opened = false };
+            return { .window = static_cast<ToolWindow*>(window), .opened = false };
         }
     }
     OpenOrFocusResult result = { .window = static_cast<ToolWindow*>(&open_overlay<ToolWindow>(std::move(id))), .opened = true };
@@ -193,8 +175,11 @@ void Application::update() {
         overlay->update();
 }
 
-void Application::remove_tooltip(Tooltip* t) {
-    std::erase_if(m_tooltips, [&](auto& other_t) { return other_t.get() == t; });
+TooltipOverlay& Application::add_tooltip(Tooltip t) {
+    auto& overlay = open_overlay<TooltipOverlay>(std::move(t));
+    auto& container = overlay.set_main_widget<Container>();
+    container.set_layout<HorizontalBoxLayout>();
+    return overlay;
 }
 
 }

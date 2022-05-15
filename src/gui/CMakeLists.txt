@@ -18,6 +18,7 @@ add_library(essa-gui
     Textbox.cpp
     TextButton.cpp
     Textfield.cpp
+    Tooltip.cpp
     ToolWindow.cpp
     ValueSlider.cpp
     Widget.cpp

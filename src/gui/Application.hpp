@@ -52,13 +52,7 @@ public:
             callback(*wnd);
     }
 
-    Tooltip& add_tooltip(std::unique_ptr<Tooltip> t) {
-        // std::cout << t->owner << " ADDED TOOLTIP" << std::endl;
-        auto t_ptr = t.get();
-        m_tooltips.push_back(std::move(t));
-        return *t_ptr;
-    }
-    void remove_tooltip(Tooltip* t);
+    TooltipOverlay& add_tooltip(Tooltip t);
 
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
@@ -75,17 +69,16 @@ private:
 
     void draw_notification(Notification const&, float y) const;
     sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
-    ToolWindow& open_overlay_impl(std::unique_ptr<ToolWindow>);
+    Overlay& open_overlay_impl(std::unique_ptr<Overlay>);
 
-    using WindowList = std::list<std::unique_ptr<ToolWindow>>;
+    using OverlayList = std::list<std::unique_ptr<Overlay>>;
 
-    void focus_window(WindowList::iterator);
+    void focus_window(OverlayList::iterator);
 
-    WindowList m_overlays;
+    OverlayList m_overlays;
     sf::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
-    ToolWindow* m_focused_overlay = nullptr;
+    Overlay* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
-    std::list<std::unique_ptr<Tooltip>> m_tooltips;
 };
 
 }

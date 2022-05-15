@@ -235,7 +235,7 @@ void EssaSettings::reset_simulation() {
     //        I don't know any better solution.
     //        (Doesn't cover Python and any other path that removes objects,
     //        when these are added)
-    GUI::Application::the().for_each_overlay([](GUI::ToolWindow& wnd) {
+    GUI::Application::the().for_each_overlay([](GUI::Overlay& wnd) {
         if (wnd.id().starts_with("FocusedGUI-"))
             wnd.close();
     });

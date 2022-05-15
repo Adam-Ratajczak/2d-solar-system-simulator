@@ -7,7 +7,7 @@
 namespace GUI {
 
 class Container;
-class Tooltip;
+class TooltipOverlay;
 class WidgetTreeRoot;
 
 struct LengthVector {
@@ -149,7 +149,7 @@ private:
     WidgetTreeRoot& m_widget_tree_root;
     sf::Vector2f m_pos, m_size;
     LengthVector m_expected_pos, m_input_size;
-    Tooltip* m_tooltip = nullptr;
+    TooltipOverlay* m_tooltip = nullptr;
     int m_tooltip_counter = -1;
     std::string m_tooltip_text;
     std::string_view m_id, m_class_name;
