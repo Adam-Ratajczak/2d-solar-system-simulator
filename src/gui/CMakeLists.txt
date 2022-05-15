@@ -8,6 +8,7 @@ add_library(essa-gui
     Datebox.cpp
     Frame.cpp
     ImageButton.cpp
+    ListView.cpp
     MessageBox.cpp
     SettingsMenu.cpp
     SelectWidget.cpp

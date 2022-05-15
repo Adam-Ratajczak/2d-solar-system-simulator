@@ -4,6 +4,8 @@
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
+#include "../gui/ListView.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <cmath>
@@ -11,10 +13,48 @@
 #include <memory>
 #include <string>
 
+class TestModel : public GUI::Model {
+    virtual size_t row_count() const override {
+        return 5;
+    }
+    virtual size_t column_count() const override {
+        return 3;
+    }
+    virtual std::string data(size_t row, size_t column) const override {
+        switch(column)
+        {
+            case 0: return "test";
+            case 1: return std::to_string(row);
+            case 2: return std::to_string(row) + " another test ";
+        }
+        return "";
+    }
+    virtual Column column(size_t column) const override {
+        switch(column) {
+            case 0: return {.width = 50, .name = "test"};
+            case 1: return {.width = 30, .name = "TS"};
+            case 2: return {.width = 200, .name=  "Unsigned Long Long Long test"};
+        }
+        return {};
+    }
+};
+
 EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     : Container(wtr)
     , m_world(world) {
     set_layout<GUI::BasicLayout>();
+
+    // TEST START
+    {
+        auto& test_window = GUI::Application::the().open_tool_window();
+        test_window.center_on_screen();
+        test_window.set_size({500, 500});
+        auto& container = test_window.set_main_widget<GUI::Container>();
+        container.set_layout<GUI::HorizontalBoxLayout>();
+        auto lv = container.add_widget<GUI::ListView>();
+        lv->create_and_set_model<TestModel>();
+    }
+    // TEST END
 
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
