@@ -57,6 +57,9 @@ class Widget {
 public:
     explicit Widget(Container& parent);
 
+    Widget(Widget const&) = delete;
+    Widget& operator=(Widget const&) = delete;
+
     virtual ~Widget();
 
     bool is_hover() const { return m_hover; }

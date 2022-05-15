@@ -183,7 +183,7 @@ void EssaCreateObject::recalculate_forward_simulation() {
 }
 
 std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(GUI::Container& parent) {
-    auto button = std::make_shared<GUI::ImageButton>(*parent.add_widget<GUI::ImageButton>(load_image("../assets/toggleUnitButton.png")));
+    auto button = std::make_shared<GUI::ImageButton>(parent, load_image("../assets/toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
         m_prev_unit_state = state;
