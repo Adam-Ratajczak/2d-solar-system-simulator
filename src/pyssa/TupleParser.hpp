@@ -23,7 +23,9 @@ requires(!std::is_reference_v<T>) struct Arg {
 
     Arg(T arg_, char const* keyword_ = "")
         : arg(std::forward<T>(arg_))
-        , keyword(keyword_) { }
+        , keyword(keyword_) {
+            // std::cout << keyword_ << " " << typeid(arg).name() << "\n";
+        }
 };
 
 };

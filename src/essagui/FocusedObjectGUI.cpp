@@ -22,6 +22,8 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolW
 
     tab_widget->on_tab_switch = [&](unsigned index) {
         m_world.m_simulation_view->pause_simulation(index == 1);
+
+        m_tab = index;
     };
 
     auto& info = tab_widget->add_tab("General info");
@@ -274,7 +276,7 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
 }
 
 void FocusedObjectGUI::update() {
-    if (m_focused == nullptr)
+    if (m_focused == nullptr || m_tab != 0)
         return;
 
     update_params();

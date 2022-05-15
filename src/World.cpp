@@ -27,6 +27,10 @@ void World::add_object(std::unique_ptr<Object> object) {
 
     if (m_object_history.set_time(m_date))
         m_object_history.clear_history(m_object_history.get_pos());
+    
+    m_object_list.remove_if([&](std::unique_ptr<Object>& obj){
+        return obj->creation_date() > m_date;
+    });
 }
 
 void World::update(int steps) {
@@ -137,8 +141,10 @@ void World::clone_for_forward_simulation(World& new_world) const {
     new_world = World();
     new_world.m_is_forward_simulated = true;
     new_world.m_simulation_view = m_simulation_view;
-    for (auto& object : m_object_list)
-        new_world.add_object(object->clone_for_forward_simulation());
+    for (auto& object : m_object_list){
+        if(!object->deleted())
+            new_world.add_object(object->clone_for_forward_simulation());
+    }
 }
 
 std::ostream& operator<<(std::ostream& out, World const& world) {

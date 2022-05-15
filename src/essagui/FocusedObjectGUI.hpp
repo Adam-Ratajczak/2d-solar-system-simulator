@@ -27,6 +27,8 @@ private:
     GUI::ToolWindow* m_window = nullptr;
     World& m_world;
 
+    unsigned m_tab = 0;
+
     GUI::Textfield* m_orbiting_title = nullptr;
 
     struct Field {
