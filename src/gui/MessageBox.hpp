@@ -16,6 +16,7 @@ public:
     explicit MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String title, Buttons buttons);
 
     enum class ButtonRole {
+        None,
         Yes,
         No,
         Ok
@@ -29,7 +30,7 @@ public:
 private:
     virtual void handle_event(sf::Event) override;
 
-    ButtonRole m_clicked_button {};
+    ButtonRole m_clicked_button = ButtonRole::None;
     Button* m_default_button = nullptr;
 };
 
