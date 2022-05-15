@@ -35,6 +35,10 @@ namespace Detail {
 template<class... Ts>
 struct ParameterPack { };
 
+// Format String Checker
+template<typename... Args>
+void compiletime_fail(Args...);
+
 // A struct that stores information required to convert C++ type to Python type
 // (and the argument itself).
 template<class CppType>
@@ -50,9 +54,10 @@ struct GetArg {
 
 // Check if a type can be used as target for Python arguments.
 template<class CppType>
-concept IsConvertibleToPython = requires(ConvertToPy<CppType> ctp, CppType cppt) {
+concept IsConvertibleToPython = requires(ConvertToPy<CppType> ctp, size_t& index, char const* format_string) {
     ctp.PyArgCount;
     // ctp.write_arg(cppt);
+    { ConvertToPy<CppType>::check_format_string(index, format_string) } -> std::same_as<bool>;
 };
 
 // Specializations of ConvertToPy for every supported type.
@@ -64,6 +69,14 @@ requires(std::is_base_of_v<WrappedObject<UnderlyingT>, UnderlyingT>) struct Conv
     void write_arg(Arg::CheckedType<UnderlyingT> ut) const {
         ut.result = UnderlyingT::get(Object::share(pyobject));
     }
+
+    static consteval bool check_format_string(size_t& index, char const* format_string) {
+        if (format_string[index++] != 'O')
+            return false;
+        if (format_string[index++] != '!')
+            return false;
+        return true;
+    }
 };
 
 template<>
@@ -73,6 +86,12 @@ struct ConvertToPy<std::string*> {
 
     void write_arg(std::string* ut) const {
         *ut = data;
+    }
+
+    static consteval bool check_format_string(size_t& index, char const* format_string) {
+        if (format_string[index++] != 's')
+            return false;
+        return true;
     }
 };
 
@@ -194,10 +213,57 @@ void write_args(ConvertToPyAll<Ts...> const& py_args, Ts... out) {
     return WriteArgImpl<std::make_index_sequence<sizeof...(Ts)>, Ts...>::run(py_args, out...);
 };
 
+// more Format String Checker ...
+template<class... Ts>
+class CheckedFormatStringImpl {
+public:
+    template<size_t N>
+    consteval CheckedFormatStringImpl(char const (&v)[N])
+        : m_value(v)
+        , m_value_len(N) {
+        check_format_string();
+    }
+
+    constexpr char const* value() const { return m_value; }
+
+private:
+    char const* m_value {};
+    size_t m_value_len = 0;
+
+    template<class T>
+    consteval void consume_arg(size_t& index) const {
+        if (index >= m_value_len - 1)
+            compiletime_fail("Too much args specified");
+        // Always expect and ignore | (optional start) or $ (kwargs start)
+        // TODO: Parse them properly (e.g expect only one, etc.)
+        while (m_value[index] == '|' || m_value[index] == '$')
+            ++index;
+        if (!ConvertToPy<T>::check_format_string(index, m_value)) {
+            // TODO: Better error message, but this is not zig when I can get
+            //       types as strings
+            compiletime_fail("Invalid format");
+        }
+    }
+
+    consteval void check_format_string() const {
+        size_t index = 0;
+        (consume_arg<Ts>(index), ...);
+        // '|$' also at the end
+        while (m_value[index] == '|' || m_value[index] == '$')
+            ++index;
+        if (index != m_value_len - 1) {
+            compiletime_fail("Not enough args given");
+        }
+    }
+};
+
+template<typename... Args>
+using CheckedFormatString = CheckedFormatStringImpl<std::type_identity_t<Args>...>;
+
 }
 
 template<class... Types>
-bool parse_arguments(Object const& args_object, Object const& kwargs_object, char const* format, Arg::Arg<Types>... out) {
+constexpr bool parse_arguments(Object const& args_object, Object const& kwargs_object, Detail::CheckedFormatString<Types...>&& format, Arg::Arg<Types>... out) {
     Detail::ConvertToPyAll<Types...> py_args;
     const char* keywords[] {
         out.keyword...,
@@ -206,7 +272,7 @@ bool parse_arguments(Object const& args_object, Object const& kwargs_object, cha
     auto result = Detail::call_pyarg_parsetuple(
         args_object.python_object(),
         kwargs_object.python_object(),
-        format,
+        format.value(),
         py_args,
         keywords);
     if (!result)
