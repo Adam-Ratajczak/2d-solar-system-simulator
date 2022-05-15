@@ -34,7 +34,8 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
         button->set_content(std::move(label));
         button->set_display_attributes(bg_color, sf::Color::Blue, sf::Color::White);
         button->on_click = [this, button_role]() {
-            on_finish(button_role);
+            if(on_finish)
+                on_finish(button_role);
             close();
         };
     };
@@ -42,6 +43,8 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
     if (buttons == Buttons::YesNo) {
         add_button(ButtonRole::Yes, "Yes", sf::Color(100, 200, 100));
         add_button(ButtonRole::No, "No", sf::Color(100, 100, 100));
+    }else if (buttons == Buttons::Ok) {
+        add_button(ButtonRole::Ok, "Ok", sf::Color(0, 0, 255));
     }
 }
 

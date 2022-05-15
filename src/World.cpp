@@ -128,6 +128,15 @@ void World::update(int steps) {
     }
 }
 
+bool World::exist_object_with_name(const std::string name) const{
+    for(const auto& obj : m_object_list){
+        if(obj->name() == name)
+            return true;
+    }
+
+    return false;
+}
+
 void World::draw(SimulationView const& view) const {
     {
         WorldDrawScope scope { view, WorldDrawScope::ClearDepth::Yes };

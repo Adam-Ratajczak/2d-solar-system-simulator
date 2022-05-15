@@ -9,7 +9,8 @@ class MessageBox : public ToolWindow {
 public:
     enum class Buttons
     {
-        YesNo
+        YesNo,
+        Ok
     };
 
     explicit MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String title, Buttons buttons);
@@ -17,7 +18,8 @@ public:
     enum class ButtonRole
     {
         Yes,
-        No
+        No,
+        Ok
     };
 
     std::function<void(ButtonRole)> on_finish;

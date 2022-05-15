@@ -55,6 +55,7 @@ public:
     std::unique_ptr<Object>& last_object(){return m_object_list.back();}
 
     void set_forces();
+    bool exist_object_with_name(const std::string name) const;
 
 private:
     Util::SimulationClock::time_point m_start_date;

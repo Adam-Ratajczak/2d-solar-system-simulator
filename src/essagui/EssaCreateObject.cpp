@@ -1,5 +1,6 @@
 #include "EssaCreateObject.hpp"
 #include "../gui/ValueSlider.hpp"
+#include "../gui/MessageBox.hpp"
 #include "../util/Units.hpp"
 #include "EssaGUI.hpp"
 #include <cmath>
@@ -139,6 +140,12 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
 
         m_add_object_button = container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
+            if(m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content())){
+                auto& msgbox = GUI::Application::the().open_tool_window<GUI::MessageBox>("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
+        
+                return;
+            }
+
             if (m_automatic_orbit_calculation)
                 m_simulation_view.world().add_object(m_create_object_from_orbit());
             else
