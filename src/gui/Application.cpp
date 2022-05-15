@@ -113,6 +113,24 @@ void Application::draw() {
     WidgetTreeRoot::draw();
     for (auto& tool_window : m_tool_windows)
         tool_window->draw();
+
+    sf::View gui_view { sf::FloatRect(position(), size()) };
+    window().setView(gui_view);
+    for (auto& tooltip : m_tooltips) {
+        sf::Text text(tooltip->text, Application::the().font, 15);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(tooltip->position);
+
+        auto bounds = text.getGlobalBounds();
+
+        sf::RectangleShape bg { { bounds.width + 10, bounds.height + 10 } };
+        auto x_pos = std::min(window().getSize().x - bg.getSize().x, bounds.left - 5);
+        bg.setPosition(x_pos, bounds.top - 5);
+        text.setPosition(x_pos + 5, text.getPosition().y);
+        window().draw(bg);
+
+        window().draw(text);
+    }
 }
 
 void Application::draw_notification(Notification const& notification, float y) const {
@@ -173,6 +191,10 @@ void Application::update() {
     });
     for (auto& tool_window : m_tool_windows)
         tool_window->update();
+}
+
+void Application::remove_tooltip(Tooltip* t) {
+    std::erase_if(m_tooltips, [&](auto& other_t) { return other_t.get() == t; });
 }
 
 }

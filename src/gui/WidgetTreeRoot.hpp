@@ -40,14 +40,6 @@ public:
         return *widget_ptr;
     }
 
-    Tooltip& add_tooltip(std::unique_ptr<Tooltip> t) {
-        // std::cout << t->owner << " ADDED TOOLTIP" << std::endl;
-        auto t_ptr = t.get();
-        m_tooltips.push_back(std::move(t));
-        return *t_ptr;
-    }
-    void remove_tooltip(Tooltip* t);
-
     virtual void draw();
     virtual void handle_event(sf::Event);
     virtual void handle_events() {}
@@ -72,7 +64,6 @@ private:
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
-    std::list<std::unique_ptr<Tooltip>> m_tooltips;
 };
 
 }

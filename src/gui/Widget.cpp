@@ -32,14 +32,14 @@ void Widget::update() {
         if (m_hover) {
             if (m_tooltip_counter == 0 && !m_tooltip) {
                 // TODO: Use mouse position;
-                m_tooltip = &m_widget_tree_root.add_tooltip(std::make_unique<Tooltip>(m_tooltip_text, this, position()));
+                m_tooltip = &Application::the().add_tooltip(std::make_unique<Tooltip>(m_tooltip_text, this, position()));
                 // std::cout << m_tooltip << std::endl;
                 m_tooltip_counter = -1;
             }
         }
         else if (m_tooltip_counter == 0) {
             // std::cout << "TEST " << this << " " << m_tooltip << std::endl;
-            m_widget_tree_root.remove_tooltip(m_tooltip);
+            Application::the().remove_tooltip(m_tooltip);
             m_tooltip = nullptr;
             m_tooltip_counter = -1;
         }

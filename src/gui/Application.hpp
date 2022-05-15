@@ -52,6 +52,14 @@ public:
             callback(*wnd);
     }
 
+    Tooltip& add_tooltip(std::unique_ptr<Tooltip> t) {
+        // std::cout << t->owner << " ADDED TOOLTIP" << std::endl;
+        auto t_ptr = t.get();
+        m_tooltips.push_back(std::move(t));
+        return *t_ptr;
+    }
+    void remove_tooltip(Tooltip* t);
+
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }
 
@@ -77,6 +85,7 @@ private:
     sf::Vector2f m_next_tool_window_position { 10, 10 + ToolWindow::TitleBarSize };
     ToolWindow* m_focused_tool_window = nullptr;
     std::vector<Notification> m_notifications;
+    std::list<std::unique_ptr<Tooltip>> m_tooltips;
 };
 
 }
