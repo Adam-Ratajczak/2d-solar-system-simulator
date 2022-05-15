@@ -184,6 +184,7 @@ void Textbox::handle_event(Event& event) {
 void Textbox::erase_selected_text() {
     auto start = std::min(m_cursor, m_selection_start);
     m_content.erase(start, std::max(m_cursor, m_selection_start) - start);
+    m_cursor = start;
     m_selection_start = m_cursor;
 }
 
