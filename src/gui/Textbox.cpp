@@ -5,7 +5,6 @@
 #include "NotifyUser.hpp"
 #include "Widget.hpp"
 #include <SFML/Graphics.hpp>
-#include <SFML/Window/Keyboard.hpp>
 #include <cassert>
 #include <cctype>
 #include <cmath>
@@ -66,9 +65,9 @@ void Textbox::interactive_set_cursor(unsigned cursor, ExtendSelection extend_sel
         m_scroll += size().x - new_cursor_position.x - 4;
 }
 
-bool Textbox::find_decimal()const{
-    for(const auto& c : m_content){
-        if(c == '.')
+bool Textbox::find_decimal() const {
+    for (const auto& c : m_content) {
+        if (c == '.')
             return true;
     }
     return false;
@@ -92,7 +91,7 @@ void Textbox::handle_event(Event& event) {
                     m_content = "0";
                 if (on_change)
                     on_change(m_content);
-                
+
                 m_has_decimal = find_decimal();
             }
             else if (codepoint == 0x7f) {
@@ -156,6 +155,22 @@ void Textbox::handle_event(Event& event) {
                     m_cursor = m_content.getSize();
                     m_selection_start = 0;
                 }
+                break;
+            }
+            case sf::Keyboard::C: {
+                if (event.event().key.control) {
+                    sf::Clipboard::setString(selected_text());
+                }
+                break;
+            }
+            case sf::Keyboard::V: {
+                if (event.event().key.control) {
+                    m_selection_start = m_cursor;
+                    auto clipboard_contents = sf::Clipboard::getString();
+                    m_content.insert(m_cursor, clipboard_contents);
+                    m_cursor += clipboard_contents.getSize();
+                }
+                break;
             }
             default:
                 break;
@@ -179,6 +194,12 @@ void Textbox::handle_event(Event& event) {
 
     if (m_type == NUMBER && m_has_limit)
         m_fit_in_range();
+}
+
+sf::String Textbox::selected_text() const {
+    auto start = std::min(m_cursor, m_selection_start);
+    auto size = std::max(m_cursor, m_selection_start) - start;
+    return m_content.substring(start, size);
 }
 
 void Textbox::erase_selected_text() {
@@ -320,7 +341,7 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     if (is_focused()) {
         // std::cout << m_cursor << std::endl;
-        if((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0)
+        if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0)
             return;
 
         sf::RectangleShape cursor(sf::Vector2f(2, cursor_height));

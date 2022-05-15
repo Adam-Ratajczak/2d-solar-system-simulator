@@ -60,6 +60,8 @@ public:
     // Set text cursor with updating scroll and selection if shift is pressed.
     void interactive_set_cursor(unsigned, ExtendSelection = ExtendSelection::Yes);
 
+    sf::String selected_text() const;
+
     std::function<void(std::string)> on_change;
 
 private:
