@@ -229,6 +229,7 @@ void EssaSettings::reset_simulation() {
     }
     ConfigLoader loader { file_in };
     m_simulation_view.world().reset(&loader);
+    m_simulation_view.reset();
 
     // FIXME: This seems like a hacky fix for FocusedObjectGUI UAF, but
     //        I don't know any better solution.
