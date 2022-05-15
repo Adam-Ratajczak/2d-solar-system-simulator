@@ -93,16 +93,18 @@ void World::update(int steps) {
         double step = m_simulation_seconds_per_tick;
         double halfStep = (step / 2.0);
 
+        double mul = (steps >= 0) ? 1 : -1;
+
         // calculate forces/accelerations based on current postions
         this->set_forces();
 
         for (auto& obj : m_object_list) // for each celestial body
         {
             // Leapfrog algorithm, step 1
-            obj->set_vel(obj->vel() + halfStep * obj->acc());
+            obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
 
             // Leapfrog algorithm, step 2
-            obj->set_pos(obj->pos() + step * obj->vel());
+            obj->set_pos(obj->pos() + step * obj->vel() * mul);
         }
 
         // calculate the forces using the new positions
@@ -111,17 +113,17 @@ void World::update(int steps) {
         for (auto& obj : m_object_list) // for each celestial body
         {
             // Leapfrog algorithm, step 3
-            obj->set_vel(obj->vel() + halfStep * obj->acc());
+            obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
 
             obj->update(m_simulation_seconds_per_tick);
     
-            std::cerr << m_date.time_since_epoch().count() << ";" << obj->name() << ";" << obj->pos() << ";" << obj->vel() << ";" << std::endl;
+            // std::cerr << m_date.time_since_epoch().count() << ";" << obj->name() << ";" << obj->pos() << ";" << obj->vel() << ";" << std::endl;
         }
 
-        if ((m_date - m_start_date).count() > 24 * 60 * 60 * 50) {
-            std::cout << "FINISHED" << std::endl;
-            _exit(0);
-        }
+        // if ((m_date - m_start_date).count() > 24 * 60 * 60 * 50) {
+        //     std::cout << "FINISHED" << std::endl;
+        //     _exit(0);
+        // }
     }
 }
 
