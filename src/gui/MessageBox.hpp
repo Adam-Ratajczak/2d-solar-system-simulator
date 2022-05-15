@@ -4,6 +4,8 @@
 
 namespace GUI {
 
+class Button;
+
 class MessageBox : public ToolWindow {
 public:
     enum class Buttons {
@@ -25,7 +27,10 @@ public:
     }
 
 private:
+    virtual void handle_event(sf::Event) override;
+
     ButtonRole m_clicked_button {};
+    Button* m_default_button = nullptr;
 };
 
 }

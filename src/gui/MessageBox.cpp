@@ -3,6 +3,7 @@
 #include "Container.hpp"
 #include "TextButton.hpp"
 #include "Textfield.hpp"
+#include "ToolWindow.hpp"
 
 namespace GUI {
 
@@ -11,6 +12,7 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
     // FIXME: Actually measure text width instead of throwing up random number
     set_size({ static_cast<float>(message.getSize() * 12), 150 });
     set_title(std::move(title));
+    center_on_screen();
 
     auto& prompt_container = set_main_widget<GUI::Container>();
     prompt_container.set_background_color(sf::Color::White);
@@ -37,14 +39,22 @@ MessageBox::MessageBox(sf::RenderWindow& wnd, sf::String message, sf::String tit
             m_clicked_button = button_role;
             close();
         };
+        return button;
     };
 
     if (buttons == Buttons::YesNo) {
-        add_button(ButtonRole::Yes, "Yes", sf::Color(100, 200, 100));
+        m_default_button = add_button(ButtonRole::Yes, "Yes", sf::Color(100, 200, 100));
         add_button(ButtonRole::No, "No", sf::Color(100, 100, 100));
-    }else if (buttons == Buttons::Ok) {
-        add_button(ButtonRole::Ok, "Ok", sf::Color(0, 0, 255));
     }
+    else if (buttons == Buttons::Ok) {
+        m_default_button = add_button(ButtonRole::Ok, "Ok", sf::Color(0, 0, 255));
+    }
+}
+
+void MessageBox::handle_event(sf::Event event) {
+    ToolWindow::handle_event(event);
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter && m_default_button)
+        m_default_button->on_click();
 }
 
 }
