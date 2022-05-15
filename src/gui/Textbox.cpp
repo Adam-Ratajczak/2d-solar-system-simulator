@@ -174,7 +174,7 @@ void Textbox::handle_event(Event& event) {
     }
     else if (event.type() == sf::Event::MouseMoved) {
         if (m_dragging)
-            m_selection_start = m_character_pos_from_mouse(event);
+            m_cursor = m_character_pos_from_mouse(event);
     }
 
     if (m_type == NUMBER && m_has_limit)
