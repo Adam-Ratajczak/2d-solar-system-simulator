@@ -33,6 +33,23 @@ void World::add_object(std::unique_ptr<Object> object) {
     });
 }
 
+void World::set_forces(){
+    for (auto& p : m_object_list) {
+        if (!p->deleted())
+            p->setup_update_forces();
+    }
+
+    for (auto it = m_object_list.begin(); it != m_object_list.end(); it++) {
+        auto it2 = it;
+        auto& this_object = **it;
+        it2++;
+        for (; it2 != m_object_list.end(); it2++) {
+            if (!this_object.deleted() && !(*it2)->deleted())
+                this_object.update_forces_against(**it2);
+        }
+    }
+}
+
 void World::update(int steps) {
     assert(steps != 0);
     bool reverse = steps < 0;
@@ -63,25 +80,31 @@ void World::update(int steps) {
             }
         }
 
-        for (auto& p : m_object_list) {
-            if (!p->deleted())
-                p->setup_update_forces();
-        }
+        double step = m_simulation_seconds_per_tick;
+	    double halfStep = (step / 2.0);
 
-        for (auto it = m_object_list.begin(); it != m_object_list.end(); it++) {
-            auto it2 = it;
-            auto& this_object = **it;
-            it2++;
-            for (; it2 != m_object_list.end(); it2++) {
-                if (!this_object.deleted() && !(*it2)->deleted())
-                    this_object.update_forces_against(**it2);
-            }
-        }
+	    // calculate forces/accelerations based on current postions
+	    this->set_forces();
 
-        for (auto& p : m_object_list) {
-            if (!p->deleted())
-                p->update(steps);
-        }
+	    for (auto& obj : m_object_list) // for each celestial body
+	    {
+			// Leapfrog algorithm, step 1
+			obj->set_vel(obj->vel() + halfStep * obj->acc());
+
+			// Leapfrog algorithm, step 2
+            obj->set_pos(obj->pos() + step * obj->vel());
+	    }
+
+	    // calculate the forces using the new positions
+	    this->set_forces();
+
+    	for (auto& obj : m_object_list) // for each celestial body
+        {
+			// Leapfrog algorithm, step 3
+			obj->set_vel( obj->vel() + halfStep * obj->acc());
+
+            obj->update(m_simulation_seconds_per_tick);
+	    }
     }
 }
 

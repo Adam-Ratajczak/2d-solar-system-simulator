@@ -53,6 +53,8 @@ public:
     std::unique_ptr<Object>& find_object_by_ptr(Object* ptr);
     std::unique_ptr<Object>& last_object(){return m_object_list.back();}
 
+    void set_forces();
+
 private:
     Util::SimulationClock::time_point m_date;
     ObjectHistory m_object_history;

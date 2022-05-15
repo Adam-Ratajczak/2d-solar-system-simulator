@@ -59,8 +59,13 @@ public:
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
 
-    Vector3 vel() const { return m_vel; }
     Vector3 pos() const { return m_pos; }
+    void set_pos(const Vector3& pos){ m_pos = pos; }
+
+    Vector3 vel() const { return m_vel; }
+    void set_vel(const Vector3& vel){ m_vel = vel; }
+
+    Vector3 acc() const { return m_attraction_factor; }
 
     sf::Color color() const { return m_color; }
 
@@ -129,21 +134,22 @@ private:
     void recalculate_trails_with_offset();
 
     Vector3 m_pos;
+    Vector3 m_vel;
+    Vector3 m_attraction_factor;
 
     bool m_deleted = false;
+    bool m_is_forward_simulated = false;
+
+    World* m_world = nullptr;
 
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
-    World* m_world = nullptr;
-    Vector3 m_attraction_factor;
     float m_prev_zoom;
     double m_orbit_len, eccencrity;
     double m_gravity_factor {};
     double m_radius {};
 
-    bool m_is_forward_simulated = false;
     Util::SimulationClock::time_point m_creation_date, m_deletion_date;
-    Vector3 m_vel;
     std::string m_name;
     sf::Color m_color;
 

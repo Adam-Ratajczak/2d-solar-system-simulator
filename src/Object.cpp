@@ -73,18 +73,23 @@ void Object::update_forces_against(Object& object) {
     denominator *= std::sqrt(denominator);
     auto attraction_base = dist / denominator;
 
-    // TODO: Do it properly
-    auto this_attraction = attraction_base * object.m_gravity_factor;
-    m_attraction_factor -= this_attraction;
-    auto this_attraction_mag = this_attraction.magnitude_squared() / object.m_gravity_factor;
+    auto calculate_attraction = [&](Vector3& this_attraction, Vector3& other_attraction)mutable{
+        this_attraction = attraction_base * object.m_gravity_factor;
+        m_attraction_factor -= this_attraction;
 
+        other_attraction = attraction_base * m_gravity_factor;
+        object.m_attraction_factor += other_attraction;
+    };
+
+    Vector3 this_attraction, other_attraction;
+
+    calculate_attraction(this_attraction, other_attraction);
+
+    auto this_attraction_mag = this_attraction.magnitude_squared() / object.m_gravity_factor;
     if (this_attraction_mag > m_max_attraction && object.m_gravity_factor > m_gravity_factor) {
         m_max_attraction = this_attraction_mag;
         m_most_attracting_object = &object;
     }
-
-    auto other_attraction = attraction_base * m_gravity_factor;
-    object.m_attraction_factor += other_attraction;
 
     auto other_attraction_mag = other_attraction.magnitude_squared() / m_gravity_factor;
     if (other_attraction_mag > object.m_max_attraction && object.m_gravity_factor < m_gravity_factor) {
@@ -98,9 +103,6 @@ void Object::update(int speed) {
         update_closest_approaches();
 
     if (speed > 0) {
-        m_vel += m_attraction_factor * m_world->simulation_seconds_per_tick();
-        m_pos += m_vel * m_world->simulation_seconds_per_tick();
-
         if (!m_is_forward_simulated) {
             auto val = m_history.move_forward({ m_pos, m_vel });
 
@@ -112,8 +114,6 @@ void Object::update(int speed) {
     }
     else if (speed < 0) {
         assert(!m_is_forward_simulated);
-        m_vel -= m_attraction_factor * m_world->simulation_seconds_per_tick();
-        m_pos -= m_vel * m_world->simulation_seconds_per_tick();
         auto val = m_history.move_backward({ m_pos, m_vel });
 
         if (val.has_value()) {
