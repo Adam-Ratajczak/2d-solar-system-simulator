@@ -14,8 +14,7 @@
 namespace GUI {
 
 ToolWindow::ToolWindow(sf::RenderWindow& wnd, std::string id)
-    : WidgetTreeRoot(wnd)
-    , m_id(std::move(id)) {
+    : Overlay(wnd, std::move(id)) {
     m_titlebar_buttons.push_back(TitlebarButton {
         .on_click = [this]() {
             close();
@@ -170,7 +169,7 @@ void ToolWindow::handle_events() {
 void ToolWindow::draw() {
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
-    auto color = Application::the().focused_tool_window() == this ? sf::Color(160, 160, 160, 150) : sf::Color(127, 127, 127, 150);
+    auto color = Application::the().focused_overlay() == this ? sf::Color(160, 160, 160, 150) : sf::Color(127, 127, 127, 150);
 
     RoundedEdgeRectangleShape rs_titlebar({ size().x + 2, TitleBarSize }, 5);
     rs_titlebar.set_border_radius_bottom_left(0);

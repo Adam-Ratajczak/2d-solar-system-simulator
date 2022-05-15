@@ -1,10 +1,10 @@
 #pragma once
 
-#include "WidgetTreeRoot.hpp"
+#include "Overlay.hpp"
 
 namespace GUI {
 
-class ToolWindow : public WidgetTreeRoot {
+class ToolWindow : public Overlay {
 public:
     explicit ToolWindow(sf::RenderWindow& wnd, std::string id = "ToolWindow");
 
@@ -19,8 +19,8 @@ public:
     virtual sf::Vector2f size() const override { return m_size; }
     void set_size(sf::Vector2f size) { m_size = size; }
 
-    void set_title(sf::String string) { m_string = std::move(string); }
-    sf::String title() const { return m_string; }
+    void set_title(sf::String string) { m_title = std::move(string); }
+    sf::String title() const { return m_title; }
 
     virtual sf::FloatRect full_rect() const override { return { position() - sf::Vector2f(0, TitleBarSize), size() + sf::Vector2f(0, TitleBarSize) }; }
     sf::FloatRect titlebar_rect() const { return { position() - sf::Vector2f(0, TitleBarSize), { size().x, TitleBarSize } }; }
@@ -28,17 +28,8 @@ public:
     virtual void handle_event(sf::Event) override;
     virtual void draw() override;
 
-    void close() { m_closed = true; quit(); }
-    bool is_closed() const { return m_closed; }
-
-    std::string id() const { return m_id; }
-
-    std::function<void()> on_close;
-
 private:
     virtual void handle_events() override;
-
-    std::string m_id;
 
     enum class Resize {
         LEFT,
@@ -50,13 +41,12 @@ private:
     };
     Resize m_resize_mode = Resize::DEFAULT;
 
+    sf::String m_title;
     sf::Vector2f m_position;
     sf::Vector2f m_size;
-    sf::String m_string;
     bool m_dragging = false;
     bool m_resizing = false;
     sf::Vector2f m_drag_position;
-    bool m_closed = false;
 
     struct TitlebarButton {
         std::function<void()> on_click;

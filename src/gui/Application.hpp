@@ -32,23 +32,23 @@ public:
     };
     void spawn_notification(std::string message, NotificationLevel);
 
-    template<class T = ToolWindow, class... Args>
-    requires(std::is_base_of_v<ToolWindow, T>)
-        T& open_tool_window(Args&&... args) {
-        return static_cast<T&>(open_tool_window_impl(std::make_unique<T>(window(), std::forward<Args>(args)...)));
+    template<class T = Overlay, class... Args>
+    requires(std::is_base_of_v<Overlay, T>)
+        T& open_overlay(Args&&... args) {
+        return static_cast<T&>(open_overlay_impl(std::make_unique<T>(window(), std::forward<Args>(args)...)));
     }
 
     struct OpenOrFocusResult {
         ToolWindow* window {};
         bool opened {};
     };
-    // FIXME: Generalize it like normal open_tool_window
+    // FIXME: Generalize it like normal open_overlay
     OpenOrFocusResult open_or_focus_tool_window(sf::String title, std::string id);
-    ToolWindow* focused_tool_window() const { return m_focused_tool_window; }
+    Overlay* focused_overlay() const { return m_focused_overlay; }
 
     template<class Callback>
-    void for_each_tool_window(Callback&& callback) {
-        for (auto& wnd : m_tool_windows)
+    void for_each_overlay(Callback&& callback) {
+        for (auto& wnd : m_overlays)
             callback(*wnd);
     }
 
@@ -75,15 +75,15 @@ private:
 
     void draw_notification(Notification const&, float y) const;
     sf::Event transform_event(sf::Vector2f offset, sf::Event event) const;
-    ToolWindow& open_tool_window_impl(std::unique_ptr<ToolWindow>);
+    ToolWindow& open_overlay_impl(std::unique_ptr<ToolWindow>);
 
     using WindowList = std::list<std::unique_ptr<ToolWindow>>;
 
     void focus_window(WindowList::iterator);
 
-    WindowList m_tool_windows;
-    sf::Vector2f m_next_tool_window_position { 10, 10 + ToolWindow::TitleBarSize };
-    ToolWindow* m_focused_tool_window = nullptr;
+    WindowList m_overlays;
+    sf::Vector2f m_next_overlay_position { 10, 10 + ToolWindow::TitleBarSize };
+    ToolWindow* m_focused_overlay = nullptr;
     std::vector<Notification> m_notifications;
     std::list<std::unique_ptr<Tooltip>> m_tooltips;
 };

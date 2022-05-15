@@ -42,12 +42,12 @@ sf::Event Application::transform_event(sf::Vector2f offset, sf::Event event) con
 }
 
 void Application::focus_window(WindowList::iterator new_focused_it) {
-    if (new_focused_it == m_tool_windows.end())
+    if (new_focused_it == m_overlays.end())
         return;
-    m_focused_tool_window = new_focused_it->get();
+    m_focused_overlay = new_focused_it->get();
     auto ptr = std::move(*new_focused_it);
-    m_tool_windows.erase(new_focused_it);
-    m_tool_windows.push_back(std::move(ptr));
+    m_overlays.erase(new_focused_it);
+    m_overlays.push_back(std::move(ptr));
 }
 
 void Application::handle_event(sf::Event event) {
@@ -59,13 +59,13 @@ void Application::handle_event(sf::Event event) {
 
     // Focus window if mouse button pressed
     if (event.type == sf::Event::MouseButtonPressed) {
-        m_focused_tool_window = nullptr;
+        m_focused_overlay = nullptr;
         sf::Vector2f position { static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
-        decltype(m_tool_windows)::iterator new_focused_it = m_tool_windows.end();
-        for (auto it = m_tool_windows.end(); it != m_tool_windows.begin();) {
+        decltype(m_overlays)::iterator new_focused_it = m_overlays.end();
+        for (auto it = m_overlays.end(); it != m_overlays.begin();) {
             auto it2 = --it;
-            auto& tool_window = **it2;
-            if (tool_window.full_rect().contains(position)) {
+            auto& overlay = **it2;
+            if (overlay.full_rect().contains(position)) {
                 new_focused_it = it2;
                 break;
             }
@@ -74,10 +74,10 @@ void Application::handle_event(sf::Event event) {
     }
 
     // Pass events to focused tool window
-    if (m_focused_tool_window) {
-        m_focused_tool_window->handle_event(transform_event(m_focused_tool_window->position(), event));
+    if (m_focused_overlay) {
+        m_focused_overlay->handle_event(transform_event(m_focused_overlay->position(), event));
         bool scroll_outside_window = event.type == sf::Event::MouseWheelScrolled
-            && !m_focused_tool_window->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+            && !m_focused_overlay->full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
         if (!(event.type == sf::Event::Closed || event.type == sf::Event::MouseMoved || event.type == sf::Event::MouseButtonReleased || scroll_outside_window))
             return;
     }
@@ -85,15 +85,15 @@ void Application::handle_event(sf::Event event) {
     bool should_pass_event_to_main_window = true;
 
     // Pass mouse moves to all tool windows + capture all scrolls
-    for (auto it = m_tool_windows.rbegin(); it != m_tool_windows.rend(); it++) {
-        auto& tool_window = **it;
+    for (auto it = m_overlays.rbegin(); it != m_overlays.rend(); it++) {
+        auto& overlay = **it;
         if (event.type == sf::Event::MouseMoved) {
-            tool_window.handle_event(transform_event(tool_window.position(), event));
+            overlay.handle_event(transform_event(overlay.position(), event));
             break;
         }
 
         bool scroll_on_window = event.type == sf::Event::MouseWheelScrolled
-            && tool_window.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
+            && overlay.full_rect().contains({ static_cast<float>(event.mouseWheelScroll.x), static_cast<float>(event.mouseWheelScroll.y) });
 
         if (scroll_on_window)
             should_pass_event_to_main_window = false;
@@ -111,8 +111,8 @@ void Application::handle_events() {
 
 void Application::draw() {
     WidgetTreeRoot::draw();
-    for (auto& tool_window : m_tool_windows)
-        tool_window->draw();
+    for (auto& overlay : m_overlays)
+        overlay->draw();
 
     sf::View gui_view { sf::FloatRect(position(), size()) };
     window().setView(gui_view);
@@ -154,43 +154,43 @@ void Application::spawn_notification(std::string message, NotificationLevel leve
     m_notifications.push_back(Notification { .message = std::move(message), .level = level });
 }
 
-ToolWindow& Application::open_tool_window_impl(std::unique_ptr<ToolWindow> tool_window) {
-    auto tool_window_ptr = tool_window.get();
-    tool_window_ptr->set_position(m_next_tool_window_position);
-    m_next_tool_window_position += sf::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
-    if (m_next_tool_window_position.x > size().x - ToolWindow::TitleBarSize || m_next_tool_window_position.y > size().y - ToolWindow::TitleBarSize)
-        m_next_tool_window_position = { 10, 10 };
-    m_tool_windows.push_back(std::move(tool_window));
-    return *tool_window_ptr;
+ToolWindow& Application::open_overlay_impl(std::unique_ptr<ToolWindow> overlay) {
+    auto overlay_ptr = overlay.get();
+    overlay_ptr->set_position(m_next_overlay_position);
+    m_next_overlay_position += sf::Vector2f(ToolWindow::TitleBarSize * 2, ToolWindow::TitleBarSize * 2);
+    if (m_next_overlay_position.x > size().x - ToolWindow::TitleBarSize || m_next_overlay_position.y > size().y - ToolWindow::TitleBarSize)
+        m_next_overlay_position = { 10, 10 };
+    m_overlays.push_back(std::move(overlay));
+    return *overlay_ptr;
 }
 
 Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String title, std::string id) {
-    for (auto it = m_tool_windows.begin(); it != m_tool_windows.end(); it++) {
+    for (auto it = m_overlays.begin(); it != m_overlays.end(); it++) {
         auto window = it->get();
         if (window->id() == id) {
             focus_window(it);
             return { .window = window, .opened = false };
         }
     }
-    OpenOrFocusResult result = { .window = &open_tool_window(std::move(id)), .opened = true };
+    OpenOrFocusResult result = { .window = static_cast<ToolWindow*>(&open_overlay<ToolWindow>(std::move(id))), .opened = true };
     result.window->set_title(std::move(title));
     return result;
 }
 
 void Application::update() {
     WidgetTreeRoot::update();
-    std::erase_if(m_tool_windows, [&](auto& wnd) {
+    std::erase_if(m_overlays, [&](auto& wnd) {
         if (wnd->is_closed()) {
             if (wnd->on_close)
                 wnd->on_close();
-            if (wnd.get() == m_focused_tool_window)
-                m_focused_tool_window = nullptr;
+            if (wnd.get() == m_focused_overlay)
+                m_focused_overlay = nullptr;
             return true;
         }
         return false;
     });
-    for (auto& tool_window : m_tool_windows)
-        tool_window->update();
+    for (auto& overlay : m_overlays)
+        overlay->update();
 }
 
 void Application::remove_tooltip(Tooltip* t) {

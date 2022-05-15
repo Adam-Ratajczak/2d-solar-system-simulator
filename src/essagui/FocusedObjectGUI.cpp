@@ -192,7 +192,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
         if(m_world.exist_object_with_name(m_name_textbox->get_content())){
-            auto& msgbox = GUI::Application::the().open_tool_window<GUI::MessageBox>("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
+            auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
         
             return;
         }
@@ -206,7 +206,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     remove_button->set_content("Remove object");
     remove_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
     remove_button->on_click = [&]() {
-        auto& msgbox = GUI::Application::the().open_tool_window<GUI::MessageBox>("Are you sure you want to delete object \"" + m_focused->name() + "\"?", "Delete object", GUI::MessageBox::Buttons::YesNo);
+        auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>("Are you sure you want to delete object \"" + m_focused->name() + "\"?", "Delete object", GUI::MessageBox::Buttons::YesNo);
         auto result = msgbox.exec();
         if (result == GUI::MessageBox::ButtonRole::Yes) {
             m_focused->delete_object();

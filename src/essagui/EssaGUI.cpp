@@ -46,7 +46,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
     // TEST START
     {
-        auto& test_window = GUI::Application::the().open_tool_window();
+        auto& test_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
         test_window.center_on_screen();
         test_window.set_size({500, 500});
         auto& container = test_window.set_main_widget<GUI::Container>();
@@ -109,7 +109,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         load_world.on_toggle = [this](bool) {
             // TODO: Add TextPrompt or something like this (like MessageBox)
             //       Or preferably a full FilePicker
-            auto& prompt_window = GUI::Application::the().open_tool_window();
+            auto& prompt_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
             prompt_window.set_title("Load world");
             prompt_window.set_size({ 500, 100 });
             prompt_window.center_on_screen();
@@ -170,7 +170,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& pyssa = menu->add_entry(load_image("../assets/python.png"), "PySSA (Python scripting)", GUI::SettingsMenu::Expandable::No);
         pyssa.on_toggle = [](bool) {
-            auto& python_repl_window = GUI::Application::the().open_tool_window();
+            auto& python_repl_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
             python_repl_window.set_title("PySSA");
             python_repl_window.set_position({ 600, 750 });
             python_repl_window.set_size({ 700, 250 });
