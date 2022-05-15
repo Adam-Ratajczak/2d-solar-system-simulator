@@ -27,13 +27,13 @@ void World::add_object(std::unique_ptr<Object> object) {
 
     if (m_object_history.set_time(m_date))
         m_object_history.clear_history(m_object_history.get_pos());
-    
-    m_object_list.remove_if([&](std::unique_ptr<Object>& obj){
+
+    m_object_list.remove_if([&](std::unique_ptr<Object>& obj) {
         return obj->creation_date() > m_date;
     });
 }
 
-void World::set_forces(){
+void World::set_forces() {
     for (auto& p : m_object_list) {
         if (!p->deleted())
             p->setup_update_forces();
@@ -80,31 +80,33 @@ void World::update(int steps) {
             }
         }
 
+        // The algorithm used is Leapfrog KDK
+        // http://courses.physics.ucsd.edu/2019/Winter/physics141/Lectures/Lecture2/volker.pdf
         double step = m_simulation_seconds_per_tick;
-	    double halfStep = (step / 2.0);
+        double halfStep = (step / 2.0);
 
-	    // calculate forces/accelerations based on current postions
-	    this->set_forces();
+        // calculate forces/accelerations based on current postions
+        this->set_forces();
 
-	    for (auto& obj : m_object_list) // for each celestial body
-	    {
-			// Leapfrog algorithm, step 1
-			obj->set_vel(obj->vel() + halfStep * obj->acc());
-
-			// Leapfrog algorithm, step 2
-            obj->set_pos(obj->pos() + step * obj->vel());
-	    }
-
-	    // calculate the forces using the new positions
-	    this->set_forces();
-
-    	for (auto& obj : m_object_list) // for each celestial body
+        for (auto& obj : m_object_list) // for each celestial body
         {
-			// Leapfrog algorithm, step 3
-			obj->set_vel( obj->vel() + halfStep * obj->acc());
+            // Leapfrog algorithm, step 1
+            obj->set_vel(obj->vel() + halfStep * obj->acc());
+
+            // Leapfrog algorithm, step 2
+            obj->set_pos(obj->pos() + step * obj->vel());
+        }
+
+        // calculate the forces using the new positions
+        this->set_forces();
+
+        for (auto& obj : m_object_list) // for each celestial body
+        {
+            // Leapfrog algorithm, step 3
+            obj->set_vel(obj->vel() + halfStep * obj->acc());
 
             obj->update(m_simulation_seconds_per_tick);
-	    }
+        }
     }
 }
 
@@ -164,8 +166,8 @@ void World::clone_for_forward_simulation(World& new_world) const {
     new_world = World();
     new_world.m_is_forward_simulated = true;
     new_world.m_simulation_view = m_simulation_view;
-    for (auto& object : m_object_list){
-        if(!object->deleted())
+    for (auto& object : m_object_list) {
+        if (!object->deleted())
             new_world.add_object(object->clone_for_forward_simulation());
     }
 }
