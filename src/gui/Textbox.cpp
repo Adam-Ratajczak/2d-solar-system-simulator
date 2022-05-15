@@ -171,6 +171,9 @@ void Textbox::handle_event(Event& event) {
                     m_cursor += clipboard_contents.getSize();
                 }
                 break;
+            } case sf::Keyboard::Enter:{
+                if(on_enter)
+                    on_enter(m_content);
             }
             default:
                 break;

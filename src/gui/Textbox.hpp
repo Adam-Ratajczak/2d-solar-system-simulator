@@ -63,6 +63,7 @@ public:
     sf::String selected_text() const;
 
     std::function<void(std::string)> on_change;
+    std::function<void(std::string)> on_enter;
 
 private:
     bool can_insert_character(uint32_t) const;

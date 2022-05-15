@@ -5,6 +5,7 @@
 #include "PythonREPL.hpp"
 
 #include "../gui/ListView.hpp"
+#include "../gui/FileExplorer.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -12,32 +13,6 @@
 #include <iostream>
 #include <memory>
 #include <string>
-
-class TestModel : public GUI::Model {
-    virtual size_t row_count() const override {
-        return 5;
-    }
-    virtual size_t column_count() const override {
-        return 3;
-    }
-    virtual std::string data(size_t row, size_t column) const override {
-        switch(column)
-        {
-            case 0: return "test";
-            case 1: return std::to_string(row);
-            case 2: return std::to_string(row) + " another test ";
-        }
-        return "";
-    }
-    virtual Column column(size_t column) const override {
-        switch(column) {
-            case 0: return {.width = 50, .name = "test"};
-            case 1: return {.width = 30, .name = "TS"};
-            case 2: return {.width = 200, .name=  "Unsigned Long Long Long test"};
-        }
-        return {};
-    }
-};
 
 EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     : Container(wtr)
@@ -48,11 +23,10 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& test_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
         test_window.center_on_screen();
-        test_window.set_size({500, 500});
+        test_window.set_size({800, 600});
         auto& container = test_window.set_main_widget<GUI::Container>();
         container.set_layout<GUI::HorizontalBoxLayout>();
-        auto lv = container.add_widget<GUI::ListView>();
-        lv->create_and_set_model<TestModel>();
+        auto fe = container.add_widget<GUI::FileExplorer>();
     }
     // TEST END
 

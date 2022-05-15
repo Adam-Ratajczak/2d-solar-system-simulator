@@ -7,6 +7,7 @@ add_library(essa-gui
     Container.cpp
     Datebox.cpp
     EventLoop.cpp
+    FileExplorer.cpp
     Frame.cpp
     ImageButton.cpp
     ListView.cpp
