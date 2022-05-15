@@ -104,6 +104,9 @@ void World::update(int steps) {
 
         for (auto& obj : m_object_list) // for each celestial body
         {
+            if(obj->deleted())
+                continue;
+                
             // Leapfrog algorithm, step 1
             obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
 
@@ -116,6 +119,9 @@ void World::update(int steps) {
 
         for (auto& obj : m_object_list) // for each celestial body
         {
+            if(obj->deleted())
+                continue;
+
             // Leapfrog algorithm, step 3
             obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
 
@@ -133,7 +139,7 @@ void World::update(int steps) {
 
 bool World::exist_object_with_name(const std::string name) const{
     for(const auto& obj : m_object_list){
-        if(obj->name() == name)
+        if(obj->name() == name && !obj->deleted())
             return true;
     }
 
