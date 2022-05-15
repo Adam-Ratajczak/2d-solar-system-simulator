@@ -55,12 +55,6 @@ Vector3 Object::attraction(const Object& other) {
     return normalized_dist * force;
 }
 
-void Object::setup_update_forces() {
-    m_old_most_attracting_object = m_most_attracting_object;
-    m_attraction_factor = Vector3();
-    m_max_attraction = 0;
-}
-
 bool Object::deleted() const {
     return (m_deleted && m_deletion_date <= m_world->date()) || m_creation_date > m_world->date();
 }
@@ -73,7 +67,7 @@ void Object::update_forces_against(Object& object) {
     denominator *= std::sqrt(denominator);
     auto attraction_base = dist / denominator;
 
-    auto calculate_attraction = [&](Vector3& this_attraction, Vector3& other_attraction)mutable{
+    auto calculate_attraction = [&](Vector3& this_attraction, Vector3& other_attraction) mutable {
         this_attraction = attraction_base * object.m_gravity_factor;
         m_attraction_factor -= this_attraction;
 
@@ -98,10 +92,18 @@ void Object::update_forces_against(Object& object) {
     }
 }
 
-void Object::update(int speed) {
+void Object::before_update() {
     if (m_is_forward_simulated)
         update_closest_approaches();
+}
 
+void Object::clear_forces() {
+    m_old_most_attracting_object = m_most_attracting_object;
+    m_attraction_factor = Vector3();
+    m_max_attraction = 0;
+}
+
+void Object::update(int speed) {
     if (speed > 0) {
         if (!m_is_forward_simulated) {
             auto val = m_history.move_forward({ m_pos, m_vel });

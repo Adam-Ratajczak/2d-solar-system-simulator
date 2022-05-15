@@ -41,7 +41,7 @@ void World::add_object(std::unique_ptr<Object> object) {
 void World::set_forces() {
     for (auto& p : m_object_list) {
         if (!p->deleted())
-            p->setup_update_forces();
+            p->clear_forces();
     }
 
     for (auto it = m_object_list.begin(); it != m_object_list.end(); it++) {
@@ -87,6 +87,9 @@ void World::update(int steps) {
     bool reverse = steps < 0;
 
     for (unsigned i = 0; i < std::abs(steps); i++) {
+        for (auto& obj : m_object_list)
+            obj->before_update();
+
         update_history_and_date(reverse);
 
         // The algorithm used is Leapfrog KDK

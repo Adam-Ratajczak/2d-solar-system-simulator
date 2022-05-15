@@ -31,9 +31,16 @@ public:
 
     std::string name() const { return m_name; }
 
-    void setup_update_forces();
+    // Called before each force calculation pass (currently Leapfrog step)
+    void clear_forces();
+
+    // Called before anything physical is done on the Object.
+    void before_update();
+
     void update_forces_against(Object&);
+
     void update(int speed);
+
     Trail& trail() { return m_trail; }
     static Sphere& sphere();
 
