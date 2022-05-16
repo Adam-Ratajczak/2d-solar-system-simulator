@@ -174,6 +174,7 @@ void Textbox::handle_event(Event& event) {
             } case sf::Keyboard::Enter:{
                 if(on_enter)
                     on_enter(m_content);
+                break;
             }
             default:
                 break;
