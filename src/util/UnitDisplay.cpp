@@ -43,6 +43,14 @@ static const std::map<Quantity, std::vector<Unit>> s_units {
             { "h", 3600 },
             { "days", 3600 * 24 },
             { "years", Year },
+        } },
+    { Quantity::FileSize,
+        {
+            { "B", 1 },
+            { "KiB", 1024 },
+            { "MiB", 1024 * 1024 },
+            { "GiB", 1024 * 1024 * 1024 },
+            { "TiB", 1024LL * 1024 * 1024 * 1024 },
         } }
 };
 

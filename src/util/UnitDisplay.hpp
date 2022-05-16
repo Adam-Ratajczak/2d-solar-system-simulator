@@ -9,6 +9,7 @@ enum class Quantity {
     Mass,
     Velocity,
     Time,
+    FileSize,
 
     None,
 };
