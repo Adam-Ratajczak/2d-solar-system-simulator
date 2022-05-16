@@ -20,6 +20,96 @@
 
 namespace GUI {
 
+Model::Column FileModel::column(size_t column) const {
+    switch (column) {
+    case 0:
+        return { .width = 200, .name = "Name" };
+    case 1:
+        return { .width = 100, .name = "Size" };
+    case 2:
+        return { .width = 300, .name = "Modified" };
+    case 3:
+        return { .width = 150, .name = "File type" };
+    }
+    return {};
+}
+
+void FileModel::update_content(std::filesystem::path path, std::function<bool(std::filesystem::path)> condition) {
+    m_content.clear();
+    m_paths.clear();
+
+    for (const auto& o : std::filesystem::directory_iterator(path)) {
+        if (!std::filesystem::exists(o) || !condition(o.path().filename()))
+            continue;
+
+        m_paths.push_back(o.path());
+
+        std::time_t cftime = std::chrono::system_clock::to_time_t(
+            std::chrono::file_clock::to_sys(o.last_write_time()));
+
+        m_content.push_back(std::vector<std::string>(4));
+        m_content.back()[0] = o.path().filename();
+        m_content.back()[1] = (!std::filesystem::is_directory(o)) ? std::to_string(o.file_size()) : "";
+        m_content.back()[2] = std::asctime(std::localtime(&cftime));
+        m_content.back()[3] = o.is_directory() ? "Directory" : file_type(o);
+
+        // for(const auto& e : m_content.back())
+        //     std::cout << e << "\t";
+        // std::cout << "\n";
+    }
+
+    std::sort(m_content.begin(), m_content.end(), [](const std::vector<std::string>& a, const std::vector<std::string>& b) {
+        if (a[1] == b[1])
+            return a[0] < b[0];
+        else {
+            if (a[1].size() == 0)
+                return true;
+            else if (b[1].size() == 0)
+                return false;
+            return a[0] < b[0];
+        }
+    });
+
+    std::sort(m_paths.begin(), m_paths.end(), [](const std::filesystem::path& a, const std::filesystem::path& b) {
+        if (std::filesystem::is_directory(a) == std::filesystem::is_directory(b))
+            return a < b;
+        else {
+            if (std::filesystem::is_directory(a))
+                return true;
+            else if (std::filesystem::is_directory(b))
+                return false;
+        }
+
+        return a < b;
+    });
+}
+
+std::string FileModel::file_type(std::filesystem::path path) {
+    // Some special-cases
+    if (path.filename() == "CMakeLists.txt")
+        return "CMake project";
+
+    std::map<std::string, std::string> extension_to_name {
+        { ".cmake", "CMake script" },
+        { ".essa", "ESSA config" },
+        { ".md", "Markdown file" },
+        { ".png", "PNG image" },
+        { ".py", "Python script" },
+        { ".ttf", "TTF font" },
+        { ".txt", "Text file" },
+    };
+
+    auto extension = path.extension().string();
+    if (extension.empty() && path.filename().string()[0] == '.') {
+        // This may be a case for files like .gitignore
+        extension = path.filename().string();
+    }
+    auto it = extension_to_name.find(extension);
+    if (it == extension_to_name.end())
+        return extension + " file";
+    return it->second;
+}
+
 FileExplorer::FileExplorer(Container& c)
     : Container(c) {
     set_layout<VerticalBoxLayout>();
@@ -107,7 +197,7 @@ FileExplorer::FileExplorer(Container& c)
     sidebar->set_size({ { 20.0, Length::Percent }, Length::Auto });
 
     auto list = main_container->add_widget<ListView>();
-    m_model = &list->create_and_set_model<FileView>();
+    m_model = &list->create_and_set_model<FileModel>();
 
     list->on_click = [&](unsigned row) {
         open_path(m_model->get_path(row));
