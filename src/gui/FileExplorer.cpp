@@ -88,7 +88,7 @@ FileExplorer::FileExplorer(Container& c)
         path_textbox->set_content(m_current_path.string(), NotifyUser::No);
     };
 
-    path_textbox->on_enter = [&, path_textbox](std::string path) mutable {
+    path_textbox->on_enter = [&, path_textbox](std::string path) {
         if (std::filesystem::exists(path) && std::filesystem::is_directory(path))
             m_current_path = path;
         else {
@@ -99,7 +99,7 @@ FileExplorer::FileExplorer(Container& c)
         m_model->update_content(m_current_path);
     };
 
-    parent_directory_button->on_click = [&, path_textbox]() mutable {
+    parent_directory_button->on_click = [&, path_textbox]() {
         m_current_path = m_current_path.parent_path();
         path_textbox->set_content(m_current_path.string(), NotifyUser::No);
         m_model->update_content(m_current_path);
