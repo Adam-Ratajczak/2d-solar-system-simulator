@@ -52,13 +52,14 @@ public:
         m_has_limit = true;
     }
 
-    enum class ExtendSelection {
-        Yes,
-        No
+    enum class SetCursorSelectionBehavior {
+        Extend,
+        Clear,
+        DontTouch
     };
 
     // Set text cursor with updating scroll and selection if shift is pressed.
-    void interactive_set_cursor(unsigned, ExtendSelection = ExtendSelection::Yes);
+    void interactive_set_cursor(unsigned, SetCursorSelectionBehavior = SetCursorSelectionBehavior::Extend);
 
     sf::String selected_text() const;
 

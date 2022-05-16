@@ -49,13 +49,13 @@ void Textbox::set_content(sf::String content, NotifyUser notify_user) {
         on_change(m_content);
 }
 
-void Textbox::interactive_set_cursor(unsigned cursor, ExtendSelection extend_selection) {
+void Textbox::interactive_set_cursor(unsigned cursor, SetCursorSelectionBehavior extend_selection) {
     if (cursor > m_content.getSize())
         m_cursor = m_content.getSize();
     else
         m_cursor = cursor;
 
-    if (extend_selection == ExtendSelection::No || !m_shift_pressed)
+    if (extend_selection == SetCursorSelectionBehavior::Clear || (extend_selection != SetCursorSelectionBehavior::DontTouch && !m_shift_pressed))
         m_selection_start = m_cursor;
 
     auto new_cursor_position = calculate_cursor_position();
@@ -82,7 +82,7 @@ void Textbox::handle_event(Event& event) {
                 if (m_cursor == m_selection_start) {
                     if (m_cursor != 0) {
                         m_content.erase(m_cursor - 1);
-                        interactive_set_cursor(m_cursor - 1, ExtendSelection::No);
+                        interactive_set_cursor(m_cursor - 1, SetCursorSelectionBehavior::Clear);
                     }
                 }
                 else
@@ -111,7 +111,7 @@ void Textbox::handle_event(Event& event) {
                 m_content.insert(m_cursor, codepoint);
                 if (on_change)
                     on_change(m_content);
-                interactive_set_cursor(m_cursor + 1, ExtendSelection::No);
+                interactive_set_cursor(m_cursor + 1, SetCursorSelectionBehavior::Clear);
             }
 
             event.set_handled();
@@ -194,7 +194,7 @@ void Textbox::handle_event(Event& event) {
     }
     else if (event.type() == sf::Event::MouseMoved) {
         if (m_dragging)
-            m_cursor = m_character_pos_from_mouse(event);
+            interactive_set_cursor(m_character_pos_from_mouse(event), SetCursorSelectionBehavior::DontTouch);
     }
 
     if (m_type == NUMBER && m_has_limit)
