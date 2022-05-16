@@ -4,8 +4,8 @@
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
-#include "../gui/ListView.hpp"
 #include "../gui/FileExplorer.hpp"
+#include "../gui/Prompt.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -23,7 +23,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& test_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
         test_window.center_on_screen();
-        test_window.set_size({1000, 600});
+        test_window.set_size({ 1000, 600 });
         auto& container = test_window.set_main_widget<GUI::Container>();
         container.set_layout<GUI::HorizontalBoxLayout>();
         auto fe = container.add_widget<GUI::FileExplorer>();
@@ -81,56 +81,13 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& load_world = menu->add_entry(load_image("../assets/loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
         load_world.on_toggle = [this](bool) {
-            // TODO: Add TextPrompt or something like this (like MessageBox)
-            //       Or preferably a full FilePicker
-            auto& prompt_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
-            prompt_window.set_title("Load world");
-            prompt_window.set_size({ 500, 100 });
-            prompt_window.center_on_screen();
+            // TODO: Port to FileExplorer when it is ready for that
+            auto file_name = GUI::prompt("File name: ", "Load world", "e.g. solar.essa");
+            if (file_name.has_value()) {
 
-            auto& container = prompt_window.set_main_widget<GUI::Container>();
-            auto& container_layout = container.set_layout<GUI::VerticalBoxLayout>();
-            container_layout.set_padding(20);
-            container_layout.set_spacing(10);
-
-            auto input_container = container.add_widget<GUI::Container>();
-            input_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-            input_container->set_size({ Length::Auto, 30.0_px });
-
-            {
-                auto label = input_container->add_widget<GUI::Textfield>();
-                label->set_size({ 150.0_px, Length::Auto });
-                label->set_content("File name:");
+                m_settings_gui->set_world_file(file_name->toAnsiString());
+                m_settings_gui->reset_simulation();
             }
-            auto input = input_container->add_widget<GUI::Textbox>();
-            // FIXME: Why textboxes are numeric by default
-            input->set_data_type(GUI::Textbox::TEXT);
-            input->set_placeholder("e.g solar.essa");
-
-            // FIXME: Also, why buttons are red by default?
-            auto button_container = container.add_widget<GUI::Container>();
-            button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(20);
-            button_container->set_size({ Length::Auto, 30.0_px });
-            {
-
-                auto cancel_button = button_container->add_widget<GUI::TextButton>();
-                cancel_button->set_alignment(GUI::Align::Center);
-                cancel_button->set_content("Cancel");
-                cancel_button->on_click = [prompt_window = &prompt_window]() {
-                    prompt_window->close();
-                };
-
-                auto ok_button = button_container->add_widget<GUI::TextButton>();
-                ok_button->set_alignment(GUI::Align::Center);
-                ok_button->set_content("OK");
-                ok_button->on_click = [this, prompt_window = &prompt_window, input]() {
-                    m_settings_gui->set_world_file(input->get_content());
-                    m_settings_gui->reset_simulation();
-                    prompt_window->close();
-                };
-            }
-
-            prompt_window.run();
         };
     }
 

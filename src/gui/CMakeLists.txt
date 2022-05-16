@@ -12,6 +12,7 @@ add_library(essa-gui
     ImageButton.cpp
     ListView.cpp
     MessageBox.cpp
+    Prompt.cpp
     SettingsMenu.cpp
     SelectWidget.cpp
     Slider.cpp
