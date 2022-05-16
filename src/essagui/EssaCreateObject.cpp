@@ -141,8 +141,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
         m_add_object_button = container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
             if(m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content())){
-                auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
-        
+                GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
                 return;
             }
 
