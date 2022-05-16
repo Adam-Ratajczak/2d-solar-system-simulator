@@ -23,7 +23,7 @@ public:
         switch(column) {
             case 0: return {.width = 200, .name = "Name"};
             case 1: return {.width = 100, .name = "Size"};
-            case 2: return {.width = 200, .name=  "Modify date"};
+            case 2: return {.width = 350, .name=  "Modified"};
             case 3: return {.width = 100, .name=  "File type"};
         }
         return {};

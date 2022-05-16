@@ -23,7 +23,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& test_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
         test_window.center_on_screen();
-        test_window.set_size({800, 600});
+        test_window.set_size({1000, 600});
         auto& container = test_window.set_main_widget<GUI::Container>();
         container.set_layout<GUI::HorizontalBoxLayout>();
         auto fe = container.add_widget<GUI::FileExplorer>();
