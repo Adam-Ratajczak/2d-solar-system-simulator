@@ -110,8 +110,8 @@ void FileExplorer::open_path(std::filesystem::path path) {
     try {
         m_model->update_content(path);
     } catch (std::filesystem::filesystem_error& error) {
-        GUI::message_box(error.path1().string() + ": " + error.code().message(), "Error!", GUI::MessageBox::Buttons::Ok);
         m_model->update_content(m_current_path);
+        GUI::message_box(error.path1().string() + ": " + error.code().message(), "Error!", GUI::MessageBox::Buttons::Ok);
         return;
     }
     m_current_path = path;
