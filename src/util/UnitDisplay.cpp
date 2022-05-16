@@ -49,7 +49,7 @@ static const std::map<Quantity, std::vector<Unit>> s_units {
 sf::String to_exponent_string(double value) {
     std::ostringstream oss;
     if (value < 10) {
-        oss << value;
+        oss << std::setprecision(2) << value;
         return oss.str();
     }
     if (value < 10'000'000) {
