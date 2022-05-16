@@ -1,4 +1,5 @@
 #include "FileExplorer.hpp"
+
 #include "Application.hpp"
 #include "Container.hpp"
 #include "ListView.hpp"
@@ -8,7 +9,11 @@
 #include "TextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
-#include <SFML/Graphics/Color.hpp>
+
+#include "../util/UnitDisplay.hpp"
+
+#include <SFML/Graphics.hpp>
+
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -49,7 +54,9 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
 
         m_content.push_back(std::vector<std::string>(4));
         m_content.back()[0] = o.path().filename();
-        m_content.back()[1] = (!std::filesystem::is_directory(o)) ? std::to_string(o.file_size()) : "";
+        m_content.back()[1] = (!std::filesystem::is_directory(o))
+            ? Util::unit_display(o.file_size(), Util::Quantity::FileSize).to_string()
+            : "";
         m_content.back()[2] = std::asctime(std::localtime(&cftime));
         m_content.back()[3] = o.is_directory() ? "Directory" : file_type(o);
 
