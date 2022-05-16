@@ -11,8 +11,12 @@
 namespace GUI {
 
 void Button::handle_event(Event& event) {
-    if (event.event().type == sf::Event::MouseButtonReleased && is_hover())
+    if (event.event().type == sf::Event::MouseButtonPressed && is_hover())
+        m_pressed_on_button = true;
+    else if (event.event().type == sf::Event::MouseButtonReleased && is_hover() && m_pressed_on_button) {
         click();
+        m_pressed_on_button = false;
+    }
 }
 
 sf::Color Button::text_color_for_state() const {

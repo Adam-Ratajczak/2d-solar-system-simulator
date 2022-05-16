@@ -55,6 +55,7 @@ private:
 
     bool m_toggleable { false };
     bool m_active { false };
+    bool m_pressed_on_button { false };
 };
 
 }
