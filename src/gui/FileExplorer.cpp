@@ -23,16 +23,15 @@ namespace GUI {
 FileExplorer::FileExplorer(Container& c)
     : Container(c) {
     set_layout<VerticalBoxLayout>();
-    m_current_path = std::filesystem::absolute("../worlds");
 
     auto toolbar = add_widget<Container>();
     toolbar->set_layout<HorizontalBoxLayout>();
     toolbar->set_size({ Length::Auto, 30.0_px });
 
-    auto path_textbox = toolbar->add_widget<Textbox>();
-    path_textbox->set_data_type(Textbox::Type::TEXT);
-    path_textbox->set_content(m_current_path.string());
-    path_textbox->set_size({ { 50.0, Length::Percent }, Length::Auto });
+    m_path_textbox = toolbar->add_widget<Textbox>();
+    m_path_textbox->set_data_type(Textbox::Type::TEXT);
+    m_path_textbox->set_content(m_current_path.string());
+    m_path_textbox->set_size({ { 50.0, Length::Percent }, Length::Auto });
 
     auto parent_directory_button = toolbar->add_widget<TextButton>();
     parent_directory_button->set_content("Parent");
@@ -48,7 +47,10 @@ FileExplorer::FileExplorer(Container& c)
     create_directory_button->on_click = [&]() {
         auto path = GUI::prompt("Folder name: ", "Create folder");
         if (path.has_value()) {
-            std::filesystem::create_directory(m_current_path.string() + "\\" + path->toAnsiString());
+            // C++ Why mutable paths?!!!
+            auto new_path = m_current_path;
+            new_path.append(path->toAnsiString());
+            std::filesystem::create_directory(new_path);
             m_model->update_content(m_current_path);
         };
     };
@@ -61,7 +63,10 @@ FileExplorer::FileExplorer(Container& c)
     create_file_button->on_click = [&]() {
         auto file_name = GUI::prompt("File name with extension: ", "Create file");
         if (file_name.has_value()) {
-            std::ofstream f_out(m_current_path.string() + "\\" + file_name->toAnsiString());
+            // C++ Why mutable paths?!!!
+            auto new_path = m_current_path;
+            new_path.append(file_name->toAnsiString());
+            std::ofstream f_out(new_path);
             m_model->update_content(m_current_path);
         };
     };
@@ -82,32 +87,35 @@ FileExplorer::FileExplorer(Container& c)
 
     auto list = main_container->add_widget<ListView>();
     m_model = &list->create_and_set_model<FileView>();
-    m_model->update_content(m_current_path);
 
-    list->on_click = [&, path_textbox](unsigned row) {
-        auto path = m_model->get_path(row);
-        if (std::filesystem::is_directory(path))
-            m_current_path = path;
-        m_model->update_content(m_current_path);
-        path_textbox->set_content(m_current_path.string(), NotifyUser::No);
+    list->on_click = [&](unsigned row) {
+        open_path(m_model->get_path(row));
     };
 
-    path_textbox->on_enter = [&, path_textbox](std::string path) {
-        if (std::filesystem::exists(path) && std::filesystem::is_directory(path))
-            m_current_path = path;
-        else {
-            auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>(path + ": Directory not found!", "Error!", GUI::MessageBox::Buttons::Ok);
-            msgbox.exec();
-            path_textbox->set_content(m_current_path.string(), NotifyUser::No);
-        }
-        m_model->update_content(m_current_path);
+    m_path_textbox->on_enter = [&](std::string path) {
+        open_path(path);
     };
 
-    parent_directory_button->on_click = [&, path_textbox]() {
+    parent_directory_button->on_click = [&]() {
         m_current_path = m_current_path.parent_path();
-        path_textbox->set_content(m_current_path.string(), NotifyUser::No);
+        m_path_textbox->set_content(m_current_path.string(), NotifyUser::No);
         m_model->update_content(m_current_path);
     };
+
+    open_path("../worlds");
+}
+
+void FileExplorer::open_path(std::filesystem::path path) {
+    path = std::filesystem::absolute(path).lexically_normal();
+    try {
+        m_model->update_content(path);
+    } catch (std::filesystem::filesystem_error& error) {
+        GUI::message_box(error.path1().string() + ": " + error.code().message(), "Error!", GUI::MessageBox::Buttons::Ok);
+        m_model->update_content(m_current_path);
+        return;
+    }
+    m_current_path = path;
+    m_path_textbox->set_content(path.string(), NotifyUser::No);
 }
 
 }
