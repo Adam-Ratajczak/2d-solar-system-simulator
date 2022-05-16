@@ -34,4 +34,6 @@ private:
     Button* m_default_button = nullptr;
 };
 
+MessageBox::ButtonRole message_box(sf::String message, sf::String title, MessageBox::Buttons buttons);
+
 }

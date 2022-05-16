@@ -1,5 +1,6 @@
 #include "MessageBox.hpp"
 
+#include "Application.hpp"
 #include "Container.hpp"
 #include "TextButton.hpp"
 #include "Textfield.hpp"
@@ -55,6 +56,11 @@ void MessageBox::handle_event(sf::Event event) {
     ToolWindow::handle_event(event);
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter && m_default_button)
         m_default_button->on_click();
+}
+
+MessageBox::ButtonRole message_box(sf::String message, sf::String title, MessageBox::Buttons buttons) {
+    auto& msgbox = GUI::Application::the().open_overlay<GUI::MessageBox>(std::move(message), std::move(title), buttons);
+    return msgbox.exec();
 }
 
 }
