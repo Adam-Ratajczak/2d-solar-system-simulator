@@ -171,8 +171,9 @@ void Textbox::handle_event(Event& event) {
                     m_cursor += clipboard_contents.getSize();
                 }
                 break;
-            } case sf::Keyboard::Enter:{
-                if(on_enter)
+            }
+            case sf::Keyboard::Enter: {
+                if (on_enter)
                     on_enter(m_content);
                 break;
             }
@@ -345,15 +346,17 @@ void Textbox::draw(sf::RenderWindow& window) const {
 
     if (is_focused()) {
         // std::cout << m_cursor << std::endl;
-        if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0)
-            return;
-
-        sf::RectangleShape cursor(sf::Vector2f(2, cursor_height));
-        auto position = calculate_cursor_position();
-        cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
-        cursor.setFillColor(sf::Color::Black);
-        window.draw(cursor);
+        if ((m_cursor_clock.getElapsedTime().asMilliseconds() / 500) % 2 == 0) {
+            sf::RectangleShape cursor(sf::Vector2f(2, cursor_height));
+            auto position = calculate_cursor_position();
+            cursor.setPosition({ position.x, size().y / 2 - cursor.getSize().y / 2 });
+            cursor.setFillColor(sf::Color::Black);
+            window.draw(cursor);
+        }
     }
+
+    rect.setFillColor(sf::Color::Transparent);
+    window.draw(rect);
 }
 
 bool Textbox::can_insert_character(uint32_t ch) const {
