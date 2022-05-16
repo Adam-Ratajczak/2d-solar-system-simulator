@@ -217,6 +217,11 @@ FileExplorer::FileExplorer(Container& c)
 }
 
 void FileExplorer::open_path(std::filesystem::path path) {
+    if (!std::filesystem::is_directory(path)) {
+        // TODO: Implement that
+        std::cout << "select path: " << path << std::endl;
+        return;
+    }
     path = std::filesystem::absolute(path).lexically_normal();
     try {
         m_model->update_content(path);
