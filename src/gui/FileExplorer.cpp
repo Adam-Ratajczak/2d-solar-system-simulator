@@ -76,7 +76,28 @@ FileExplorer::FileExplorer(Container& c)
     find->set_size({ { 25.0, Length::Percent }, Length::Auto });
     find->set_data_type(Textbox::Type::TEXT);
     find->on_change = [&](std::string content){
-        m_model->update_content(m_current_path, [&](std::filesystem::path path){return path.string().substr(0, content.size()) == content;});
+        m_model->update_content(m_current_path, [&](std::filesystem::path path){
+            auto str = path.string();
+            auto size = content.size();
+
+            if(content[0] != '*' && content[size - 1] != '*'){
+                return str.substr(0, size) == content;
+            }else if(content[0] != '*' && content[size - 1] == '*'){
+                return str.substr(0, size - 1) == content.substr(0, size - 1);
+            }else if(content[0] == '*' && content[size - 1] != '*'){
+                for(unsigned i = 0; i < str.size(); i++){
+                    if(str.substr(i, std::min(i + size - 1, str.size())) == content.substr(1, size))
+                        return true;
+                }
+                return false;
+            }else{
+                for(unsigned i = 0; i < str.size(); i++){
+                    if(str.substr(i, std::min(i + size - 1, str.size())) == content.substr(1, size - 1))
+                        return true;
+                }
+            return false;
+            }
+        });
     };
 
     auto main_container = add_widget<Container>();
