@@ -3,6 +3,7 @@
 #include "ListView.hpp"
 #include "Widget.hpp"
 #include <filesystem>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -33,12 +34,12 @@ public:
         return m_paths[row];
     }
 
-    void update_content(std::filesystem::path path){
+    void update_content(std::filesystem::path path, std::function<bool(std::filesystem::path)> condition = [](std::filesystem::path path){return true;}){
         m_content.clear();
         m_paths.clear();
 
         for(const auto& o : std::filesystem::directory_iterator(path)){
-            if(!std::filesystem::exists(o))
+            if(!std::filesystem::exists(o) || !condition(o.path().filename()))
                 continue;
             
             m_paths.push_back(o.path());

@@ -69,6 +69,10 @@ FileExplorer::FileExplorer(Container& c)
     auto find = toolbar->add_widget<Textbox>();
     find->set_placeholder("Find file or directory");
     find->set_size({ { 25.0, Length::Percent }, Length::Auto });
+    find->set_data_type(Textbox::Type::TEXT);
+    find->on_change = [&](std::string content){
+        m_model->update_content(m_current_path, [&](std::filesystem::path path){return path.string().substr(0, content.size()) == content;});
+    };
 
     auto main_container = add_widget<Container>();
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
