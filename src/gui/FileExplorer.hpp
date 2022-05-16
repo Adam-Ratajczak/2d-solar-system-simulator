@@ -63,6 +63,31 @@ public:
             //     std::cout << e << "\t";
             // std::cout << "\n";
         }
+
+        std::sort(m_content.begin(), m_content.end(), [](const std::vector<std::string>& a, const std::vector<std::string>& b){
+            if(a[1] == b[1])
+                return a[0] < b[0];
+            else{
+                if(a[1].size() == 0)
+                    return true;
+                else if(b[1].size() == 0)
+                    return false;
+                return a[0] < b[0];
+            }
+        });
+
+        std::sort(m_paths.begin(), m_paths.end(), [](const std::filesystem::path& a, const std::filesystem::path& b){
+            if(std::filesystem::is_directory(a) == std::filesystem::is_directory(b))
+                return a < b;
+            else{
+                if(std::filesystem::is_directory(a))
+                    return true;
+                else if(std::filesystem::is_directory(b))
+                    return false;
+            }
+
+            return a < b;
+        });
     }
 
 private:
