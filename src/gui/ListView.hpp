@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Widget.hpp"
+#include <functional>
 
 namespace GUI {
 
@@ -36,6 +37,9 @@ public:
     }
 
     virtual void draw(sf::RenderWindow&) const override;
+    virtual void do_handle_event(Event&) override;
+
+    std::function<void(unsigned)> on_click;
 
 private:
     sf::Vector2f cell_size(size_t row, size_t column) const;

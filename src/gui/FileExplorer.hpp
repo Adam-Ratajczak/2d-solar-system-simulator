@@ -4,6 +4,7 @@
 #include "Widget.hpp"
 #include <filesystem>
 #include <memory>
+#include <vector>
 
 namespace GUI {
 
@@ -28,25 +29,26 @@ public:
         return {};
     }
 
+    std::filesystem::path get_path(size_t row) const{
+        return m_paths[row];
+    }
+
     void update_content(std::filesystem::path path){
         m_content.clear();
+        m_paths.clear();
+
         for(const auto& o : std::filesystem::directory_iterator(path)){
+            if(!std::filesystem::exists(o))
+                continue;
+            
+            m_paths.push_back(o.path());
+
             std::time_t cftime = std::chrono::system_clock::to_time_t(
             std::chrono::file_clock::to_sys(o.last_write_time()));
 
-            size_t size = 0;
-
-            if(std::filesystem::is_directory(o)){
-                for(const auto& d : std::filesystem::recursive_directory_iterator(o)){
-                    if(!std::filesystem::is_directory(d))
-                        size += d.file_size();
-                }
-            }else
-                size = o.file_size();
-
             m_content.push_back(std::vector<std::string>(4));
             m_content.back()[0] = o.path().filename();
-            m_content.back()[1] = std::to_string(size);
+            m_content.back()[1] = (!std::filesystem::is_directory(o)) ? std::to_string(o.file_size()) : "";
             m_content.back()[2] = std::asctime(std::localtime(&cftime));
             m_content.back()[3] = o.path().extension();
 
@@ -57,6 +59,7 @@ public:
     }
 private:
     std::vector<std::vector<std::string>> m_content;
+    std::vector<std::filesystem::path> m_paths;
 };
 
 class FileExplorer : public Container{

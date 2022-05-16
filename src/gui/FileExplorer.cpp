@@ -63,6 +63,14 @@ FileExplorer::FileExplorer(Container& c) : Container(c){
     m_model = &list->create_and_set_model<FileView>();
     m_model->update_content(m_current_path);
 
+    list->on_click = [&, path_textbox](unsigned row){
+        auto path = m_model->get_path(row);
+        if(std::filesystem::is_directory(path))
+            m_current_path = path;
+        m_model->update_content(m_current_path);
+        path_textbox->set_content(m_current_path.string(), NotifyUser::No);
+    };
+
     path_textbox->on_enter = [&, path_textbox](std::string path) mutable{
         if(std::filesystem::exists(path) && std::filesystem::is_directory(path))
             m_current_path = path;

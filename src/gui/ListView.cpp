@@ -2,6 +2,9 @@
 
 #include "../gfx/ClipViewScope.hpp"
 #include "Application.hpp"
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 
 namespace GUI {
 
@@ -67,6 +70,25 @@ void ListView::draw(sf::RenderWindow& wnd) const {
 
 sf::Vector2f ListView::cell_size(size_t row, size_t column) const {
     return { m_model->column(column).width, RowHeight };
+}
+
+void ListView::do_handle_event(Event &event){
+    size_t rows = m_model->row_count();
+    if(event.type() == sf::Event::MouseButtonPressed){
+        sf::Vector2i mouse_pos(event.mouse_position());
+
+        if(is_mouse_over(mouse_pos)){
+            for (size_t r = 0; r < rows; r++) {
+                sf::Rect<int> rect(position().x, position().y + RowHeight * (r + 1), size().x, RowHeight);
+
+                if(rect.contains(mouse_pos)){
+                    if(on_click)
+                        on_click(r);
+                    return;
+                }
+            }
+        }
+    }
 }
 
 }
