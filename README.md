@@ -21,8 +21,6 @@ The application is written in modern C++20 and uses the latest additions to this
 * Basic GUI library - widget framework with auto-layout
 * *PySSA* - Python API for scripting.
 
-## External dependencies
-* SFML - for rendering the interface.
-* Python - for scripting
-* fmt - for text formatting (not currently a dependency, but this may change due to its usefulness)
-* This list is subject to change
+## How to build and run this?
+
+See [Build instructions](./BuildInstructions.md).
