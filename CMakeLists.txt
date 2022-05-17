@@ -56,7 +56,7 @@ function(setup_target targetname)
 endfunction()
 setup_target(out)
 
-target_link_libraries(out essa-gui GLEW GLU GL)
+target_link_libraries(out essa-gui GLEW GL)
 target_link_libraries(out ${PYTHON_LIBRARIES})
 target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
 
