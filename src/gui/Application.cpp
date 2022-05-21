@@ -161,6 +161,12 @@ Application::OpenOrFocusResult Application::open_or_focus_tool_window(sf::String
 
 void Application::update() {
     WidgetTreeRoot::update();
+    remove_closed_overlays();
+    for (auto& overlay : m_overlays)
+        overlay->update();
+}
+
+void Application::remove_closed_overlays() {
     std::erase_if(m_overlays, [&](auto& wnd) {
         if (wnd->is_closed()) {
             if (wnd->on_close)
@@ -171,8 +177,6 @@ void Application::update() {
         }
         return false;
     });
-    for (auto& overlay : m_overlays)
-        overlay->update();
 }
 
 TooltipOverlay& Application::add_tooltip(Tooltip t) {

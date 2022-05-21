@@ -53,6 +53,7 @@ public:
     }
 
     TooltipOverlay& add_tooltip(Tooltip t);
+    void remove_closed_overlays();
 
     virtual sf::Vector2f position() const override { return {}; }
     virtual sf::Vector2f size() const override { return sf::Vector2f { window().getSize() }; }

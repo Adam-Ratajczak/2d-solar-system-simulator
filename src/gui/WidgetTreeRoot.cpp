@@ -47,6 +47,12 @@ void WidgetTreeRoot::tick() {
     window().clear();
     Application::the().draw();
     window().display();
+
+    // Remove closed overlays on Application so
+    // that closed windows actually are closed
+    if (!is_running())
+        return;
+    Application::the().remove_closed_overlays();
 }
 
 sf::Event WidgetTreeRoot::transform_event(sf::Vector2f offset, sf::Event event) const {
