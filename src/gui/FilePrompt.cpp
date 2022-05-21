@@ -28,7 +28,7 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
 
     {
         auto label = input_container->add_widget<Textfield>();
-        label->set_size({ 150.0_px, Length::Auto });
+        label->set_size({ 160.0_px, Length::Auto });
         label->set_content(help_text);
     }
     auto input = input_container->add_widget<Textbox>();
