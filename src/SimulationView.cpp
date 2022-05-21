@@ -2,12 +2,12 @@
 
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
-#include "gui/Application.hpp"
-#include "gui/WidgetTreeRoot.hpp"
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include "math/Ray.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
-#include "util/UnitDisplay.hpp"
+#include <EssaGUI/util/UnitDisplay.hpp>
 
 #include <GL/gl.h>
 #include <GL/glu.h>

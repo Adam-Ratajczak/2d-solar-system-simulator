@@ -1,19 +1,21 @@
 #pragma once
 
+#include <EssaGUI/gui/MessageBox.hpp>
+
 #include "../Object.hpp"
 #include "../SimulationView.hpp"
 #include "../World.hpp"
-#include "../gui/Button.hpp"
-#include "../gui/ColorPicker.hpp"
-#include "../gui/Container.hpp"
-#include "../gui/SettingsMenu.hpp"
-#include "../gui/Slider.hpp"
-#include "../gui/StateTextButton.hpp"
-#include "../gui/TextButton.hpp"
-#include "../gui/Textbox.hpp"
-#include "../gui/Textfield.hpp"
-#include "../gui/ValueSlider.hpp"
-#include "../gui/Widget.hpp"
+#include <EssaGUI/gui/Button.hpp>
+#include <EssaGUI/gui/ColorPicker.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/SettingsMenu.hpp>
+#include <EssaGUI/gui/Slider.hpp>
+#include <EssaGUI/gui/StateTextButton.hpp>
+#include <EssaGUI/gui/TextButton.hpp>
+#include <EssaGUI/gui/Textbox.hpp>
+#include <EssaGUI/gui/Textfield.hpp>
+#include <EssaGUI/gui/ValueSlider.hpp>
+#include <EssaGUI/gui/Widget.hpp>
 #include "EssaCreateObject.hpp"
 #include "EssaSettings.hpp"
 #include "FocusedObjectGUI.hpp"

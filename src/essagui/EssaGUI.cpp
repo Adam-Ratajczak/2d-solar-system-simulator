@@ -4,7 +4,7 @@
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
-#include "../gui/FilePrompt.hpp"
+#include <EssaGUI/gui/FilePrompt.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -71,7 +71,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     {
         auto& load_world = menu->add_entry(load_image("../assets/loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
         load_world.on_toggle = [this](bool) {
-            // TODO: Port to FileExplorer when it is ready for that
             auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
             prompt.add_desired_extension(".essa");
             prompt.run();

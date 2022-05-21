@@ -1,5 +1,5 @@
 #include "ObjectHistory.hpp"
-#include "util/SimulationClock.hpp"
+#include <EssaGUI/util/SimulationClock.hpp>
 
 void ObjectHistory::clear_history(unsigned long to_index) {
     m_entries.resize(std::min(to_index, m_entries.size()));

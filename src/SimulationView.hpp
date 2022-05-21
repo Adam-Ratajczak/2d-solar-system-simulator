@@ -1,11 +1,11 @@
 #pragma once
 
-#include "gui/Widget.hpp"
 #include "math/Matrix.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
-#include "util/Constants.hpp"
+#include <EssaGUI/gui/Widget.hpp>
+#include <EssaGUI/util/Constants.hpp>
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include <optional>
@@ -120,7 +120,7 @@ private:
     PySSA::Object python_get_zoom() const;
     bool python_set_zoom(PySSA::Object const&);
     PySSA::Object python_get_focused_object() const;
-    //bool python_set_focused_object(PySSA::Object const&); // TODO
+    // bool python_set_focused_object(PySSA::Object const&); // TODO
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;

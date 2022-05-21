@@ -1,7 +1,7 @@
 #include "PythonREPL.hpp"
 
-#include "../gui/Application.hpp"
-#include "../gui/ArrowButton.hpp"
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/ArrowButton.hpp>
 #include "../pyssa/Environment.hpp"
 
 PythonREPL::PythonREPL(GUI::WidgetTreeRoot& c)

@@ -5,8 +5,8 @@
 #include "ObjectHistory.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
-#include "util/Constants.hpp"
-#include "util/SimulationClock.hpp"
+#include <EssaGUI/util/Constants.hpp>
+#include <EssaGUI/util/SimulationClock.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <cstdint>

@@ -4,14 +4,14 @@
 #include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"
 #include "glwrapper/Vertex.hpp"
-#include "gui/Application.hpp"
+#include <EssaGUI/gui/Application.hpp>
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
-#include "util/DelayedInit.hpp"
-#include "util/UnitDisplay.hpp"
-#include "util/Units.hpp"
+#include <EssaGUI/util/DelayedInit.hpp>
+#include <EssaGUI/util/UnitDisplay.hpp>
+#include <EssaGUI/util/Units.hpp>
 
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>

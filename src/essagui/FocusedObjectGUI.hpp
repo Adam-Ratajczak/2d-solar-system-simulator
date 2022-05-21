@@ -2,12 +2,12 @@
 
 #include "../Object.hpp"
 #include "../World.hpp"
-#include "../gui/Application.hpp"
-#include "../gui/ColorPicker.hpp"
-#include "../gui/Container.hpp"
-#include "../gui/Textfield.hpp"
-#include "../gui/ValueSlider.hpp"
-#include "../util/UnitDisplay.hpp"
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/ColorPicker.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/Textfield.hpp>
+#include <EssaGUI/gui/ValueSlider.hpp>
+#include <EssaGUI/util/UnitDisplay.hpp>
 #include <memory>
 #include <vector>
 

@@ -7,8 +7,8 @@
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"
-#include "util/SimulationClock.hpp"
-#include "util/Units.hpp"
+#include <EssaGUI/util/SimulationClock.hpp>
+#include <EssaGUI/util/Units.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>

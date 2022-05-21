@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 find_package(PythonLibs 3.5 REQUIRED)
+find_package(EssaGUI REQUIRED)
 
 add_executable(
     out
@@ -25,9 +26,6 @@ add_executable(
     src/essagui/FocusedObjectGUI.cpp
     src/essagui/PythonREPL.cpp
 
-    src/gfx/ClipViewScope.cpp
-    src/gfx/RoundedEdgeRectangleShape.cpp
-
     src/glwrapper/Helpers.cpp
     src/glwrapper/Sphere.cpp
 
@@ -37,9 +35,6 @@ add_executable(
 
     src/pyssa/Environment.cpp
     src/pyssa/Object.cpp
-
-    src/util/SimulationClock.cpp
-    src/util/UnitDisplay.cpp
 )
 
 target_compile_options(out PUBLIC -fdiagnostics-color=always)
@@ -59,5 +54,3 @@ setup_target(out)
 target_link_libraries(out essa-gui GLEW GL)
 target_link_libraries(out ${PYTHON_LIBRARIES})
 target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
-
-add_subdirectory(src/gui)

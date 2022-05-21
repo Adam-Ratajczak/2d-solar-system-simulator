@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../gui/ArrowButton.hpp"
-#include "../gui/Console.hpp"
-#include "../gui/Container.hpp"
-#include "../gui/Textbox.hpp"
-#include "../gui/Widget.hpp"
+#include <EssaGUI/gui/ArrowButton.hpp>
+#include <EssaGUI/gui/Console.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/Textbox.hpp>
+#include <EssaGUI/gui/Widget.hpp>
 
 #include <deque>
 #include <vector>

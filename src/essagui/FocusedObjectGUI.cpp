@@ -1,9 +1,9 @@
 #include "FocusedObjectGUI.hpp"
 
 #include "../Object.hpp"
-#include "../gui/MessageBox.hpp"
-#include "../gui/TabWidget.hpp"
-#include "../util/UnitDisplay.hpp"
+#include <EssaGUI/gui/MessageBox.hpp>
+#include <EssaGUI/gui/TabWidget.hpp>
+#include <EssaGUI/util/UnitDisplay.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iomanip>

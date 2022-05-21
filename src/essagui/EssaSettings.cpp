@@ -2,13 +2,13 @@
 
 #include "../World.hpp"
 #include "../glwrapper/Sphere.hpp"
-#include "../gui/Container.hpp"
-#include "../gui/StateTextButton.hpp"
-#include "../gui/TabWidget.hpp"
-#include "../gui/Textbox.hpp"
-#include "../gui/Textfield.hpp"
-#include "../gui/ValueSlider.hpp"
-#include "../util/SimulationClock.hpp"
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/StateTextButton.hpp>
+#include <EssaGUI/gui/TabWidget.hpp>
+#include <EssaGUI/gui/Textbox.hpp>
+#include <EssaGUI/gui/Textfield.hpp>
+#include <EssaGUI/gui/ValueSlider.hpp>
+#include <EssaGUI/util/SimulationClock.hpp>
 
 #include <fstream>
 

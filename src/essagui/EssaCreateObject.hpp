@@ -1,10 +1,12 @@
 #pragma once
+
 #include "../SimulationView.hpp"
 #include "../World.hpp"
-#include "../gui/ColorPicker.hpp"
-#include "../gui/Container.hpp"
-#include "../gui/ImageButton.hpp"
-#include "../gui/ValueSlider.hpp"
+
+#include <EssaGUI/gui/ColorPicker.hpp>
+#include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/ImageButton.hpp>
+#include <EssaGUI/gui/ValueSlider.hpp>
 #include <memory>
 
 class EssaCreateObject : public GUI::Container {
@@ -56,9 +58,9 @@ private:
 
     World m_forward_simulated_world;
     Vector3 m_new_object_pos;
-    
+
     std::unique_ptr<Object> m_new_object;
-    
+
     int m_saved_speed = 0;
     bool m_forward_simulation_is_valid = true;
     bool m_automatic_orbit_calculation = false, m_prev_unit_state = false;

@@ -3,7 +3,7 @@
 
 #include "World.hpp"
 #include "essagui/EssaGUI.hpp"
-#include "gui/Application.hpp"
+#include <EssaGUI/gui/Application.hpp>
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Environment.hpp"
