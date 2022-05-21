@@ -427,5 +427,5 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Deg };
     }
 
-    return m_focused->create_object_relative_to(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content(), 0.0_deg);
+    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content(), 0.0_deg);
 }

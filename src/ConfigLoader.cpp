@@ -87,11 +87,24 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
                 std::cout << "'around' object doesn't exist: " << around << std::endl;
                 return {};
             }
-            return around_object->create_object_relative_to(
+            if(read_distance_property("apoapsis").value() != 0 && read_distance_property("periapsis").value() != 0)
+                return around_object->create_object_relative_to_ap_pe(
+                    read_double_property("mass"),
+                    read_distance_property("radius"),
+                    read_distance_property("apoapsis"),
+                    read_distance_property("periapsis"),
+                    properties["direction"] == "right" ? false : true,
+                    Angle(read_double_property("orbit_position"), Angle::Unit::Deg),
+                    Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),
+                    sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
+                    properties["name"],
+                    0.0_deg); // TODO
+            
+            return around_object->create_object_relative_to_maj_ecc(
                 read_double_property("mass"),
                 read_distance_property("radius"),
-                read_distance_property("apoapsis"),
-                read_distance_property("periapsis"),
+                read_distance_property("major_axis"),
+                read_double_property("eccencrity"),
                 properties["direction"] == "right" ? false : true,
                 Angle(read_double_property("orbit_position"), Angle::Unit::Deg),
                 Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),

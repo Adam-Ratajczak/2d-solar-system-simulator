@@ -1,0 +1,61 @@
+planet name=Jupiter mass=1.89813e27 radius=70000000;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.6e16
+    radius=21000
+    major_axis=128000_km
+    eccencrity=0.0002
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.06
+    colorr=80 colorg=78 colorb=81
+    name=Metis;
+
+orbitting_planet
+    around=Jupiter
+    mass=2e15
+    radius=8000
+    major_axis=129000_km
+    eccencrity=0.0015
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.03
+    colorr=80 colorg=78 colorb=81
+    name=Andrastea;
+
+orbitting_planet
+    around=Jupiter
+    mass=2.08e18
+    radius=83000
+    major_axis=181400_km
+    eccencrity=0.0032
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.374
+    colorr=80 colorg=78 colorb=81
+    name=Amalthea;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.3e17
+    radius=49000
+    major_axis=221900_km
+    eccencrity=0.0175
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=1.076
+    colorr=80 colorg=78 colorb=81
+    name=Thebe;
+
+orbitting_planet
+    around=Jupiter
+    mass=8.931e22
+    radius=1824000
+    major_axis=421800_km
+    eccencrity=0.0041
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=1.0
+    colorr=80 colorg=78 colorb=81
+    name=Io;

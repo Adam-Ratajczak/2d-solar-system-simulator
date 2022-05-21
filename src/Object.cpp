@@ -19,6 +19,7 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -26,7 +27,7 @@
 static Util::DelayedInit<Sphere> s_sphere;
 
 Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
-    : m_trail(std::max(2U, period * 2), color)
+    : m_trail(std::max(2U, std::max(period * 2, (unsigned)500)), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
     , m_history(1000, { pos, vel })
@@ -254,7 +255,7 @@ void Object::draw_gui(SimulationView const& view) {
     draw_label(view, render_position(), m_name, m_is_forward_simulated ? sf::Color(128, 128, 128) : sf::Color::White);
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
@@ -290,9 +291,45 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
 
     return result;
 }
+    std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
 
 void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
-    m_world->add_object(create_object_relative_to(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
+    m_world->add_object(create_object_relative_to_ap_pe(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
+}
+
+std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation){
+
+    double GM = m_gravity_factor;
+    double a = semi_major.value();
+
+    double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
+    // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
+    Vector3 pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
+    pos = pos.rotate_vector(rotation.rad());
+    pos += this->m_pos;
+
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
+    result->m_ap = 0;
+    result->m_pe = std::numeric_limits<double>::max();
+
+    result->eccencrity = ecc;
+    // std::cout << result.eccencrity << "\n";
+
+    double velocity_constant = (2 * GM) / (a * 2);
+
+    result->m_ap_vel = std::sqrt(2 * GM / a - velocity_constant);
+    result->m_pe_vel = std::sqrt(2 * GM / a * ecc - velocity_constant);
+    double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
+
+    Vector3 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
+
+    if (direction)
+        vel = -vel;
+
+    vel += this->m_vel;
+    result->m_vel = vel;
+
+    return result;
 }
 
 std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
@@ -304,7 +341,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
             255
         };
     };
-    auto object = std::make_unique<Object>(mass(), m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 500 * (3600 * 24) * 2);
+    auto object = std::make_unique<Object>(mass() * 1000, m_radius, m_pos, m_vel, brightened_color(m_color), m_name, 500);
     object->m_is_forward_simulated = true;
     object->trail().set_enable_min_step(false);
     return object;
