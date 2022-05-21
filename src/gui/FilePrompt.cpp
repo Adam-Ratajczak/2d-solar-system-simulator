@@ -39,7 +39,7 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
     auto file_btn = input_container->add_widget<TextButton>();
     file_btn->set_content("Browse file");
 
-    file_btn->on_click = [&](){
+    file_btn->on_click = [this, input](){
         auto& file_explorer_wnd = GUI::Application::the().open_overlay<FileExplorer>();
         file_explorer_wnd.set_size({ 1000, 600 });
         file_explorer_wnd.center_on_screen();
@@ -49,10 +49,6 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
         
         file_explorer_wnd.on_submit = [file_explorer_wnd = &file_explorer_wnd, input](std::filesystem::path path){
             input->set_content(path.relative_path().string());
-        };
-
-        on_close = [&](){
-            file_explorer_wnd.close();
         };
 
         file_explorer_wnd.run();
