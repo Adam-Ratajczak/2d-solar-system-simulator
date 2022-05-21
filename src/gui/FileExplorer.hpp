@@ -1,8 +1,11 @@
 #pragma once
 #include "Container.hpp"
 #include "ListView.hpp"
+#include "ToolWindow.hpp"
+#include "WidgetTreeRoot.hpp"
 #include "Textbox.hpp"
 #include "Widget.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -43,9 +46,9 @@ private:
     std::vector<std::string> m_extensions;
 };
 
-class FileExplorer : public Container {
+class FileExplorer : public ToolWindow {
 public:
-    explicit FileExplorer(Container& c);
+    explicit FileExplorer(sf::RenderWindow& wnd);
 
     enum class FileExplorerType{
         FILE,

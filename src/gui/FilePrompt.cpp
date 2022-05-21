@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "Container.hpp"
+#include "FileExplorer.hpp"
 #include "TextButton.hpp"
 #include "Textbox.hpp"
 #include "Textfield.hpp"
@@ -15,7 +16,6 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
     set_title(std::move(window_title));
     set_size({ 500, 100 });
     center_on_screen();
-    // set_id("WND");
 
     auto& container = set_main_widget<Container>();
     auto& container_layout = container.set_layout<VerticalBoxLayout>();
@@ -39,25 +39,23 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
     auto file_btn = input_container->add_widget<TextButton>();
     file_btn->set_content("Browse file");
 
-    file_btn->on_click = [&]() {
-        auto& file_explorer_wnd = GUI::Application::the().open_overlay<ToolWindow>();
+    file_btn->on_click = [&](){
+        auto& file_explorer_wnd = GUI::Application::the().open_overlay<FileExplorer>();
         file_explorer_wnd.set_size({ 1000, 600 });
         file_explorer_wnd.center_on_screen();
-
-        auto& file_explorer_container = file_explorer_wnd.set_main_widget<Container>();
-        file_explorer_container.set_layout<HorizontalBoxLayout>();
-        m_file_explorer = file_explorer_container.add_widget<FileExplorer>();
-        m_file_explorer->model()->add_desired_extension(".essa");
         
-        m_file_explorer->on_submit = [&](std::filesystem::path path)mutable{
+        for(const auto& ext : m_extensions)
+            file_explorer_wnd.model()->add_desired_extension(ext);
+        
+        file_explorer_wnd.on_submit = [file_explorer_wnd = &file_explorer_wnd, input](std::filesystem::path path){
             input->set_content(path.relative_path().string());
-        
-            file_explorer_wnd.close();
         };
 
         on_close = [&](){
             file_explorer_wnd.close();
         };
+
+        file_explorer_wnd.run();
     };
 
     // FIXME: Also, why buttons are red by default?
@@ -68,14 +66,14 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
         auto cancel_button = button_container->add_widget<TextButton>();
         cancel_button->set_alignment(Align::Center);
         cancel_button->set_content("Cancel");
-        cancel_button->on_click = [&]() mutable{
+        cancel_button->on_click = [&](){
             close();
         };
 
         auto ok_button = button_container->add_widget<TextButton>();
         ok_button->set_alignment(Align::Center);
         ok_button->set_content("OK");
-        ok_button->on_click = [&, input]()mutable {
+        ok_button->on_click = [&, input]() {
             m_result = input->get_content();
             close();
         };

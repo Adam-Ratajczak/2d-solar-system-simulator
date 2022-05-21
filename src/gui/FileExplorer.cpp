@@ -11,6 +11,7 @@
 #include "Textfield.hpp"
 
 #include "../util/UnitDisplay.hpp"
+#include "ToolWindow.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -131,11 +132,13 @@ std::string FileModel::file_type(std::filesystem::path path) {
     return it->second;
 }
 
-FileExplorer::FileExplorer(Container& c)
-    : Container(c) {
-    set_layout<VerticalBoxLayout>();
+FileExplorer::FileExplorer(sf::RenderWindow& wnd)
+    : ToolWindow(wnd) {
 
-    auto toolbar = add_widget<Container>();
+    auto& container = set_main_widget<GUI::Container>();
+    container.set_layout<VerticalBoxLayout>();
+
+    auto toolbar = container.add_widget<Container>();
     toolbar->set_layout<HorizontalBoxLayout>();
     toolbar->set_size({ Length::Auto, 30.0_px });
 
@@ -215,7 +218,7 @@ FileExplorer::FileExplorer(Container& c)
         });
     };
 
-    auto main_container = add_widget<Container>();
+    auto main_container = container.add_widget<Container>();
     main_container->set_layout<HorizontalBoxLayout>().set_spacing(10);
 
     auto sidebar = main_container->add_widget<Container>();
@@ -230,6 +233,7 @@ FileExplorer::FileExplorer(Container& c)
         if(m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)){
             if(on_submit)
                 on_submit(path);
+            close();
         }else {
             open_path(path);
         }

@@ -80,6 +80,8 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             // TODO: Port to FileExplorer when it is ready for that
             auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>(std::move("Choose file to open: "), std::move("Open file"), std::move("e.g.: solar.essa"));
 
+            prompt.add_desired_extension(".essa");
+
             prompt.run();
             
             if (prompt.result().has_value()) {
