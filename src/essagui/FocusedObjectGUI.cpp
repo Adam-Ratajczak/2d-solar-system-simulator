@@ -191,7 +191,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
-        if (m_world.exist_object_with_name(m_name_textbox->get_content())) {
+        if (m_world.exist_object_with_name(m_name_textbox->get_content()) && m_focused->name() != m_name_textbox->get_content()) {
             GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
             return;
         }
