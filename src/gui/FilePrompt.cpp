@@ -48,7 +48,7 @@ FilePrompt::FilePrompt(sf::RenderWindow& wnd, sf::String help_text, sf::String w
             file_explorer_wnd.model()->add_desired_extension(ext);
         
         file_explorer_wnd.on_submit = [file_explorer_wnd = &file_explorer_wnd, input](std::filesystem::path path){
-            input->set_content(path.relative_path().string());
+            input->set_content(path.string());
         };
 
         file_explorer_wnd.run();

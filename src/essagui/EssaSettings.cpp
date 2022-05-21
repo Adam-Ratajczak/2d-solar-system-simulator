@@ -222,7 +222,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
 void EssaSettings::reset_simulation() {
 
-    std::ifstream file_in("../worlds/" + m_world_file);
+    std::ifstream file_in(m_world_file);
     if (!file_in.good()) {
         // TODO: Display msgbox and abort loading
         std::cout << "Failed to load world file " << m_world_file << std::endl;
