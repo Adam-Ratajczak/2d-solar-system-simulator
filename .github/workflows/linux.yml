@@ -15,6 +15,15 @@ jobs:
     - uses: actions/checkout@v2
     - name: Dependency install
       run: sudo apt install libsfml-dev libglew-dev ninja-build
+    - name: Build & install EssaGUI
+      run: |
+        git clone https://github.com/sppmacd/EssaGUI.git
+        cd EssaGUI
+        mkdir build
+        cd build
+        cmake .. -GNinja
+        ninja
+        sudo ninja install
     - name: Generate build system
       run: mkdir build && cd build && cmake .. -GNinja
     - name: Build
