@@ -26,7 +26,7 @@
 static Util::DelayedInit<Sphere> s_sphere;
 
 Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
-    : m_trail(std::max(2U, period / (3600 * 24) * 2), color)
+    : m_trail(std::max(2U, period * 2), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
     , m_history(1000, { pos, vel })
@@ -267,7 +267,7 @@ std::unique_ptr<Object> Object::create_object_relative_to(double mass, Distance 
     pos = pos.rotate_vector(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T);
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
     result->m_ap = apogee.value();
     result->m_pe = perigee.value();
 
