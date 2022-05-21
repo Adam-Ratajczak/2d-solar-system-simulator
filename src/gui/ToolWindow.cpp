@@ -167,6 +167,11 @@ void ToolWindow::handle_events() {
 }
 
 void ToolWindow::draw() {
+    sf::RectangleShape background { size() };
+    background.setFillColor(sf::Color(50, 50, 50, 120));
+    background.setPosition(position());
+    window().draw(background);
+
     // FIXME: Add some graphical indication that there is
     //        modal window opened now
     auto color = Application::the().focused_overlay() == this ? sf::Color(160, 160, 160, 150) : sf::Color(127, 127, 127, 150);

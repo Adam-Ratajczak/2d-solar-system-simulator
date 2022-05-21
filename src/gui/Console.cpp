@@ -43,10 +43,6 @@ void Console::clear() {
 constexpr float PADDING = 5;
 
 void Console::draw(sf::RenderWindow& window) const {
-    sf::RectangleShape background { size() };
-    background.setFillColor(sf::Color(50, 50, 50, 120));
-    window.draw(background);
-
     size_t s = 0;
     for (auto& line : m_lines) {
         sf::Text text(line.text, Application::the().fixed_width_font, 15);
