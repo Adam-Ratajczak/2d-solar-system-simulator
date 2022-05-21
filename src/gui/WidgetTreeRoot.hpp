@@ -14,6 +14,9 @@ public:
     explicit WidgetTreeRoot(sf::RenderWindow& wnd)
         : m_window(wnd) { }
 
+    WidgetTreeRoot(WidgetTreeRoot const&) = delete;
+    WidgetTreeRoot& operator=(WidgetTreeRoot const&) = delete;
+
     virtual ~WidgetTreeRoot() = default;
 
     sf::RenderWindow& window() const { return m_window; }
