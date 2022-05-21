@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
+#include <string_view>
 #include <vector>
 
 namespace GUI {
@@ -27,6 +28,9 @@ public:
     std::filesystem::path get_path(size_t row) const {
         return m_paths[row];
     }
+    void add_desired_extension(const std::string ext){
+        m_extensions.push_back(ext);
+    }
 
     void update_content(
         std::filesystem::path path, std::function<bool(std::filesystem::path)> condition = [](std::filesystem::path path) { return true; });
@@ -36,11 +40,22 @@ private:
 
     std::vector<std::vector<std::string>> m_content;
     std::vector<std::filesystem::path> m_paths;
+    std::vector<std::string> m_extensions;
 };
 
 class FileExplorer : public Container {
 public:
     explicit FileExplorer(Container& c);
+
+    enum class FileExplorerType{
+        FILE,
+        FOLDER
+    };
+
+    FileModel* model(){return m_model;}
+    void type(FileExplorerType type){m_type = type;}
+
+    std::function<void(std::filesystem::path path)> on_submit;
 
 private:
     void open_path(std::filesystem::path path);
@@ -48,6 +63,8 @@ private:
     std::filesystem::path m_current_path;
     Textbox* m_path_textbox {};
     FileModel* m_model {};
+
+    FileExplorerType m_type = FileExplorerType::FILE;
 };
 
 }

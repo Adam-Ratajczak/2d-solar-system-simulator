@@ -46,6 +46,15 @@ void FileModel::update_content(std::filesystem::path path, std::function<bool(st
     for (const auto& o : std::filesystem::directory_iterator(path)) {
         if (!std::filesystem::exists(o) || !condition(o.path().filename()))
             continue;
+        bool con = 1;
+
+        for(const auto& e : m_extensions){
+            if(o.path().extension() == e)
+                con = 0;
+        }
+
+        if(m_extensions.size() != 0 && con && !std::filesystem::is_directory(o))
+            continue;
 
         m_paths.push_back(o.path());
 
@@ -104,6 +113,11 @@ std::string FileModel::file_type(std::filesystem::path path) {
         { ".py", "Python script" },
         { ".ttf", "TTF font" },
         { ".txt", "Text file" },
+        { ".cpp", "C++ source file" },
+        { ".hpp", "C++ header file" },
+        { ".o", "Object file" },
+        { ".bf", "Brainfuck file" },
+        { ".exe", "Executable file" },
     };
 
     auto extension = path.extension().string();
@@ -211,7 +225,14 @@ FileExplorer::FileExplorer(Container& c)
     m_model = &list->create_and_set_model<FileModel>();
 
     list->on_click = [&](unsigned row) {
-        open_path(m_model->get_path(row));
+        auto path = m_model->get_path(row);
+
+        if(m_type == FileExplorerType::FILE && !std::filesystem::is_directory(path)){
+            if(on_submit)
+                on_submit(path);
+        }else {
+            open_path(path);
+        }
     };
 
     m_path_textbox->on_enter = [&](std::string path) {

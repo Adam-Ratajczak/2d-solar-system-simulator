@@ -4,12 +4,13 @@
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
-#include "../gui/FileExplorer.hpp"
-#include "../gui/Prompt.hpp"
+#include "../gui/FilePrompt.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <cmath>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -21,12 +22,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
     // TEST START
     {
-        auto& test_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
-        test_window.set_size({ 1000, 600 });
-        test_window.center_on_screen();
-        auto& container = test_window.set_main_widget<GUI::Container>();
-        container.set_layout<GUI::HorizontalBoxLayout>();
-        auto fe = container.add_widget<GUI::FileExplorer>();
+        
     }
     // TEST END
 
@@ -82,10 +78,13 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         auto& load_world = menu->add_entry(load_image("../assets/loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
         load_world.on_toggle = [this](bool) {
             // TODO: Port to FileExplorer when it is ready for that
-            auto file_name = GUI::prompt("File name: ", "Load world", "e.g. solar.essa");
-            if (file_name.has_value()) {
+            auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>(std::move("Choose file to open: "), std::move("Open file"), std::move("e.g.: solar.essa"));
 
-                m_settings_gui->set_world_file(file_name->toAnsiString());
+            prompt.run();
+            
+            if (prompt.result().has_value()) {
+
+                m_settings_gui->set_world_file(prompt.result().value().toAnsiString());
                 m_settings_gui->reset_simulation();
             }
         };

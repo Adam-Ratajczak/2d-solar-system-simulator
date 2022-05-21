@@ -39,6 +39,8 @@ public:
         return *widget_ptr;
     }
 
+    void set_id(std::string id){m_id = id;}
+
     virtual void draw();
     virtual void handle_event(sf::Event);
     virtual void handle_events() {}
@@ -63,6 +65,8 @@ private:
     Widget* m_focused_widget {};
     bool m_needs_relayout = true;
     std::shared_ptr<Widget> m_main_widget;
+
+    std::string m_id = "";
 };
 
 }

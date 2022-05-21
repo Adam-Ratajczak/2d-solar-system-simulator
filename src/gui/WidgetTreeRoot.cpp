@@ -17,6 +17,7 @@ void WidgetTreeRoot::draw() {
     m_window.setView(gui_view);
 
     if (m_needs_relayout) {
+        // std::cout << m_id << "\n"
         m_main_widget->set_size({ { size().x, Length::Unit::Px }, { size().y, Length::Unit::Px } });
         m_main_widget->set_raw_size(size());
         m_main_widget->do_relayout();
