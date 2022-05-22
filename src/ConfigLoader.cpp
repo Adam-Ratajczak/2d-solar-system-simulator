@@ -69,7 +69,7 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
             // FIXME: This has no overflow checking etc...
             return std::make_unique<Object>(
                 read_double_property("mass", 1),
-                read_double_property("radius", 1000),
+                read_distance_property("radius").value(),
                 Vector3 { read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },
                 Vector3 { read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
                 sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
@@ -87,7 +87,7 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
                 std::cout << "'around' object doesn't exist: " << around << std::endl;
                 return {};
             }
-            if(read_distance_property("apoapsis").value() != 0 && read_distance_property("periapsis").value() != 0)
+            if (read_distance_property("apoapsis").value() != 0 && read_distance_property("periapsis").value() != 0)
                 return around_object->create_object_relative_to_ap_pe(
                     read_double_property("mass"),
                     read_distance_property("radius"),
@@ -99,7 +99,7 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
                     sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                     properties["name"],
                     0.0_deg); // TODO
-            
+
             return around_object->create_object_relative_to_maj_ecc(
                 read_double_property("mass"),
                 read_distance_property("radius"),
