@@ -56,6 +56,138 @@ orbitting_planet
     eccencrity=0.0041
     direction=left
     orbit_position=180.0
-    orbit_tilt=1.0
+    orbit_tilt=0.05
     colorr=80 colorg=78 colorb=81
     name=Io;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.7998e22
+    radius=1570000
+    major_axis=671100_km
+    eccencrity=0.009
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.5
+    colorr=80 colorg=78 colorb=81
+    name=Europa;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4819e23
+    radius=2630000
+    major_axis=1070400_km
+    eccencrity=0.0013
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.2
+    colorr=80 colorg=78 colorb=81
+    name=Ganymede;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.0759e23
+    radius=2410000
+    major_axis=1882770_km
+    eccencrity=0.0074
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=0.192
+    colorr=80 colorg=78 colorb=81
+    name=Callisto;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.8e14
+    radius=4500
+    major_axis=7380500_km
+    eccencrity=0.3
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=43.8
+    colorr=80 colorg=78 colorb=81
+    name=Thermisto;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e15
+    radius=10750
+    major_axis=11146400_km
+    eccencrity=0.162
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=28.6
+    colorr=80 colorg=78 colorb=81
+    name=Leda;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=11401000_km
+    eccencrity=0.116
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=29.1
+    colorr=80 colorg=78 colorb=81
+    name=Ersa;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e18
+    radius=68000
+    major_axis=11440600_km
+    eccencrity=0.160
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=28.1
+    colorr=80 colorg=78 colorb=81
+    name=Himalia;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=11481000_km
+    eccencrity=0.179
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=29.0
+    colorr=80 colorg=78 colorb=81
+    name=Pandia;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.9e16
+    radius=21000
+    major_axis=11700800_km
+    eccencrity=0.117
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=27.2
+    colorr=80 colorg=78 colorb=81
+    name=Lysithea;
+
+orbitting_planet
+    around=Jupiter
+    mass=2.7e17
+    radius=40000
+    major_axis=11712300_km
+    eccencrity=0.211
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=27.9
+    colorr=80 colorg=78 colorb=81
+    name=Elara;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=12260300_km
+    eccencrity=0.232
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=29.0
+    colorr=80 colorg=78 colorb=81
+    name=Dia;
