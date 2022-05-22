@@ -9,8 +9,10 @@ public:
     bool pause_simulation_on_creative_mode()const {return m_pause_simulation_on_creative_mode;}
     bool unfocus_on_wnd_close()const {return m_unfocus_on_wnd_close;}
 
+    // FIXME: This should be somewhere else, maybe in SimulationView.
     void set_world_file(std::string wf) { m_world_file = std::move(wf); }
     void reset_simulation();
+    void load_world(std::string wf);
 
 private:
     SimulationView& m_simulation_view;

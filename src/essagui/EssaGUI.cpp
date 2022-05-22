@@ -5,7 +5,6 @@
 #include "PythonREPL.hpp"
 
 #include <EssaGUI/gui/FilePrompt.hpp>
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -37,7 +36,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
                 if (m_settings_gui->unfocus_on_wnd_close())
                     m_simulation_view->set_focused(nullptr);
 
-                if(m_simulation_view->speed() == 0)
+                if (m_simulation_view->speed() == 0)
                     m_simulation_view->pause_simulation(false);
             };
         }
@@ -76,11 +75,8 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             prompt.add_desired_extension(".essa");
             prompt.run();
 
-            if (prompt.result().has_value()) {
-
-                m_settings_gui->set_world_file(prompt.result().value().toAnsiString());
-                m_settings_gui->reset_simulation();
-            }
+            if (prompt.result().has_value())
+                m_settings_gui->load_world(prompt.result().value().toAnsiString());
         };
     }
 

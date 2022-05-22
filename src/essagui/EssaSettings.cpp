@@ -240,3 +240,8 @@ void EssaSettings::reset_simulation() {
             wnd.close();
     });
 }
+
+void EssaSettings::load_world(std::string wf) {
+    set_world_file(std::move(wf));
+    reset_simulation();
+}
