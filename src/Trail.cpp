@@ -81,7 +81,7 @@ void Trail::recalculate_with_offset(Vector3 offset) {
     if (m_offset == offset)
         return;
     for (size_t s = 0; s < m_length; s++)
-        m_vertexes[s].position = m_vertexes[s].position - m_offset + offset;
+        m_vertexes[s].position = m_vertexes[s].position - m_offset / AU + offset / AU;
     m_offset = offset;
 }
 
