@@ -32,11 +32,11 @@ EssaSplash::EssaSplash(sf::RenderWindow& wnd, EssaSettings& essa_settings)
     auto button_space = container.add_widget<GUI::Container>();
     auto& button_space_layout = button_space->set_layout<GUI::HorizontalBoxLayout>();
     button_space_layout.set_padding(10);
-    button_space_layout.set_spacing(10);
+    button_space_layout.set_spacing(20);
 
     auto add_button = [](GUI::Container* container, sf::String label, std::function<void()> on_click) {
         auto button = container->add_widget<GUI::TextButton>();
-        button->set_size({ Length::Auto, 50.0_px });
+        button->set_size({ Length::Auto, 40.0_px });
         button->set_content(std::move(label));
         button->on_click = std::move(on_click);
     };
@@ -56,7 +56,7 @@ EssaSplash::EssaSplash(sf::RenderWindow& wnd, EssaSettings& essa_settings)
 
     auto button_space_column2 = button_space->add_widget<GUI::Container>();
     auto& button_space_column2_layout = button_space_column2->set_layout<GUI::VerticalBoxLayout>();
-    button_space_column2_layout.set_spacing(5);
+    button_space_column2_layout.set_spacing(10);
 
     add_button(button_space_column2, "About...", [this]() {
         constexpr char const AboutString[] = "ESSA - Extremely Sophiscated Space Application\n"
