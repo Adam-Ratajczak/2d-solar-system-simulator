@@ -96,6 +96,7 @@ void Object::update_forces_against(Object& object) {
 void Object::before_update() {
     if (m_is_forward_simulated)
         update_closest_approaches();
+    m_old_most_attracting_object = m_most_attracting_object;
 }
 
 void Object::nonphysical_update() {
@@ -122,7 +123,6 @@ void Object::nonphysical_update() {
 }
 
 void Object::clear_forces() {
-    m_old_most_attracting_object = m_most_attracting_object;
     m_attraction_factor = Vector3();
     m_max_attraction = 0;
 }
