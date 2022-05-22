@@ -29,14 +29,14 @@ Trail::Trail(size_t max_trail_size, sf::Color color)
     m_length++;
 }
 
-std::pair<Vector3, Vector3> Trail::m_get_last_two_entries() const{
+std::pair<Vector3, Vector3> Trail::m_get_last_two_entries() const {
     int i1 = m_append_offset;
     int i2 = m_append_offset - 1;
 
-    if(i1 < 0)
+    if (i1 < 0)
         i1 += m_vertexes.size();
 
-    if(i2 < 0)
+    if (i2 < 0)
         i2 += m_vertexes.size();
 
     return std::make_pair(m_vertexes[i1].position, m_vertexes[i2].position);
@@ -69,7 +69,6 @@ void Trail::push_back(Vector3 pos) {
 
     last_xy_angle = std::atan2(pos.y, pos.x);
     last_yz_angle = std::atan2(pos.y, pos.z);
-
 }
 
 void Trail::reset() {
@@ -81,7 +80,7 @@ void Trail::recalculate_with_offset(Vector3 offset) {
     if (m_offset == offset)
         return;
     for (size_t s = 0; s < m_length; s++)
-        m_vertexes[s].position = m_vertexes[s].position - m_offset / AU + offset / AU;
+        m_vertexes[s].position = m_vertexes[s].position + m_offset / AU - offset / AU;
     m_offset = offset;
 }
 
