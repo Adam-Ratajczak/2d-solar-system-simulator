@@ -47,8 +47,8 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolW
 
 void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     auto title = info.add_widget<GUI::Textfield>();
-    title->set_size({ Length::Auto, 30.0_px });
-    title->set_alignment(GUI::Align::Center);
+    title->set_size({ Length::Auto, 40.0_px });
+    title->set_alignment(GUI::Align::Top);
     title->set_font_size(30);
     title->set_content("General information");
 
@@ -89,8 +89,8 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
 
 void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     auto title = modify.add_widget<GUI::Textfield>();
-    title->set_size({ Length::Auto, 30.0_px });
-    title->set_alignment(GUI::Align::Center);
+    title->set_size({ Length::Auto, 40.0_px });
+    title->set_alignment(GUI::Align::Top);
     title->set_font_size(30);
     title->set_content("Modify object");
 
@@ -216,8 +216,8 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
 void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
     auto title = parent.add_widget<GUI::Textfield>();
-    title->set_size({ Length::Auto, 30.0_px });
-    title->set_alignment(GUI::Align::Center);
+    title->set_size({ Length::Auto, 40.0_px });
+    title->set_alignment(GUI::Align::Top);
     title->set_font_size(30);
     title->set_content("Change object view");
 
