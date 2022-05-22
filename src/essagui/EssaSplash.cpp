@@ -2,7 +2,9 @@
 
 #include "EssaSettings.hpp"
 
+#include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/FilePrompt.hpp>
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/TextButton.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
@@ -47,6 +49,16 @@ EssaSplash::EssaSplash(sf::RenderWindow& wnd, EssaSettings& essa_settings)
 
     add_button(button_space_column1, "Open Solar System", [this]() {
         m_essa_settings.load_world("../worlds/solar.essa");
+        close();
+    });
+
+    add_button(button_space_column1, "Open file", [this]() {
+        auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
+        prompt.add_desired_extension(".essa");
+        prompt.run();
+
+        if (prompt.result().has_value())
+            m_essa_settings.load_world(prompt.result().value().toAnsiString());
         close();
     });
 
