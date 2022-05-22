@@ -66,6 +66,7 @@ EssaSplash::EssaSplash(sf::RenderWindow& wnd, EssaSettings& essa_settings)
                                              "Licensed under Beerware License\n"
                                              "Source: https://github.com/Adam-Ratajczak/essa\n"
                                              "\n"
+                                             "Powered by:\n"
                                              "\u2022 EssaGUI (https://github.com/sppmacd/EssaGUI)\n"
                                              "\u2022 SFML (https://github.com/SFML/SFML)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
