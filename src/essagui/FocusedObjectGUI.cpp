@@ -187,7 +187,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
     auto modify_button = button_container->add_widget<GUI::TextButton>();
     modify_button->set_content("Modify object");
-    modify_button->set_display_attributes(sf::Color::Green, sf::Color::Green, sf::Color::White);
+    modify_button->override_button_colors().untoggleable.background = theme().positive;
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
@@ -203,7 +203,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
     auto remove_button = button_container->add_widget<GUI::TextButton>();
     remove_button->set_content("Remove object");
-    remove_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
+    remove_button->override_button_colors().untoggleable.background = theme().negative;
     remove_button->on_click = [&]() {
         auto result = GUI::message_box("Are you sure you want to delete object \"" + m_focused->name() + "\"?", "Delete object", GUI::MessageBox::Buttons::YesNo);
         if (result == GUI::MessageBox::ButtonRole::Yes) {
@@ -228,7 +228,6 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
     auto default_view_textfield = default_view_button_container->add_widget<GUI::Textfield>();
     default_view_textfield->set_content("Hide focused object window");
     auto default_view_button = default_view_button_container->add_widget<GUI::TextButton>();
-    default_view_button->set_display_attributes(sf::Color::Red, sf::Color::Red, sf::Color::White);
     default_view_button->set_content("Hide");
     default_view_button->set_alignment(GUI::Align::Center);
 
