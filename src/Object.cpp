@@ -39,13 +39,13 @@ Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color c
     , m_name(name)
     , m_orbit_len(period) {
     m_trail.push_back(m_pos);
-
-    if (!s_sphere.is_initialized()) {
-        s_sphere.construct();
-    }
 }
 
 Sphere& Object::sphere() {
+    if (!s_sphere.is_initialized()) {
+        s_sphere.construct();
+    }
+
     return *s_sphere;
 }
 
