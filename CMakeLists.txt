@@ -23,6 +23,7 @@ add_executable(
     src/essagui/EssaCreateObject.cpp
     src/essagui/EssaGUI.cpp
     src/essagui/EssaSettings.cpp
+    src/essagui/EssaSplash.cpp
     src/essagui/FocusedObjectGUI.cpp
     src/essagui/PythonREPL.cpp
 

@@ -4,6 +4,7 @@
 #include "World.hpp"
 #include "essagui/EssaGUI.hpp"
 #include <EssaGUI/gui/Application.hpp>
+#include "essagui/EssaSplash.hpp"
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Environment.hpp"
@@ -30,6 +31,10 @@ int main() {
 
     // Save clean OpenGL state which we will use for world rendering
     window.pushGLStates();
+
+    // Display splash
+    auto& splash = GUI::Application::the().open_overlay<EssaSplash>(gui.settings_gui());
+    splash.run();
 
     application.run();
     return EXIT_SUCCESS;

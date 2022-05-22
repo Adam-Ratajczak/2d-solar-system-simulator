@@ -5,6 +5,9 @@
 #include "../Object.hpp"
 #include "../SimulationView.hpp"
 #include "../World.hpp"
+#include "EssaCreateObject.hpp"
+#include "EssaSettings.hpp"
+#include "FocusedObjectGUI.hpp"
 #include <EssaGUI/gui/Button.hpp>
 #include <EssaGUI/gui/ColorPicker.hpp>
 #include <EssaGUI/gui/Container.hpp>
@@ -16,9 +19,6 @@
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
 #include <EssaGUI/gui/Widget.hpp>
-#include "EssaCreateObject.hpp"
-#include "EssaSettings.hpp"
-#include "FocusedObjectGUI.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
@@ -42,6 +42,8 @@ public:
     virtual void draw(sf::RenderWindow& window) const override;
 
     SimulationView& simulation_view() const { return *m_simulation_view; }
+
+    EssaSettings& settings_gui() { return *m_settings_gui; }
 
 private:
     World& m_world;
