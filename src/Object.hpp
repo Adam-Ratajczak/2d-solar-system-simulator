@@ -38,7 +38,6 @@ public:
     void before_update();
 
     void update_forces_against(Object&);
-
     void update(int speed);
 
     Trail& trail() { return m_trail; }
@@ -116,6 +115,11 @@ private:
     friend std::ostream& operator<<(std::ostream& out, Object const&);
 
     void update_closest_approaches();
+
+    // Called after everything physical is done on the Object.
+    // Used for trails / apoapsis & periapsis / everything that doesn't
+    // influence physical behavior
+    void nonphysical_update();
 
     // Draws label in at 3d position but not projected (in GUI layer).
     void draw_label(SimulationView const&, Vector3 position, std::string, sf::Color) const;

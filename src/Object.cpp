@@ -4,11 +4,11 @@
 #include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"
 #include "glwrapper/Vertex.hpp"
-#include <EssaGUI/gui/Application.hpp>
 #include "math/Transform.hpp"
 #include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
+#include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/util/DelayedInit.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
 #include <EssaGUI/util/Units.hpp>
@@ -98,6 +98,29 @@ void Object::before_update() {
         update_closest_approaches();
 }
 
+void Object::nonphysical_update() {
+    if (m_world->m_simulation_view->offset_trails())
+        recalculate_trails_with_offset();
+    else {
+        m_trail.recalculate_with_offset({});
+        m_trail.push_back(m_pos);
+    }
+
+    if (m_most_attracting_object == nullptr)
+        return;
+
+    double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
+    if (m_ap < distance_from_object) {
+        m_ap = distance_from_object;
+        m_ap_vel = m_vel.magnitude();
+    }
+
+    if (m_pe > distance_from_object) {
+        m_pe = distance_from_object;
+        m_pe_vel = m_vel.magnitude();
+    }
+}
+
 void Object::clear_forces() {
     m_old_most_attracting_object = m_most_attracting_object;
     m_attraction_factor = Vector3();
@@ -125,26 +148,7 @@ void Object::update(int speed) {
         }
     }
 
-    if (m_world->m_simulation_view->offset_trails())
-        recalculate_trails_with_offset();
-    else {
-        m_trail.recalculate_with_offset({});
-        m_trail.push_back(m_pos);
-    }
-
-    if (m_most_attracting_object == nullptr)
-        return;
-
-    double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
-    if (m_ap < distance_from_object) {
-        m_ap = distance_from_object;
-        m_ap_vel = m_vel.magnitude();
-    }
-
-    if (m_pe > distance_from_object) {
-        m_pe = distance_from_object;
-        m_pe_vel = m_vel.magnitude();
-    }
+    nonphysical_update();
 }
 
 void Object::recalculate_trails_with_offset() {
@@ -291,13 +295,13 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
 
     return result;
 }
-    std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
+std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
 
 void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
     m_world->add_object(create_object_relative_to_ap_pe(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation){
+std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
 
     double GM = m_gravity_factor;
     double a = semi_major.value();
