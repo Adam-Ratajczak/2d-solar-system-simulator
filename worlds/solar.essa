@@ -22,7 +22,7 @@ orbitting_planet
     direction=left
     orbit_position=263.6570
     orbit_tilt=0.0
-    colorr=255 colorg=255 colorb=255
+    colorr=255 colorg=243 colorb=232
     name=Venus;
 
 orbitting_planet
@@ -34,7 +34,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.0
-    colorr=255 colorg=255 colorb=255
+    colorr=53 colorg=112 colorb=171
     name=Earth;
 
 orbitting_planet
@@ -46,7 +46,7 @@ orbitting_planet
     direction=left
     orbit_position=290.6297
     orbit_tilt=0.0
-    colorr=188 colorg=39 colorb=50
+    colorr=185 colorg=87 colorb=50
     name=Mars;
 
 orbitting_planet
@@ -58,7 +58,7 @@ orbitting_planet
     direction=left
     orbit_position=105.2543
     orbit_tilt=0.0
-    colorr=207 colorg=82 colorb=63
+    colorr=234 colorg=157 colorb=113
     name=Jupiter;
 
 orbitting_planet
@@ -70,7 +70,7 @@ orbitting_planet
     direction=left
     orbit_position=289.4523
     orbit_tilt=0.0
-    colorr=207 colorg=186 colorb=178
+    colorr=222 colorg=194 colorb=114
     name=Saturn;
 
 orbitting_planet
@@ -82,7 +82,7 @@ orbitting_planet
     direction=left
     orbit_position=276.7999
     orbit_tilt=0.0
-    colorr=0 colorg=174 colorb=199
+    colorr=186 colorg=227 colorb=245
     name=Uranus;
 
 orbitting_planet
@@ -94,7 +94,7 @@ orbitting_planet
     direction=left
     orbit_position=282.7192
     orbit_tilt=0.0
-    colorr=0 colorg=111 colorb=255
+    colorr=97 colorg=147 colorb=197
     name=Neptune;
 
 orbitting_planet
