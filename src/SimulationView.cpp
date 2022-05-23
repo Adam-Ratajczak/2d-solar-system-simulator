@@ -7,6 +7,7 @@
 
 #include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <EssaGUI/util/DelayedInit.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
@@ -323,30 +324,24 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
         oss << ", Reversed";
     oss << ")";
 
-    return;
-    // TODO
+    GUI::TextDrawOptions label_text;
+    label_text.fill_color = sf::Color::White;
+    label_text.font_size = 25;
+    window.draw_text("FPS: " + std::to_string(m_fps), GUI::Application::the().font, { 10, window.getSize().y - 65.f });
+    window.draw_text(oss.str(), GUI::Application::the().font, { 10, window.getSize().y - 35.f });
 
-    // sf::Text fps_text("FPS: " + std::to_string(m_fps), GUI::Application::the().font, 25);
-    // fps_text.setFillColor(sf::Color::White);
-    // fps_text.setPosition(10, window.getSize().y - 65);
-    // window.draw(fps_text);
+    std::ostringstream debugoss;
+    auto mp = sf::Mouse::getPosition(window);
+    debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
+    debugoss << "s=" << scale() << std::endl;
+    debugoss << "off=" << offset() << std::endl;
+    debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
+    debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
 
-    // sf::Text date_text(oss.str(), GUI::Application::the().font, 25);
-    // date_text.setFillColor(sf::Color::White);
-    // date_text.setPosition(10, window.getSize().y - 35);
-    // window.draw(date_text);
-
-    // std::ostringstream debugoss;
-    // auto mp = sf::Mouse::getPosition(window);
-    // debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
-    // debugoss << "s=" << scale() << std::endl;
-    // debugoss << "off=" << offset() << std::endl;
-    // debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
-    // debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
-
-    // sf::Text debug_text(debugoss.str(), GUI::Application::the().font, 15);
-    // debug_text.setPosition(600, 10);
-    // window.draw(debug_text);
+    GUI::TextDrawOptions debug_text;
+    debug_text.fill_color = sf::Color::White;
+    debug_text.font_size = 15;
+    window.draw_text(debugoss.str(), GUI::Application::the().fixed_width_font, {600, 20}, debug_text);
 }
 
 void SimulationView::pause_simulation(bool state) {
@@ -490,7 +485,7 @@ WorldDrawScope const* WorldDrawScope::current() {
 }
 
 WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, sf::Shader* custom_shader)
-    : m_simulation_view(view){
+    : m_simulation_view(view) {
 
     if (s_current_draw_scope)
         return;
