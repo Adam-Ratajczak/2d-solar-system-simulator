@@ -91,6 +91,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
                 m_simulation_view.start_focus_measure([&](Object* focusing) {
                     m_add_object_button->set_visible(true);
                     m_focused = focusing;
+                    m_forward_simulation_is_valid = false;
                 });
             }
             else {
