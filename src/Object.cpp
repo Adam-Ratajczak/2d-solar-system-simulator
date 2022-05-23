@@ -180,7 +180,8 @@ void Object::draw(SimulationView const& view) {
     s_sphere->set_radius(m_radius / AU);
     s_sphere->set_position(scaled_pos);
     s_sphere->set_color(m_color);
-    s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Vector3());
+    if (m_world)
+        s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Vector3());
     s_sphere->draw(view.window());
 
     if (view.show_trails())
