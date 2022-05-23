@@ -39,7 +39,7 @@ public:
     explicit EssaGUI(GUI::WidgetTreeRoot&, World& world);
 
     virtual void handle_event(GUI::Event&) override;
-    virtual void draw(sf::RenderWindow& window) const override;
+    virtual void draw(GUI::SFMLWindow& window) const override;
 
     SimulationView& simulation_view() const { return *m_simulation_view; }
 

@@ -21,6 +21,8 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
     m_simulation_view = add_widget<SimulationView>(world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    // m_simulation_view->set_visible(false);
+    m_world.m_simulation_view = m_simulation_view;
 
     m_simulation_view->on_change_focus = [&](Object* obj) {
         if (obj == nullptr)
@@ -48,8 +50,6 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         m_simulation_view->reset();
     };
     home_button->set_tooltip_text("Reset coordinates");
-
-    m_world.m_simulation_view = m_simulation_view;
 
     auto menu = add_widget<GUI::SettingsMenu>();
     menu->set_position({ 10.0_px, 10.0_px });
@@ -100,11 +100,13 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 }
 
 void EssaGUI::update() {
+    return;
     if (!m_create_object_gui->is_forward_simulation_valid())
         m_create_object_gui->recalculate_forward_simulation();
 }
 
-void EssaGUI::draw(sf::RenderWindow& window) const {
+void EssaGUI::draw(GUI::SFMLWindow& window) const {
+    return;
     if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
             WorldDrawScope scope(*m_simulation_view);

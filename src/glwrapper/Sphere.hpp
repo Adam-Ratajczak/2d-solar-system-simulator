@@ -13,10 +13,12 @@
 
 #pragma once
 
-#include "../math/Vector3.hpp"
-#include "Color.hpp"
-#include "Vertex.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <GL/glew.h>
+
+#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/glwrapper/Color.hpp>
+#include <EssaGUI/glwrapper/Vertex.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
@@ -24,6 +26,7 @@
 class Sphere {
 public:
     enum class DrawMode {
+        Fancy,
         Full,
         Grid
     };
@@ -35,8 +38,9 @@ public:
     void set_position(Vector3 pos) { m_pos = pos; }
     void set_radius(double radius) { m_radius = radius; }
     void set_draw_mode(DrawMode mode) { m_mode = mode; }
+    void set_light_position(Vector3 pos) { m_light_position = pos; }
 
-    void draw() const;
+    void draw(GUI::SFMLWindow& window) const;
 
 private:
     double m_radius {};
@@ -44,6 +48,7 @@ private:
     unsigned m_stacks {};
     DrawMode m_mode = DrawMode::Full;
     Vector3 m_pos;
+    Vector3 m_light_position;
     sf::Color m_color;
 
     void gen_sphere();

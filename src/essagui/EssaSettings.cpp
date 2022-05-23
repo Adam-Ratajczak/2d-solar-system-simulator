@@ -89,15 +89,16 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         sphere_mode_label->set_size({ { 60, Length::Percent }, Length::Auto });
 
         auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
-        toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, sf::Color::Green);
-        toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, sf::Color::Blue);
-        toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Full, sf::Color::Red);
+        toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, theme().positive);
+        toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, theme().negative);
+        toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Fancy, theme().neutral);
         toggle_sphere_mode->set_alignment(GUI::Align::Center);
         m_on_restore_defaults.push_back([toggle_sphere_mode]() {
-            toggle_sphere_mode->set_index(0);
+            toggle_sphere_mode->set_index(2);
+            toggle_sphere_mode->on_change(Sphere::DrawMode::Fancy);
         });
         toggle_sphere_mode->on_change = [this](Sphere::DrawMode mode) {
-                Object::sphere().set_draw_mode(mode);
+            Object::sphere().set_draw_mode(mode);
         };
 
         auto toggle_time_format_container = display_settings.add_widget<GUI::Container>();

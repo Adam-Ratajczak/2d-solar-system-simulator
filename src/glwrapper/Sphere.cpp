@@ -1,13 +1,15 @@
 #include "Sphere.hpp"
+
 #include "../SimulationView.hpp"
 #include "../math/Transform.hpp"
-#include "Color.hpp"
-#include "Helpers.hpp"
 
+#include <EssaGUI/glwrapper/Color.hpp>
 #include <GL/gl.h>
+#include <SFML/Graphics/Glsl.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 
@@ -17,23 +19,50 @@ const int MIN_STACK_COUNT = 2;
 sf::Shader s_shader;
 bool m_shader_loaded = false;
 
-static char const s_vertex_shader[] = R"~~~(
-#version 110
+static char const s_vertex_shader[] = R"~~~(// Planet VS
+#version 330
 
-void main()
-{
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+layout (location = 0) in vec4 position;
+
+uniform vec4 translation;
+uniform float radius;
+uniform mat4 modelMatrix;
+uniform mat4 worldViewMatrix;
+uniform mat4 projectionMatrix;
+
+out vec4 vertex;
+
+void main() {
+    vertex = position;
+    gl_Position = projectionMatrix * (worldViewMatrix * (modelMatrix * vertex));
 }
 )~~~";
 
-static char const s_fragment_shader[] = R"~~~(
-#version 110
+static char const s_fragment_shader[] = R"~~~(// Planet FS
+#version 330
 
 uniform vec4 color;
+uniform vec4 lightPosition;
+uniform bool fancy;
+uniform vec4 translation;
+uniform float radius;
 
-void main()
-{
-    gl_FragColor = color;
+in vec4 vertex;
+
+void main() {
+    //if (!fancy) {
+        gl_FragColor = color;
+        return;
+    //}
+    vec4 worldFragPos = normalize(vertex) * radius + translation;
+    // if (radius > length(lightPosition - vertex) / 1000) {
+    //     // Light source is inside object. For now just fallback to flat mode.
+    //     gl_FragColor = color;
+    //     return;
+    // }
+    // float d = length(translation - vertex * radius)/4; //dot(normalize(-vertex), normalize(worldFragPos - normalize(vertex) * radius - lightPosition));
+    // float sd = d - 0.5;
+    // gl_FragColor = vec4(d,d,d,1); //d < 0 ? vec4(1,0,0,1) : vec4(0,1,0,1);
 }
 )~~~";
 
@@ -43,9 +72,11 @@ Sphere::Sphere(int sectors, int stacks)
     gen_sphere();
     if (!m_shader_loaded) {
         m_shader_loaded = true;
-        std::cout << "Loading shader" << std::endl;
-        s_shader.loadFromMemory(s_vertex_shader, sf::Shader::Vertex);
-        s_shader.loadFromMemory(s_fragment_shader, sf::Shader::Fragment);
+        std::cout << "Sphere: Loading planet shader" << std::endl;
+        if (!s_shader.loadFromMemory(s_vertex_shader, s_fragment_shader)) {
+            std::cout << "Failed to load planet shader. Fancy mode will not work." << std::endl;
+            m_shader_loaded = false;
+        }
     }
 }
 
@@ -87,19 +118,28 @@ unsigned Sphere::vertex_index(unsigned stack, unsigned sector) const {
     return stack * m_sectors + (sector % m_sectors);
 }
 
-void Sphere::draw() const {
+void Sphere::draw(GUI::SFMLWindow& window) const {
     WorldDrawScope::verify();
 
-    sf::Shader::bind(&s_shader);
+    auto model_matrix = Transform::scale({ m_radius, m_radius, m_radius }) * Transform::translation(m_pos);
+    GUI::SFMLWindow::ModelScope scope(window, model_matrix);
+
     s_shader.setUniform("color", sf::Glsl::Vec4 { m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f, m_color.a / 255.f });
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    Transform::translation(m_pos).gl_mult();
-    Transform::scale({ m_radius, m_radius, m_radius }).gl_mult();
-    if (m_mode == DrawMode::Full)
-        GL::draw_indexed_vertices(GL_TRIANGLES, m_vertices, m_indices);
-    else if (m_mode == DrawMode::Grid)
-        GL::draw_indexed_vertices(GL_LINES, m_vertices, m_indices);
-    sf::Shader::bind(nullptr);
-    glPopMatrix();
+    s_shader.setUniform("translation", sf::Glsl::Vec4 { static_cast<float>(m_pos.x), static_cast<float>(m_pos.y), static_cast<float>(m_pos.z), 0 });
+    s_shader.setUniform("radius", 0.1f);
+    if (m_mode == DrawMode::Fancy) {
+        s_shader.setUniform("fancy", true);
+        s_shader.setUniform("lightPosition", sf::Glsl::Vec4(m_light_position.x, m_light_position.y, m_light_position.z, 1));
+    }
+    else {
+        s_shader.setUniform("fancy", false);
+    }
+
+    WorldDrawScope::current()->apply_uniforms(s_shader);
+    window.set_shader(&s_shader);
+    if (m_mode == DrawMode::Grid)
+        window.draw_indexed_vertices(GL_LINES, m_vertices, m_indices);
+    else
+        window.draw_indexed_vertices(GL_TRIANGLES, m_vertices, m_indices);
+    window.set_shader(nullptr);
 }

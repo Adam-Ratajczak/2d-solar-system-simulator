@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Vector3.hpp"
-#include "Matrix.hpp"
+#include <EssaGUI/util/Matrix.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 
 namespace Math {
 

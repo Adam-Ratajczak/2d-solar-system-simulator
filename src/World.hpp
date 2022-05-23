@@ -3,10 +3,10 @@
 #include "ConfigLoader.hpp"
 #include "Object.hpp"
 #include "ObjectHistory.hpp"
-#include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
 #include <EssaGUI/util/Constants.hpp>
 #include <EssaGUI/util/SimulationClock.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <cstdint>
@@ -52,10 +52,17 @@ public:
 
     void delete_object_by_ptr(Object* ptr);
     std::unique_ptr<Object>& find_object_by_ptr(Object* ptr);
-    std::unique_ptr<Object>& last_object(){return m_object_list.back();}
+    std::unique_ptr<Object>& last_object() { return m_object_list.back(); }
 
     void set_forces();
     bool exist_object_with_name(const std::string name) const;
+
+    bool set_light_source(std::string const& name) {
+        m_light_source = get_object_by_name(name);
+        std::cout << name << "??? " << m_light_source << std::endl;
+        return m_light_source != nullptr;
+    }
+    Object* light_source() const { return m_light_source; }
 
 private:
     Util::SimulationClock::time_point m_start_date;
@@ -64,6 +71,7 @@ private:
     std::list<std::unique_ptr<Object>> m_object_list;
     int m_simulation_seconds_per_tick = 60 * 60 * 12; // 12 Hours / half a day
     bool m_is_forward_simulated = false;
+    Object* m_light_source = nullptr;
 
     void update_history_and_date(bool reverse);
 

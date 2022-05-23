@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/Vector3.hpp"
+#include <EssaGUI/util/Vector3.hpp>
 
 #include <Python.h>
 #include <SFML/Graphics.hpp>

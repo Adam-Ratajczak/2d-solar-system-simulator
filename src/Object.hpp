@@ -1,14 +1,17 @@
 #pragma once
 
+#include <GL/glew.h>
+
 #include "History.hpp"
 #include "SimulationView.hpp"
 #include "Trail.hpp"
 #include "glwrapper/Sphere.hpp"
-#include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"
+
 #include <EssaGUI/util/SimulationClock.hpp>
 #include <EssaGUI/util/Units.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
@@ -67,10 +70,10 @@ public:
     double gravity_factor() const { return m_gravity_factor; }
 
     Vector3 pos() const { return m_pos; }
-    void set_pos(const Vector3& pos){ m_pos = pos; }
+    void set_pos(const Vector3& pos) { m_pos = pos; }
 
     Vector3 vel() const { return m_vel; }
-    void set_vel(const Vector3& vel){ m_vel = vel; }
+    void set_vel(const Vector3& vel) { m_vel = vel; }
 
     Vector3 acc() const { return m_attraction_factor; }
 

@@ -1,0 +1,20 @@
+planet
+    name=star
+    mass=2e30
+    radius=1e6_km;
+
+orbitting_planet
+    name=planet
+    around=star
+    mass=2e20
+    radius=10000_km
+    apoapsis=1_AU
+    periapsis=1_AU;
+
+orbitting_planet
+    name=moon
+    around=planet
+    mass=2e22
+    radius=1000_km
+    apoapsis=100000_km
+    periapsis=100000_km;

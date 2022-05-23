@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/Vector3.hpp"
+#include <EssaGUI/util/Vector3.hpp>
 #include <list>
 #include <optional>
 #include <vector>

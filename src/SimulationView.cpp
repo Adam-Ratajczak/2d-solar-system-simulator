@@ -1,13 +1,16 @@
 #include "SimulationView.hpp"
 
 #include "World.hpp"
-#include "glwrapper/Helpers.hpp"
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/WidgetTreeRoot.hpp>
+#include "WorldShader.hpp"
 #include "math/Ray.hpp"
 #include "math/Transform.hpp"
-#include "math/Vector3.hpp"
+
+#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/WidgetTreeRoot.hpp>
+#include <EssaGUI/util/DelayedInit.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -157,7 +160,7 @@ void SimulationView::handle_event(GUI::Event& event) {
     }
 }
 
-void SimulationView::draw_grid(sf::RenderWindow& window) const {
+void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
     constexpr float zoom_step_exponent = 2;
     auto spacing = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom / 2) / std::log2(zoom_step_exponent)));
     constexpr int major_gridline_interval = 4;
@@ -220,29 +223,26 @@ void SimulationView::draw_grid(sf::RenderWindow& window) const {
             index++;
         }
 
-        GL::draw_vertices(GL_LINES, vertices);
+        window.draw_vertices(GL_LINES, vertices);
     }
 
     // guide
     sf::Vector2f guide_start { size().x - 200.f, size().y - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
     sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * 300 / scale(), 0);
-    sf::VertexArray guide { sf::Lines, 6 };
+    std::array<Vertex, 6> guide;
     sf::Color const guide_color { 127, 127, 127 };
-    guide[0] = sf::Vertex({ guide_start, guide_color });
-    guide[1] = sf::Vertex({ guide_end, guide_color });
-    guide[2] = sf::Vertex({ guide_start - sf::Vector2f(0, 5), guide_color });
-    guide[3] = sf::Vertex({ guide_start + sf::Vector2f(0, 5), guide_color });
-    guide[4] = sf::Vertex({ guide_end - sf::Vector2f(0, 5), guide_color });
-    guide[5] = sf::Vertex({ guide_end + sf::Vector2f(0, 5), guide_color });
-    window.draw(guide);
+    guide[0] = Vertex { .position = Vector3(guide_start), .color = guide_color };
+    guide[1] = Vertex { .position = Vector3(guide_end), .color = guide_color };
+    guide[2] = Vertex { .position = Vector3(guide_start - sf::Vector2f(0, 5)), .color = guide_color };
+    guide[3] = Vertex { .position = Vector3(guide_start + sf::Vector2f(0, 5)), .color = guide_color };
+    guide[4] = Vertex { .position = Vector3(guide_end - sf::Vector2f(0, 5)), .color = guide_color };
+    guide[5] = Vertex { .position = Vector3(guide_end + sf::Vector2f(0, 5)), .color = guide_color };
+    window.draw_vertices(GL_LINES, guide);
 
     // FIXME: UB on size_t conversion
-    sf::Text text { Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(), GUI::Application::the().font, 15 };
-    text.setPosition(guide_start);
-    auto bounds = text.getLocalBounds();
-    text.setOrigin({ bounds.width, bounds.height + 10 });
-    window.draw(text);
+    window.draw_text_aligned_in_rect(Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(),
+        { guide_start, {} }, GUI::Application::the().font);
 }
 
 Matrix4x4d SimulationView::projection_matrix() const {
@@ -282,7 +282,7 @@ Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, clip_space.z };
 }
 
-void SimulationView::draw(sf::RenderWindow& window) const {
+void SimulationView::draw(GUI::SFMLWindow& window) const {
     if (m_show_grid)
         draw_grid(window);
     m_world.draw(*this);
@@ -290,22 +290,22 @@ void SimulationView::draw(sf::RenderWindow& window) const {
     switch (m_measure) {
     case Measure::Coords: {
         auto sizes = size();
-        sf::VertexArray lines(sf::Lines, 4);
-        lines[0] = sf::Vertex { { 0, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Red };
-        lines[1] = sf::Vertex { { sizes.x, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Red };
-        lines[2] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), 0 }, sf::Color::Red };
-        lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Red };
-        window.draw(lines);
+        std::array<Vertex, 4> lines;
+        lines[0] = Vertex { .position = Vector3 { 0, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Red };
+        lines[1] = Vertex { .position = Vector3 { sizes.x, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Red };
+        lines[2] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), 0 }, .color = sf::Color::Red };
+        lines[3] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, .color = sf::Color::Red };
+        window.draw_vertices(GL_LINES, lines);
         break;
     }
     case Measure::Focus: {
         auto sizes = size();
-        sf::VertexArray lines(sf::Lines, 4);
-        lines[0] = sf::Vertex { { 0, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Green };
-        lines[1] = sf::Vertex { { sizes.x, static_cast<float>(m_prev_mouse_pos.y) }, sf::Color::Green };
-        lines[2] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), 0 }, sf::Color::Green };
-        lines[3] = sf::Vertex { { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, sf::Color::Green };
-        window.draw(lines);
+        std::array<Vertex, 4> lines;
+        lines[0] = Vertex { .position = Vector3 { 0, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Green };
+        lines[1] = Vertex { .position = Vector3 { sizes.x, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Green };
+        lines[2] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), 0 }, .color = sf::Color::Green };
+        lines[3] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, .color = sf::Color::Green };
+        window.draw_vertices(GL_LINES, lines);
         break;
     }
     default:
@@ -323,27 +323,30 @@ void SimulationView::draw(sf::RenderWindow& window) const {
         oss << ", Reversed";
     oss << ")";
 
-    sf::Text fps_text("FPS: " + std::to_string(m_fps), GUI::Application::the().font, 25);
-    fps_text.setFillColor(sf::Color::White);
-    fps_text.setPosition(10, window.getSize().y - 65);
-    window.draw(fps_text);
+    return;
+    // TODO
 
-    sf::Text date_text(oss.str(), GUI::Application::the().font, 25);
-    date_text.setFillColor(sf::Color::White);
-    date_text.setPosition(10, window.getSize().y - 35);
-    window.draw(date_text);
+    // sf::Text fps_text("FPS: " + std::to_string(m_fps), GUI::Application::the().font, 25);
+    // fps_text.setFillColor(sf::Color::White);
+    // fps_text.setPosition(10, window.getSize().y - 65);
+    // window.draw(fps_text);
 
-    std::ostringstream debugoss;
-    auto mp = sf::Mouse::getPosition(window);
-    debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
-    debugoss << "s=" << scale() << std::endl;
-    debugoss << "off=" << offset() << std::endl;
-    debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
-    debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
+    // sf::Text date_text(oss.str(), GUI::Application::the().font, 25);
+    // date_text.setFillColor(sf::Color::White);
+    // date_text.setPosition(10, window.getSize().y - 35);
+    // window.draw(date_text);
 
-    sf::Text debug_text(debugoss.str(), GUI::Application::the().font, 15);
-    debug_text.setPosition(600, 10);
-    window.draw(debug_text);
+    // std::ostringstream debugoss;
+    // auto mp = sf::Mouse::getPosition(window);
+    // debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
+    // debugoss << "s=" << scale() << std::endl;
+    // debugoss << "off=" << offset() << std::endl;
+    // debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
+    // debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
+
+    // sf::Text debug_text(debugoss.str(), GUI::Application::the().font, 15);
+    // debug_text.setPosition(600, 10);
+    // window.draw(debug_text);
 }
 
 void SimulationView::pause_simulation(bool state) {
@@ -372,7 +375,7 @@ void SimulationView::update() {
             m_pitch_from_object = std::atan2(a.y, a.z) - M_PI / 2;
             m_yaw_from_object = std::atan2(a.y, a.x) + M_PI / 2;
 
-            if(a.y < 0)
+            if (a.y < 0)
                 m_pitch_from_object -= M_PI;
         }
     }
@@ -476,42 +479,47 @@ PySSA::Object SimulationView::python_get_focused_object() const {
     return m_focused_object ? m_focused_object->wrap() : PySSA::Object::none();
 }
 
-static size_t s_world_draw_scope_recursion = 0;
+WorldDrawScope const* s_current_draw_scope = nullptr;
 
 void WorldDrawScope::verify() {
-    assert(s_world_draw_scope_recursion > 0);
+    assert(s_current_draw_scope);
 }
 
-WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth)
-    : m_simulation_view(view) {
-    s_world_draw_scope_recursion++;
-    if (s_world_draw_scope_recursion > 1)
+WorldDrawScope const* WorldDrawScope::current() {
+    return s_current_draw_scope;
+}
+
+WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, sf::Shader* custom_shader)
+    : m_simulation_view(view){
+
+    if (s_current_draw_scope)
         return;
 
-    view.window().popGLStates();
-
-    glViewport(0, 0, view.size().x, view.size().y);
-
-    // simple OpenGL test
-    glMatrixMode(GL_PROJECTION);
-    view.projection_matrix().gl_load();
-
-    glMatrixMode(GL_MODELVIEW);
-    view.modelview_matrix().gl_load();
+    auto& shader = custom_shader ? *custom_shader : WorldShader::world_shader();
+    view.window().set_shader(&shader);
+    apply_uniforms(shader);
 
     glEnable(GL_DEPTH_TEST);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
 
     if (clear_depth == ClearDepth::Yes)
         glClear(GL_DEPTH_BUFFER_BIT);
+
+    m_parent = s_current_draw_scope;
+    s_current_draw_scope = this;
+}
+
+void WorldDrawScope::apply_uniforms(sf::Shader& shader) const {
+    auto projection_matrix = m_simulation_view.projection_matrix().convert<float>();
+    shader.setUniform("projectionMatrix", sf::Glsl::Mat4((float*)projection_matrix.data));
+    auto modelview_matrix = m_simulation_view.modelview_matrix().convert<float>();
+    shader.setUniform("worldViewMatrix", sf::Glsl::Mat4((float*)modelview_matrix.data));
 }
 
 WorldDrawScope::~WorldDrawScope() {
-    s_world_draw_scope_recursion--;
-    if (s_world_draw_scope_recursion != 0)
+    s_current_draw_scope = m_parent;
+    if (s_current_draw_scope)
         return;
-    glFlush();
-    m_simulation_view.window().pushGLStates();
-    m_simulation_view.window().resetGLStates();
+
+    glDisable(GL_DEPTH_TEST);
+    m_simulation_view.window().set_shader(nullptr);
 }

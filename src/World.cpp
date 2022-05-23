@@ -6,11 +6,11 @@
 #include "SimulationView.hpp"
 #include "World.hpp"
 #include "essagui/EssaGUI.hpp"
-#include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
-#include <EssaGUI/util/SimulationClock.hpp>
 
+#include <EssaGUI/util/SimulationClock.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <cassert>
@@ -104,9 +104,9 @@ void World::update(int steps) {
 
         for (auto& obj : m_object_list) // for each celestial body
         {
-            if(obj->deleted())
+            if (obj->deleted())
                 continue;
-                
+
             // Leapfrog algorithm, step 1
             obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
 
@@ -119,14 +119,14 @@ void World::update(int steps) {
 
         for (auto& obj : m_object_list) // for each celestial body
         {
-            if(obj->deleted())
+            if (obj->deleted())
                 continue;
 
             // Leapfrog algorithm, step 3
             obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
 
             obj->update(m_simulation_seconds_per_tick);
-    
+
             // std::cerr << m_date.time_since_epoch().count() << ";" << obj->name() << ";" << obj->pos() << ";" << obj->vel() << ";" << std::endl;
         }
 
@@ -137,9 +137,9 @@ void World::update(int steps) {
     }
 }
 
-bool World::exist_object_with_name(const std::string name) const{
-    for(const auto& obj : m_object_list){
-        if(obj->name() == name && !obj->deleted())
+bool World::exist_object_with_name(const std::string name) const {
+    for (const auto& obj : m_object_list) {
+        if (obj->name() == name && !obj->deleted())
             return true;
     }
 
@@ -172,7 +172,7 @@ void World::reset(ConfigLoader* loader) {
     m_simulation_view->set_focused(nullptr);
     m_date = Util::SimulationTime::create(1990, 4, 20);
     m_object_history.clear_history(0);
-    if(loader)
+    if (loader)
         loader->load(*this);
 }
 
@@ -188,6 +188,9 @@ void World::delete_object_by_ptr(Object* ptr) {
         if (o->most_attracting_object() == ptr)
             o->delete_most_attracting_object();
     }
+
+    if (m_light_source == ptr)
+        m_light_source = nullptr;
 }
 
 std::unique_ptr<Object>& World::find_object_by_ptr(Object* ptr) {

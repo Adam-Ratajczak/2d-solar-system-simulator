@@ -1,13 +1,13 @@
 #include "Object.hpp"
+
 #include "SimulationView.hpp"
 #include "World.hpp"
-#include "glwrapper/Helpers.hpp"
+#include "WorldShader.hpp"
 #include "glwrapper/Sphere.hpp"
-#include "glwrapper/Vertex.hpp"
 #include "math/Transform.hpp"
-#include "math/Vector3.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
+#include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/util/DelayedInit.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
@@ -172,6 +172,7 @@ void Object::delete_most_attracting_object() {
 }
 
 void Object::draw(SimulationView const& view) {
+    WorldDrawScope::verify();
 
     auto scaled_pos = render_position();
     auto& target = view.window();
@@ -179,10 +180,11 @@ void Object::draw(SimulationView const& view) {
     s_sphere->set_radius(m_radius / AU);
     s_sphere->set_position(scaled_pos);
     s_sphere->set_color(m_color);
-    s_sphere->draw();
+    s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Vector3());
+    s_sphere->draw(view.window());
 
     if (view.show_trails())
-        m_trail.draw();
+        m_trail.draw(view.window());
 }
 
 void Object::draw_closest_approaches(SimulationView const& view) {
@@ -196,7 +198,7 @@ void Object::draw_closest_approaches(SimulationView const& view) {
         sf::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
         closest_approaches_vertexes.push_back(Vertex { .position = closest_approach_entry.second.other_object_position / AU, .color = other_color });
     }
-    GL::draw_vertices(GL_LINES, closest_approaches_vertexes);
+    view.window().draw_vertices(GL_LINES, closest_approaches_vertexes);
 }
 
 void Object::draw_closest_approaches_gui(SimulationView const& view) {
@@ -216,10 +218,11 @@ void Object::draw_label(SimulationView const& sv, Vector3 position, std::string 
     // Don't draw labels of planets outside of clipping box
     if (screen_position.z > 1 || screen_position.z < -1)
         return;
-    sf::Text text(std::move(string), GUI::Application::the().bold_font, 15);
-    text.setPosition({ std::roundf(screen_position.x), std::roundf(screen_position.y) });
-    text.setFillColor(color);
-    sv.window().draw(text);
+
+    GUI::TextDrawOptions text;
+    text.font_size = 15;
+    text.fill_color = color;
+    sv.window().draw_text(string, GUI::Application::the().bold_font, { std::roundf(screen_position.x), std::roundf(screen_position.y) }, text);
 }
 
 void Object::delete_object() {

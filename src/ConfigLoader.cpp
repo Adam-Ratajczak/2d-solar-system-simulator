@@ -8,15 +8,12 @@
 
 void ConfigLoader::load(World& world) {
     while (true) {
-        auto planet = parse_planet(world);
-        if (!planet)
+        if (!parse_statement(world))
             break;
-        // FIXME: World should store pointers to Objects.
-        world.add_object(std::move(planet));
     }
 }
 
-std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
+bool ConfigLoader::parse_statement(World& world) {
     std::string line;
     if (!std::getline(m_in, line, ';'))
         return {};
@@ -25,18 +22,11 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
 
     std::string keyword;
     if (!(line_stream >> keyword)) {
-        std::cout << "Expected keyword ('planet' or 'orbitting_planet')" << std::endl;
+        std::cout << "Expected keyword ('planet', 'orbitting_planet' or 'light_source')" << std::endl;
         return {};
     }
 
     std::map<std::string, std::string> properties;
-
-    while (true) {
-        auto property = parse_key_value_pair(line_stream);
-        if (!property.has_value())
-            break;
-        properties.insert(property.value());
-    }
 
     auto read_double_property = [&](std::string const& name, double default_value = 0) {
         auto it = properties.find(name);
@@ -65,18 +55,33 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
 
     // FIXME: It would be better with TRY().
     try {
+        std::cout << keyword << std::endl;
         if (keyword == "planet") {
+            while (true) {
+                auto property = parse_key_value_pair(line_stream);
+                if (!property.has_value())
+                    break;
+                properties.insert(property.value());
+            }
+
             // FIXME: This has no overflow checking etc...
-            return std::make_unique<Object>(
+            world.add_object(std::make_unique<Object>(
                 read_double_property("mass", 1),
                 read_distance_property("radius").value(),
                 Vector3 { read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },
                 Vector3 { read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
                 sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                 properties["name"],
-                read_double_property("trail_length", 1000 * 3600 * 24));
+                read_double_property("trail_length", 1000 * 3600 * 24)));
         }
         else if (keyword == "orbitting_planet") {
+            while (true) {
+                auto property = parse_key_value_pair(line_stream);
+                if (!property.has_value())
+                    break;
+                properties.insert(property.value());
+            }
+
             auto around = properties["around"];
             if (around.empty()) {
                 std::cout << "You need to specify 'around' for 'orbitting_planet'" << std::endl;
@@ -87,8 +92,8 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
                 std::cout << "'around' object doesn't exist: " << around << std::endl;
                 return {};
             }
-            if (read_distance_property("apoapsis").value() != 0 && read_distance_property("periapsis").value() != 0)
-                return around_object->create_object_relative_to_ap_pe(
+            if (read_distance_property("apoapsis").value() != 0 && read_distance_property("periapsis").value() != 0) {
+                world.add_object(around_object->create_object_relative_to_ap_pe(
                     read_double_property("mass"),
                     read_distance_property("radius"),
                     read_distance_property("apoapsis"),
@@ -98,29 +103,42 @@ std::unique_ptr<Object> ConfigLoader::parse_planet(World& world) {
                     Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),
                     sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                     properties["name"],
-                    0.0_deg); // TODO
-
-            return around_object->create_object_relative_to_maj_ecc(
-                read_double_property("mass"),
-                read_distance_property("radius"),
-                read_distance_property("major_axis"),
-                read_double_property("eccencrity"),
-                properties["direction"] == "right" ? false : true,
-                Angle(read_double_property("orbit_position"), Angle::Unit::Deg),
-                Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),
-                sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
-                properties["name"],
-                0.0_deg); // TODO
+                    0.0_deg));
+            }
+            else {
+                world.add_object(around_object->create_object_relative_to_maj_ecc(
+                    read_double_property("mass"),
+                    read_distance_property("radius"),
+                    read_distance_property("major_axis"),
+                    read_double_property("eccencrity"),
+                    properties["direction"] == "right" ? false : true,
+                    Angle(read_double_property("orbit_position"), Angle::Unit::Deg),
+                    Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),
+                    sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
+                    properties["name"],
+                    0.0_deg));
+            }
         }
-        else
-            std::cout << "Invalid keyword: " << keyword << ". Must be 'planet' or 'orbitting_planet'." << std::endl;
-    }
-
-    catch (std::exception& e) {
+        else if (keyword == "light_source") {
+            std::string name;
+            if (!(line_stream >> name)) {
+                std::cout << "Expected light source name" << std::endl;
+                return false;
+            }
+            if (!world.set_light_source(name)) {
+                std::cout << "Light source planet not found" << std::endl;
+                return false;
+            }
+        }
+        else {
+            std::cout << "Invalid keyword: " << keyword << ". Must be 'planet', 'orbitting_planet' or 'light_source'." << std::endl;
+            return false;
+        }
+    } catch (std::exception& e) {
         std::cout << "Some of the values are invalid: " << e.what() << std::endl;
-        return {};
+        return false;
     }
-    return {};
+    return true;
 }
 
 std::optional<std::pair<std::string, std::string>> ConfigLoader::parse_key_value_pair(std::istream& in) {

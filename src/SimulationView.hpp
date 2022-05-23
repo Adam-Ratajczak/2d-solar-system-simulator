@@ -1,12 +1,15 @@
 #pragma once
 
-#include "math/Matrix.hpp"
+#include <GL/glew.h>
+
 #include "math/Transform.hpp"
-#include "math/Vector3.hpp"
 #include "pyssa/WrappedObject.hpp"
 #include <EssaGUI/gui/Widget.hpp>
 #include <EssaGUI/util/Constants.hpp>
+#include <EssaGUI/util/Matrix.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <functional>
 #include <optional>
 
@@ -98,12 +101,12 @@ public:
 
 private:
     virtual void handle_event(GUI::Event&) override;
-    virtual void draw(sf::RenderWindow&) const override;
+    virtual void draw(GUI::SFMLWindow&) const override;
     virtual void update() override;
 
     virtual bool accepts_focus() const override { return true; }
 
-    void draw_grid(sf::RenderWindow&) const;
+    void draw_grid(GUI::SFMLWindow&) const;
 
     PySSA::Object python_reset(PySSA::Object const& args, PySSA::Object const& kwargs);
 
@@ -186,11 +189,22 @@ public:
         No
     };
 
-    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No);
+    // Custom shader uniforms:
+    // - modelviewMatrix : mat4
+    // - projectionMatrix : mat4
+    // - the same as for default shader (see WorldShader.hpp)
+    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No, sf::Shader* custom_shader = nullptr);
     ~WorldDrawScope();
 
+    // Re-apply all uniforms to the shader This can be used when you
+    // draw things with another shaders in a single WorldDrawScope.
+    // (Actually this is a HACK because Sphere doesn't know about SV)
+    void apply_uniforms(sf::Shader&) const;
+
     static void verify();
+    static WorldDrawScope const* current();
 
 private:
     SimulationView const& m_simulation_view;
+    WorldDrawScope const* m_parent = nullptr;
 };

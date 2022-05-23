@@ -18,6 +18,7 @@ add_executable(
     src/SimulationView.cpp
     src/Trail.cpp
     src/World.cpp
+    src/WorldShader.cpp
     src/main.cpp
     
     src/essagui/EssaCreateObject.cpp
@@ -27,7 +28,6 @@ add_executable(
     src/essagui/FocusedObjectGUI.cpp
     src/essagui/PythonREPL.cpp
 
-    src/glwrapper/Helpers.cpp
     src/glwrapper/Sphere.cpp
 
     src/math/Plane.cpp

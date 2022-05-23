@@ -1,0 +1,3 @@
+planet name=Sun1 mass=1e31 radius=0.1_AU colorb=0 posx=1e10 velx=1e5;
+orbitting_planet around=Sun1 name=Sun2 mass=1e20 radius=0.05_AU colorb=0 apoapsis=1_AU periapsis=1_AU;
+light_source Sun1;

@@ -3,17 +3,18 @@
 
 #include "World.hpp"
 #include "essagui/EssaGUI.hpp"
-#include <EssaGUI/gui/Application.hpp>
 #include "essagui/EssaSplash.hpp"
 #include "math/Transform.hpp"
-#include "math/Vector3.hpp"
 #include "pyssa/Environment.hpp"
+
+#include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 int main() {
     glewInit();
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "ESSA", sf::Style::Default, sf::ContextSettings(24, 0, 0));
+    GUI::SFMLWindow window(sf::VideoMode::getDesktopMode(), "ESSA", sf::Style::Default, sf::ContextSettings(24, 0, 0, 3, 2));
     window.setFramerateLimit(60);
 
     World world;
@@ -28,9 +29,6 @@ int main() {
     if (!env.run_script("test.py")) {
         std::cout << "Failed to execute python script :(" << std::endl;
     }
-
-    // Save clean OpenGL state which we will use for world rendering
-    window.pushGLStates();
 
     // Display splash
     auto& splash = GUI::Application::the().open_overlay<EssaSplash>(gui.settings_gui());

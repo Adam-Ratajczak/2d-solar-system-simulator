@@ -1,4 +1,5 @@
 planet name=Sun mass=1.98892e30 radius=695700000 colorb=0;
+light_source Sun;
 
 orbitting_planet
     around=Sun
@@ -33,7 +34,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.0
-    colorr=100 colorg=149 colorb=237
+    colorr=255 colorg=255 colorb=255
     name=Earth;
 
 orbitting_planet

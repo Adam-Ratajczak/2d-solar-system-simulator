@@ -12,7 +12,7 @@
 
 #include <algorithm>
 
-EssaSplash::EssaSplash(sf::RenderWindow& wnd, EssaSettings& essa_settings)
+EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
     : GUI::ToolWindow(wnd)
     , m_essa_settings(essa_settings) {
     set_title("ESSA");

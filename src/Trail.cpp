@@ -1,9 +1,11 @@
 #include "Trail.hpp"
 
 #include "Object.hpp"
-#include "glwrapper/Helpers.hpp"
+#include "WorldShader.hpp"
 #include "math/Transform.hpp"
-#include "math/Vector3.hpp"
+
+#include <EssaGUI/util/DelayedInit.hpp>
+#include <EssaGUI/util/Vector3.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -83,22 +85,20 @@ void Trail::recalculate_with_offset(Vector3 offset) {
     m_offset = offset;
 }
 
-void Trail::draw() {
+void Trail::draw(GUI::SFMLWindow& window) {
+    window.set_shader(&WorldShader::world_shader());
+    Util::DelayedInit<GUI::SFMLWindow::ModelScope> scope;
     if (m_offset != Vector3()) {
-        glPushMatrix();
-        Transform::translation(m_offset / AU).gl_mult();
+        scope.construct(window, Transform::translation(m_offset / AU));
     }
 
     if (m_length != m_vertexes.size()) {
-        GL::draw_vertices(GL_LINE_STRIP, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
+        window.draw_vertices(GL_LINE_STRIP, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
     }
     else {
-        GL::draw_vertices(GL_LINE_STRIP, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
-        GL::draw_vertices(GL_LINE_STRIP, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
+        window.draw_vertices(GL_LINE_STRIP, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
+        window.draw_vertices(GL_LINE_STRIP, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
     }
-
-    if (m_offset != Vector3())
-        glPopMatrix();
 }
 
 void Trail::change_current(Vector3 pos) {
