@@ -48,8 +48,6 @@ void SimulationView::handle_event(GUI::Event& event) {
                     m_on_focus_measure(m_focused_object);
                 }
                 m_focused_object = nullptr;
-                m_yaw += m_yaw_from_object;
-                m_pitch = m_pitch_from_object;
             }
 
             event.set_handled();
