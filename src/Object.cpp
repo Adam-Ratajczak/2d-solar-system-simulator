@@ -319,10 +319,10 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
     result->eccencrity = ecc;
     // std::cout << result.eccencrity << "\n";
 
-    double velocity_constant = (2 * GM) / (a * 2);
+    double velocity_constant = (2 * GM) / (a * 2 - a * ecc);
 
     result->m_ap_vel = std::sqrt(2 * GM / a - velocity_constant);
-    result->m_pe_vel = std::sqrt(2 * GM / a * ecc - velocity_constant);
+    result->m_pe_vel = std::sqrt(2 * GM / (a - a * ecc) - velocity_constant);
     double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
 
     Vector3 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);

@@ -14,7 +14,7 @@ class Trail {
     Vector3 m_offset;
     bool m_enable_min_step = true;
 
-    double last_xy_angle = 0, last_yz_angle = 0;
+    double last_xy_angle = 0;
 
     const sf::Color m_color;
 

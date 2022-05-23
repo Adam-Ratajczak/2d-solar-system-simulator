@@ -9,7 +9,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.06
-    colorr=80 colorg=78 colorb=81
+    colorr=220 colorg=220 colorb=220
     name=Metis;
 
 orbitting_planet
@@ -21,7 +21,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.03
-    colorr=80 colorg=78 colorb=81
+    colorr=220 colorg=220 colorb=220
     name=Andrastea;
 
 orbitting_planet
@@ -33,7 +33,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.374
-    colorr=80 colorg=78 colorb=81
+    colorr=220 colorg=220 colorb=220
     name=Amalthea;
 
 orbitting_planet
@@ -45,7 +45,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=1.076
-    colorr=80 colorg=78 colorb=81
+    colorr=220 colorg=220 colorb=220
     name=Thebe;
 
 orbitting_planet
@@ -57,7 +57,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.05
-    colorr=80 colorg=78 colorb=81
+    colorr=204 colorg=204 colorb=255
     name=Io;
 
 orbitting_planet
@@ -69,7 +69,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.5
-    colorr=80 colorg=78 colorb=81
+    colorr=204 colorg=204 colorb=255
     name=Europa;
 
 orbitting_planet
@@ -81,7 +81,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.2
-    colorr=80 colorg=78 colorb=81
+    colorr=204 colorg=204 colorb=255
     name=Ganymede;
 
 orbitting_planet
@@ -93,7 +93,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=0.192
-    colorr=80 colorg=78 colorb=81
+    colorr=204 colorg=204 colorb=255
     name=Callisto;
 
 orbitting_planet
@@ -117,7 +117,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=28.6
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Leda;
 
 orbitting_planet
@@ -129,7 +129,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=29.1
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Ersa;
 
 orbitting_planet
@@ -141,7 +141,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=28.1
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Himalia;
 
 orbitting_planet
@@ -153,7 +153,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=29.0
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Pandia;
 
 orbitting_planet
@@ -165,7 +165,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=27.2
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Lysithea;
 
 orbitting_planet
@@ -177,7 +177,7 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=27.9
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Elara;
 
 orbitting_planet
@@ -189,5 +189,725 @@ orbitting_planet
     direction=left
     orbit_position=180.0
     orbit_tilt=29.0
-    colorr=80 colorg=78 colorb=81
+    colorr=253 colorg=213 colorb=177
     name=Dia;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=17042300_km
+    eccencrity=0.42
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=53.2
+    colorr=80 colorg=78 colorb=81
+    name=Carpo;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e11
+    radius=500
+    major_axis=18694200_km
+    eccencrity=0.22
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=34.5
+    colorr=80 colorg=78 colorb=81
+    name=Valetudo;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=19265800_km
+    eccencrity=0.148
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=145,7
+    colorr=240 colorg=240 colorb=176
+    name=Euporie;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20336300_km
+    eccencrity=0.09
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=145.3
+    colorr=240 colorg=240 colorb=176
+    name=S/2003_J_18;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20768600_km
+    eccencrity=0.241
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.0
+    colorr=240 colorg=240 colorb=176
+    name=Eupheme;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e10
+    radius=500
+    major_axis=20793000_km
+    eccencrity=0.248
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.1
+    colorr=240 colorg=240 colorb=176
+    name=S/2010_J_2;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e10
+    radius=500
+    major_axis=20802900_km
+    eccencrity=0.232
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.7
+    colorr=240 colorg=240 colorb=176
+    name=S/2016_J_1;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20821000_km
+    eccencrity=0.247
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.0
+    colorr=240 colorg=240 colorb=176
+    name=Mneme;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=20827000_km
+    eccencrity=0.239
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.0
+    colorr=240 colorg=240 colorb=176
+    name=Euanthe;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20882600_km
+    eccencrity=0.243
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.0
+    colorr=240 colorg=240 colorb=176
+    name=S/2003_J_16;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=20892100_km
+    eccencrity=0.232
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=147.7
+    colorr=240 colorg=240 colorb=176
+    name=Harpalyke;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20901000_km
+    eccencrity=0.299
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=144.3
+    colorr=240 colorg=240 colorb=176
+    name=Orthosie;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=20915700_km
+    eccencrity=0.153
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=154.4
+    colorr=240 colorg=240 colorb=176
+    name=Helike;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.8e14
+    radius=3500
+    major_axis=20935400_km
+    eccencrity=0.246
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.3
+    colorr=240 colorg=240 colorb=176
+    name=Praxidike;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20941000_km
+    eccencrity=0.231
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=147.9
+    colorr=240 colorg=240 colorb=176
+    name=S/2017_J_3;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e11
+    radius=500
+    major_axis=20963100_km
+    eccencrity=0.235
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=150.0
+    colorr=240 colorg=240 colorb=176
+    name=S/2003_J_12;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20964800_km
+    eccencrity=0.233
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=147.3
+    colorr=240 colorg=240 colorb=176
+    name=S/2017_J_7;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=20976000_km
+    eccencrity=0.228
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=150.6
+    colorr=240 colorg=240 colorb=176
+    name=Thelxinoe;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=20978000_km
+    eccencrity=0.233
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=147.5
+    colorr=240 colorg=240 colorb=176
+    name=Thyone;
+    
+orbitting_planet
+    around=Jupiter
+    mass=1.3e16
+    radius=15000
+    major_axis=21034500_km
+    eccencrity=0.237
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=147.6
+    colorr=240 colorg=240 colorb=176
+    name=Ananke;
+
+orbitting_planet
+    around=Jupiter
+    mass=6.5e13
+    radius=2500
+    major_axis=21066700_km
+    eccencrity=0.227
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.8
+    colorr=240 colorg=240 colorb=176
+    name=Iocaste;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=21108500_km
+    eccencrity=0.219
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=150.2
+    colorr=240 colorg=240 colorb=176
+    name=Hermippe;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=21768700_km
+    eccencrity=0.2
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=155.5
+    colorr=240 colorg=240 colorb=176
+    name=S/2017_J_9;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=22604600_km
+    eccencrity=0.229
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=146.3
+    colorr=80 colorg=78 colorb=81
+    name=Philophrosyne;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=22846700_km
+    eccencrity=0.27
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=Pasithee;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e11
+    radius=500
+    major_axis=22849500_km
+    eccencrity=0.255
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.8
+    colorr=244 colorg=194 colorb=194
+    name=S/2017_J_8;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=22887400_km
+    eccencrity=0.259
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.5
+    colorr=244 colorg=194 colorb=194
+    name=S/2003_j_24;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=22899000_km
+    eccencrity=0.294
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=149.1
+    colorr=80 colorg=78 colorb=81
+    name=Eurydome;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.2e11
+    radius=500
+    major_axis=22909200_km
+    eccencrity=0.355
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=151.9
+    colorr=80 colorg=78 colorb=81
+    name=S/2011_J_2;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=22926500_km
+    eccencrity=0.328
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.2
+    colorr=80 colorg=78 colorb=81
+    name=S/2003_J_4;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=1500
+    major_axis=22930500_km
+    eccencrity=0.265
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.7
+    colorr=244 colorg=194 colorb=194
+    name=Chaldene;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1500
+    major_axis=22953200_km
+    eccencrity=0.272
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.5
+    colorr=244 colorg=194 colorb=194
+    name=S/2017_J_2;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=1500
+    major_axis=22981300_km
+    eccencrity=0.249
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.8
+    colorr=244 colorg=194 colorb=194
+    name=Isonoe;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23021800_km
+    eccencrity=0.252
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.8
+    colorr=244 colorg=194 colorb=194
+    name=Kallichore;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1500
+    major_axis=23032900_km
+    eccencrity=0.276
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.4
+    colorr=244 colorg=194 colorb=194
+    name=Erinome;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1000
+    major_axis=23052600_km
+    eccencrity=0.262
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=Kale;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=23055800_km
+    eccencrity=0.258
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.5
+    colorr=244 colorg=194 colorb=194
+    name=Eirene;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=23064400_km
+    eccencrity=0.277
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=Aitne;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=23067400_km
+    eccencrity=0.277
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=Eukelade;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=23097800_km
+    eccencrity=0.261
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=Arche;
+
+orbitting_planet
+    around=Jupiter
+    mass=6.5e13
+    radius=2500
+    major_axis=23108000_km
+    eccencrity=0.253
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.7
+    colorr=244 colorg=194 colorb=194
+    name=Taygete;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23124500_km
+    eccencrity=0.271
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=S/2011_J_1;
+
+orbitting_planet
+    around=Jupiter
+    mass=5.3e16
+    radius=23000
+    major_axis=23144400_km
+    eccencrity=0.256
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.6
+    colorr=244 colorg=194 colorb=194
+    name=Carme;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23150500_km
+    eccencrity=0.262
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.4
+    colorr=244 colorg=194 colorb=194
+    name=Herse;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23156400_km
+    eccencrity=0.265
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.7
+    colorr=244 colorg=194 colorb=194
+    name=S/2003_J_10;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23245300_km
+    eccencrity=0.336
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=149.7
+    colorr=80 colorg=78 colorb=81
+    name=S/2017_J_6;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.7e13
+    radius=3500
+    major_axis=23302600_km
+    eccencrity=0.260
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.8
+    colorr=244 colorg=194 colorb=194
+    name=Halyke;
+
+orbitting_planet
+    around=Jupiter
+    mass=1.4e13
+    radius=1500
+    major_axis=23348700_km
+    eccencrity=0.358
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=152.6
+    colorr=80 colorg=78 colorb=81
+    name=Hegemone;
+
+orbitting_planet
+    around=Jupiter
+    mass=1e17
+    radius=30000
+    major_axis=23468200_km
+    eccencrity=0.412
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=148.4
+    colorr=80 colorg=78 colorb=81
+    name=Pasiphae;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23543300_km
+    eccencrity=0.322
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=149.3
+    colorr=80 colorg=78 colorb=81
+    name=Sponde;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23576300_km
+    eccencrity=0.264
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=164.4
+    colorr=244 colorg=194 colorb=194
+    name=S/2003_j_10;
+
+orbitting_planet
+    around=Jupiter
+    mass=6.5e13
+    radius=2500
+    major_axis=23644600_km
+    eccencrity=0.421
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=149.8
+    colorr=80 colorg=78 colorb=81
+    name=Megaclite;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23654700_km
+    eccencrity=0.419
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=146.8
+    colorr=80 colorg=78 colorb=81
+    name=Cyllene;
+
+orbitting_planet
+    around=Jupiter
+    mass=2.2e16
+    radius=17500
+    major_axis=23083900_km
+    eccencrity=0.264
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=157.3
+    colorr=80 colorg=78 colorb=81
+    name=Sinope;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23744800_km
+    eccencrity=0.328
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=145.8
+    colorr=80 colorg=78 colorb=81
+    name=S/2017_J_1;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=23778200_km
+    eccencrity=0.436
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=155.7
+    colorr=80 colorg=78 colorb=81
+    name=Aoede;
+
+orbitting_planet
+    around=Jupiter
+    mass=3.4e13
+    radius=2000
+    major_axis=23792500_km
+    eccencrity=0.33
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=150.8
+    colorr=80 colorg=78 colorb=81
+    name=Autonoe;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.6e13
+    radius=5000
+    major_axis=23795500_km
+    eccencrity=0.297
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=145.1
+    colorr=80 colorg=78 colorb=81
+    name=Callirrhoe;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=23829300_km
+    eccencrity=0.313
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=144.7
+    colorr=80 colorg=78 colorb=81
+    name=S/2003_J_23;
+
+orbitting_planet
+    around=Jupiter
+    mass=4.2e12
+    radius=1000
+    major_axis=24205200_km
+    eccencrity=0.328
+    direction=left
+    orbit_position=180.0
+    orbit_tilt=141.5
+    colorr=80 colorg=78 colorb=81
+    name=Kore;

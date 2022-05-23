@@ -52,7 +52,7 @@ void Trail::push_back(Vector3 pos) {
     }
 
     if (m_length >= 3 && m_append_offset != 0) {
-        if (std::fabs(std::atan2(pos.y, pos.x) - last_xy_angle) <= 2 * M_PI / m_vertexes.size() && std::fabs(std::atan2(pos.y, pos.z) - last_yz_angle) <= 2 * M_PI / m_vertexes.size()) {
+        if (std::fabs(std::atan2(pos.y, pos.x) - last_xy_angle) <= 2 * M_PI / m_vertexes.size()) {
             change_current(pos);
             return;
         }
@@ -68,7 +68,6 @@ void Trail::push_back(Vector3 pos) {
     }
 
     last_xy_angle = std::atan2(pos.y, pos.x);
-    last_yz_angle = std::atan2(pos.y, pos.z);
 }
 
 void Trail::reset() {
