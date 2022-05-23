@@ -100,13 +100,11 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 }
 
 void EssaGUI::update() {
-    return;
     if (!m_create_object_gui->is_forward_simulation_valid())
         m_create_object_gui->recalculate_forward_simulation();
 }
 
 void EssaGUI::draw(GUI::SFMLWindow& window) const {
-    return;
     if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
             WorldDrawScope scope(*m_simulation_view);
