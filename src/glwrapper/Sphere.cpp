@@ -31,10 +31,12 @@ uniform mat4 worldViewMatrix;
 uniform mat4 projectionMatrix;
 
 out vec4 vertex;
+out vec4 csVertex;
 
 void main() {
     vertex = position;
-    gl_Position = projectionMatrix * (worldViewMatrix * (modelMatrix * vertex));
+    csVertex = projectionMatrix * (worldViewMatrix * (modelMatrix * vertex));
+    gl_Position = csVertex;
 }
 )~~~";
 
@@ -46,23 +48,24 @@ uniform vec4 lightPosition;
 uniform bool fancy;
 uniform vec4 translation;
 uniform float radius;
+uniform mat4 modelMatrix;
 
 in vec4 vertex;
+in vec4 csVertex;
 
 void main() {
-    //if (!fancy) {
+    if (!fancy) {
         gl_FragColor = color;
         return;
-    //}
-    vec4 worldFragPos = normalize(vertex) * radius + translation;
-    // if (radius > length(lightPosition - vertex) / 1000) {
-    //     // Light source is inside object. For now just fallback to flat mode.
-    //     gl_FragColor = color;
-    //     return;
-    // }
-    // float d = length(translation - vertex * radius)/4; //dot(normalize(-vertex), normalize(worldFragPos - normalize(vertex) * radius - lightPosition));
-    // float sd = d - 0.5;
-    // gl_FragColor = vec4(d,d,d,1); //d < 0 ? vec4(1,0,0,1) : vec4(0,1,0,1);
+    }
+    vec4 worldFragPos = modelMatrix * vertex;
+    if (radius > length(lightPosition - worldFragPos)) {
+        // Light source is inside object. For now just fallback to flat mode.
+        gl_FragColor = color;
+        return;
+    }
+    float d = dot(normalize(-vertex), normalize(worldFragPos - lightPosition));
+    gl_FragColor = vec4(d * color.rgb, 1);
 }
 )~~~";
 
@@ -126,7 +129,7 @@ void Sphere::draw(GUI::SFMLWindow& window) const {
 
     s_shader.setUniform("color", sf::Glsl::Vec4 { m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f, m_color.a / 255.f });
     s_shader.setUniform("translation", sf::Glsl::Vec4 { static_cast<float>(m_pos.x), static_cast<float>(m_pos.y), static_cast<float>(m_pos.z), 0 });
-    s_shader.setUniform("radius", 0.1f);
+    s_shader.setUniform("radius", (float)m_radius);
     if (m_mode == DrawMode::Fancy) {
         s_shader.setUniform("fancy", true);
         s_shader.setUniform("lightPosition", sf::Glsl::Vec4(m_light_position.x, m_light_position.y, m_light_position.z, 1));
