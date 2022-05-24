@@ -90,15 +90,19 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
 
     {
         auto& pyssa = menu->add_entry(load_image("../assets/python.png"), "PySSA (Python scripting)", GUI::SettingsMenu::Expandable::No);
-        pyssa.on_toggle = [](bool) {
-            auto& python_repl_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
-            python_repl_window.set_title("PySSA");
-            python_repl_window.set_position({ 600, 750 });
-            python_repl_window.set_size({ 700, 250 });
-            GUI::Application::the().focus_overlay(python_repl_window);
-            auto& python_repl = python_repl_window.set_main_widget<PythonREPL>();
+        pyssa.on_toggle = [this](bool) {
+            open_python_repl();
         };
     }
+}
+
+void EssaGUI::open_python_repl() {
+    auto& python_repl_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
+    python_repl_window.set_title("PySSA");
+    python_repl_window.set_position({ 600, 750 });
+    python_repl_window.set_size({ 700, 250 });
+    GUI::Application::the().focus_overlay(python_repl_window);
+    python_repl_window.set_main_widget<PythonREPL>();
 }
 
 void EssaGUI::update() {
@@ -124,5 +128,8 @@ void EssaGUI::handle_event(GUI::Event& event) {
     if (event.type() == sf::Event::Closed) {
         window().close();
         event.set_handled();
+    }
+    else if (event.type() == sf::Event::KeyPressed && event.event().key.code == sf::Keyboard::Tilde) {
+        open_python_repl();
     }
 }

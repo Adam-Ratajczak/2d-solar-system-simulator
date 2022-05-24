@@ -56,4 +56,5 @@ private:
     bool m_draw_forward_simulation = false;
 
     void m_switch_info(bool state);
+    void open_python_repl();
 };
