@@ -169,7 +169,7 @@ Object* World::get_object_by_name(std::string const& name) {
 
 void World::reset(ConfigLoader* loader) {
     m_object_list.clear();
-    m_simulation_view->set_focused(nullptr);
+    m_simulation_view->set_focused_object(nullptr);
     m_date = Util::SimulationTime::create(1990, 4, 20);
     m_object_history.clear_history(0);
     m_light_source = nullptr;
@@ -183,7 +183,7 @@ void World::reset_all_trails() {
 
 void World::delete_object_by_ptr(Object* ptr) {
     m_object_list.remove_if([ptr](std::unique_ptr<Object>& obj) { return obj.get() == ptr; });
-    m_simulation_view->set_focused(nullptr);
+    m_simulation_view->set_focused_object(nullptr);
 
     for (auto& o : m_object_list) {
         if (o->most_attracting_object() == ptr)

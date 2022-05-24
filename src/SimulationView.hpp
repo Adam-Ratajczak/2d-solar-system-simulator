@@ -1,5 +1,6 @@
 #pragma once
 
+#include <EssaGUI/gui/NotifyUser.hpp>
 #include <GL/glew.h>
 
 #include "math/Transform.hpp"
@@ -91,7 +92,7 @@ public:
 
     World& world() { return m_world; }
     Object* focused_object() const;
-    void set_focused(Object* obj) { m_focused_object = obj; }
+    void set_focused_object(Object* obj);
 
     void change_speed(bool state) { m_allow_change_speed = state; }
     void pause_simulation(bool state);
@@ -123,7 +124,7 @@ private:
     PySSA::Object python_get_zoom() const;
     bool python_set_zoom(PySSA::Object const&);
     PySSA::Object python_get_focused_object() const;
-    // bool python_set_focused_object(PySSA::Object const&); // TODO
+    bool python_set_focused_object(PySSA::Object const&);
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;

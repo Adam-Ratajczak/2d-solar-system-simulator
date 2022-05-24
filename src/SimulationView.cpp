@@ -7,6 +7,7 @@
 
 #include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <EssaGUI/util/DelayedInit.hpp>
@@ -32,7 +33,7 @@ void SimulationView::handle_event(GUI::Event& event) {
                 obj_pos_screen.z = 0;
                 auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
                 if (distance < 30) {
-                    m_focused_object = &obj;
+                    set_focused_object(&obj);
                     if (on_change_focus && m_prev_focused_object == m_focused_object)
                         on_change_focus(m_focused_object);
                     return;
@@ -157,6 +158,10 @@ void SimulationView::handle_event(GUI::Event& event) {
             }
         }
     }
+}
+
+void SimulationView::set_focused_object(Object* obj) {
+    m_focused_object = obj;
 }
 
 void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
@@ -342,7 +347,7 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
     GUI::TextDrawOptions debug_text;
     debug_text.fill_color = sf::Color::White;
     debug_text.font_size = 15;
-    window.draw_text(debugoss.str(), GUI::Application::the().fixed_width_font, {600, 20}, debug_text);
+    window.draw_text(debugoss.str(), GUI::Application::the().fixed_width_font, { 600, 20 }, debug_text);
 }
 
 void SimulationView::pause_simulation(bool state) {
@@ -399,7 +404,7 @@ void SimulationView::setup_python_bindings(TypeSetup type_setup) {
     type_setup.add_attribute<&SimulationView::python_get_yaw, &SimulationView::python_set_yaw>("yaw");
     type_setup.add_attribute<&SimulationView::python_get_pitch, &SimulationView::python_set_pitch>("pitch");
     type_setup.add_attribute<&SimulationView::python_get_zoom, &SimulationView::python_set_zoom>("zoom");
-    type_setup.add_attribute<&SimulationView::python_get_focused_object, nullptr>("focused_object");
+    type_setup.add_attribute<&SimulationView::python_get_focused_object, &SimulationView::python_set_focused_object>("focused_object");
 }
 
 PySSA::Object SimulationView::python_reset(PySSA::Object const&, PySSA::Object const&) {
@@ -473,6 +478,14 @@ bool SimulationView::python_set_zoom(PySSA::Object const& object) {
 
 PySSA::Object SimulationView::python_get_focused_object() const {
     return m_focused_object ? m_focused_object->wrap() : PySSA::Object::none();
+}
+
+bool SimulationView::python_set_focused_object(PySSA::Object const& object) {
+    auto v = Object::get(object);
+    if (!v)
+        return false;
+    m_focused_object = v;
+    return true;
 }
 
 WorldDrawScope const* s_current_draw_scope = nullptr;

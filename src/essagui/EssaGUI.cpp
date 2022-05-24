@@ -36,7 +36,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             focused_object_gui.update_params();
             focused_object_window.window->on_close = [&]() {
                 if (m_settings_gui->unfocus_on_wnd_close())
-                    m_simulation_view->set_focused(nullptr);
+                    m_simulation_view->set_focused_object(nullptr);
 
                 if (m_simulation_view->speed() == 0)
                     m_simulation_view->pause_simulation(false);

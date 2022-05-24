@@ -233,7 +233,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
 
     default_view_button->on_click = [&]() {
         m_window->close();
-        m_world.m_simulation_view->set_focused(m_focused);
+        m_world.m_simulation_view->set_focused_object(m_focused);
     };
 }
 
