@@ -92,7 +92,7 @@ public:
 
     World& world() { return m_world; }
     Object* focused_object() const;
-    void set_focused_object(Object* obj);
+    void set_focused_object(Object* obj, GUI::NotifyUser notify_user = GUI::NotifyUser::No);
 
     void change_speed(bool state) { m_allow_change_speed = state; }
     void pause_simulation(bool state);
@@ -137,7 +137,6 @@ private:
     World& m_world;
     double m_zoom = 1;
     Object* m_focused_object = nullptr;
-    Object* m_prev_focused_object = nullptr;
     sf::Vector2f m_prev_mouse_pos;
     sf::Vector2f m_prev_drag_pos;
 

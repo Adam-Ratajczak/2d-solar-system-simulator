@@ -33,9 +33,7 @@ void SimulationView::handle_event(GUI::Event& event) {
                 obj_pos_screen.z = 0;
                 auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
                 if (distance < 30) {
-                    set_focused_object(&obj);
-                    if (on_change_focus && m_prev_focused_object == m_focused_object)
-                        on_change_focus(m_focused_object);
+                    set_focused_object(&obj, GUI::NotifyUser::Yes);
                     return;
                 }
             });
@@ -160,8 +158,10 @@ void SimulationView::handle_event(GUI::Event& event) {
     }
 }
 
-void SimulationView::set_focused_object(Object* obj) {
+void SimulationView::set_focused_object(Object* obj, GUI::NotifyUser notify_user) {
     m_focused_object = obj;
+    if (notify_user == GUI::NotifyUser::Yes && m_focused_object && on_change_focus)
+        on_change_focus(m_focused_object);
 }
 
 void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
@@ -381,12 +381,6 @@ void SimulationView::update() {
         }
     }
 
-    if (m_focused_object != m_prev_focused_object) {
-        if (on_change_focus)
-            on_change_focus(m_focused_object);
-        m_prev_focused_object = m_focused_object;
-    }
-
     if (m_focused_object != nullptr && if_focused)
         if_focused();
 }
@@ -484,7 +478,7 @@ bool SimulationView::python_set_focused_object(PySSA::Object const& object) {
     auto v = Object::get(object);
     if (!v)
         return false;
-    m_focused_object = v;
+    set_focused_object(v);
     return true;
 }
 
