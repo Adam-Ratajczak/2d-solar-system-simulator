@@ -240,8 +240,11 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
     window.draw_vertices(GL_LINES, guide);
 
     // FIXME: UB on size_t conversion
+    GUI::TextDrawOptions guide_text;
+    guide_text.font_size = 15;
+    guide_text.text_align = GUI::Align::Center;
     window.draw_text_aligned_in_rect(Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(),
-        { guide_start, {} }, GUI::Application::the().font);
+        { guide_start - sf::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font, guide_text);
 }
 
 Matrix4x4d SimulationView::projection_matrix() const {
