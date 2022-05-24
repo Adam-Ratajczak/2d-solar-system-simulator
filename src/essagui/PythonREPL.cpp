@@ -1,8 +1,8 @@
 #include "PythonREPL.hpp"
 
+#include "../pyssa/Environment.hpp"
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/ArrowButton.hpp>
-#include "../pyssa/Environment.hpp"
 
 PythonREPL::PythonREPL(GUI::WidgetTreeRoot& c)
     : Container(c) {
@@ -13,6 +13,7 @@ PythonREPL::PythonREPL(GUI::WidgetTreeRoot& c)
     m_textbox->set_position({ 0.0_px, 0.0_px_o });
     m_textbox->set_data_type(GUI::Textbox::Type::TEXT);
     m_textbox->set_placeholder("PySSA Command");
+    m_textbox->set_focused();
 }
 
 void PythonREPL::handle_event(GUI::Event& event) {
