@@ -172,6 +172,7 @@ void World::reset(ConfigLoader* loader) {
     m_simulation_view->set_focused(nullptr);
     m_date = Util::SimulationTime::create(1990, 4, 20);
     m_object_history.clear_history(0);
+    m_light_source = nullptr;
     if (loader)
         loader->load(*this);
 }
