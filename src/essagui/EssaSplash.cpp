@@ -91,6 +91,7 @@ void EssaSplash::handle_event(sf::Event event) {
     GUI::ToolWindow::handle_event(event);
 
     GUI::Event gui_event { event };
-    if (gui_event.type() == sf::Event::MouseButtonPressed && !full_rect().contains(gui_event.mouse_position() + position()))
+    if (gui_event.type() == sf::Event::MouseButtonPressed && !full_rect().contains(gui_event.mouse_position() + position())
+        || gui_event.type() == sf::Event::KeyPressed && gui_event.event().key.code == sf::Keyboard::Escape)
         close();
 }
