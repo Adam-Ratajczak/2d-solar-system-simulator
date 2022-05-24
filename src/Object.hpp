@@ -16,6 +16,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
