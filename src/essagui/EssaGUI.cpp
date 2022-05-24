@@ -4,6 +4,7 @@
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
+#include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FilePrompt.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -94,6 +95,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             python_repl_window.set_title("PySSA");
             python_repl_window.set_position({ 600, 750 });
             python_repl_window.set_size({ 700, 250 });
+            GUI::Application::the().focus_overlay(python_repl_window);
             auto& python_repl = python_repl_window.set_main_widget<PythonREPL>();
         };
     }
