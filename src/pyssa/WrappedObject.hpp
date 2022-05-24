@@ -57,6 +57,11 @@ public:
     }
 
     static T* get(Object const& object) {
+        auto pyobject = object.python_object();
+        if (Py_TYPE(pyobject) != &type_object()) {
+            PyErr_Format(PyExc_TypeError, "Object is not an instance of '%s'", T::PythonClassName);
+            return nullptr;
+        }
         return ((PythonType*)object.python_object())->ptr;
     }
 
