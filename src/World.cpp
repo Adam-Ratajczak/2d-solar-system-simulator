@@ -87,10 +87,10 @@ void World::update(int steps) {
     bool reverse = steps < 0;
 
     for (unsigned i = 0; i < std::abs(steps); i++) {
+        update_history_and_date(reverse);
+
         for (auto& obj : m_object_list)
             obj->before_update();
-
-        update_history_and_date(reverse);
 
         // The algorithm used is Leapfrog KDK
         // http://courses.physics.ucsd.edu/2019/Winter/physics141/Lectures/Lecture2/volker.pdf
