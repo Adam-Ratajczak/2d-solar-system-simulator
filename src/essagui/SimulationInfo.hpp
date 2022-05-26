@@ -18,7 +18,10 @@ private:
     sf::Clock m_clock;
     float m_fps = 60;
 
-    GUI::Textfield *m_fps_field = nullptr;
-    GUI::Textfield *m_speed_field = nullptr;
+    void m_update_time();
+    void m_update_fps();
+
+    GUI::Textfield* m_fps_field = nullptr;
+    GUI::Textfield* m_time_field = nullptr;
     SimulationView* m_simulation_view = nullptr;
 };

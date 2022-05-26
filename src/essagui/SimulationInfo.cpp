@@ -1,4 +1,5 @@
 #include "SimulationInfo.hpp"
+#include "../World.hpp"
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/util/Units.hpp>
@@ -14,22 +15,41 @@ SimulationInfo::SimulationInfo(GUI::Container& parent, SimulationView* sw) : GUI
     fps_label->set_content("FPS: ");
 
     m_fps_field = fps_container->add_widget<GUI::Textfield>();
-    m_fps_field->set_content("N / A");
+    m_fps_field->set_content("60.000000");
 
     auto speed_container = add_widget<GUI::Container>();
     speed_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    auto speed_label = speed_container->add_widget<GUI::Textfield>();
-    speed_label->set_size({{30, Length::Percent}, Length::Auto});
-    speed_label->set_content("Speed: ");
+    auto time_label = speed_container->add_widget<GUI::Textfield>();
+    time_label->set_size({{30, Length::Percent}, Length::Auto});
+    time_label->set_content("Time: ");
 
-    m_speed_field = speed_container->add_widget<GUI::Textfield>();
-    m_speed_field->set_content("x " + std::to_string((int)std::fabs(m_simulation_view->speed())) + ((m_simulation_view->speed() < 0) ? " (Reversed)" : ""));
+    m_time_field = speed_container->add_widget<GUI::Textfield>();
+    m_update_time();
 }
 
 void SimulationInfo::do_update(){
+    m_update_fps();
+    m_update_time();
+}
+
+void SimulationInfo::m_update_fps(){
     float current_time = m_clock.restart().asSeconds();
     m_fps = 1.f / (current_time);
 
     m_fps_field->set_content(std::to_string(m_fps));
-    m_speed_field->set_content("x " + std::to_string((int)std::fabs(m_simulation_view->speed())) + ((m_simulation_view->speed() < 0) ? " (Reversed)" : ""));
+}
+
+void SimulationInfo::m_update_time(){
+    std::ostringstream oss;
+    oss << m_simulation_view->world().date();
+    if (m_simulation_view->speed() == 0)
+        oss << " (Paused";
+    else
+        oss << " (" << std::abs(m_simulation_view->speed()) << "x";
+
+    if (m_simulation_view->speed() < 0)
+        oss << ", Reversed";
+    oss << ")";
+
+    m_time_field->set_content(oss.str());
 }
