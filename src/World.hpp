@@ -62,6 +62,8 @@ public:
         std::cout << name << "??? " << m_light_source << std::endl;
         return m_light_source != nullptr;
     }
+    void set_light_source(Object* obj){m_light_source = obj;}
+    
     Object* light_source() const { return m_light_source; }
 
 private:

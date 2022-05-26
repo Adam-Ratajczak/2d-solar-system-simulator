@@ -3,8 +3,10 @@
 #include "../Object.hpp"
 #include "../World.hpp"
 #include <EssaGUI/gui/Application.hpp>
+#include <EssaGUI/gui/Button.hpp>
 #include <EssaGUI/gui/ColorPicker.hpp>
 #include <EssaGUI/gui/Container.hpp>
+#include <EssaGUI/gui/TextButton.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
 #include <EssaGUI/util/UnitDisplay.hpp>
@@ -63,6 +65,8 @@ private:
     GUI::Textbox* m_name_textbox = nullptr;
 
     GUI::ColorPicker* m_color_control = nullptr;
+
+    GUI::TextButton* m_light_source_button = nullptr;
 
     Vector3 m_new_object_pos;
 

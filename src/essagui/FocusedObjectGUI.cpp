@@ -235,6 +235,27 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
         m_window->close();
         m_world.m_simulation_view->set_focused_object(m_focused);
     };
+
+    auto light_source_button_container = parent.add_widget<GUI::Container>();
+    light_source_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+    light_source_button_container->set_size({ Length::Auto, 30.0_px });
+
+    auto light_source_textfield = light_source_button_container->add_widget<GUI::Textfield>();
+    light_source_textfield->set_content("Toggle Light source options");
+
+    m_light_source_button = light_source_button_container->add_widget<GUI::TextButton>();
+    m_light_source_button->set_content("Make a lightsource");
+    m_light_source_button->set_active_content("Make a casual body");
+    m_light_source_button->set_alignment(GUI::Align::Center);
+    m_light_source_button->set_toggleable(true);
+    m_light_source_button->set_active(m_focused == m_world.light_source());
+
+    m_light_source_button->on_change = [&](bool state) {
+        if(state)
+            m_world.set_light_source(m_focused);
+        else
+            m_world.set_light_source(nullptr);
+    };
 }
 
 std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
@@ -277,6 +298,8 @@ void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const&
 }
 
 void FocusedObjectGUI::update() {
+    m_light_source_button->set_active(m_focused == m_world.light_source());
+    
     if (m_focused == nullptr || m_tab != 0)
         return;
 
