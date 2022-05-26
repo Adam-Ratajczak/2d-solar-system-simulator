@@ -26,7 +26,7 @@ add_executable(
     src/essagui/EssaSettings.cpp
     src/essagui/EssaSplash.cpp
     src/essagui/FocusedObjectGUI.cpp
-    src/essagui/FPSCounter.cpp
+    src/essagui/SimulationInfo.cpp
     src/essagui/PythonREPL.cpp
 
     src/glwrapper/Sphere.cpp

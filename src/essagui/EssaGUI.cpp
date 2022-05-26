@@ -1,7 +1,7 @@
 #include "EssaGUI.hpp"
 
 #include "EssaSettings.hpp"
-#include "FPSCounter.hpp"
+#include "SimulationInfo.hpp"
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
@@ -96,8 +96,8 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         };
     }
 
-    auto fps_counter = add_widget<FPSCounter>();
-    fps_counter->set_size({600.0_px, 100.0_px});
+    auto fps_counter = add_widget<SimulationInfo>(m_simulation_view);
+    fps_counter->set_size({600.0_px, 50.0_px});
     fps_counter->set_position({20.0_px, 0.0_px_o});
 }
 
