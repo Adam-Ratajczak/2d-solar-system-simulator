@@ -1,6 +1,7 @@
 #include "EssaGUI.hpp"
 
 #include "EssaSettings.hpp"
+#include "FPSCounter.hpp"
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 
@@ -29,7 +30,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(obj->name(), "FocusedGUI-" + obj->name());
+        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(obj->name(), "FocusedGUI - " + obj->name());
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ size().x - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
@@ -94,6 +95,10 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             open_python_repl();
         };
     }
+
+    auto fps_counter = add_widget<FPSCounter>();
+    fps_counter->set_size({600.0_px, 100.0_px});
+    fps_counter->set_position({20.0_px, 0.0_px_o});
 }
 
 void EssaGUI::open_python_repl() {

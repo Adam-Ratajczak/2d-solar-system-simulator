@@ -80,9 +80,6 @@ public:
     // TODO: This should be private
     bool m_measured = false;
 
-    // FIXME: This should be in GUI.
-    void set_fps(float fps) { m_fps = fps; }
-
     // FIXME: This should be in some Simulation object.
     int speed() const { return m_speed; }
     void set_speed(int speed) { m_speed = speed; }
@@ -172,9 +169,6 @@ private:
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
     int m_speed = 1, m_saved_speed = 1;
-
-    // FIXME: This should be in GUI.
-    float m_fps = 60;
 };
 
 // This class ensures that everything in the scope will be drawn using

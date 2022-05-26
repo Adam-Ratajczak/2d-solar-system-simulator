@@ -330,12 +330,6 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
         oss << ", Reversed";
     oss << ")";
 
-    GUI::TextDrawOptions label_text;
-    label_text.fill_color = sf::Color::White;
-    label_text.font_size = 25;
-    window.draw_text("FPS: " + std::to_string(m_fps), GUI::Application::the().font, { 10, window.getSize().y - 65.f });
-    window.draw_text(oss.str(), GUI::Application::the().font, { 10, window.getSize().y - 35.f });
-
     std::ostringstream debugoss;
     auto mp = sf::Mouse::getPosition(window);
     debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
