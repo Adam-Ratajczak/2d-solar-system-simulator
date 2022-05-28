@@ -24,3 +24,7 @@ The application is written in modern C++20 and uses the latest additions to this
 ## How to build and run this?
 
 See [Build instructions](./docs/BuildInstructions.md).
+
+# Documentation
+
+* [PySSA documentation](./docs/PySSA/Index.md)
