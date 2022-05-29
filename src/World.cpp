@@ -220,6 +220,8 @@ std::ostream& operator<<(std::ostream& out, World const& world) {
     return out << "World (" << world.m_object_list.size() << " objects)";
 }
 
+#ifdef ENABLE_PYSSA
+
 void World::setup_python_bindings(TypeSetup adder) {
     adder.add_method<&World::python_get_object_by_name>("get_object_by_name", "Returns an object that has the name given in argument.");
     adder.add_method<&World::python_add_object>("add_object", "Adds an object to the World.");
@@ -258,3 +260,5 @@ bool World::python_set_simulation_seconds_per_tick(PySSA::Object const& object) 
     m_simulation_seconds_per_tick = maybe_value.value();
     return true;
 }
+
+#endif

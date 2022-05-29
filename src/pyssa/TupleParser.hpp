@@ -1,8 +1,9 @@
 #pragma once
 
+#ifdef ENABLE_PYSSA
+
 #include "Object.hpp"
 #include "WrappedObject.hpp"
-#include "pyport.h"
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -282,3 +283,5 @@ constexpr bool parse_arguments(Object const& args_object, Object const& kwargs_o
 }
 
 }
+
+#endif

@@ -382,6 +382,8 @@ std::ostream& operator<<(std::ostream& out, Object const& object) {
     return out << "Object(" << object.m_name << ") @ " << object.m_pos;
 }
 
+#ifdef ENABLE_PYSSA
+
 void Object::setup_python_bindings(TypeSetup setup) {
     setup.add_method<&Object::python_attraction>("attraction", "Returns gravity of this object to object given as argument, as acceleration (vector, in m/tick^2)");
     setup.add_attribute<&Object::python_get_pos, &Object::python_set_pos>("pos", "Object position (vector, in m)");
@@ -491,3 +493,5 @@ bool Object::python_set_radius(PySSA::Object const& value) {
     m_radius = maybe_value.value();
     return true;
 }
+
+#endif

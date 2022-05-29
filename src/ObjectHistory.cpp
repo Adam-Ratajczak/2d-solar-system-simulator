@@ -2,7 +2,7 @@
 #include <EssaGUI/util/SimulationClock.hpp>
 
 void ObjectHistory::clear_history(unsigned long to_index) {
-    m_entries.resize(std::min(to_index, m_entries.size()));
+    m_entries.resize(std::min<size_t>(to_index, m_entries.size()));
     m_pos = to_index - 1;
 }
 

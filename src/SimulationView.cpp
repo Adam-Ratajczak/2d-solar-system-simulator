@@ -385,6 +385,8 @@ Object* SimulationView::focused_object() const {
     return {};
 }
 
+#ifdef ENABLE_PYSSA
+
 void SimulationView::setup_python_bindings(TypeSetup type_setup) {
     type_setup.add_method<&SimulationView::python_reset>("reset", "Reset view transform");
     type_setup.add_attribute<&SimulationView::python_get_offset, &SimulationView::python_set_offset>("offset");
@@ -475,6 +477,8 @@ bool SimulationView::python_set_focused_object(PySSA::Object const& object) {
     set_focused_object(v);
     return true;
 }
+
+#endif
 
 WorldDrawScope const* s_current_draw_scope = nullptr;
 

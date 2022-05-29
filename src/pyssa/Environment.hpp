@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef ENABLE_PYSSA
+
 #include "Object.hpp"
 
 #include <string>
@@ -30,3 +32,5 @@ private:
 };
 
 }
+
+#endif

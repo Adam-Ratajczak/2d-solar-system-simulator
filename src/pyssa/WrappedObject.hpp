@@ -7,6 +7,8 @@
 
 namespace PySSA {
 
+#ifdef ENABLE_PYSSA
+
 // A TypeObject wrapper for specific T. Makes all Python objects
 // of this type just handles, so that things they wrap aren't deleted
 // by Python interpreter. Should be used for objects that we want to
@@ -213,4 +215,12 @@ PyTypeObject& WrappedObject<T>::type_object() {
     assert(PyType_Ready(&type_object) >= 0);
     return type_object;
 }
+
+#else
+
+template<class T>
+class WrappedObject { };
+
+#endif
+
 }

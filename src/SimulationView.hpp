@@ -94,7 +94,10 @@ public:
     void change_speed(bool state) { m_allow_change_speed = state; }
     void pause_simulation(bool state);
 
+#ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
+#endif
+
     static constexpr char const* PythonClassName = "SimulationView";
 
 private:
@@ -106,6 +109,7 @@ private:
 
     void draw_grid(GUI::SFMLWindow&) const;
 
+#ifdef ENABLE_PYSSA
     PySSA::Object python_reset(PySSA::Object const& args, PySSA::Object const& kwargs);
 
     PySSA::Object python_get_offset() const;
@@ -122,6 +126,7 @@ private:
     bool python_set_zoom(PySSA::Object const&);
     PySSA::Object python_get_focused_object() const;
     bool python_set_focused_object(PySSA::Object const&);
+#endif
 
     Vector3 m_offset;
     Angle m_fov = 80.0_deg;

@@ -25,10 +25,12 @@ int main() {
     world.reset(nullptr);
 
     // PySSA test
+#ifdef ENABLE_PYSSA
     PySSA::Environment env(world, gui.simulation_view());
     if (!env.run_script("test.py")) {
         std::cout << "Failed to execute python script :(" << std::endl;
     }
+#endif
 
     // Display splash
     auto& splash = GUI::Application::the().open_overlay<EssaSplash>(gui.settings_gui());

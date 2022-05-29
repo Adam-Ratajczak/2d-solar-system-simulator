@@ -24,7 +24,9 @@ class Object : public PySSA::WrappedObject<Object> {
 public:
     Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
 
+#ifdef ENABLE_PYSSA
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
+#endif
 
     Object(Object const& other) = delete;
     Object& operator=(Object const& other) = delete;
@@ -86,8 +88,10 @@ public:
     bool deleted() const;
     void delete_object();
 
+#ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "Object";
+#endif
 
     double radius() const { return m_radius; }
     void set_radius(double radius);
@@ -128,6 +132,7 @@ private:
     // Draws label in at 3d position but not projected (in GUI layer).
     void draw_label(SimulationView const&, Vector3 position, std::string, sf::Color) const;
 
+#ifdef ENABLE_PYSSA
     PySSA::Object python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs);
 
     PySSA::Object python_get_pos() const;
@@ -140,6 +145,7 @@ private:
     bool python_set_color(PySSA::Object const&);
     PySSA::Object python_get_radius() const;
     bool python_set_radius(PySSA::Object const&);
+#endif
 
     double m_density;
     Trail m_trail;

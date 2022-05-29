@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef ENABLE_PYSSA
+
 #include <EssaGUI/gui/ArrowButton.hpp>
 #include <EssaGUI/gui/Console.hpp>
 #include <EssaGUI/gui/Container.hpp>
@@ -21,3 +23,5 @@ private:
     std::vector<std::string> m_commands;
     unsigned m_curr_command = 0;
 };
+
+#endif

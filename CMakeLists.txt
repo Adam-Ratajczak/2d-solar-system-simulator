@@ -4,9 +4,26 @@ project(out)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
-find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
-find_package(PythonLibs 3.5 REQUIRED)
+option(ENABLE_PYSSA "Enable PySSA" 1)
+
+if(ENABLE_PYSSA)
+    find_package(PythonLibs 3.5 REQUIRED)
+endif()
 find_package(EssaGUI REQUIRED)
+
+# FIXME: This should be imported along with EssaGUI.
+find_package(GLEW REQUIRED)
+find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
+
+if(ENABLE_PYSSA)
+    set(PYSSA_SOURCES 
+        src/essagui/PythonREPL.cpp
+        src/pyssa/Environment.cpp
+        src/pyssa/Object.cpp
+    )
+else()
+    set(PYSSA_SOURCES)
+endif()
 
 add_executable(
     out
@@ -27,16 +44,12 @@ add_executable(
     src/essagui/EssaSplash.cpp
     src/essagui/FocusedObjectGUI.cpp
     src/essagui/SimulationInfo.cpp
-    src/essagui/PythonREPL.cpp
 
     src/glwrapper/Sphere.cpp
 
     src/math/Plane.cpp
     src/math/Ray.cpp
     src/math/Transform.cpp
-
-    src/pyssa/Environment.cpp
-    src/pyssa/Object.cpp
 )
 
 target_compile_options(out PUBLIC -fdiagnostics-color=always)
@@ -53,6 +66,9 @@ function(setup_target targetname)
 endfunction()
 setup_target(out)
 
-target_link_libraries(out essa-gui GLEW GL)
-target_link_libraries(out ${PYTHON_LIBRARIES})
-target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(out essa-gui)
+if(ENABLE_PYSSA)
+    target_link_libraries(out ${PYTHON_LIBRARIES})
+    target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
+    target_compile_definitions(out PRIVATE ENABLE_PYSSA)
+endif()

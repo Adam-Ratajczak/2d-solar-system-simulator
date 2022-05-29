@@ -1,12 +1,13 @@
 #include "EssaGUI.hpp"
 
 #include "EssaSettings.hpp"
-#include "SimulationInfo.hpp"
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
+#include "SimulationInfo.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FilePrompt.hpp>
+#include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/Overlay.hpp>
 #include <EssaGUI/gui/ToolWindow.hpp>
 #include <SFML/Graphics.hpp>
@@ -28,7 +29,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     // m_simulation_view->set_visible(false);
     m_world.m_simulation_view = m_simulation_view;
 
-    m_simulation_view->on_change_focus = [&](Object* obj){
+    m_simulation_view->on_change_focus = [&](Object* obj) {
         if (obj == nullptr)
             return;
 
@@ -48,9 +49,9 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         }
     };
 
-    m_world.on_reset = [&](){
-        GUI::Application::the().for_each_overlay([](GUI::Overlay& wnd){
-            if(wnd.id() == "FocusedGUI")
+    m_world.on_reset = [&]() {
+        GUI::Application::the().for_each_overlay([](GUI::Overlay& wnd) {
+            if (wnd.id() == "FocusedGUI")
                 wnd.close();
         });
     };
@@ -106,17 +107,21 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     }
 
     auto fps_counter = add_widget<SimulationInfo>(m_simulation_view);
-    fps_counter->set_size({600.0_px, 50.0_px});
-    fps_counter->set_position({20.0_px, 0.0_px_o});
+    fps_counter->set_size({ 600.0_px, 50.0_px });
+    fps_counter->set_position({ 20.0_px, 0.0_px_o });
 }
 
 void EssaGUI::open_python_repl() {
+#ifdef ENABLE_PYSSA
     auto& python_repl_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
     python_repl_window.set_title("PySSA");
     python_repl_window.set_position({ 600, 750 });
     python_repl_window.set_size({ 700, 250 });
     GUI::Application::the().focus_overlay(python_repl_window);
     python_repl_window.set_main_widget<PythonREPL>();
+#else
+    GUI::message_box("PySSA is not enabled on this build. Use Linux build with -DENABLE_PYSSA=1 instead.", "Error", GUI::MessageBox::Buttons::Ok);
+#endif
 }
 
 void EssaGUI::update() {

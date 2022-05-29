@@ -48,8 +48,10 @@ public:
 
     void reset_all_trails();
 
+#ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
     static constexpr char const* PythonClassName = "World";
+#endif
 
     void delete_object_by_ptr(Object* ptr);
     std::unique_ptr<Object>& find_object_by_ptr(Object* ptr);
@@ -63,8 +65,8 @@ public:
         std::cout << name << "??? " << m_light_source << std::endl;
         return m_light_source != nullptr;
     }
-    void set_light_source(Object* obj){m_light_source = obj;}
-    
+    void set_light_source(Object* obj) { m_light_source = obj; }
+
     Object* light_source() const { return m_light_source; }
 
     std::function<void()> on_reset;
@@ -80,11 +82,13 @@ private:
 
     void update_history_and_date(bool reverse);
 
+#ifdef ENABLE_PYSSA
     // FIXME: (on WrappedObject side) Allow const-qualified members
     PySSA::Object python_add_object(PySSA::Object const& args, PySSA::Object const& kwargs);
     PySSA::Object python_get_object_by_name(PySSA::Object const& args, PySSA::Object const& kwargs);
     PySSA::Object python_get_simulation_seconds_per_tick() const;
     bool python_set_simulation_seconds_per_tick(PySSA::Object const&);
+#endif
 
     friend std::ostream& operator<<(std::ostream& out, World const&);
 };

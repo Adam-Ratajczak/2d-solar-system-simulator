@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef ENABLE_PYSSA
 #include <EssaGUI/util/Vector3.hpp>
 
 #include <Python.h>
@@ -137,3 +138,5 @@ private:
 };
 
 }
+
+#endif
