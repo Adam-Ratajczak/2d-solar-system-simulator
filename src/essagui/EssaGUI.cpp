@@ -7,6 +7,8 @@
 
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FilePrompt.hpp>
+#include <EssaGUI/gui/Overlay.hpp>
+#include <EssaGUI/gui/ToolWindow.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -26,11 +28,11 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     // m_simulation_view->set_visible(false);
     m_world.m_simulation_view = m_simulation_view;
 
-    m_simulation_view->on_change_focus = [&](Object* obj) {
+    m_simulation_view->on_change_focus = [&](Object* obj){
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(obj->name(), "FocusedGUI - " + obj->name());
+        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window("FocusedGUI - " + obj->name(), "FocusedGUI");
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ size().x - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
@@ -44,6 +46,13 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
                     m_simulation_view->pause_simulation(false);
             };
         }
+    };
+
+    m_world.on_reset = [&](){
+        GUI::Application::the().for_each_overlay([](GUI::Overlay& wnd){
+            if(wnd.id() == "FocusedGUI")
+                wnd.close();
+        });
     };
 
     auto home_button = add_widget<GUI::ImageButton>(load_image("../assets/homeButton.png"));

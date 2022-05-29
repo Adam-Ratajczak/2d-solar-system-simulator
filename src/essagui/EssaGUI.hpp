@@ -19,6 +19,7 @@
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
 #include <EssaGUI/gui/Widget.hpp>
+#include <EssaGUI/gui/ToolWindow.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <memory>

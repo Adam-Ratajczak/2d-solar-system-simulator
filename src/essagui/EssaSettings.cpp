@@ -229,15 +229,6 @@ void EssaSettings::reset_simulation() {
     ConfigLoader loader { file_in };
     m_simulation_view.world().reset(&loader);
     m_simulation_view.reset();
-
-    // FIXME: This seems like a hacky fix for FocusedObjectGUI UAF, but
-    //        I don't know any better solution.
-    //        (Doesn't cover Python and any other path that removes objects,
-    //        when these are added)
-    GUI::Application::the().for_each_overlay([](GUI::Overlay& wnd) {
-        if (wnd.id().starts_with("FocusedGUI-"))
-            wnd.close();
-    });
 }
 
 void EssaSettings::load_world(std::string wf) {

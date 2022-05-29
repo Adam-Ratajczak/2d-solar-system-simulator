@@ -168,6 +168,9 @@ Object* World::get_object_by_name(std::string const& name) {
 }
 
 void World::reset(ConfigLoader* loader) {
+    if(on_reset)
+        on_reset();
+        
     m_object_list.clear();
     m_simulation_view->set_focused_object(nullptr);
     m_date = Util::SimulationTime::create(1990, 4, 20);

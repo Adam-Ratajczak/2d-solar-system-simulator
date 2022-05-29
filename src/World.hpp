@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <cstdint>
+#include <functional>
 #include <list>
 #include <memory>
 #include <string>
@@ -65,6 +66,8 @@ public:
     void set_light_source(Object* obj){m_light_source = obj;}
     
     Object* light_source() const { return m_light_source; }
+
+    std::function<void()> on_reset;
 
 private:
     Util::SimulationClock::time_point m_start_date;
