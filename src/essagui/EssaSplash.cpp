@@ -1,10 +1,13 @@
 #include "EssaSplash.hpp"
 
+#include "EssaGUI.hpp"
 #include "EssaSettings.hpp"
 
+#include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/FilePrompt.hpp>
+#include <EssaGUI/gui/ImageWidget.hpp>
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/TextButton.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
@@ -24,12 +27,12 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
     container_layout.set_padding(10);
     container_layout.set_spacing(10);
 
-    // TODO: Make it an image
-    auto logo_label = container.add_widget<GUI::Textfield>();
-    logo_label->set_size({ Length::Auto, 160.0_px });
-    logo_label->set_content("ESSA");
-    logo_label->set_font_size(50);
-    logo_label->set_alignment(GUI::Align::Center);
+    static sf::Texture logo_image = Gfx::require_texture("../assets/splash_full_v1.png");
+    logo_image.setSmooth(true);
+
+    auto logo = container.add_widget<GUI::ImageWidget>();
+    logo->set_size({ Length::Auto, 160.0_px });
+    logo->set_image(&logo_image);
 
     auto button_space = container.add_widget<GUI::Container>();
     auto& button_space_layout = button_space->set_layout<GUI::HorizontalBoxLayout>();
