@@ -50,6 +50,8 @@ add_executable(
     src/math/Plane.cpp
     src/math/Ray.cpp
     src/math/Transform.cpp
+
+    ${PYSSA_SOURCES}
 )
 
 target_compile_options(out PUBLIC -fdiagnostics-color=always)
@@ -68,7 +70,8 @@ setup_target(out)
 
 target_link_libraries(out essa-gui)
 if(ENABLE_PYSSA)
+    message("Enabling PySSA")
     target_link_libraries(out ${PYTHON_LIBRARIES})
     target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
-    target_compile_definitions(out PRIVATE ENABLE_PYSSA)
+    target_compile_definitions(out PRIVATE ENABLE_PYSSA=1)
 endif()
