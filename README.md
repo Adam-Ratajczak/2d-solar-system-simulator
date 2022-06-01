@@ -23,7 +23,9 @@ The application is written in modern C++20 and uses the latest additions to this
 
 ## How to build and run this?
 
-See [Build instructions](./docs/BuildInstructions.md).
+If you are on Windows, you can download the prebuilt binaries in Releases page. Note that it doesn't support PySSA; you would need to build from source to use Python scripting.
+
+If you are on Linux, you can use [build instructions](./docs/BuildInstructions.md) to build ESSA from source.
 
 # Documentation
 
