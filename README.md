@@ -3,23 +3,21 @@
 https://github.com/Adam-Ratajczak/essa
 
 ## Description
-**ESSA**, or Extremely Sophisticated Space Application is an ambitious attempt to create an extremely accurate simulator of gravitational forces in an N-body system. Already an extremely recognizable project among the class, and this is just the beginning! Work is already well underway to take the simulation view into the next dimension. You can already create new objects and track the relationships between them. The interface is very intuitive and minimalistic, which is of course an advantage. Also under consideration are ways to increase the precision of the simulation, as well as a preliminary idea for storing a new simulation history system.
+**ESSA**, or Extremely Sophisticated Space Application is an ambitious attempt to create an extremely accurate simulator of gravitational forces in an N-body system. You can create new objects and track the relationships between them. It is possible to create your own planetar systems or use pre-defined templates, like Solar System or Jupiter System.
 
-The plans for this application are huge, we are going to add an external API in Python, *PySSA* for short, allowing us to manipulate the simulation and extract information through code, and maybe even export the generated solar system graphics. The tool will also have a lot of functionality related to measuring planetary parameters. We also intend to implement time dilation measurement mechanics and a rocket trajectory creator. It will be possible to create a rocket that will fly between two planets. 
+Our main goal is to create a stable simulation that is consistent with the real world and reasonably attractive.
 
-Our goal is to create a stable simulation that is consistent with the real world and reasonably attractive. We also want to do simple, however based on basic physics, planetary collisions.
+The application is written in modern C++20 and uses the latest additions to this standard, including concepts, modern STL classes (like `std::optional`) or constant evaluation `consteval`. It uses the CMake build system to ensure cross-platform [1].
 
-The application is written in modern C++20 and uses the latest additions to this standard, including `concept`, `requires`, `std::optional` and uses the CMake project build system to ensure cross-platform. The work is synchronized using Git, with a repository created on GitHub.
+* [1] Currently ESSA is tested only on Linux. Not fully-functional Windows builds are provided.
 
-## Project Scope
-* Possibly accurate simulation of gravitational forces in an N body system:
-    * Numerical counting of planetary positions with a certain accuracy (configurable).
-    * Possibility of using Newton's laws of universal gravitation or Einstein's theory of relativity.
-    * Finding various parameters of the bodies, e.g. 
+## Features
+* Simulation of gravitational forces in an N-body system:
+    * Numerical counting of planetary positions, with configurable tick length
+    * The [Leapfrog KDK integrator](http://courses.physics.ucsd.edu/2019/Winter/physics141/Lectures/Lecture2/volker.pdf) is used for as accurate as possible physics while keeping good performance - Solar System template runs at ~67500 iterations per second on AMD Ryzen 5 5600H CPU, with default settings (10 iterations/tick)
 * Ability to add new bodies, including with automatic counting of orbits (either exactly or based on various approximations)
-* Automatic finding of orbits with specific properties (e.g. passing through a point or orbiting a planet).
-* Basic GUI library - widget framework with auto-layout
-* *PySSA* - Python API for scripting.
+* [Basic GUI library](https://github.com/sppmacd/EssaGUI) - widget/GUI framework with auto-layout and simple windowing system, inspired by Qt.
+* Simple Python API for scripting, [*PySSA*](./src/pyssa).
 
 ## How to build and run this?
 
