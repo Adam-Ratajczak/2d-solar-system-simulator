@@ -17,7 +17,7 @@ jobs:
       run: sudo apt install libsfml-dev libglew-dev ninja-build
     - name: Build & install EssaGUI
       run: |
-        git clone https://github.com/sppmacd/EssaGUI.git
+        git clone https://github.com/essa-software/EssaGUI.git
         cd EssaGUI
         mkdir build
         cd build

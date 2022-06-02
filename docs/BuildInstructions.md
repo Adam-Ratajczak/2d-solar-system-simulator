@@ -18,13 +18,13 @@ sudo pacman -Ss base-devel sfml glew python3
 
 ## Build and run EssaGUI
 
-EssaGUI is a GUI framework written specifically for Essa. You can download it from the [GitHub repository](https://github.com/sppmacd/EssaGUI).
+EssaGUI is a GUI framework written specifically for Essa. You can download it from the [GitHub repository](https://github.com/essa-software/EssaGUI).
 
 TODO: make it a submodule
 
 From the project root directory:
 ```sh
-git clone git@github.com:sppmacd/EssaGUI.git
+git clone git@github.com:essa-software/EssaGUI.git
 cd EssaGUI
 mkdir build
 cd build

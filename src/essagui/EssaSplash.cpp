@@ -79,10 +79,10 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
                                              "Copyright (c) 2022 Adam2004yt, sppmacd\n"
                                              "\n"
                                              "Licensed under Beerware License\n"
-                                             "Source: https://github.com/Adam-Ratajczak/essa\n"
+                                             "Source: https://github.com/essa-software/essa\n"
                                              "\n"
                                              "Powered by:\n"
-                                             "\u2022 EssaGUI (https://github.com/sppmacd/EssaGUI)\n"
+                                             "\u2022 EssaGUI (https://github.com/essa-software/EssaGUI)\n"
                                              "\u2022 SFML (https://github.com/SFML/SFML)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
 
