@@ -29,6 +29,9 @@ Object sphere and trail color
 ### `radius : float`
 Object radius (in meters)
 
+### `mass : float`
+Object mass (in kg)
+
 ## Methods
 
 ### `attraction(other: Object) -> Vec3`

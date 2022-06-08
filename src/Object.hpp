@@ -145,6 +145,8 @@ private:
     bool python_set_color(PySSA::Object const&);
     PySSA::Object python_get_radius() const;
     bool python_set_radius(PySSA::Object const&);
+    PySSA::Object python_get_mass() const;
+    bool python_set_mass(PySSA::Object const&);
 #endif
 
     double m_density;

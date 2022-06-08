@@ -391,6 +391,7 @@ void Object::setup_python_bindings(TypeSetup setup) {
     setup.add_attribute<&Object::python_get_name, &Object::python_set_name>("name", "Object name (to be used with world.get_object_by_name())");
     setup.add_attribute<&Object::python_get_color, &Object::python_set_color>("color", "Object sphere and trail color (RGB)");
     setup.add_attribute<&Object::python_get_radius, &Object::python_set_radius>("radius", "Object radius (in meters)");
+    setup.add_attribute<&Object::python_get_mass, &Object::python_set_mass>("mass", "Object mass (in kg)");
 }
 
 Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs) {
@@ -491,6 +492,18 @@ bool Object::python_set_radius(PySSA::Object const& value) {
     if (!maybe_value.has_value())
         return false;
     m_radius = maybe_value.value();
+    return true;
+}
+
+PySSA::Object Object::python_get_mass() const {
+    return PySSA::Object::create(m_gravity_factor * G);
+}
+
+bool Object::python_set_mass(PySSA::Object const& value) {
+    auto maybe_value = value.as_double();
+    if (!maybe_value.has_value())
+        return false;
+    m_gravity_factor = maybe_value.value() / G;
     return true;
 }
 
