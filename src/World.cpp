@@ -9,8 +9,8 @@
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
 
-#include <EssaGUI/util/SimulationClock.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/SimulationClock.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <cassert>

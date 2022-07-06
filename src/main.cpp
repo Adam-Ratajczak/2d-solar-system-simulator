@@ -8,7 +8,7 @@
 #include "pyssa/Environment.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 

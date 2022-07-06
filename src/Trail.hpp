@@ -2,7 +2,7 @@
 
 #include "SimulationView.hpp"
 #include <EssaGUI/glwrapper/Vertex.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <list>

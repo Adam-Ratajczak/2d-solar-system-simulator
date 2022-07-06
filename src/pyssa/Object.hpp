@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef ENABLE_PYSSA
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Vector3.hpp>
 
 #include <Python.h>
 #include <SFML/Graphics.hpp>

@@ -10,9 +10,9 @@
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaGUI/gui/WidgetTreeRoot.hpp>
-#include <EssaGUI/util/DelayedInit.hpp>
-#include <EssaGUI/util/UnitDisplay.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
+#include <EssaUtil/Vector3.hpp>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -114,6 +114,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             if (object_pos_in_clip_space) {
                 // Go back to world coordinates to get actual object position.
                 auto object_pos_in_world_space = matrix().inverted() * object_pos_in_clip_space.value();
+                object_pos_in_world_space /= object_pos_in_world_space.w;
 
                 // Inform the client about measured position.
                 m_measured = true;
@@ -280,12 +281,15 @@ Matrix4x4d SimulationView::matrix() const {
 
 Vector3 SimulationView::screen_to_world(Vector3 v) const {
     Vector3 clip_space { -(v.x - size().x / 2.0) * 2 / size().x, (v.y - size().y / 2.0) * 2 / size().y };
-    return matrix().inverted() * clip_space;
+    auto local_space = matrix().inverted() * clip_space;
+    local_space /= local_space.w;
+    return local_space;
 }
 
 Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
     auto clip_space = matrix() * local_space;
+    clip_space /= clip_space.w;
     return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, clip_space.z };
 }
 

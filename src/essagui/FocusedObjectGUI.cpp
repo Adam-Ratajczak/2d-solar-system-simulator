@@ -3,7 +3,7 @@
 #include "../Object.hpp"
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/TabWidget.hpp>
-#include <EssaGUI/util/UnitDisplay.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iomanip>
@@ -251,7 +251,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
     m_light_source_button->set_active(m_focused == m_world.light_source());
 
     m_light_source_button->on_change = [&](bool state) {
-        if(state)
+        if (state)
             m_world.set_light_source(m_focused);
         else
             m_world.set_light_source(nullptr);
@@ -293,13 +293,13 @@ void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
 }
 
 void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const& value) const {
-    unit_textfield->set_content(value.unit);
-    value_textfield->set_content(value.value);
+    unit_textfield->set_content(sf::String::fromUtf8(value.unit.begin(), value.unit.end()));
+    value_textfield->set_content(sf::String::fromUtf8(value.value.begin(), value.value.end()));
 }
 
 void FocusedObjectGUI::update() {
     m_light_source_button->set_active(m_focused == m_world.light_source());
-    
+
     if (m_focused == nullptr || m_tab != 0)
         return;
 

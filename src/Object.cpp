@@ -9,9 +9,9 @@
 #include "pyssa/TupleParser.hpp"
 #include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/util/DelayedInit.hpp>
-#include <EssaGUI/util/UnitDisplay.hpp>
-#include <EssaGUI/util/Units.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
+#include <EssaUtil/Units.hpp>
 
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
@@ -208,7 +208,11 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
             continue;
         auto position = (closest_approach_entry.second.this_position + closest_approach_entry.second.other_object_position) / (2 * AU);
         std::ostringstream oss;
-        oss << "CA with " << closest_approach_entry.first->name() << ": " << Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string().toAnsiString();
+        auto str = Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string();
+        for (auto c : str)
+            std::cout << std::hex << (int)c << " " << std::dec;
+        std::cout << std::endl;
+        oss << "CA with " << closest_approach_entry.first->name() << ": " << str;
         draw_label(view, position, oss.str(), closest_approach_entry.first->m_color);
     }
 }
@@ -223,7 +227,7 @@ void Object::draw_label(SimulationView const& sv, Vector3 position, std::string 
     GUI::TextDrawOptions text;
     text.font_size = 15;
     text.fill_color = color;
-    sv.window().draw_text(string, GUI::Application::the().bold_font, { std::roundf(screen_position.x), std::roundf(screen_position.y) }, text);
+    sv.window().draw_text(sf::String::fromUtf8(string.begin(), string.end()), GUI::Application::the().bold_font, { std::roundf(screen_position.x), std::roundf(screen_position.y) }, text);
 }
 
 void Object::delete_object() {

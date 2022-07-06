@@ -9,7 +9,7 @@
 #include <EssaGUI/gui/TextButton.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
-#include <EssaGUI/util/UnitDisplay.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
 #include <memory>
 #include <vector>
 

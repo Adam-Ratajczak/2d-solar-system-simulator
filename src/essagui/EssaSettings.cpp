@@ -8,7 +8,7 @@
 #include <EssaGUI/gui/Textbox.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
-#include <EssaGUI/util/SimulationClock.hpp>
+#include <EssaUtil/SimulationClock.hpp>
 
 #include <fstream>
 

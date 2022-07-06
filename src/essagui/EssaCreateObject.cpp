@@ -1,7 +1,7 @@
 #include "EssaCreateObject.hpp"
 #include <EssaGUI/gui/ValueSlider.hpp>
 #include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaGUI/util/Units.hpp>
+#include <EssaUtil/Units.hpp>
 #include "EssaGUI.hpp"
 #include <cmath>
 #include <memory>

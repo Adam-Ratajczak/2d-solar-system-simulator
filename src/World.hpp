@@ -4,9 +4,9 @@
 #include "Object.hpp"
 #include "ObjectHistory.hpp"
 #include "pyssa/WrappedObject.hpp"
-#include <EssaGUI/util/Constants.hpp>
-#include <EssaGUI/util/SimulationClock.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Constants.hpp>
+#include <EssaUtil/SimulationClock.hpp>
+#include <EssaUtil/Vector3.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <cstdint>

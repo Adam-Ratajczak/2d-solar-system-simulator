@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EssaGUI/util/Matrix.hpp>
+#include <EssaUtil/Matrix.hpp>
 
 namespace Transform {
 

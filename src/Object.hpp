@@ -9,9 +9,9 @@
 #include "pyssa/Object.hpp"
 #include "pyssa/WrappedObject.hpp"
 
-#include <EssaGUI/util/SimulationClock.hpp>
-#include <EssaGUI/util/Units.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/SimulationClock.hpp>
+#include <EssaUtil/Units.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>

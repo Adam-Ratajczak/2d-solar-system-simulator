@@ -4,8 +4,8 @@
 #include "WorldShader.hpp"
 #include "math/Transform.hpp"
 
-#include <EssaGUI/util/DelayedInit.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <cmath>

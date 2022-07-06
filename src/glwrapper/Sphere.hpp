@@ -18,7 +18,7 @@
 #include <EssaGUI/gfx/SFMLWindow.hpp>
 #include <EssaGUI/glwrapper/Color.hpp>
 #include <EssaGUI/glwrapper/Vertex.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>

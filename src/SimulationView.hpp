@@ -6,9 +6,9 @@
 #include "math/Transform.hpp"
 #include "pyssa/WrappedObject.hpp"
 #include <EssaGUI/gui/Widget.hpp>
-#include <EssaGUI/util/Constants.hpp>
-#include <EssaGUI/util/Matrix.hpp>
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Constants.hpp>
+#include <EssaUtil/Matrix.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <functional>

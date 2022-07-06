@@ -2,7 +2,7 @@
 
 #include "Plane.hpp"
 
-#include <EssaGUI/util/Vector3.hpp>
+#include <EssaUtil/Vector3.hpp>
 #include <optional>
 
 namespace Math {

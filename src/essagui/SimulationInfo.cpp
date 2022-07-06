@@ -2,7 +2,7 @@
 #include "../World.hpp"
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
-#include <EssaGUI/util/Units.hpp>
+#include <EssaUtil/Units.hpp>
 #include <string>
 
 SimulationInfo::SimulationInfo(GUI::Container& parent, SimulationView* sw) : GUI::Container(parent), m_simulation_view(sw){
