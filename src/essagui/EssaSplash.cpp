@@ -39,7 +39,7 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
     button_space_layout.set_padding(10);
     button_space_layout.set_spacing(20);
 
-    auto add_button = [](GUI::Container* container, sf::String label, std::function<void()> on_click) {
+    auto add_button = [](GUI::Container* container, Util::UString label, std::function<void()> on_click) {
         auto button = container->add_widget<GUI::TextButton>();
         button->set_size({ Length::Auto, 40.0_px });
         button->set_content(std::move(label));
@@ -61,7 +61,7 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
         prompt.run();
 
         if (prompt.result().has_value())
-            m_essa_settings.load_world(prompt.result().value().toAnsiString());
+            m_essa_settings.load_world(prompt.result().value().encode());
         close();
     });
 
@@ -86,7 +86,7 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
                                              "\u2022 SFML (https://github.com/SFML/SFML)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
 
-        GUI::message_box(sf::String::fromUtf8(std::begin(AboutString), std::end(AboutString) - 1), "About", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box(AboutString, "About", GUI::MessageBox::Buttons::Ok);
     });
 }
 

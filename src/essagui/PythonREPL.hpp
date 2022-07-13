@@ -20,7 +20,7 @@ private:
     GUI::Console* m_console {};
     GUI::Textbox* m_textbox {};
 
-    std::vector<std::string> m_commands;
+    std::vector<Util::UString> m_commands;
     unsigned m_curr_command = 0;
 };
 

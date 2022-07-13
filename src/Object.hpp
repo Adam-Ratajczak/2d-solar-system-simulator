@@ -20,9 +20,10 @@
 #include <string>
 #include <vector>
 
+// TODO: Port to Util::UString where appropriate
 class Object : public PySSA::WrappedObject<Object> {
 public:
-    Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period);
+    Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string string, unsigned period);
 
 #ifdef ENABLE_PYSSA
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -130,7 +131,7 @@ private:
     void nonphysical_update();
 
     // Draws label in at 3d position but not projected (in GUI layer).
-    void draw_label(SimulationView const&, Vector3 position, std::string, sf::Color) const;
+    void draw_label(SimulationView const&, Vector3 position, Util::UString string, sf::Color) const;
 
 #ifdef ENABLE_PYSSA
     PySSA::Object python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs);

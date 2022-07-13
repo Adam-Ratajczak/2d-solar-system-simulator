@@ -1,8 +1,8 @@
 #include "EssaCreateObject.hpp"
-#include <EssaGUI/gui/ValueSlider.hpp>
-#include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaUtil/Units.hpp>
 #include "EssaGUI.hpp"
+#include <EssaGUI/gui/MessageBox.hpp>
+#include <EssaGUI/gui/ValueSlider.hpp>
+#include <EssaUtil/Units.hpp>
 #include <cmath>
 #include <memory>
 
@@ -44,7 +44,7 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     mode_specific_submit_container->add_created_widget(m_submit_create_container);
 }
 
-void EssaCreateObject::m_create_name_and_color_container(){
+void EssaCreateObject::m_create_name_and_color_container() {
     auto main_color_container = add_widget<Container>();
     main_color_container->set_size({ Length::Auto, 150.0_px });
     auto& main_color_layout = main_color_container->set_layout<GUI::VerticalBoxLayout>();
@@ -79,7 +79,7 @@ void EssaCreateObject::m_create_name_and_color_container(){
     }
 }
 
-std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI::Container& parent){
+std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI::Container& parent) {
     auto container = std::make_shared<GUI::Container>(parent);
     container->set_size({ Length::Auto, 72.0_px });
     auto& submit_layout = container->set_layout<GUI::HorizontalBoxLayout>();
@@ -141,7 +141,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
 
         m_add_object_button = container->add_widget<GUI::ImageButton>(load_image("../assets/addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
-            if(m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content())){
+            if (m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content().encode())) {
                 GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
                 return;
             }
@@ -158,7 +158,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
 }
 
 void EssaCreateObject::recalculate_forward_simulation() {
-    if(m_to_modify != nullptr)
+    if (m_to_modify != nullptr)
         return;
 
     if (m_automatic_orbit_calculation)
@@ -382,7 +382,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
 }
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
-    double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+    double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
     double radius = m_radius_control->value() * 1000;
     double theta = m_direction_xz_control->value();
     double alpha = m_direction_yz_control->value();
@@ -399,16 +399,14 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
     pos.z = m_y_position_control->value();
 
     sf::Color color = m_color_control->value();
-
-    std::string name = m_name_textbox->get_content();
-
+    auto name = m_name_textbox->get_content().encode();
     return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
 }
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
     if (!m_focused)
         return nullptr;
-    double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+    double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
     Distance radius = { static_cast<float>(m_radius_control->value() * 1000), Distance::Kilometer };
     Distance apogee, perigee;
     Angle angle, tilt;
@@ -428,5 +426,5 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Deg };
     }
 
-    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content(), 0.0_deg);
+    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content().encode(), 0.0_deg);
 }

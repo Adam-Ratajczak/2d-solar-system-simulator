@@ -129,7 +129,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             Util::SimulationClock::time_format = state;
         };
 
-        auto add_toggle = [&](std::string title, auto on_change, bool default_value = true) {
+        auto add_toggle = [&](Util::UString title, auto on_change, bool default_value = true) {
             auto toggle_container = display_settings.add_widget<GUI::Container>();
             auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
             toggle_layout.set_spacing(10);

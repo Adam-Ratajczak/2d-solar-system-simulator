@@ -52,7 +52,7 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     title->set_font_size(30);
     title->set_content("General information");
 
-    auto add_field = [&](std::string name, bool is_most_massive_data) -> Field {
+    auto add_field = [&](Util::UString name, bool is_most_massive_data) -> Field {
         auto subcontainer = info.add_widget<GUI::Container>();
         subcontainer->set_size({ Length::Auto, 30.0_px });
         subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
@@ -191,21 +191,21 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
-        if (m_world.exist_object_with_name(m_name_textbox->get_content()) && m_focused->name() != m_name_textbox->get_content()) {
+        if (m_world.exist_object_with_name(m_name_textbox->get_content().encode()) && m_focused->name() != m_name_textbox->get_content().encode()) {
             GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
             return;
         }
         m_focused->delete_object();
         m_world.add_object(m_create_object_from_params());
         m_focused = m_world.last_object().get();
-        m_window->set_title(m_focused->name());
+        m_window->set_title(Util::UString { m_focused->name() });
     };
 
     auto remove_button = button_container->add_widget<GUI::TextButton>();
     remove_button->set_content("Remove object");
     remove_button->override_button_colors().untoggleable.background = theme().negative;
     remove_button->on_click = [&]() {
-        auto result = GUI::message_box("Are you sure you want to delete object \"" + m_focused->name() + "\"?", "Delete object", GUI::MessageBox::Buttons::YesNo);
+        auto result = GUI::message_box(Util::UString { "Are you sure you want to delete object \"" + m_focused->name() + "\"?" }, "Delete object", GUI::MessageBox::Buttons::YesNo);
         if (result == GUI::MessageBox::ButtonRole::Yes) {
             m_focused->delete_object();
             m_focused = nullptr;
@@ -259,7 +259,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
 }
 
 std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
-    double mass = std::stod(m_mass_textbox->get_content().toAnsiString()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().toAnsiString()));
+    double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
     double radius = m_radius_control->value() * 1000;
     double theta = m_direction_xz_control->value();
     double alpha = m_direction_yz_control->value();
@@ -274,8 +274,7 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
     pos.z = m_y_position_control->value();
 
     sf::Color color = m_color_control->value();
-
-    std::string name = m_name_textbox->get_content();
+    std::string name = m_name_textbox->get_content().encode();
 
     // FIXME: Trails should be calculated in realtime somehow
     return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000000);
@@ -293,8 +292,8 @@ void FocusedObjectGUI::set_most_massive_data_visible(bool visible) {
 }
 
 void FocusedObjectGUI::Field::set_content_from_unit_value(Util::UnitValue const& value) const {
-    unit_textfield->set_content(sf::String::fromUtf8(value.unit.begin(), value.unit.end()));
-    value_textfield->set_content(sf::String::fromUtf8(value.value.begin(), value.value.end()));
+    unit_textfield->set_content(value.unit);
+    value_textfield->set_content(value.value);
 }
 
 void FocusedObjectGUI::update() {
@@ -311,7 +310,7 @@ void FocusedObjectGUI::update_params() {
     set_most_massive_data_visible(m_focused->most_attracting_object());
 
     if (m_focused->most_attracting_object())
-        m_orbiting_title->set_content("Orbiting around: " + m_focused->most_attracting_object()->name());
+        m_orbiting_title->set_content(Util::UString { "Orbiting around: " + m_focused->most_attracting_object()->name() });
 
     auto info = m_focused->get_info();
 
@@ -340,9 +339,9 @@ void FocusedObjectGUI::update_params() {
     m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z) / M_PI * 180 - 90);
 
     double mass = m_focused->mass();
-    m_mass_exponent_textbox->set_content(std::to_string(static_cast<int>(std::log10(mass))));
-    m_mass_textbox->set_content(std::to_string(mass / std::pow(10, (int)std::log10(mass))));
+    m_mass_exponent_textbox->set_content(Util::UString { std::to_string(static_cast<int>(std::log10(mass))) });
+    m_mass_textbox->set_content(Util::UString { std::to_string(mass / std::pow(10, (int)std::log10(mass))) });
 
     m_color_control->set_value(m_focused->color());
-    m_name_textbox->set_content(m_focused->name());
+    m_name_textbox->set_content(Util::UString { m_focused->name() });
 }

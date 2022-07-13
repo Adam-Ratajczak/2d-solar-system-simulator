@@ -212,12 +212,12 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
         for (auto c : str)
             std::cout << std::hex << (int)c << " " << std::dec;
         std::cout << std::endl;
-        oss << "CA with " << closest_approach_entry.first->name() << ": " << str;
-        draw_label(view, position, oss.str(), closest_approach_entry.first->m_color);
+        oss << "CA with " << closest_approach_entry.first->name() << ": " << str.encode();
+        draw_label(view, position, Util::UString { oss.str() }, closest_approach_entry.first->m_color);
     }
 }
 
-void Object::draw_label(SimulationView const& sv, Vector3 position, std::string string, sf::Color color) const {
+void Object::draw_label(SimulationView const& sv, Vector3 position, Util::UString string, sf::Color color) const {
     auto screen_position = sv.world_to_screen(position);
 
     // Don't draw labels of planets outside of clipping box
@@ -227,7 +227,7 @@ void Object::draw_label(SimulationView const& sv, Vector3 position, std::string 
     GUI::TextDrawOptions text;
     text.font_size = 15;
     text.fill_color = color;
-    sv.window().draw_text(sf::String::fromUtf8(string.begin(), string.end()), GUI::Application::the().bold_font, { std::roundf(screen_position.x), std::roundf(screen_position.y) }, text);
+    sv.window().draw_text(string, GUI::Application::the().bold_font, { std::roundf(screen_position.x), std::roundf(screen_position.y) }, text);
 }
 
 void Object::delete_object() {
@@ -264,7 +264,7 @@ void Object::draw_gui(SimulationView const& view) {
 
     if (!view.show_labels())
         return;
-    draw_label(view, render_position(), m_name, m_is_forward_simulated ? sf::Color(128, 128, 128) : sf::Color::White);
+    draw_label(view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? sf::Color(128, 128, 128) : sf::Color::White);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {

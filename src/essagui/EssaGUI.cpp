@@ -33,7 +33,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window("FocusedGUI - " + obj->name(), "FocusedGUI");
+        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(Util::UString { "FocusedGUI - " + obj->name() }, "FocusedGUI");
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ size().x - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
@@ -88,7 +88,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             prompt.run();
 
             if (prompt.result().has_value())
-                m_settings_gui->load_world(prompt.result().value().toAnsiString());
+                m_settings_gui->load_world(prompt.result().value().encode());
         };
     }
 

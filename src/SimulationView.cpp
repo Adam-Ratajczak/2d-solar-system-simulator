@@ -345,7 +345,7 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
     GUI::TextDrawOptions debug_text;
     debug_text.fill_color = sf::Color::White;
     debug_text.font_size = 15;
-    window.draw_text(debugoss.str(), GUI::Application::the().fixed_width_font, { 600, 20 }, debug_text);
+    window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font, { 600, 20 }, debug_text);
 }
 
 void SimulationView::pause_simulation(bool state) {

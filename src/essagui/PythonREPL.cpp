@@ -22,21 +22,21 @@ void PythonREPL::handle_event(GUI::Event& event) {
         if (!m_textbox->is_focused())
             break;
         if (event.event().key.code == sf::Keyboard::Enter) {
-            auto content = m_textbox->get_content().toAnsiString();
+            auto content = m_textbox->get_content();
             m_commands.push_back(content);
             m_curr_command = m_commands.size();
-            content += "\n";
+            content = content + "\n";
             m_console->append_line({ .color = sf::Color(100, 255, 255), .text = ">>> " + content });
-            auto result = PySSA::Environment::the().eval_string(content);
+            auto result = PySSA::Environment::the().eval_string(content.encode());
             if (!result) {
                 std::cout << "ERROR!!" << std::endl;
 
                 auto message = PySSA::Environment::the().generate_exception_message();
                 for (auto& line : message)
-                    m_console->append_line({ .color = sf::Color(255, 100, 100), .text = line });
+                    m_console->append_line({ .color = sf::Color(255, 100, 100), .text = Util::UString { line } });
             }
             else {
-                m_console->append_line({ .color = sf::Color(200, 200, 200), .text = result.repr() });
+                m_console->append_line({ .color = sf::Color(200, 200, 200), .text = Util::UString { result.repr() } });
             }
             m_textbox->set_content("");
             event.set_handled();
