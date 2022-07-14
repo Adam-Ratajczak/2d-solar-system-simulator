@@ -1,14 +1,16 @@
 #pragma once
 
-#include <EssaGUI/gui/NotifyUser.hpp>
 #include <GL/glew.h>
 
 #include "math/Transform.hpp"
 #include "pyssa/WrappedObject.hpp"
+
+#include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaGUI/gui/Widget.hpp>
+#include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Constants.hpp>
 #include <EssaUtil/Matrix.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <functional>
@@ -24,9 +26,9 @@ public:
         : Widget(c)
         , m_world(world) { reset(); }
 
-    void set_offset(Vector3 o) { m_offset = o; }
+    void set_offset(Util::Vector3d o) { m_offset = o; }
     void set_zoom(double d) { m_zoom = d; }
-    Vector3 offset() const { return m_offset; }
+    Util::Vector3d offset() const { return m_offset; }
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
@@ -39,20 +41,20 @@ public:
     double real_yaw() const { return m_yaw + m_yaw_from_object; }
     double real_pitch() const { return m_pitch + m_pitch_from_object; }
 
-    Vector3 screen_to_world(Vector3 v) const;
-    Vector3 world_to_screen(Vector3 v) const;
-    Matrix4x4d projection_matrix() const;
-    Matrix4x4d modelview_matrix() const;
-    Matrix4x4d matrix() const;
+    Util::Vector3d screen_to_world(Util::Vector3d v) const;
+    Util::Vector3d world_to_screen(Util::Vector3d v) const;
+    Util::Matrix4x4d projection_matrix() const;
+    Util::Matrix4x4d modelview_matrix() const;
+    Util::Matrix4x4d matrix() const;
 
     void reset() {
-        m_offset = Vector3 { 0, 0, 0 };
+        m_offset = Util::Vector3d { 0, 0, 0 };
         m_zoom = 1;
         m_focused_object = nullptr;
         reset_rotation();
     };
 
-    void start_coords_measure(std::function<void(Vector3)> handler) {
+    void start_coords_measure(std::function<void(Util::Vector3d)> handler) {
         m_measure = Measure::Coords;
         m_on_coord_measure = std::move(handler);
     }
@@ -75,7 +77,7 @@ public:
     void set_fixed_rotation_on_focus(bool b) { m_fixed_rotation_on_focus = b; }
     bool set_fixed_rotation_on_focus() const { return m_fixed_rotation_on_focus; }
 
-    void set_fov(Angle fov) { m_fov = fov; }
+    void set_fov(Util::Angle fov) { m_fov = fov; }
 
     // TODO: This should be private
     bool m_measured = false;
@@ -128,8 +130,8 @@ private:
     bool python_set_focused_object(PySSA::Object const&);
 #endif
 
-    Vector3 m_offset;
-    Angle m_fov = 80.0_deg;
+    Util::Vector3d m_offset;
+    Util::Angle m_fov = 80.0_deg;
 
     double m_yaw = 0;
     double m_pitch = 0;
@@ -139,10 +141,10 @@ private:
     World& m_world;
     double m_zoom = 1;
     Object* m_focused_object = nullptr;
-    sf::Vector2f m_prev_mouse_pos;
-    sf::Vector2f m_prev_drag_pos;
+    Util::Vector2f m_prev_mouse_pos;
+    Util::Vector2f m_prev_drag_pos;
 
-    std::function<void(Vector3 pos)> m_on_coord_measure;
+    std::function<void(Util::Vector3d pos)> m_on_coord_measure;
     std::function<void(Object* focused)> m_on_focus_measure;
 
     enum class DragMode {

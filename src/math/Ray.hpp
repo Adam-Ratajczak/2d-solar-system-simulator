@@ -2,26 +2,26 @@
 
 #include "Plane.hpp"
 
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <optional>
 
 namespace Math {
 
 class Ray {
 public:
-    Ray(Vector3 start, Vector3 end)
+    Ray(Util::Vector3d start, Util::Vector3d end)
         : m_start(start)
         , m_end(end) { }
 
-    Vector3 start() const { return m_start; }
-    Vector3 end() const { return m_end; }
+    Util::Vector3d start() const { return m_start; }
+    Util::Vector3d end() const { return m_end; }
 
-    double distance_to_point(Vector3) const;
-    std::optional<Vector3> intersection_with_plane(Plane const& plane) const;
+    double distance_to_point(Util::Vector3d) const;
+    std::optional<Util::Vector3d> intersection_with_plane(Plane const& plane) const;
 
 private:
-    Vector3 m_start;
-    Vector3 m_end;
+    Util::Vector3d m_start;
+    Util::Vector3d m_end;
 };
 
 }

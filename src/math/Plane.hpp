@@ -1,11 +1,12 @@
 #pragma once
 
 #include <EssaUtil/Matrix.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 
 namespace Math {
 
 // Ax + By + Cz + D = 0
+// FIXME: This belongs to LLGL or EssaUtil.
 class Plane {
 public:
     Plane(double a, double b, double c, double d)
@@ -14,19 +15,19 @@ public:
         , m_c(c)
         , m_d(d) { }
 
-    Plane(Vector3 p1, Vector3 p2, Vector3 p3);
+    Plane(Util::Vector3d p1, Util::Vector3d p2, Util::Vector3d p3);
 
     double a() const { return m_a; }
     double b() const { return m_b; }
     double c() const { return m_c; }
     double d() const { return m_d; }
 
-    Vector3 normal() const;
+    Util::Vector3d normal() const;
 
     // *one of points that is known to be on the plane
-    Vector3 point() const;
+    Util::Vector3d point() const;
 
-    Plane transformed(Matrix4x4d const&) const;
+    Plane transformed(Util::Matrix4x4d const&) const;
 
 private:
     friend std::ostream& operator<<(std::ostream& out, Plane const&);

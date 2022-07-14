@@ -68,9 +68,9 @@ bool ConfigLoader::parse_statement(World& world) {
             world.add_object(std::make_unique<Object>(
                 read_double_property("mass", 1),
                 read_distance_property("radius").value(),
-                Vector3 { read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },
-                Vector3 { read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
-                sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
+                Util::Vector3d { read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },
+                Util::Vector3d { read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
+                Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                 properties["name"],
                 read_double_property("trail_length", 1000 * 3600 * 24)));
         }
@@ -99,9 +99,9 @@ bool ConfigLoader::parse_statement(World& world) {
                     read_distance_property("apoapsis"),
                     read_distance_property("periapsis"),
                     properties["direction"] == "right" ? false : true,
-                    Angle(read_double_property("orbit_position"), Angle::Unit::Deg),
-                    Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),
-                    sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
+                    Util::Angle(read_double_property("orbit_position"), Util::Angle::Unit::Deg),
+                    Util::Angle(read_double_property("orbit_tilt"), Util::Angle::Unit::Deg),
+                    Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                     properties["name"],
                     0.0_deg));
             }
@@ -112,9 +112,9 @@ bool ConfigLoader::parse_statement(World& world) {
                     read_distance_property("major_axis"),
                     read_double_property("eccencrity"),
                     properties["direction"] == "right" ? false : true,
-                    Angle(read_double_property("orbit_position"), Angle::Unit::Deg),
-                    Angle(read_double_property("orbit_tilt"), Angle::Unit::Deg),
-                    sf::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
+                    Util::Angle(read_double_property("orbit_position"), Util::Angle::Unit::Deg),
+                    Util::Angle(read_double_property("orbit_tilt"), Util::Angle::Unit::Deg),
+                    Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                     properties["name"],
                     0.0_deg));
             }

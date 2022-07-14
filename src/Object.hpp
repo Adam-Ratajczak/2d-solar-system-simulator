@@ -11,7 +11,7 @@
 
 #include <EssaUtil/SimulationClock.hpp>
 #include <EssaUtil/Units.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
@@ -23,7 +23,7 @@
 // TODO: Port to Util::UString where appropriate
 class Object : public PySSA::WrappedObject<Object> {
 public:
-    Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string string, unsigned period);
+    Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, std::string string, unsigned period);
 
 #ifdef ENABLE_PYSSA
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -34,7 +34,7 @@ public:
     Object(Object&& other) = delete;
     Object& operator=(Object&& other) = delete;
 
-    Vector3 render_position() const { return m_pos / AU; }
+    Util::Vector3d render_position() const { return m_pos / AU; }
 
     std::string name() const { return m_name; }
 
@@ -60,28 +60,28 @@ public:
     void draw_closest_approaches_gui(SimulationView const&);
 
     void calculate_propieties();
-    std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
-    std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
-    void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation = 0.0_rad);
+    std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
+    std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
+    void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation = 0.0_rad);
 
     std::unique_ptr<Object> clone_for_forward_simulation() const;
 
     // Calculates velocity and direction so that the orbit passes through
     // the given point.
-    void require_orbit_point(Vector3);
+    void require_orbit_point(Util::Vector3d);
 
     double mass() const { return m_gravity_factor / G; }
     double gravity_factor() const { return m_gravity_factor; }
 
-    Vector3 pos() const { return m_pos; }
-    void set_pos(const Vector3& pos) { m_pos = pos; }
+    Util::Vector3d pos() const { return m_pos; }
+    void set_pos(const Util::Vector3d& pos) { m_pos = pos; }
 
-    Vector3 vel() const { return m_vel; }
-    void set_vel(const Vector3& vel) { m_vel = vel; }
+    Util::Vector3d vel() const { return m_vel; }
+    void set_vel(const Util::Vector3d& vel) { m_vel = vel; }
 
-    Vector3 acc() const { return m_attraction_factor; }
+    Util::Vector3d acc() const { return m_attraction_factor; }
 
-    sf::Color color() const { return m_color; }
+    Util::Color color() const { return m_color; }
 
     Util::SimulationClock::time_point creation_date() const { return m_creation_date; }
 
@@ -131,7 +131,7 @@ private:
     void nonphysical_update();
 
     // Draws label in at 3d position but not projected (in GUI layer).
-    void draw_label(SimulationView const&, Vector3 position, Util::UString string, sf::Color) const;
+    void draw_label(SimulationView const&, Util::Vector3d position, Util::UString string, Util::Color) const;
 
 #ifdef ENABLE_PYSSA
     PySSA::Object python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -155,12 +155,12 @@ private:
     History m_history;
 
     // NOTE: We only keep that for Python. It's not used anywhere.
-    Vector3 attraction(const Object&);
+    Util::Vector3d attraction(const Object&);
     void recalculate_trails_with_offset();
 
-    Vector3 m_pos;
-    Vector3 m_vel;
-    Vector3 m_attraction_factor;
+    Util::Vector3d m_pos;
+    Util::Vector3d m_vel;
+    Util::Vector3d m_attraction_factor;
 
     bool m_deleted = false;
     bool m_is_forward_simulated = false;
@@ -176,15 +176,15 @@ private:
 
     Util::SimulationClock::time_point m_creation_date, m_deletion_date;
     std::string m_name;
-    sf::Color m_color;
+    Util::Color m_color;
 
     double m_max_attraction = 0;
     Object* m_old_most_attracting_object = nullptr;
     Object* m_most_attracting_object = nullptr;
 
     struct ClosestApproachEntry {
-        Vector3 this_position;
-        Vector3 other_object_position;
+        Util::Vector3d this_position;
+        Util::Vector3d other_object_position;
         double distance {};
     };
     std::map<Object*, ClosestApproachEntry> m_closest_approaches;

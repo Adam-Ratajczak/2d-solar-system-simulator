@@ -27,15 +27,15 @@ Object Object::create(double v) {
     return o;
 }
 
-Object Object::create(Vector3 const& vector) {
+Object Object::create(Util::Vector3d const& vector) {
     auto tuple = PySSA::Object::empty_tuple(3);
-    tuple.set_tuple_item(0, PySSA::Object::create(vector.x));
-    tuple.set_tuple_item(1, PySSA::Object::create(vector.y));
-    tuple.set_tuple_item(2, PySSA::Object::create(vector.z));
+    tuple.set_tuple_item(0, PySSA::Object::create(vector.x()));
+    tuple.set_tuple_item(1, PySSA::Object::create(vector.y()));
+    tuple.set_tuple_item(2, PySSA::Object::create(vector.z()));
     return tuple;
 }
 
-Object Object::create(sf::Color const& color) {
+Object Object::create(Util::Color const& color) {
     auto tuple = PySSA::Object::empty_tuple(3);
     tuple.set_tuple_item(0, PySSA::Object::create(color.r));
     tuple.set_tuple_item(1, PySSA::Object::create(color.g));
@@ -102,7 +102,7 @@ std::optional<std::vector<Object>> Object::as_tuple() const {
     return list;
 }
 
-std::optional<Vector3> Object::as_vector() const {
+std::optional<Util::Vector3d> Object::as_vector() const {
     auto object_as_tuple = as_tuple();
     if (!object_as_tuple.has_value())
         return {};
@@ -126,10 +126,10 @@ std::optional<Vector3> Object::as_vector() const {
         PyErr_SetString(PyExc_TypeError, "'z' coordinate must be a float");
         return {};
     }
-    return Vector3(x.value(), y.value(), z.value());
+    return Util::Vector3d(x.value(), y.value(), z.value());
 }
 
-std::optional<sf::Color> Object::as_color() const {
+std::optional<Util::Color> Object::as_color() const {
     auto object_as_tuple = as_tuple();
     if (!object_as_tuple.has_value())
         return {};
@@ -165,7 +165,7 @@ std::optional<sf::Color> Object::as_color() const {
         PyErr_Format(PyExc_ValueError, "'b' component must be in range <0;255>, %d given", b);
         return {};
     }
-    return sf::Color(r.value(), g.value(), b.value());
+    return Util::Color { static_cast<uint8_t>(r.value()), static_cast<uint8_t>(g.value()), static_cast<uint8_t>(b.value()) };
 }
 
 std::string Object::str() const {

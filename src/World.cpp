@@ -10,7 +10,7 @@
 #include "pyssa/TupleParser.hpp"
 
 #include <EssaUtil/SimulationClock.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics.hpp>
 #include <cassert>
@@ -108,10 +108,10 @@ void World::update(int steps) {
                 continue;
 
             // Leapfrog algorithm, step 1
-            obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
+            obj->set_vel(obj->vel() + obj->acc() * halfStep * mul);
 
             // Leapfrog algorithm, step 2
-            obj->set_pos(obj->pos() + step * obj->vel() * mul);
+            obj->set_pos(obj->pos() + obj->vel() * step * mul);
         }
 
         // calculate the forces using the new positions
@@ -123,7 +123,7 @@ void World::update(int steps) {
                 continue;
 
             // Leapfrog algorithm, step 3
-            obj->set_vel(obj->vel() + halfStep * obj->acc() * mul);
+            obj->set_vel(obj->vel() + obj->acc() * halfStep * mul);
 
             obj->update(m_simulation_seconds_per_tick);
 
@@ -168,9 +168,9 @@ Object* World::get_object_by_name(std::string const& name) {
 }
 
 void World::reset(ConfigLoader* loader) {
-    if(on_reset)
+    if (on_reset)
         on_reset();
-        
+
     m_object_list.clear();
     m_simulation_view->set_focused_object(nullptr);
     m_date = Util::SimulationTime::create(1990, 4, 20);

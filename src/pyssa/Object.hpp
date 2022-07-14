@@ -1,16 +1,17 @@
 #pragma once
 
 #ifdef ENABLE_PYSSA
-#include <EssaUtil/Vector3.hpp>
+#    include <EssaUtil/Color.hpp>
+#    include <EssaUtil/Vector.hpp>
 
-#include <Python.h>
-#include <SFML/Graphics.hpp>
-#include <cstdio>
-#include <iostream>
-#include <optional>
-#include <string>
-#include <utility>
-#include <vector>
+#    include <Python.h>
+#    include <SFML/Graphics.hpp>
+#    include <cstdio>
+#    include <iostream>
+#    include <optional>
+#    include <string>
+#    include <utility>
+#    include <vector>
 
 namespace PySSA {
 
@@ -83,8 +84,8 @@ public:
         return tuple;
     }
 
-    static Object create(Vector3 const&);
-    static Object create(sf::Color const&);
+    static Object create(Util::Vector3d const&);
+    static Object create(Util::Color const&);
 
     void set_tuple_item(Py_ssize_t i, Object const& object) {
         PyTuple_SetItem(m_object, i, object.share_object());
@@ -127,8 +128,8 @@ public:
     std::optional<double> as_double() const;
     std::optional<std::vector<Object>> as_list() const;
     std::optional<std::vector<Object>> as_tuple() const;
-    std::optional<Vector3> as_vector() const;
-    std::optional<sf::Color> as_color() const;
+    std::optional<Util::Vector3d> as_vector() const;
+    std::optional<Util::Color> as_color() const;
 
     std::string str() const;
     std::string repr() const;

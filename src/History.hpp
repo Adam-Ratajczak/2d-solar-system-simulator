@@ -1,13 +1,13 @@
 #pragma once
 
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <list>
 #include <optional>
 #include <vector>
 
 class History {
     struct Entry {
-        Vector3 pos, vel;
+        Util::Vector3d pos, vel;
     };
 
     std::list<Entry> m_entry_list;

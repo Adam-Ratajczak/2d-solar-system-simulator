@@ -3,7 +3,7 @@
 #include "../SimulationView.hpp"
 #include "../math/Transform.hpp"
 
-#include <EssaGUI/glwrapper/Color.hpp>
+#include <EssaUtil/Color.hpp>
 #include <GL/gl.h>
 #include <SFML/Graphics/Glsl.hpp>
 #include <cassert>
@@ -90,7 +90,7 @@ void Sphere::gen_sphere() {
         for (unsigned sector = 0; sector < m_sectors; sector++) {
             auto stack_angle = stack * delta_stack_angle;
             auto sector_angle = sector * delta_sector_angle;
-            Vector3 point_position { 1 * std::cos(sector_angle) * std::sin(stack_angle),
+            Util::Vector3f point_position { 1 * std::cos(sector_angle) * std::sin(stack_angle),
                 1 * std::sin(sector_angle) * std::sin(stack_angle),
                 1 * std::cos(stack_angle) };
             m_vertices.push_back(Vertex { .position = point_position });
@@ -128,11 +128,11 @@ void Sphere::draw(GUI::SFMLWindow& window) const {
     GUI::SFMLWindow::ModelScope scope(window, model_matrix);
 
     s_shader.setUniform("color", sf::Glsl::Vec4 { m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f, m_color.a / 255.f });
-    s_shader.setUniform("translation", sf::Glsl::Vec4 { static_cast<float>(m_pos.x), static_cast<float>(m_pos.y), static_cast<float>(m_pos.z), 0 });
+    s_shader.setUniform("translation", sf::Glsl::Vec4 { static_cast<float>(m_pos.x()), static_cast<float>(m_pos.y()), static_cast<float>(m_pos.z()), 0 });
     s_shader.setUniform("radius", (float)m_radius);
     if (m_mode == DrawMode::Fancy) {
         s_shader.setUniform("fancy", true);
-        s_shader.setUniform("lightPosition", sf::Glsl::Vec4(m_light_position.x, m_light_position.y, m_light_position.z, 1));
+        s_shader.setUniform("lightPosition", sf::Glsl::Vec4 { static_cast<float>(m_light_position.x()), static_cast<float>(m_light_position.y()), static_cast<float>(m_light_position.z()), 1 });
     }
     else {
         s_shader.setUniform("fancy", false);

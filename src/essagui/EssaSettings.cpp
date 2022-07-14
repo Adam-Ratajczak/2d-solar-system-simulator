@@ -76,7 +76,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         fov_control->set_tooltip_text("Field of View");
         fov_control->on_change = [this](double value) {
             if (value > 0)
-                m_simulation_view.set_fov(Angle { static_cast<float>(value), Angle::Unit::Deg });
+                m_simulation_view.set_fov(Util::Angle { static_cast<float>(value), Util::Angle::Unit::Deg });
         };
 
         auto toggle_sphere_mode_container = display_settings.add_widget<GUI::Container>();
@@ -112,14 +112,14 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
-        toggle_time_format->add_state("American format", Util::SimulationClock::Format::AMERICAN, sf::Color::Blue);
-        toggle_time_format->add_state("Short format", Util::SimulationClock::Format::SHORT_TIME, sf::Color::Blue);
-        toggle_time_format->add_state("Mid format", Util::SimulationClock::Format::MID_TIME, sf::Color::Blue);
-        toggle_time_format->add_state("Long format", Util::SimulationClock::Format::LONG_TIME, sf::Color::Blue);
-        toggle_time_format->add_state("No clock American format", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, sf::Color::Blue);
-        toggle_time_format->add_state("No clock short format", Util::SimulationClock::Format::NO_CLOCK_SHORT, sf::Color::Blue);
-        toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, sf::Color::Blue);
-        toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, sf::Color::Blue);
+        toggle_time_format->add_state("American format", Util::SimulationClock::Format::AMERICAN, Util::Colors::blue);
+        toggle_time_format->add_state("Short format", Util::SimulationClock::Format::SHORT_TIME, Util::Colors::blue);
+        toggle_time_format->add_state("Mid format", Util::SimulationClock::Format::MID_TIME, Util::Colors::blue);
+        toggle_time_format->add_state("Long format", Util::SimulationClock::Format::LONG_TIME, Util::Colors::blue);
+        toggle_time_format->add_state("No clock American format", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, Util::Colors::blue);
+        toggle_time_format->add_state("No clock short format", Util::SimulationClock::Format::NO_CLOCK_SHORT, Util::Colors::blue);
+        toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, Util::Colors::blue);
+        toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, Util::Colors::blue);
 
         m_on_restore_defaults.push_back([toggle_time_format]() {
             toggle_time_format->set_index(0);

@@ -95,7 +95,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
                 });
             }
             else {
-                m_simulation_view.start_coords_measure([&](Vector3 pos) {
+                m_simulation_view.start_coords_measure([&](Util::Vector3d pos) {
                     m_add_object_button->set_visible(true);
                     m_forward_simulation_is_valid = false;
                     m_new_object_pos = pos;
@@ -131,7 +131,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
                 GUI::Application::the().spawn_notification("You need to specify initial coords of the object", GUI::Application::NotificationLevel::Error);
                 return;
             }
-            m_simulation_view.start_coords_measure([this](Vector3 coords) {
+            m_simulation_view.start_coords_measure([this](Util::Vector3d coords) {
                 assert(m_new_object);
                 m_new_object->require_orbit_point(coords);
             });
@@ -314,7 +314,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gu
     m_direction_xz_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
     m_direction_xz_control->set_name("Direction X");
     m_direction_xz_control->set_unit("[deg]");
-    m_direction_xz_control->set_class_name("Angle");
+    m_direction_xz_control->set_class_name("Util::Angle");
     m_direction_xz_control->slider().set_wraparound(true);
     m_direction_xz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
@@ -323,7 +323,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gu
     m_direction_yz_control = container->add_widget<GUI::ValueSlider>(-90, 90, 1);
     m_direction_yz_control->set_name("Direction Y");
     m_direction_yz_control->set_unit("[deg]");
-    m_direction_yz_control->set_class_name("Angle");
+    m_direction_yz_control->set_class_name("Util::Angle");
     m_direction_yz_control->slider().set_wraparound(true);
     m_direction_yz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
@@ -361,9 +361,9 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
     };
 
     m_orbit_angle_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
-    m_orbit_angle_control->set_name("Angle");
+    m_orbit_angle_control->set_name("Util::Angle");
     m_orbit_angle_control->set_unit("[deg]");
-    m_orbit_angle_control->set_class_name("Angle");
+    m_orbit_angle_control->set_class_name("Util::Angle");
     m_orbit_angle_control->slider().set_wraparound(true);
     m_orbit_angle_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
@@ -372,7 +372,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
     m_orbit_tilt_control = container->add_widget<GUI::ValueSlider>(-90, 90, 1);
     m_orbit_tilt_control->set_name("Tilt");
     m_orbit_tilt_control->set_unit("[deg]");
-    m_orbit_tilt_control->set_class_name("Angle");
+    m_orbit_tilt_control->set_class_name("Util::Angle");
     m_orbit_tilt_control->slider().set_wraparound(true);
     m_orbit_tilt_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
@@ -393,12 +393,12 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
         alpha = alpha / 180 * M_PI;
     }
 
-    Vector3 vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
+    Util::Vector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
 
     auto pos = m_new_object_pos;
-    pos.z = m_y_position_control->value();
+    pos.z() = m_y_position_control->value();
 
-    sf::Color color = m_color_control->value();
+    Util::Color color = m_color_control->value();
     auto name = m_name_textbox->get_content().encode();
     return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
 }
@@ -409,21 +409,21 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
     double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
     Distance radius = { static_cast<float>(m_radius_control->value() * 1000), Distance::Kilometer };
     Distance apogee, perigee;
-    Angle angle, tilt;
+    Util::Angle angle, tilt;
 
     if (m_toggle_unit_button->is_active()) {
         apogee = { static_cast<float>(m_apogee_control->value() * AU), Distance::Au };
         perigee = { static_cast<float>(m_perigee_control->value() * AU), Distance::Au };
 
-        angle = { static_cast<float>(m_orbit_angle_control->value()), Angle::Rad };
-        tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Rad };
+        angle = { static_cast<float>(m_orbit_angle_control->value()), Util::Angle::Rad };
+        tilt = { static_cast<float>(m_orbit_tilt_control->value()), Util::Angle::Rad };
     }
     else {
         apogee = { static_cast<float>(m_apogee_control->value() * 1000), Distance::Kilometer };
         perigee = { static_cast<float>(m_perigee_control->value() * 1000), Distance::Kilometer };
 
-        angle = { static_cast<float>(m_orbit_angle_control->value()), Angle::Deg };
-        tilt = { static_cast<float>(m_orbit_tilt_control->value()), Angle::Deg };
+        angle = { static_cast<float>(m_orbit_angle_control->value()), Util::Angle::Deg };
+        tilt = { static_cast<float>(m_orbit_tilt_control->value()), Util::Angle::Deg };
     }
 
     return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content().encode(), 0.0_deg);

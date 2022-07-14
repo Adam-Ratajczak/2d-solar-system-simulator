@@ -16,13 +16,13 @@
 #include <GL/glew.h>
 
 #include <EssaGUI/gfx/SFMLWindow.hpp>
-#include <EssaGUI/glwrapper/Color.hpp>
-#include <EssaGUI/glwrapper/Vertex.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Color.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
 
+// TODO: Remove this in favor of LLGL one
 class Sphere {
 public:
     enum class DrawMode {
@@ -34,11 +34,11 @@ public:
     Sphere(int sectorCount = 36, int stackCount = 18);
     ~Sphere() { }
 
-    void set_color(Color color) { m_color = color; }
-    void set_position(Vector3 pos) { m_pos = pos; }
+    void set_color(Util::Color color) { m_color = color; }
+    void set_position(Util::Vector3d pos) { m_pos = pos; }
     void set_radius(double radius) { m_radius = radius; }
     void set_draw_mode(DrawMode mode) { m_mode = mode; }
-    void set_light_position(Vector3 pos) { m_light_position = pos; }
+    void set_light_position(Util::Vector3d pos) { m_light_position = pos; }
 
     void draw(GUI::SFMLWindow& window) const;
 
@@ -47,9 +47,9 @@ private:
     unsigned m_sectors {};
     unsigned m_stacks {};
     DrawMode m_mode = DrawMode::Full;
-    Vector3 m_pos;
-    Vector3 m_light_position;
-    sf::Color m_color;
+    Util::Vector3d m_pos;
+    Util::Vector3d m_light_position;
+    Util::Color m_color;
 
     void gen_sphere();
 

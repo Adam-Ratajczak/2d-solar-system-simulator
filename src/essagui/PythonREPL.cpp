@@ -26,17 +26,17 @@ void PythonREPL::handle_event(GUI::Event& event) {
             m_commands.push_back(content);
             m_curr_command = m_commands.size();
             content = content + "\n";
-            m_console->append_line({ .color = sf::Color(100, 255, 255), .text = ">>> " + content });
+            m_console->append_line({ .color = Util::Color(100, 255, 255), .text = ">>> " + content });
             auto result = PySSA::Environment::the().eval_string(content.encode());
             if (!result) {
                 std::cout << "ERROR!!" << std::endl;
 
                 auto message = PySSA::Environment::the().generate_exception_message();
                 for (auto& line : message)
-                    m_console->append_line({ .color = sf::Color(255, 100, 100), .text = Util::UString { line } });
+                    m_console->append_line({ .color = Util::Color(255, 100, 100), .text = Util::UString { line } });
             }
             else {
-                m_console->append_line({ .color = sf::Color(200, 200, 200), .text = Util::UString { result.repr() } });
+                m_console->append_line({ .color = Util::Color(200, 200, 200), .text = Util::UString { result.repr() } });
             }
             m_textbox->set_content("");
             event.set_handled();

@@ -26,7 +26,7 @@
 
 static Util::DelayedInit<Sphere> s_sphere;
 
-Object::Object(double mass, double radius, Vector3 pos, Vector3 vel, sf::Color color, std::string name, unsigned period)
+Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, std::string name, unsigned period)
     : m_trail(std::max(2U, std::max(period * 2, (unsigned)500)), color)
     // FIXME: Share the sphere as it is identical for all objects and
     //        takes most of the object's used memory.
@@ -49,10 +49,10 @@ Sphere& Object::sphere() {
     return *s_sphere;
 }
 
-Vector3 Object::attraction(const Object& other) {
-    Vector3 dist = this->m_pos - other.m_pos;
-    double force = other.m_gravity_factor / dist.magnitude_squared();
-    Vector3 normalized_dist = dist.normalized();
+Util::Vector3d Object::attraction(const Object& other) {
+    Util::Vector3d dist = this->m_pos - other.m_pos;
+    double force = other.m_gravity_factor / dist.length_squared();
+    Util::Vector3d normalized_dist = dist.normalized();
     return normalized_dist * force;
 }
 
@@ -62,13 +62,13 @@ bool Object::deleted() const {
 
 void Object::update_forces_against(Object& object) {
     // TODO: Collisions
-    Vector3 dist = this->m_pos - object.m_pos;
+    Util::Vector3d dist = this->m_pos - object.m_pos;
     // denominator: R^2*normalized(dist)
-    double denominator = dist.magnitude_squared();
+    double denominator = dist.length_squared();
     denominator *= std::sqrt(denominator);
     auto attraction_base = dist / denominator;
 
-    auto calculate_attraction = [&](Vector3& this_attraction, Vector3& other_attraction) mutable {
+    auto calculate_attraction = [&](Util::Vector3d& this_attraction, Util::Vector3d& other_attraction) mutable {
         this_attraction = attraction_base * object.m_gravity_factor;
         m_attraction_factor -= this_attraction;
 
@@ -76,17 +76,17 @@ void Object::update_forces_against(Object& object) {
         object.m_attraction_factor += other_attraction;
     };
 
-    Vector3 this_attraction, other_attraction;
+    Util::Vector3d this_attraction, other_attraction;
 
     calculate_attraction(this_attraction, other_attraction);
 
-    auto this_attraction_mag = this_attraction.magnitude_squared() / object.m_gravity_factor;
+    auto this_attraction_mag = this_attraction.length_squared() / object.m_gravity_factor;
     if (this_attraction_mag > m_max_attraction && object.m_gravity_factor > m_gravity_factor) {
         m_max_attraction = this_attraction_mag;
         m_most_attracting_object = &object;
     }
 
-    auto other_attraction_mag = other_attraction.magnitude_squared() / m_gravity_factor;
+    auto other_attraction_mag = other_attraction.length_squared() / m_gravity_factor;
     if (other_attraction_mag > object.m_max_attraction && object.m_gravity_factor < m_gravity_factor) {
         object.m_max_attraction = other_attraction_mag;
         object.m_most_attracting_object = this;
@@ -110,20 +110,20 @@ void Object::nonphysical_update() {
     if (m_most_attracting_object == nullptr)
         return;
 
-    double distance_from_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
+    double distance_from_object = Util::get_distance(this->m_pos, m_most_attracting_object->m_pos);
     if (m_ap < distance_from_object) {
         m_ap = distance_from_object;
-        m_ap_vel = m_vel.magnitude();
+        m_ap_vel = m_vel.length();
     }
 
     if (m_pe > distance_from_object) {
         m_pe = distance_from_object;
-        m_pe_vel = m_vel.magnitude();
+        m_pe_vel = m_vel.length();
     }
 }
 
 void Object::clear_forces() {
-    m_attraction_factor = Vector3();
+    m_attraction_factor = Util::Vector3d();
     m_max_attraction = 0;
 }
 
@@ -181,7 +181,7 @@ void Object::draw(SimulationView const& view) {
     s_sphere->set_position(scaled_pos);
     s_sphere->set_color(m_color);
     if (m_world)
-        s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Vector3());
+        s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Util::Vector3d());
     s_sphere->draw(view.window());
 
     if (view.show_trails())
@@ -195,9 +195,9 @@ void Object::draw_closest_approaches(SimulationView const& view) {
     for (auto& closest_approach_entry : m_closest_approaches) {
         if (closest_approach_entry.second.distance > AU / 10)
             continue;
-        closest_approaches_vertexes.push_back(Vertex { .position = closest_approach_entry.second.this_position / AU, .color = sf::Color(m_color.r, m_color.g, m_color.b, 100) });
-        sf::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
-        closest_approaches_vertexes.push_back(Vertex { .position = closest_approach_entry.second.other_object_position / AU, .color = other_color });
+        closest_approaches_vertexes.push_back(Vertex { .position = Util::Vector3f { closest_approach_entry.second.this_position / AU }, .color = Util::Color { m_color.r, m_color.g, m_color.b, 100 } });
+        Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
+        closest_approaches_vertexes.push_back(Vertex { .position = Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, .color = other_color });
     }
     view.window().draw_vertices(GL_LINES, closest_approaches_vertexes);
 }
@@ -217,17 +217,17 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
     }
 }
 
-void Object::draw_label(SimulationView const& sv, Vector3 position, Util::UString string, sf::Color color) const {
+void Object::draw_label(SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
     auto screen_position = sv.world_to_screen(position);
 
     // Don't draw labels of planets outside of clipping box
-    if (screen_position.z > 1 || screen_position.z < -1)
+    if (screen_position.z() > 1 || screen_position.z() < -1)
         return;
 
     GUI::TextDrawOptions text;
     text.font_size = 15;
     text.fill_color = color;
-    sv.window().draw_text(string, GUI::Application::the().bold_font, { std::roundf(screen_position.x), std::roundf(screen_position.y) }, text);
+    sv.window().draw_text(string, GUI::Application::the().bold_font, { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
 }
 
 void Object::delete_object() {
@@ -239,11 +239,11 @@ Object::Info Object::get_info() const {
     Info info {
         .mass = mass(),
         .radius = m_radius,
-        .absolute_velocity = m_vel.magnitude()
+        .absolute_velocity = m_vel.length()
     };
 
     if (m_most_attracting_object) {
-        info.distance_from_most_massive_object = get_distance(this->m_pos, m_most_attracting_object->m_pos);
+        info.distance_from_most_massive_object = Util::get_distance(this->m_pos, m_most_attracting_object->m_pos);
         info.apogee = m_ap;
         info.apogee_velocity = m_ap_vel;
         info.perigee = m_pe;
@@ -264,10 +264,10 @@ void Object::draw_gui(SimulationView const& view) {
 
     if (!view.show_labels())
         return;
-    draw_label(view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? sf::Color(128, 128, 128) : sf::Color::White);
+    draw_label(view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::white);
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
@@ -276,11 +276,11 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
-    Vector3 pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
-    pos = pos.rotate_vector(rotation.rad());
+    Util::Vector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
+    pos = pos.rotate(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::Vector3d {}, color, name, T / (3600 * 24));
     result->m_ap = apogee.value();
     result->m_pe = perigee.value();
 
@@ -291,9 +291,9 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
 
     result->m_ap_vel = std::sqrt(2 * GM / apogee.value() - velocity_constant);
     result->m_pe_vel = std::sqrt(2 * GM / perigee.value() - velocity_constant);
-    double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
+    double velocity = std::sqrt(2 * GM / Util::get_distance(pos, this->m_pos) - velocity_constant);
 
-    Vector3 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
+    Util::Vector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
 
     if (direction)
         vel = -vel;
@@ -303,24 +303,24 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
 
     return result;
 }
-std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation);
+std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
 
-void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
+void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {
     m_world->add_object(create_object_relative_to_ap_pe(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Angle theta, Angle alpha, sf::Color color, std::string name, Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {
 
     double GM = m_gravity_factor;
     double a = semi_major.value();
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
-    Vector3 pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
-    pos = pos.rotate_vector(rotation.rad());
+    Util::Vector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
+    pos = pos.rotate(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(mass, radius.value(), pos, Vector3(0, 0), color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::Vector3d {}, color, name, T / (3600 * 24));
     result->m_ap = 0;
     result->m_pe = std::numeric_limits<double>::max();
 
@@ -331,9 +331,9 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
 
     result->m_ap_vel = std::sqrt(2 * GM / a - velocity_constant);
     result->m_pe_vel = std::sqrt(2 * GM / (a - a * ecc) - velocity_constant);
-    double velocity = std::sqrt(2 * GM / get_distance(pos, this->m_pos) - velocity_constant);
+    double velocity = std::sqrt(2 * GM / Util::get_distance(pos, this->m_pos) - velocity_constant);
 
-    Vector3 vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity);
+    Util::Vector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
 
     if (direction)
         vel = -vel;
@@ -345,8 +345,8 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
 }
 
 std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
-    auto brightened_color = [](sf::Color const& color) {
-        return sf::Color {
+    auto brightened_color = [](Util::Color const& color) {
+        return Util::Color {
             (uint8_t)std::min(255, color.r + 60),
             (uint8_t)std::min(255, color.g + 60),
             (uint8_t)std::min(255, color.b + 60),
@@ -360,7 +360,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
     return object;
 }
 
-void Object::require_orbit_point(Vector3 pos) {
+void Object::require_orbit_point(Util::Vector3d pos) {
     std::cout << "TODO: require_orbit_point " << pos << std::endl;
 }
 
@@ -369,7 +369,7 @@ void Object::update_closest_approaches() {
         if (&object == this)
             return;
         auto& closest_approach_entry = m_closest_approaches[&object];
-        auto distance = object.m_pos.distance_to(m_pos);
+        auto distance = Util::get_distance(object.m_pos, m_pos);
         if (closest_approach_entry.distance == 0 || distance < closest_approach_entry.distance) {
             closest_approach_entry.distance = distance;
             closest_approach_entry.this_position = m_pos;
@@ -402,9 +402,9 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
     PyObject* world = nullptr;
     double mass = 0;
     double radius = 0;
-    Vector3 pos;
-    Vector3 vel;
-    sf::Color color;
+    Util::Vector3d pos;
+    Util::Vector3d vel;
+    Util::Color color;
     char const* name = "Planet";
     unsigned period = 1;
 
@@ -422,8 +422,8 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
     if (!PyArg_ParseTupleAndKeywords(args.python_object(), kwargs.python_object(), "|$dd(ddd)(ddd)(bbb)su", (char**)keywords,
             &mass,
             &radius,
-            &pos.x, &pos.y, &pos.z,
-            &vel.x, &vel.y, &vel.z,
+            &pos.x(), &pos.y(), &pos.z(),
+            &vel.x(), &vel.y(), &vel.z(),
             &color.r, &color.g, &color.b,
             &name,
             &period))

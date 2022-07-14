@@ -16,7 +16,7 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolW
     , m_window(wnd) {
     set_layout<GUI::VerticalBoxLayout>();
     add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
-    set_background_color(sf::Color(192, 192, 192, 30));
+    set_background_color(Util::Color { 192, 192, 192, 30 });
 
     auto tab_widget = add_widget<GUI::TabWidget>();
 
@@ -268,12 +268,12 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
     theta = theta / 180 * M_PI;
     alpha = alpha / 180 * M_PI;
 
-    Vector3 vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
+    Util::Vector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
 
     auto pos = m_new_object_pos;
-    pos.z = m_y_position_control->value();
+    pos.z() = m_y_position_control->value();
 
-    sf::Color color = m_color_control->value();
+    Util::Color color = m_color_control->value();
     std::string name = m_name_textbox->get_content().encode();
 
     // FIXME: Trails should be calculated in realtime somehow
@@ -330,13 +330,13 @@ void FocusedObjectGUI::update_params() {
     m_orbiting_title->set_visible(m_focused->most_attracting_object() != nullptr);
 
     m_radius_control->set_value(m_focused->radius() / 1000);
-    m_velocity_control->set_value(m_focused->vel().magnitude());
+    m_velocity_control->set_value(m_focused->vel().length());
 
-    m_new_object_pos.x = m_focused->pos().x;
-    m_new_object_pos.y = m_focused->pos().y;
-    m_y_position_control->set_value(m_focused->pos().z);
-    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.x) / M_PI * 180 - 90);
-    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y, m_new_object_pos.z) / M_PI * 180 - 90);
+    m_new_object_pos.x() = m_focused->pos().x();
+    m_new_object_pos.y() = m_focused->pos().y();
+    m_y_position_control->set_value(m_focused->pos().z());
+    m_direction_xz_control->set_value(std::atan2(m_new_object_pos.y(), m_new_object_pos.x()) / M_PI * 180 - 90);
+    m_direction_yz_control->set_value(std::atan2(m_new_object_pos.y(), m_new_object_pos.z()) / M_PI * 180 - 90);
 
     double mass = m_focused->mass();
     m_mass_exponent_textbox->set_content(Util::UString { std::to_string(static_cast<int>(std::log10(mass))) });

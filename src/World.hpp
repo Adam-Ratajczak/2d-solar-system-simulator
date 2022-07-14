@@ -6,7 +6,7 @@
 #include "pyssa/WrappedObject.hpp"
 #include <EssaUtil/Constants.hpp>
 #include <EssaUtil/SimulationClock.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <cstdint>

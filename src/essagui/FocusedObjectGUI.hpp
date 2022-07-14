@@ -68,7 +68,7 @@ private:
 
     GUI::TextButton* m_light_source_button = nullptr;
 
-    Vector3 m_new_object_pos;
+    Util::Vector3d m_new_object_pos;
 
     void m_create_info_gui(GUI::Container& info);
     void m_create_modify_gui(GUI::Container& modify);

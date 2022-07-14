@@ -4,21 +4,21 @@
 
 namespace Math {
 
-double Ray::distance_to_point(Vector3 point) const {
+double Ray::distance_to_point(Util::Vector3d point) const {
     // https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    double num = (point - m_start).cross(point - m_end).magnitude();
-    double den = (m_end - m_start).magnitude();
+    double num = (point - m_start).cross(point - m_end).length();
+    double den = (m_end - m_start).length();
     return num / den;
 }
 
-std::optional<Vector3> Ray::intersection_with_plane(Plane const& plane) const {
+std::optional<Util::Vector3d> Ray::intersection_with_plane(Plane const& plane) const {
     // https://stackoverflow.com/questions/5666222/3d-line-plane-intersection
     // TODO: Do ray&plane, not line&plane intersection
-    Vector3 plane_normal  = plane.normal();
-    Vector3 plane_point = plane.point();
+    Util::Vector3d plane_normal  = plane.normal();
+    Util::Vector3d plane_point = plane.point();
     plane_normal = plane_normal.normalized();
 
-    Vector3 line_direction = (m_start - m_end).normalized();
+    Util::Vector3d line_direction = (m_start - m_end).normalized();
     if (plane_normal.dot(line_direction) == 0)
         return {};
 

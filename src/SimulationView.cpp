@@ -12,7 +12,7 @@
 #include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
-#include <EssaUtil/Vector3.hpp>
+#include <EssaUtil/Vector.hpp>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -30,8 +30,8 @@ void SimulationView::handle_event(GUI::Event& event) {
 
             m_world.for_each_object([&](Object& obj) {
                 auto obj_pos_screen = world_to_screen(obj.render_position());
-                obj_pos_screen.z = 0;
-                auto distance = obj_pos_screen.distance_to(Vector3(m_prev_mouse_pos));
+                obj_pos_screen.z() = 0;
+                auto distance = Util::get_distance(obj_pos_screen, Util::Vector3d { m_prev_mouse_pos, 0 });
                 if (distance < 30) {
                     set_focused_object(&obj, GUI::NotifyUser::Yes);
                     return;
@@ -65,33 +65,33 @@ void SimulationView::handle_event(GUI::Event& event) {
             apply_zoom(1.1);
     }
     else if (event.type() == sf::Event::MouseMoved) {
-        sf::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+        Util::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
         m_prev_mouse_pos = mouse_pos;
         // std::cout << "SV MouseMoved " << Vector3 { m_prev_mouse_pos } << std::endl;
 
         // DRAG
         auto drag_delta = m_prev_drag_pos - mouse_pos;
 
-        if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(drag_delta.x) > 20 || std::abs(drag_delta.y) > 20)) {
+        if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(drag_delta.x()) > 20 || std::abs(drag_delta.y()) > 20)) {
             m_is_dragging = true;
 
             if (m_drag_mode == DragMode::Pan && m_focused_object) {
                 m_focused_object = nullptr;
-                m_offset.z = 0;
+                m_offset.z() = 0;
             }
         }
 
         if (m_is_dragging) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
-                Vector3 qad_delta { -drag_delta.x, drag_delta.y, 0 };
-                set_offset(offset() + (Transform::rotation_around_z(-real_yaw()) * qad_delta * scale() / 320));
+                Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
+                set_offset(offset() + Util::Vector3d { Transform::rotation_around_z(-real_yaw()) * Util::Vector4d { qad_delta } * scale() / 320 });
                 break;
             }
             case DragMode::Rotate: {
                 auto sizes = window().getSize();
-                m_yaw += drag_delta.x / sizes.x * M_PI;
-                m_pitch -= drag_delta.y / sizes.y * M_PI;
+                m_yaw += drag_delta.x() / sizes.x * M_PI;
+                m_pitch -= drag_delta.y() / sizes.y * M_PI;
                 break;
             }
             default:
@@ -103,23 +103,27 @@ void SimulationView::handle_event(GUI::Event& event) {
         // COORD MEASURE
         if (m_measure == Measure::Coords) {
             // FIXME: This doesn't work perfectly yet.
-            Vector3 mouse_pos_in_clip_space { (mouse_pos.x - size().x / 2.0) * 2 / size().x, -(mouse_pos.y - size().y / 2.0) * 2 / size().y, 1, 1 };
+            Util::Vector3d mouse_pos_in_clip_space { (mouse_pos.x() - size().x() / 2.0) * 2 / size().x(), -(mouse_pos.y() - size().y() / 2.0) * 2 / size().y(), 1 };
             Math::Ray ray { {}, mouse_pos_in_clip_space };
+            std::cout << "ray: " << ray.start() << ".." << ray.end() << std::endl; 
 
             // Transform a grid plane (z = 0) to the clip space.
             Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix());
+            std::cout << "mouse_pos: " << mouse_pos_in_clip_space << std::endl;
+            std::cout << "plane: " << plane.a() << "," << plane.b() << "," << plane.c() << "," << plane.d() << std::endl;
 
             // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
             auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
             if (object_pos_in_clip_space) {
                 // Go back to world coordinates to get actual object position.
-                auto object_pos_in_world_space = matrix().inverted() * object_pos_in_clip_space.value();
-                object_pos_in_world_space /= object_pos_in_world_space.w;
+                std::cout << mouse_pos_in_clip_space << " -> " << *object_pos_in_clip_space << std::endl;
+                auto object_pos_in_world_space = matrix().inverted() * Util::Vector4d { object_pos_in_clip_space.value() };
+                object_pos_in_world_space /= object_pos_in_world_space.w();
 
                 // Inform the client about measured position.
                 m_measured = true;
                 if (m_on_coord_measure) {
-                    m_on_coord_measure(object_pos_in_world_space * AU);
+                    m_on_coord_measure(Util::Vector3d { object_pos_in_world_space * AU });
                 }
             }
         }
@@ -177,24 +181,24 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
         // start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
         // Vector3 end_coords = screen_to_world({ size().x, size().y });
-        Vector3 start_coords = { -bounds, -bounds, 0 };
-        start_coords.x -= std::round(m_offset.x / major_gridline_spacing) * major_gridline_spacing;
-        start_coords.y -= std::round(m_offset.y / major_gridline_spacing) * major_gridline_spacing;
-        Vector3 end_coords = { bounds, bounds, 0 };
-        end_coords.x -= std::round(m_offset.x / major_gridline_spacing) * major_gridline_spacing;
-        end_coords.y -= std::round(m_offset.y / major_gridline_spacing) * major_gridline_spacing;
-        Vector3 center_coords = (start_coords + end_coords) / 2.0;
+        Util::Vector3d start_coords = { -bounds, -bounds, 0 };
+        start_coords.x() -= std::round(m_offset.x() / major_gridline_spacing) * major_gridline_spacing;
+        start_coords.y() -= std::round(m_offset.y() / major_gridline_spacing) * major_gridline_spacing;
+        Util::Vector3d end_coords = { bounds, bounds, 0 };
+        end_coords.x() -= std::round(m_offset.x() / major_gridline_spacing) * major_gridline_spacing;
+        end_coords.y() -= std::round(m_offset.y() / major_gridline_spacing) * major_gridline_spacing;
+        Util::Vector3d center_coords = (start_coords + end_coords) / 2.0;
 
-        sf::Color const major_grid_line_color { 87, 87, 108 };
-        sf::Color const grid_line_color { 25, 25, 37 };
+        Util::Color const major_grid_line_color { 87, 87, 108 };
+        Util::Color const grid_line_color { 25, 25, 37 };
 
         // TODO: Create proper API for it.
         std::vector<Vertex> vertices;
 
         int index = 0;
 
-        auto blend_color = [](sf::Color start, sf::Color end, float fac) {
-            return sf::Color {
+        auto blend_color = [](Util::Color start, Util::Color end, float fac) {
+            return Util::Color {
                 static_cast<uint8_t>(start.r * (1 - fac) + end.r * fac),
                 static_cast<uint8_t>(start.g * (1 - fac) + end.g * fac),
                 static_cast<uint8_t>(start.b * (1 - fac) + end.b * fac),
@@ -204,27 +208,27 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
 
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
         // TODO: Add real fog shader instead of THIS thing
-        for (double x = start_coords.x; x < end_coords.x; x += spacing) {
+        for (double x = start_coords.x(); x < end_coords.x(); x += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { x, start_coords.y, 0 }, .color = sf::Color::Transparent });
-            double factor = std::abs(0.5 - (x - start_coords.x) / (end_coords.x - start_coords.x)) * 2;
-            auto center_color = blend_color(color, sf::Color::Transparent, factor);
-            vertices.push_back(Vertex { .position = { x, center_coords.y, 0 }, .color = center_color });
+            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, .color = Util::Colors::transparent });
+            double factor = std::abs(0.5 - (x - start_coords.x()) / (end_coords.x() - start_coords.x())) * 2;
+            auto center_color = blend_color(color, Util::Colors::transparent, factor);
+            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
             // FIXME: Make this duplicate vertex not needed
-            vertices.push_back(Vertex { .position = { x, center_coords.y, 0 }, .color = center_color });
-            vertices.push_back(Vertex { .position = { x, end_coords.y, 0 }, .color = sf::Color::Transparent });
+            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
+            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, .color = Util::Colors::transparent });
             index++;
         }
         index = 0;
-        for (double y = start_coords.y; y < end_coords.y; y += spacing) {
+        for (double y = start_coords.y(); y < end_coords.y(); y += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { start_coords.x, y, 0 }, .color = sf::Color::Transparent });
-            double factor = std::abs(0.5 - (y - start_coords.y) / (end_coords.y - start_coords.y)) * 2;
-            auto center_color = blend_color(color, sf::Color::Transparent, factor);
-            vertices.push_back(Vertex { .position = { center_coords.x, y, 0 }, .color = center_color });
+            vertices.push_back(Vertex { .position = { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
+            double factor = std::abs(0.5 - (y - start_coords.y()) / (end_coords.y() - start_coords.y())) * 2;
+            auto center_color = blend_color(color, Util::Colors::transparent, factor);
+            vertices.push_back(Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
             // FIXME: Make this duplicate vertex not needed
-            vertices.push_back(Vertex { .position = { center_coords.x, y, 0 }, .color = center_color });
-            vertices.push_back(Vertex { .position = { end_coords.x, y, 0 }, .color = sf::Color::Transparent });
+            vertices.push_back(Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
+            vertices.push_back(Vertex { .position = { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
             index++;
         }
 
@@ -232,17 +236,17 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
     }
 
     // guide
-    sf::Vector2f guide_start { size().x - 200.f, size().y - 30.f };
+    Util::Vector2f guide_start { size().x() - 200.f, size().y() - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
-    sf::Vector2f guide_end = guide_start - sf::Vector2f(spacing * 300 / scale(), 0);
+    Util::Vector2f guide_end = guide_start - Util::Vector2f(spacing * 300 / scale(), 0);
     std::array<Vertex, 6> guide;
-    sf::Color const guide_color { 127, 127, 127 };
-    guide[0] = Vertex { .position = Vector3(guide_start), .color = guide_color };
-    guide[1] = Vertex { .position = Vector3(guide_end), .color = guide_color };
-    guide[2] = Vertex { .position = Vector3(guide_start - sf::Vector2f(0, 5)), .color = guide_color };
-    guide[3] = Vertex { .position = Vector3(guide_start + sf::Vector2f(0, 5)), .color = guide_color };
-    guide[4] = Vertex { .position = Vector3(guide_end - sf::Vector2f(0, 5)), .color = guide_color };
-    guide[5] = Vertex { .position = Vector3(guide_end + sf::Vector2f(0, 5)), .color = guide_color };
+    Util::Color const guide_color { 127, 127, 127 };
+    guide[0] = Vertex { .position = Util::Vector3f(guide_start, 0), .color = guide_color };
+    guide[1] = Vertex { .position = Util::Vector3f(guide_end, 0), .color = guide_color };
+    guide[2] = Vertex { .position = Util::Vector3f(guide_start - Util::Vector2f(0, 5), 0), .color = guide_color };
+    guide[3] = Vertex { .position = Util::Vector3f(guide_start + Util::Vector2f(0, 5), 0), .color = guide_color };
+    guide[4] = Vertex { .position = Util::Vector3f(guide_end - Util::Vector2f(0, 5), 0), .color = guide_color };
+    guide[5] = Vertex { .position = Util::Vector3f(guide_end + Util::Vector2f(0, 5), 0), .color = guide_color };
     window.draw_vertices(GL_LINES, guide);
 
     // FIXME: UB on size_t conversion
@@ -250,24 +254,26 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
     guide_text.font_size = 15;
     guide_text.text_align = GUI::Align::Center;
     window.draw_text_aligned_in_rect(Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(),
-        { guide_start - sf::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font, guide_text);
+        { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font, guide_text);
 }
 
-Matrix4x4d SimulationView::projection_matrix() const {
+Util::Matrix4x4d SimulationView::projection_matrix() const {
     double fov = m_fov.rad();
     double fd = 1 / std::tan(fov / 2);
-    double aspect = size().x / (double)size().y;
+    double aspect = size().x() / (double)size().y();
     double zFar = 1000 * scale();
     double zNear = 0.1 * scale();
 
-    return { { { fd / aspect, 0, 0, 0 },
-        { 0, fd, 0, 0 },
-        { 0, 0, (zFar + zNear) / (zNear - zFar), -1 },
-        { 0, 0, (2 * zFar * zNear) / (zNear - zFar), 0 } } };
+    return {
+        fd / aspect, 0, 0, 0,
+        0, fd, 0, 0,
+        0, 0, (zFar + zNear) / (zNear - zFar), -1,
+        0, 0, (2 * zFar * zNear) / (zNear - zFar), 0
+    };
 }
 
-Matrix4x4d SimulationView::modelview_matrix() const {
-    Matrix4x4d matrix = Matrix4x4d::identity();
+Util::Matrix4x4d SimulationView::modelview_matrix() const {
+    Util::Matrix4x4d matrix = Util::Matrix4x4d::identity();
     matrix = matrix * Transform::translation(m_offset);
     matrix = matrix * Transform::rotation_around_z(real_yaw());
     matrix = matrix * Transform::rotation_around_x(real_pitch());
@@ -275,22 +281,22 @@ Matrix4x4d SimulationView::modelview_matrix() const {
     return matrix;
 }
 
-Matrix4x4d SimulationView::matrix() const {
+Util::Matrix4x4d SimulationView::matrix() const {
     return modelview_matrix() * projection_matrix();
 }
 
-Vector3 SimulationView::screen_to_world(Vector3 v) const {
-    Vector3 clip_space { -(v.x - size().x / 2.0) * 2 / size().x, (v.y - size().y / 2.0) * 2 / size().y };
+Util::Vector3d SimulationView::screen_to_world(Util::Vector3d v) const {
+    Util::Vector4d clip_space { -(v.x() - size().x() / 2.0) * 2 / size().x(), (v.y() - size().y() / 2.0) * 2 / size().y(), 0 };
     auto local_space = matrix().inverted() * clip_space;
-    local_space /= local_space.w;
-    return local_space;
+    local_space /= local_space.w();
+    return Util::Vector3d { local_space };
 }
 
-Vector3 SimulationView::world_to_screen(Vector3 local_space) const {
+Util::Vector3d SimulationView::world_to_screen(Util::Vector3d local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    auto clip_space = matrix() * local_space;
-    clip_space /= clip_space.w;
-    return { (clip_space.x + 1) / 2 * size().x, (-clip_space.y + 1) / 2 * size().y, clip_space.z };
+    auto clip_space = matrix() * Util::Vector4d { local_space };
+    clip_space /= clip_space.w();
+    return { (clip_space.x() + 1) / 2 * size().x(), (-clip_space.y() + 1) / 2 * size().y(), clip_space.z() };
 }
 
 void SimulationView::draw(GUI::SFMLWindow& window) const {
@@ -302,20 +308,20 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
     case Measure::Coords: {
         auto sizes = size();
         std::array<Vertex, 4> lines;
-        lines[0] = Vertex { .position = Vector3 { 0, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Red };
-        lines[1] = Vertex { .position = Vector3 { sizes.x, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Red };
-        lines[2] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), 0 }, .color = sf::Color::Red };
-        lines[3] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, .color = sf::Color::Red };
+        lines[0] = Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
+        lines[1] = Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
+        lines[2] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::red };
+        lines[3] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::red };
         window.draw_vertices(GL_LINES, lines);
         break;
     }
     case Measure::Focus: {
         auto sizes = size();
         std::array<Vertex, 4> lines;
-        lines[0] = Vertex { .position = Vector3 { 0, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Green };
-        lines[1] = Vertex { .position = Vector3 { sizes.x, static_cast<float>(m_prev_mouse_pos.y) }, .color = sf::Color::Green };
-        lines[2] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), 0 }, .color = sf::Color::Green };
-        lines[3] = Vertex { .position = Vector3 { static_cast<float>(m_prev_mouse_pos.x), sizes.y }, .color = sf::Color::Green };
+        lines[0] = Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
+        lines[1] = Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
+        lines[2] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::green };
+        lines[3] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::green };
         window.draw_vertices(GL_LINES, lines);
         break;
     }
@@ -343,7 +349,7 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
     debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
 
     GUI::TextDrawOptions debug_text;
-    debug_text.fill_color = sf::Color::White;
+    debug_text.fill_color = Util::Colors::white;
     debug_text.font_size = 15;
     window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font, { 600, 20 }, debug_text);
 }
@@ -369,12 +375,12 @@ void SimulationView::update() {
         set_offset(-m_focused_object->render_position());
 
         if (m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus) {
-            Vector3 a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
+            Util::Vector3d a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
 
-            m_pitch_from_object = std::atan2(a.y, a.z) - M_PI / 2;
-            m_yaw_from_object = std::atan2(a.y, a.x) + M_PI / 2;
+            m_pitch_from_object = std::atan2(a.y(), a.z()) - M_PI / 2;
+            m_yaw_from_object = std::atan2(a.y(), a.x()) + M_PI / 2;
 
-            if (a.y < 0)
+            if (a.y() < 0)
                 m_pitch_from_object -= M_PI;
         }
     }
@@ -426,7 +432,7 @@ bool SimulationView::python_set_fov(PySSA::Object const& object) {
     auto v = object.as_double();
     if (!v)
         return false;
-    m_fov = Angle(*v, Angle::Unit::Deg);
+    m_fov = Util::Angle(*v, Util::Angle::Unit::Deg);
     return true;
 }
 
@@ -515,9 +521,9 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_dept
 
 void WorldDrawScope::apply_uniforms(sf::Shader& shader) const {
     auto projection_matrix = m_simulation_view.projection_matrix().convert<float>();
-    shader.setUniform("projectionMatrix", sf::Glsl::Mat4((float*)projection_matrix.data));
+    shader.setUniform("projectionMatrix", sf::Glsl::Mat4(projection_matrix.raw_data()));
     auto modelview_matrix = m_simulation_view.modelview_matrix().convert<float>();
-    shader.setUniform("worldViewMatrix", sf::Glsl::Mat4((float*)modelview_matrix.data));
+    shader.setUniform("worldViewMatrix", sf::Glsl::Mat4(modelview_matrix.raw_data()));
 }
 
 WorldDrawScope::~WorldDrawScope() {
