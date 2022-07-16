@@ -4,7 +4,6 @@
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/TabWidget.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <cmath>
 #include <iomanip>
 #include <memory>

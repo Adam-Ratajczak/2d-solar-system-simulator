@@ -12,7 +12,6 @@
 #include <EssaUtil/SimulationClock.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <GL/gl.h>
-#include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
 #include <memory>

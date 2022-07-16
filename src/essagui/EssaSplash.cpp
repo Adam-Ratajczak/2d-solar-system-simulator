@@ -15,7 +15,7 @@
 
 #include <algorithm>
 
-EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
+EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
     : GUI::ToolWindow(wnd)
     , m_essa_settings(essa_settings) {
     set_title("ESSA");
@@ -27,8 +27,8 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
     container_layout.set_padding(10);
     container_layout.set_spacing(10);
 
-    static sf::Texture logo_image = Gfx::require_texture("../assets/splash_full_v1.png");
-    logo_image.setSmooth(true);
+    static llgl::opengl::Texture logo_image = Gfx::require_texture("../assets/splash_full_v1.png");
+    logo_image.set_filtering(llgl::opengl::Texture::Filtering::Linear);
 
     auto logo = container.add_widget<GUI::ImageWidget>();
     logo->set_size({ Length::Auto, 160.0_px });
@@ -90,11 +90,11 @@ EssaSplash::EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings)
     });
 }
 
-void EssaSplash::handle_event(sf::Event event) {
+void EssaSplash::handle_event(llgl::Event event) {
     GUI::ToolWindow::handle_event(event);
 
     GUI::Event gui_event { event };
-    if (gui_event.type() == sf::Event::MouseButtonPressed && !full_rect().contains(Util::Vector2f { gui_event.mouse_position() } + position())
-        || gui_event.type() == sf::Event::KeyPressed && gui_event.event().key.code == sf::Keyboard::Escape)
+    if (gui_event.type() == llgl::Event::Type::MouseButtonPress && !full_rect().contains(Util::Vector2f { gui_event.mouse_position() } + position())
+        || gui_event.type() == llgl::Event::Type::KeyPress && gui_event.event().key.keycode == llgl::KeyCode::Escape)
         close();
 }

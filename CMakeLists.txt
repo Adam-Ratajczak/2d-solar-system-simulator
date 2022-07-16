@@ -35,7 +35,6 @@ add_executable(
     src/SimulationView.cpp
     src/Trail.cpp
     src/World.cpp
-    src/WorldShader.cpp
     src/main.cpp
     
     src/essagui/EssaCreateObject.cpp
@@ -49,7 +48,6 @@ add_executable(
 
     src/math/Plane.cpp
     src/math/Ray.cpp
-    src/math/Transform.cpp
 
     ${PYSSA_SOURCES}
 )
@@ -68,7 +66,7 @@ function(setup_target targetname)
 endfunction()
 setup_target(out)
 
-target_link_libraries(out essa-gui)
+target_link_libraries(out essa-gui LLGL::3D)
 if(ENABLE_PYSSA)
     message("Enabling PySSA")
     target_link_libraries(out ${PYTHON_LIBRARIES})

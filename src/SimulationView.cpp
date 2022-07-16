@@ -1,11 +1,9 @@
 #include "SimulationView.hpp"
 
 #include "World.hpp"
-#include "WorldShader.hpp"
 #include "math/Ray.hpp"
-#include "math/Transform.hpp"
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaGUI/gui/TextAlign.hpp>
@@ -13,25 +11,26 @@
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Vector.hpp>
-
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <LLGL/OpenGL/Shader.hpp>
+#include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
+#include <LLGL/Renderer/Transform.hpp>
+#include <LLGL/Window/Mouse.hpp>
 #include <cmath>
 #include <optional>
 #include <sstream>
 
 void SimulationView::handle_event(GUI::Event& event) {
-    if (event.type() == sf::Event::MouseButtonPressed) {
-        m_prev_mouse_pos = { static_cast<float>(event.event().mouseButton.x), static_cast<float>(event.event().mouseButton.y) };
+    if (event.type() == llgl::Event::Type::MouseButtonPress) {
+        m_prev_mouse_pos = Util::Vector2f { Util::Vector2i { event.event().mouse_button.position } };
         // std::cout << "SV MouseButtonPressed " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
         m_prev_drag_pos = m_prev_mouse_pos;
-        if (event.event().mouseButton.button == sf::Mouse::Left) {
+        if (event.event().mouse_button.button == llgl::MouseButton::Left) {
             m_drag_mode = DragMode::Pan;
 
             m_world.for_each_object([&](Object& obj) {
                 auto obj_pos_screen = world_to_screen(obj.render_position());
-                obj_pos_screen.z() = 0;
-                auto distance = Util::get_distance(obj_pos_screen, Util::Vector3d { m_prev_mouse_pos, 0 });
+                auto distance = Util::get_distance(Util::Vector2f { obj_pos_screen.x(), obj_pos_screen.y() }, m_prev_mouse_pos);
                 if (distance < 30) {
                     set_focused_object(&obj, GUI::NotifyUser::Yes);
                     return;
@@ -51,21 +50,20 @@ void SimulationView::handle_event(GUI::Event& event) {
 
             event.set_handled();
         }
-        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+        else if (llgl::is_mouse_button_pressed(llgl::MouseButton::Right)) {
             m_measure = Measure::None;
             m_drag_mode = DragMode::Rotate;
         }
     }
-    else if (event.type() == sf::Event::MouseWheelScrolled) {
-        if (event.event().mouseWheelScroll.wheel != sf::Mouse::VerticalWheel)
-            return;
-        if (event.event().mouseWheelScroll.delta > 0)
+    else if (event.type() == llgl::Event::Type::MouseScroll) {
+        // TODO: Check mouse wheel
+        if (event.event().mouse_scroll.delta > 0)
             apply_zoom(1 / 1.1);
         else
             apply_zoom(1.1);
     }
-    else if (event.type() == sf::Event::MouseMoved) {
-        Util::Vector2f mouse_pos { static_cast<float>(event.event().mouseMove.x), static_cast<float>(event.event().mouseMove.y) };
+    else if (event.type() == llgl::Event::Type::MouseMove) {
+        Util::Vector2f mouse_pos { Util::Vector2i { event.event().mouse_move.position } };
         m_prev_mouse_pos = mouse_pos;
         // std::cout << "SV MouseMoved " << Vector3 { m_prev_mouse_pos } << std::endl;
 
@@ -85,13 +83,13 @@ void SimulationView::handle_event(GUI::Event& event) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
                 Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
-                set_offset(offset() + Util::Vector3d { Transform::rotation_around_z(-real_yaw()) * Util::Vector4d { qad_delta } * scale() / 320 });
+                set_offset(offset() + Util::Vector3d { llgl::Transform {}.rotate_z(-real_yaw()).transform_point(Util::Vector3f { qad_delta }) * scale() / 320 });
                 break;
             }
             case DragMode::Rotate: {
-                auto sizes = window().getSize();
-                m_yaw += drag_delta.x() / sizes.x * M_PI;
-                m_pitch -= drag_delta.y() / sizes.y * M_PI;
+                auto sizes = window().size();
+                m_yaw -= drag_delta.x() / sizes.x() * M_PI;
+                m_pitch += drag_delta.y() / sizes.y() * M_PI;
                 break;
             }
             default:
@@ -100,50 +98,33 @@ void SimulationView::handle_event(GUI::Event& event) {
             m_prev_drag_pos = mouse_pos;
         }
 
-        // COORD MEASURE
+        // Coord measure
         if (m_measure == Measure::Coords) {
-            // FIXME: This doesn't work perfectly yet.
-            Util::Vector3d mouse_pos_in_clip_space { (mouse_pos.x() - size().x() / 2.0) * 2 / size().x(), -(mouse_pos.y() - size().y() / 2.0) * 2 / size().y(), 1 };
-            Math::Ray ray { {}, mouse_pos_in_clip_space };
-            std::cout << "ray: " << ray.start() << ".." << ray.end() << std::endl; 
-
-            // Transform a grid plane (z = 0) to the clip space.
-            Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix());
-            std::cout << "mouse_pos: " << mouse_pos_in_clip_space << std::endl;
-            std::cout << "plane: " << plane.a() << "," << plane.b() << "," << plane.c() << "," << plane.d() << std::endl;
-
-            // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
-            auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
-            if (object_pos_in_clip_space) {
-                // Go back to world coordinates to get actual object position.
-                std::cout << mouse_pos_in_clip_space << " -> " << *object_pos_in_clip_space << std::endl;
-                auto object_pos_in_world_space = matrix().inverted() * Util::Vector4d { object_pos_in_clip_space.value() };
-                object_pos_in_world_space /= object_pos_in_world_space.w();
-
-                // Inform the client about measured position.
+            auto object_pos_in_world_space = screen_to_world_on_grid(mouse_pos);
+            if (object_pos_in_world_space) {
                 m_measured = true;
                 if (m_on_coord_measure) {
-                    m_on_coord_measure(Util::Vector3d { object_pos_in_world_space * AU });
+                    m_on_coord_measure(*object_pos_in_world_space * AU);
                 }
             }
         }
     }
-    else if (event.type() == sf::Event::MouseButtonReleased) {
+    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
         // std::cout << "SV MouseButtonReleased " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
         m_is_dragging = false;
         m_drag_mode = DragMode::None;
     }
-    else if (event.type() == sf::Event::KeyPressed && m_allow_change_speed) {
+    else if (event.type() == llgl::Event::Type::KeyPress && m_allow_change_speed) {
         if (event.event().key.shift) {
             if (m_speed != 0)
                 return;
-            if (event.event().key.code == sf::Keyboard::Right)
+            if (event.event().key.keycode == llgl::KeyCode::Right)
                 m_world.update(1);
-            else if (event.event().key.code == sf::Keyboard::Left)
+            else if (event.event().key.keycode == llgl::KeyCode::Left)
                 m_world.update(-1);
         }
         else {
-            if (event.event().key.code == sf::Keyboard::Right) {
+            if (event.event().key.keycode == llgl::KeyCode::Right) {
                 if (m_speed > 0)
                     m_speed *= 2;
                 else if (m_speed == 0)
@@ -151,7 +132,7 @@ void SimulationView::handle_event(GUI::Event& event) {
                 else
                     m_speed /= 2;
             }
-            else if (event.event().key.code == sf::Keyboard::Left) {
+            else if (event.event().key.keycode == llgl::KeyCode::Left) {
                 if (m_speed < 0)
                     m_speed *= 2;
                 else if (m_speed == 0)
@@ -163,13 +144,34 @@ void SimulationView::handle_event(GUI::Event& event) {
     }
 }
 
+std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vector2f screen) const {
+    auto clip_space = screen_to_clip_space(screen);
+    Math::Ray ray { { clip_space.x(), clip_space.y(), 0 }, { clip_space.x(), clip_space.y(), 1 } };
+
+    // Transform a grid plane (z = 0) to the clip space.
+    Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix());
+    /// std::cout << "[Coord] Mouse(Clip): " << clip_space << std::endl;
+
+    // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
+    auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
+    if (object_pos_in_clip_space) {
+        // Go back to world coordinates to get actual object position.
+        auto object_pos_in_world_space = llgl::Transform { matrix().inverted().convert<float>() }.transform_point(Util::Vector3f { object_pos_in_clip_space.value() });
+
+        // std::cout << "[Coord] Object(Clip)->Object(World): " << *object_pos_in_clip_space << " -> " << object_pos_in_world_space << std::endl;
+
+        return Util::Vector3d { object_pos_in_world_space };
+    }
+    return {};
+}
+
 void SimulationView::set_focused_object(Object* obj, GUI::NotifyUser notify_user) {
     m_focused_object = obj;
     if (notify_user == GUI::NotifyUser::Yes && m_focused_object && on_change_focus)
         on_change_focus(m_focused_object);
 }
 
-void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
+void SimulationView::draw_grid(GUI::Window& window) const {
     constexpr float zoom_step_exponent = 2;
     auto spacing = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom / 2) / std::log2(zoom_step_exponent)));
     constexpr int major_gridline_interval = 4;
@@ -193,7 +195,7 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
         Util::Color const grid_line_color { 25, 25, 37 };
 
         // TODO: Create proper API for it.
-        std::vector<Vertex> vertices;
+        std::vector<llgl::Vertex> vertices;
 
         int index = 0;
 
@@ -210,44 +212,44 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
         // TODO: Add real fog shader instead of THIS thing
         for (double x = start_coords.x(); x < end_coords.x(); x += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, .color = Util::Colors::transparent });
             double factor = std::abs(0.5 - (x - start_coords.x()) / (end_coords.x() - start_coords.x())) * 2;
             auto center_color = blend_color(color, Util::Colors::transparent, factor);
-            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
             // FIXME: Make this duplicate vertex not needed
-            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
-            vertices.push_back(Vertex { .position = { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, .color = Util::Colors::transparent });
             index++;
         }
         index = 0;
         for (double y = start_coords.y(); y < end_coords.y(); y += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(Vertex { .position = { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
             double factor = std::abs(0.5 - (y - start_coords.y()) / (end_coords.y() - start_coords.y())) * 2;
             auto center_color = blend_color(color, Util::Colors::transparent, factor);
-            vertices.push_back(Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
             // FIXME: Make this duplicate vertex not needed
-            vertices.push_back(Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
-            vertices.push_back(Vertex { .position = { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
             index++;
         }
 
-        window.draw_vertices(GL_LINES, vertices);
+        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, vertices);
     }
 
     // guide
     Util::Vector2f guide_start { size().x() - 200.f, size().y() - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
     Util::Vector2f guide_end = guide_start - Util::Vector2f(spacing * 300 / scale(), 0);
-    std::array<Vertex, 6> guide;
+    std::array<llgl::Vertex, 6> guide;
     Util::Color const guide_color { 127, 127, 127 };
-    guide[0] = Vertex { .position = Util::Vector3f(guide_start, 0), .color = guide_color };
-    guide[1] = Vertex { .position = Util::Vector3f(guide_end, 0), .color = guide_color };
-    guide[2] = Vertex { .position = Util::Vector3f(guide_start - Util::Vector2f(0, 5), 0), .color = guide_color };
-    guide[3] = Vertex { .position = Util::Vector3f(guide_start + Util::Vector2f(0, 5), 0), .color = guide_color };
-    guide[4] = Vertex { .position = Util::Vector3f(guide_end - Util::Vector2f(0, 5), 0), .color = guide_color };
-    guide[5] = Vertex { .position = Util::Vector3f(guide_end + Util::Vector2f(0, 5), 0), .color = guide_color };
-    window.draw_vertices(GL_LINES, guide);
+    guide[0] = llgl::Vertex { .position = Util::Vector3f(guide_start, 0), .color = guide_color };
+    guide[1] = llgl::Vertex { .position = Util::Vector3f(guide_end, 0), .color = guide_color };
+    guide[2] = llgl::Vertex { .position = Util::Vector3f(guide_start - Util::Vector2f(0, 5), 0), .color = guide_color };
+    guide[3] = llgl::Vertex { .position = Util::Vector3f(guide_start + Util::Vector2f(0, 5), 0), .color = guide_color };
+    guide[4] = llgl::Vertex { .position = Util::Vector3f(guide_end - Util::Vector2f(0, 5), 0), .color = guide_color };
+    guide[5] = llgl::Vertex { .position = Util::Vector3f(guide_end + Util::Vector2f(0, 5), 0), .color = guide_color };
+    window.draw_vertices(llgl::opengl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
     GUI::TextDrawOptions guide_text;
@@ -257,49 +259,33 @@ void SimulationView::draw_grid(GUI::SFMLWindow& window) const {
         { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font, guide_text);
 }
 
-Util::Matrix4x4d SimulationView::projection_matrix() const {
-    double fov = m_fov.rad();
-    double fd = 1 / std::tan(fov / 2);
-    double aspect = size().x() / (double)size().y();
-    double zFar = 1000 * scale();
-    double zNear = 0.1 * scale();
-
-    return {
-        fd / aspect, 0, 0, 0,
-        0, fd, 0, 0,
-        0, 0, (zFar + zNear) / (zNear - zFar), -1,
-        0, 0, (2 * zFar * zNear) / (zNear - zFar), 0
-    };
+llgl::Transform SimulationView::camera_transform() const {
+    return llgl::Transform {}
+        .translate({ 0, 0, -scale() })
+        .rotate_x(m_pitch)
+        .rotate_z(m_yaw)
+        .translate(Util::Vector3f { m_offset });
 }
 
-Util::Matrix4x4d SimulationView::modelview_matrix() const {
-    Util::Matrix4x4d matrix = Util::Matrix4x4d::identity();
-    matrix = matrix * Transform::translation(m_offset);
-    matrix = matrix * Transform::rotation_around_z(real_yaw());
-    matrix = matrix * Transform::rotation_around_x(real_pitch());
-    matrix = matrix * Transform::translation({ 0, 0, -scale() });
-    return matrix;
+llgl::View SimulationView::view() const {
+    llgl::View view;
+    view.set_perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() });
+    view.set_viewport(Util::Recti { rect() });
+    return view;
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
-    return modelview_matrix() * projection_matrix();
+    return (view().matrix() * camera_transform().matrix()).convert<double>();
 }
 
-Util::Vector3d SimulationView::screen_to_world(Util::Vector3d v) const {
-    Util::Vector4d clip_space { -(v.x() - size().x() / 2.0) * 2 / size().x(), (v.y() - size().y() / 2.0) * 2 / size().y(), 0 };
-    auto local_space = matrix().inverted() * clip_space;
-    local_space /= local_space.w();
-    return Util::Vector3d { local_space };
-}
-
-Util::Vector3d SimulationView::world_to_screen(Util::Vector3d local_space) const {
+Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
     auto clip_space = matrix() * Util::Vector4d { local_space };
     clip_space /= clip_space.w();
-    return { (clip_space.x() + 1) / 2 * size().x(), (-clip_space.y() + 1) / 2 * size().y(), clip_space.z() };
+    return Util::Vector3f { clip_space_to_screen(Util::Vector3d { clip_space }), clip_space.z() };
 }
 
-void SimulationView::draw(GUI::SFMLWindow& window) const {
+void SimulationView::draw(GUI::Window& window) const {
     if (m_show_grid)
         draw_grid(window);
     m_world.draw(*this);
@@ -307,22 +293,22 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
     switch (m_measure) {
     case Measure::Coords: {
         auto sizes = size();
-        std::array<Vertex, 4> lines;
-        lines[0] = Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
-        lines[1] = Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
-        lines[2] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::red };
-        lines[3] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::red };
-        window.draw_vertices(GL_LINES, lines);
+        std::array<llgl::Vertex, 4> lines;
+        lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
+        lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
+        lines[2] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::red };
+        lines[3] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::red };
+        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, lines);
         break;
     }
     case Measure::Focus: {
         auto sizes = size();
-        std::array<Vertex, 4> lines;
-        lines[0] = Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
-        lines[1] = Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
-        lines[2] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::green };
-        lines[3] = Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::green };
-        window.draw_vertices(GL_LINES, lines);
+        std::array<llgl::Vertex, 4> lines;
+        lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
+        lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
+        lines[2] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::green };
+        lines[3] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::green };
+        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, lines);
         break;
     }
     default:
@@ -341,8 +327,7 @@ void SimulationView::draw(GUI::SFMLWindow& window) const {
     oss << ")";
 
     std::ostringstream debugoss;
-    auto mp = sf::Mouse::getPosition(window);
-    debugoss << "ws=" << screen_to_world({ static_cast<double>(mp.x), static_cast<double>(mp.y), 0 }) << std::endl;
+    auto mp = llgl::mouse_position();
     debugoss << "s=" << scale() << std::endl;
     debugoss << "off=" << offset() << std::endl;
     debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
@@ -393,6 +378,19 @@ Object* SimulationView::focused_object() const {
     if (m_focused_object != nullptr)
         return m_focused_object;
     return {};
+}
+
+void SimulationView::apply_states() const {
+    window().set_view_matrix(camera_transform().matrix());
+    window().set_view(view());
+}
+
+Util::Vector2f SimulationView::clip_space_to_screen(Util::Vector3d clip_space) const {
+    return { (clip_space.x() + 1) / 2 * size().x(), size().y() - (clip_space.y() + 1) / 2 * size().y() };
+}
+
+Util::Vector3d SimulationView::screen_to_clip_space(Util::Vector2f viewport) const {
+    return { (viewport.x() - size().x() / 2.0) * 2 / size().x(), -(viewport.y() - size().y() / 2.0) * 2 / size().y(), 1 };
 }
 
 #ifdef ENABLE_PYSSA
@@ -500,15 +498,17 @@ WorldDrawScope const* WorldDrawScope::current() {
     return s_current_draw_scope;
 }
 
-WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, sf::Shader* custom_shader)
-    : m_simulation_view(view) {
+WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, llgl::opengl::Shader* custom_shader)
+    : m_simulation_view(view)
+    , m_previous_view(view.window().view()) {
 
     if (s_current_draw_scope)
         return;
 
-    auto& shader = custom_shader ? *custom_shader : WorldShader::world_shader();
-    view.window().set_shader(&shader);
-    apply_uniforms(shader);
+    static llgl::opengl::shaders::Basic330Core basic_shader;
+
+    view.window().set_shader(custom_shader ? custom_shader : &basic_shader);
+    m_simulation_view.apply_states();
 
     glEnable(GL_DEPTH_TEST);
 
@@ -519,13 +519,6 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_dept
     s_current_draw_scope = this;
 }
 
-void WorldDrawScope::apply_uniforms(sf::Shader& shader) const {
-    auto projection_matrix = m_simulation_view.projection_matrix().convert<float>();
-    shader.setUniform("projectionMatrix", sf::Glsl::Mat4(projection_matrix.raw_data()));
-    auto modelview_matrix = m_simulation_view.modelview_matrix().convert<float>();
-    shader.setUniform("worldViewMatrix", sf::Glsl::Mat4(modelview_matrix.raw_data()));
-}
-
 WorldDrawScope::~WorldDrawScope() {
     s_current_draw_scope = m_parent;
     if (s_current_draw_scope)
@@ -533,4 +526,5 @@ WorldDrawScope::~WorldDrawScope() {
 
     glDisable(GL_DEPTH_TEST);
     m_simulation_view.window().set_shader(nullptr);
+    m_simulation_view.window().set_view(m_previous_view);
 }

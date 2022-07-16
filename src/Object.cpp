@@ -2,19 +2,17 @@
 
 #include "SimulationView.hpp"
 #include "World.hpp"
-#include "WorldShader.hpp"
 #include "glwrapper/Sphere.hpp"
-#include "math/Transform.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
 
 #include <GL/gl.h>
-#include <SFML/Graphics.hpp>
+#include <LLGL/OpenGL/Vertex.hpp>
 #include <cmath>
 #include <cstring>
 #include <iomanip>
@@ -182,7 +180,7 @@ void Object::draw(SimulationView const& view) {
     s_sphere->set_color(m_color);
     if (m_world)
         s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Util::Vector3d());
-    s_sphere->draw(view.window());
+    s_sphere->draw(view);
 
     if (view.show_trails())
         m_trail.draw(view.window());
@@ -191,15 +189,15 @@ void Object::draw(SimulationView const& view) {
 void Object::draw_closest_approaches(SimulationView const& view) {
     WorldDrawScope::verify();
 
-    std::vector<Vertex> closest_approaches_vertexes;
+    std::vector<llgl::Vertex> closest_approaches_vertexes;
     for (auto& closest_approach_entry : m_closest_approaches) {
         if (closest_approach_entry.second.distance > AU / 10)
             continue;
-        closest_approaches_vertexes.push_back(Vertex { .position = Util::Vector3f { closest_approach_entry.second.this_position / AU }, .color = Util::Color { m_color.r, m_color.g, m_color.b, 100 } });
+        closest_approaches_vertexes.push_back(llgl::Vertex { .position = Util::Vector3f { closest_approach_entry.second.this_position / AU }, .color = Util::Color { m_color.r, m_color.g, m_color.b, 100 } });
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
-        closest_approaches_vertexes.push_back(Vertex { .position = Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, .color = other_color });
+        closest_approaches_vertexes.push_back(llgl::Vertex { .position = Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, .color = other_color });
     }
-    view.window().draw_vertices(GL_LINES, closest_approaches_vertexes);
+    view.window().draw_vertices(llgl::opengl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
 void Object::draw_closest_approaches_gui(SimulationView const& view) {
@@ -209,9 +207,6 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
         auto position = (closest_approach_entry.second.this_position + closest_approach_entry.second.other_object_position) / (2 * AU);
         std::ostringstream oss;
         auto str = Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string();
-        for (auto c : str)
-            std::cout << std::hex << (int)c << " " << std::dec;
-        std::cout << std::endl;
         oss << "CA with " << closest_approach_entry.first->name() << ": " << str.encode();
         draw_label(view, position, Util::UString { oss.str() }, closest_approach_entry.first->m_color);
     }

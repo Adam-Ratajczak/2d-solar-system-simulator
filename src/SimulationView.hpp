@@ -2,7 +2,6 @@
 
 #include <GL/glew.h>
 
-#include "math/Transform.hpp"
 #include "pyssa/WrappedObject.hpp"
 
 #include <EssaGUI/gui/NotifyUser.hpp>
@@ -11,8 +10,7 @@
 #include <EssaUtil/Constants.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Shader.hpp>
+#include <LLGL/Renderer/Transform.hpp>
 #include <functional>
 #include <optional>
 
@@ -32,7 +30,7 @@ public:
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
-        m_pitch = -0.7;
+        m_pitch = 0.7;
         m_pitch_from_object = 0;
         m_yaw = 0;
         m_yaw_from_object = 0;
@@ -41,10 +39,17 @@ public:
     double real_yaw() const { return m_yaw + m_yaw_from_object; }
     double real_pitch() const { return m_pitch + m_pitch_from_object; }
 
-    Util::Vector3d screen_to_world(Util::Vector3d v) const;
-    Util::Vector3d world_to_screen(Util::Vector3d v) const;
-    Util::Matrix4x4d projection_matrix() const;
-    Util::Matrix4x4d modelview_matrix() const;
+    std::optional<Util::Vector3d> screen_to_world_on_grid(Util::Vector2f screen) const;
+
+    // The Z coordinate is in the clip space. So if you want to do clipping,
+    // you need to check if z is in range <-1, 1>.
+    Util::Vector3f world_to_screen(Util::Vector3d v) const;
+
+    Util::Vector3d screen_to_clip_space(Util::Vector2f) const;
+    Util::Vector2f clip_space_to_screen(Util::Vector3d) const;
+
+    llgl::Transform camera_transform() const;
+    llgl::View view() const;
     Util::Matrix4x4d matrix() const;
 
     void reset() {
@@ -96,6 +101,8 @@ public:
     void change_speed(bool state) { m_allow_change_speed = state; }
     void pause_simulation(bool state);
 
+    void apply_states() const;
+
 #ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
 #endif
@@ -104,12 +111,12 @@ public:
 
 private:
     virtual void handle_event(GUI::Event&) override;
-    virtual void draw(GUI::SFMLWindow&) const override;
+    virtual void draw(GUI::Window&) const override;
     virtual void update() override;
 
     virtual bool accepts_focus() const override { return true; }
 
-    void draw_grid(GUI::SFMLWindow&) const;
+    void draw_grid(GUI::Window&) const;
 
 #ifdef ENABLE_PYSSA
     PySSA::Object python_reset(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -190,17 +197,8 @@ public:
         No
     };
 
-    // Custom shader uniforms:
-    // - modelviewMatrix : mat4
-    // - projectionMatrix : mat4
-    // - the same as for default shader (see WorldShader.hpp)
-    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No, sf::Shader* custom_shader = nullptr);
+    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No, llgl::opengl::Shader* custom_shader = nullptr);
     ~WorldDrawScope();
-
-    // Re-apply all uniforms to the shader This can be used when you
-    // draw things with another shaders in a single WorldDrawScope.
-    // (Actually this is a HACK because Sphere doesn't know about SV)
-    void apply_uniforms(sf::Shader&) const;
 
     static void verify();
     static WorldDrawScope const* current();
@@ -208,4 +206,5 @@ public:
 private:
     SimulationView const& m_simulation_view;
     WorldDrawScope const* m_parent = nullptr;
+    llgl::View m_previous_view;
 };

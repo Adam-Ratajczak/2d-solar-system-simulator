@@ -12,8 +12,6 @@
 #include <EssaUtil/SimulationClock.hpp>
 #include <EssaUtil/Units.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <limits>
 #include <list>
 #include <memory>

@@ -2,7 +2,6 @@
 
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
-#include <SFML/System/Clock.hpp>
 
 #include "../SimulationView.hpp"
 
@@ -15,7 +14,7 @@ public:
     virtual void do_update() override;
 
 private:
-    sf::Clock m_clock;
+    // sf::Clock m_clock;
     float m_fps = 60;
 
     void m_update_time();

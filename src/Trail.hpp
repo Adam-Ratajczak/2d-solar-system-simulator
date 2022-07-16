@@ -2,12 +2,10 @@
 
 #include "SimulationView.hpp"
 #include <EssaUtil/Vector.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <list>
 
 class Trail {
-    std::vector<Vertex> m_vertexes;
+    std::vector<llgl::Vertex> m_vertexes;
     int m_append_offset = 1;
     int m_length = 0;
     Util::Vector3d m_offset;
@@ -21,7 +19,7 @@ class Trail {
 
 public:
     Trail(size_t max_trail_size, Util::Color color);
-    void draw(GUI::SFMLWindow&);
+    void draw(GUI::Window&);
     void push_back(Util::Vector3d pos);
     void reset();
     void set_offset(Util::Vector3d offset) { m_offset = offset; }

@@ -8,7 +8,6 @@
 #include <EssaUtil/SimulationClock.hpp>
 #include <EssaUtil/Vector.hpp>
 
-#include <SFML/Graphics.hpp>
 #include <cstdint>
 #include <functional>
 #include <list>

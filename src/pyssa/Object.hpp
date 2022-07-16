@@ -5,7 +5,6 @@
 #    include <EssaUtil/Vector.hpp>
 
 #    include <Python.h>
-#    include <SFML/Graphics.hpp>
 #    include <cstdio>
 #    include <iostream>
 #    include <optional>

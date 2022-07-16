@@ -30,19 +30,19 @@ Plane Plane::transformed(Util::Matrix4x4d const& matrix) const {
     // https://stackoverflow.com/questions/7685495/transforming-a-3d-plane-using-a-4x4-matrix
     auto normal = Util::Vector4d { this->normal(), 0 };
     auto point = Util::Vector4d { this->point() };
-    std::cout << normal << "," << point << std::endl;
+    // std::cout << normal << "," << point << std::endl;
 
     auto transformed_point = matrix * point;
+    transformed_point /= transformed_point.w();
     auto transformed_normal = matrix.inverted().transposed() * normal;
+    transformed_normal /= transformed_normal.w();
 
-    double d = -(transformed_normal.x() * transformed_point.x()
-        + transformed_normal.y() * transformed_point.y()
-        + transformed_normal.z() * transformed_point.z());
+    double d = transformed_normal.dot(transformed_point);
     return Plane {
         transformed_normal.x(),
         transformed_normal.y(),
         transformed_normal.z(),
-        d
+        -d
     };
 }
 

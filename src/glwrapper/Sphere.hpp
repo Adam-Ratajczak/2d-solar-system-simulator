@@ -13,16 +13,32 @@
 
 #pragma once
 
-#include <GL/glew.h>
+#include "../SimulationView.hpp"
 
-#include <EssaGUI/gfx/SFMLWindow.hpp>
+#include <EssaGUI/gfx/Window.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <LLGL/3D/Sphere.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
 
-// TODO: Remove this in favor of LLGL one
+class Sphere;
+
+class SphereShader : public llgl::opengl::Shader {
+public:
+    SphereShader();
+
+    virtual llgl::opengl::AttributeMapping attribute_mapping() const { return { 0, 100, 100, 100 }; };
+
+    void set_sphere(Sphere const& sphere) { m_sphere = &sphere; }
+
+private:
+    Sphere const* m_sphere = nullptr;
+
+    virtual void on_bind(llgl::opengl::ShaderScope& scope) const;
+};
+
 class Sphere {
 public:
     enum class DrawMode {
@@ -30,31 +46,27 @@ public:
         Full,
         Grid
     };
-    // ctor/dtor
-    Sphere(int sectorCount = 36, int stackCount = 18);
-    ~Sphere() { }
 
     void set_color(Util::Color color) { m_color = color; }
-    void set_position(Util::Vector3d pos) { m_pos = pos; }
+    void set_position(Util::Vector3d pos) { m_position = pos; }
     void set_radius(double radius) { m_radius = radius; }
     void set_draw_mode(DrawMode mode) { m_mode = mode; }
     void set_light_position(Util::Vector3d pos) { m_light_position = pos; }
 
-    void draw(GUI::SFMLWindow& window) const;
+    void draw(SimulationView const&) const;
+
+    double radius() const { return m_radius; }
+    Util::Color color() const { return m_color; }
+    Util::Vector3d position() const { return m_position; }
+    DrawMode mode() const { return m_mode; }
+    Util::Vector3d light_position() const { return m_light_position; }
 
 private:
-    double m_radius {};
-    unsigned m_sectors {};
-    unsigned m_stacks {};
     DrawMode m_mode = DrawMode::Full;
-    Util::Vector3d m_pos;
+    Util::Vector3d m_position;
     Util::Vector3d m_light_position;
+    double m_radius {};
     Util::Color m_color;
-
-    void gen_sphere();
-
-    unsigned vertex_index(unsigned stack, unsigned sector) const;
-
-    std::vector<Vertex> m_vertices;
-    std::vector<unsigned> m_indices;
+    mutable SphereShader m_shader;
+    llgl::Sphere m_sphere;
 };

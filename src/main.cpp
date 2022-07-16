@@ -4,17 +4,14 @@
 #include "World.hpp"
 #include "essagui/EssaGUI.hpp"
 #include "essagui/EssaSplash.hpp"
-#include "math/Transform.hpp"
 #include "pyssa/Environment.hpp"
 
 #include <EssaGUI/gui/Application.hpp>
-#include <SFML/Graphics.hpp>
 #include <iostream>
 
 int main() {
-    glewInit();
-    GUI::SFMLWindow window(sf::VideoMode::getDesktopMode(), "ESSA", sf::Style::Default, sf::ContextSettings(24, 0, 0, 3, 2));
-    window.setFramerateLimit(60);
+    GUI::Window window { { 1000, 1000 }, "ESSA" };
+    // TODO: set framerate limit
 
     World world;
 

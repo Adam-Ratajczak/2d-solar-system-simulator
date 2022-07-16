@@ -5,10 +5,10 @@
 
 class EssaSplash : public GUI::ToolWindow {
 public:
-    explicit EssaSplash(GUI::SFMLWindow& wnd, EssaSettings& essa_settings);
+    explicit EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings);
 
 private:
-    virtual void handle_event(sf::Event) override;
+    virtual void handle_event(llgl::Event) override;
 
     EssaSettings& m_essa_settings;
 };

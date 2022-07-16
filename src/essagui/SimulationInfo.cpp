@@ -35,8 +35,9 @@ void SimulationInfo::do_update() {
 }
 
 void SimulationInfo::m_update_fps() {
-    float current_time = m_clock.restart().asSeconds();
-    m_fps = 1.f / (current_time);
+    // TODO
+    // float current_time = m_clock.restart().asSeconds();
+    m_fps = 60; // 1.f / (current_time);
 
     m_fps_field->set_content(Util::UString { std::to_string(m_fps) });
 }

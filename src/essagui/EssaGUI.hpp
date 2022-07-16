@@ -21,26 +21,16 @@
 #include <EssaGUI/gui/Widget.hpp>
 #include <EssaGUI/gui/ToolWindow.hpp>
 
-#include <SFML/Graphics.hpp>
 #include <memory>
 #include <random>
 #include <vector>
-
-inline sf::Image load_image(std::string path) {
-    // TODO: Error handling
-    sf::Image image;
-    image.loadFromFile(path);
-    return image;
-}
-
-sf::Image load_image(std::string path);
 
 class EssaGUI : public GUI::Container {
 public:
     explicit EssaGUI(GUI::WidgetTreeRoot&, World& world);
 
     virtual void handle_event(GUI::Event&) override;
-    virtual void draw(GUI::SFMLWindow& window) const override;
+    virtual void draw(GUI::Window& window) const override;
 
     SimulationView& simulation_view() const { return *m_simulation_view; }
 
