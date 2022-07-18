@@ -1,5 +1,6 @@
 #include "SimulationInfo.hpp"
 #include "../World.hpp"
+#include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
 #include <EssaUtil/Units.hpp>
@@ -35,10 +36,7 @@ void SimulationInfo::do_update() {
 }
 
 void SimulationInfo::m_update_fps() {
-    // TODO
-    // float current_time = m_clock.restart().asSeconds();
-    m_fps = 60; // 1.f / (current_time);
-
+    m_fps = widget_tree_root().tps();
     m_fps_field->set_content(Util::UString { std::to_string(m_fps) });
 }
 

@@ -9,7 +9,7 @@ class SimulationInfo : public GUI::Container {
 public:
     explicit SimulationInfo(GUI::Container& parent, SimulationView* sw);
 
-    float get_fps() const{return m_fps;}
+    float get_fps() const { return m_fps; }
 
     virtual void do_update() override;
 
