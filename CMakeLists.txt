@@ -13,7 +13,6 @@ find_package(EssaGUI REQUIRED)
 
 # FIXME: This should be imported along with EssaGUI.
 find_package(GLEW REQUIRED)
-find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 
 if(ENABLE_PYSSA)
     set(PYSSA_SOURCES 
