@@ -291,16 +291,6 @@ void SimulationView::draw(GUI::Window& window) const {
     m_world.draw(*this);
 
     switch (m_measure) {
-    case Measure::Coords: {
-        auto sizes = size();
-        std::array<llgl::Vertex, 4> lines;
-        lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
-        lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::red };
-        lines[2] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::red };
-        lines[3] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::red };
-        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, lines);
-        break;
-    }
     case Measure::Focus: {
         auto sizes = size();
         std::array<llgl::Vertex, 4> lines;
