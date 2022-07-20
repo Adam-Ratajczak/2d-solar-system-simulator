@@ -2,7 +2,6 @@
 
 #include "EssaGUI.hpp"
 
-#include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
 #include <EssaUtil/Units.hpp>
@@ -87,7 +86,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
     auto& submit_layout = container->set_layout<GUI::HorizontalBoxLayout>();
     submit_layout.set_spacing(10);
     {
-        m_coords_button = container->add_widget<GUI::ImageButton>(Gfx::require_texture("../assets/coordsButton.png"));
+        m_coords_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("coordsButton.png"));
         m_coords_button->on_click = [this]() {
             if (m_automatic_orbit_calculation) {
                 m_simulation_view.start_focus_measure([&](Object* focusing) {
@@ -106,7 +105,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
         };
         m_coords_button->set_tooltip_text("Set position");
 
-        auto creative_mode_button = container->add_widget<GUI::ImageButton>(Gfx::require_texture("../assets/toggleCreativeModeButton.png"));
+        auto creative_mode_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("toggleCreativeModeButton.png"));
         creative_mode_button->set_toggleable(true);
         creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
@@ -118,7 +117,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
             m_automatic_orbit_calculation = state;
         };
 
-        m_toggle_orbit_direction_button = container->add_widget<GUI::ImageButton>(Gfx::require_texture("../assets/orbitDirectionButton.png"));
+        m_toggle_orbit_direction_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("orbitDirectionButton.png"));
         m_toggle_orbit_direction_button->set_toggleable(true);
         m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
         m_toggle_orbit_direction_button->on_change = [this](bool state) {
@@ -126,7 +125,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
         };
         m_toggle_orbit_direction_button->set_visible(false);
 
-        m_require_orbit_point_button = container->add_widget<GUI::ImageButton>(Gfx::require_texture("../assets/requireOrbitPointButton.png"));
+        m_require_orbit_point_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("requireOrbitPointButton.png"));
         m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
         m_require_orbit_point_button->on_click = [this]() {
             if (!m_new_object) {
@@ -141,7 +140,7 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
 
         container->add_widget<Widget>(); // spacer
 
-        m_add_object_button = container->add_widget<GUI::ImageButton>(Gfx::require_texture("../assets/addObjectButton.png"));
+        m_add_object_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
             if (m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content().encode())) {
                 GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
@@ -185,7 +184,7 @@ void EssaCreateObject::recalculate_forward_simulation() {
 }
 
 std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(GUI::Container& parent) {
-    auto button = std::make_shared<GUI::ImageButton>(parent, Gfx::require_texture("../assets/toggleUnitButton.png"));
+    auto button = std::make_shared<GUI::ImageButton>(parent, resource_manager().require_texture("toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
         m_prev_unit_state = state;

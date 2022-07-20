@@ -222,7 +222,7 @@ void Object::draw_label(SimulationView const& sv, Util::Vector3d position, Util:
     GUI::TextDrawOptions text;
     text.font_size = 15;
     text.fill_color = color;
-    sv.window().draw_text(string, GUI::Application::the().bold_font, { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
+    sv.window().draw_text(string, GUI::Application::the().bold_font(), { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
 }
 
 void Object::delete_object() {

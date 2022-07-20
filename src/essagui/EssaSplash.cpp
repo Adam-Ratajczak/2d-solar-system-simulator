@@ -3,7 +3,6 @@
 #include "EssaGUI.hpp"
 #include "EssaSettings.hpp"
 
-#include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/Container.hpp>
 #include <EssaGUI/gui/FilePrompt.hpp>
@@ -27,12 +26,15 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
     container_layout.set_padding(10);
     container_layout.set_spacing(10);
 
-    static llgl::opengl::Texture logo_image = Gfx::require_texture("../assets/splash_full_v1.png");
-    logo_image.set_filtering(llgl::opengl::Texture::Filtering::Linear);
+    static llgl::opengl::Texture& logo_image = [this]() -> llgl::opengl::Texture& {
+        auto& texture = resource_manager().require_texture("splash_full_v1.png");
+        texture.set_filtering(llgl::opengl::Texture::Filtering::Linear);
+        return texture;
+    }();
 
     auto logo = container.add_widget<GUI::ImageWidget>();
     logo->set_size({ Length::Auto, 160.0_px });
-    logo->set_image(&logo_image);
+    logo->set_image(logo_image);
 
     auto button_space = container.add_widget<GUI::Container>();
     auto& button_space_layout = button_space->set_layout<GUI::HorizontalBoxLayout>();

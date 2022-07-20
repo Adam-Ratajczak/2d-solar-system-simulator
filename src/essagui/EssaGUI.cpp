@@ -5,7 +5,6 @@
 #include "PythonREPL.hpp"
 #include "SimulationInfo.hpp"
 
-#include <EssaGUI/gfx/ResourceLoader.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/FilePrompt.hpp>
 #include <EssaGUI/gui/MessageBox.hpp>
@@ -54,7 +53,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         });
     };
 
-    auto home_button = add_widget<GUI::ImageButton>(Gfx::require_texture("../assets/homeButton.png"));
+    auto home_button = add_widget<GUI::ImageButton>(resource_manager().require_texture("homeButton.png"));
     home_button->set_position({ 10.0_px_o, 10.0_px_o });
     home_button->on_click = [this]() {
         m_simulation_view->reset();
@@ -64,7 +63,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     auto menu = add_widget<GUI::SettingsMenu>();
     menu->set_position({ 10.0_px, 10.0_px });
     {
-        auto& create_menu = menu->add_entry(Gfx::require_texture("../assets/createButton.png"), "Create new object");
+        auto& create_menu = menu->add_entry(resource_manager().require_texture("createButton.png"), "Create new object");
         create_menu.on_toggle = [this](bool state) {
             if (m_settings_gui->pause_simulation_on_creative_mode()) {
                 m_create_object_gui->set_new_object(nullptr);
@@ -79,7 +78,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     }
 
     {
-        auto& load_world = menu->add_entry(Gfx::require_texture("../assets/loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
+        auto& load_world = menu->add_entry(resource_manager().require_texture("loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
         load_world.on_toggle = [this](bool) {
             auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
             prompt.add_desired_extension(".essa");
@@ -91,14 +90,14 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
     }
 
     {
-        auto& settings = menu->add_entry(Gfx::require_texture("../assets/simulationSettings.png"), "Simulation Settings");
+        auto& settings = menu->add_entry(resource_manager().require_texture("simulationSettings.png"), "Simulation Settings");
         settings.settings_container->set_layout<GUI::HorizontalBoxLayout>();
         settings.settings_container->set_size({ 500.0_px, 600.0_px });
         m_settings_gui = settings.settings_container->add_widget<EssaSettings>(*m_simulation_view);
     }
 
     {
-        auto& pyssa = menu->add_entry(Gfx::require_texture("../assets/python.png"), "PySSA (Python scripting)", GUI::SettingsMenu::Expandable::No);
+        auto& pyssa = menu->add_entry(resource_manager().require_texture("python.png"), "PySSA (Python scripting)", GUI::SettingsMenu::Expandable::No);
         pyssa.on_toggle = [this](bool) {
             open_python_repl();
         };

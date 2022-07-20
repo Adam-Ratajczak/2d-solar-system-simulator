@@ -256,7 +256,7 @@ void SimulationView::draw_grid(GUI::Window& window) const {
     guide_text.font_size = 15;
     guide_text.text_align = GUI::Align::Center;
     window.draw_text_aligned_in_rect(Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(),
-        { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font, guide_text);
+        { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font(), guide_text);
 }
 
 llgl::Transform SimulationView::camera_transform() const {
@@ -326,7 +326,7 @@ void SimulationView::draw(GUI::Window& window) const {
     GUI::TextDrawOptions debug_text;
     debug_text.fill_color = Util::Colors::white;
     debug_text.font_size = 15;
-    window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font, { 600, 20 }, debug_text);
+    window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
 }
 
 void SimulationView::pause_simulation(bool state) {
