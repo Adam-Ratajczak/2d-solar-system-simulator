@@ -40,8 +40,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
                 if (m_settings_gui->unfocus_on_wnd_close())
                     m_simulation_view->set_focused_object(nullptr);
 
-                if (m_simulation_view->speed() == 0)
-                    m_simulation_view->pause_simulation(false);
+                m_simulation_view->pop_pause();
             };
         }
     };
@@ -68,7 +67,12 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             if (m_settings_gui->pause_simulation_on_creative_mode()) {
                 m_create_object_gui->set_new_object(nullptr);
                 m_create_object_gui->forward_simulation_state(true);
-                m_simulation_view->pause_simulation(state);
+                if (state) {
+                    m_simulation_view->push_pause();
+                }
+                else {
+                    m_simulation_view->pop_pause();
+                }
             }
             m_draw_forward_simulation = state;
         };

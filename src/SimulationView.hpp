@@ -99,7 +99,10 @@ public:
     void set_focused_object(Object* obj, GUI::NotifyUser notify_user = GUI::NotifyUser::No);
 
     void change_speed(bool state) { m_allow_change_speed = state; }
+
     void pause_simulation(bool state);
+    void push_pause();
+    void pop_pause();
 
     void apply_states() const;
 
@@ -182,7 +185,9 @@ private:
 
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
-    int m_speed = 1, m_saved_speed = 1;
+    int m_speed = 1;
+    int m_saved_speed = 1;
+    int m_pause_count = 0;
 };
 
 // This class ensures that everything in the scope will be drawn using

@@ -128,17 +128,27 @@ void SimulationView::handle_event(GUI::Event& event) {
                 if (m_speed > 0)
                     m_speed *= 2;
                 else if (m_speed == 0)
-                    m_speed = 1;
+                    pop_pause();
                 else
                     m_speed /= 2;
+
+                if (m_speed == 0) {
+                    m_speed = 1;
+                    push_pause();
+                }
             }
             else if (event.event().key.keycode == llgl::KeyCode::Left) {
                 if (m_speed < 0)
                     m_speed *= 2;
                 else if (m_speed == 0)
-                    m_speed = -1;
+                    pop_pause();
                 else
                     m_speed /= 2;
+
+                if (m_speed == 0) {
+                    m_speed = -1;
+                    push_pause();
+                }
             }
         }
     }
@@ -322,6 +332,7 @@ void SimulationView::draw(GUI::Window& window) const {
     debugoss << "off=" << offset() << std::endl;
     debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
     debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
+    debugoss << "pause_count=" << m_pause_count << std::endl;
 
     GUI::TextDrawOptions debug_text;
     debug_text.fill_color = Util::Colors::white;
@@ -337,6 +348,18 @@ void SimulationView::pause_simulation(bool state) {
         m_saved_speed = m_speed;
         m_speed = 0;
     }
+}
+
+void SimulationView::push_pause() {
+    if (m_pause_count == 0)
+        pause_simulation(true);
+    m_pause_count++;
+}
+
+void SimulationView::pop_pause() {
+    m_pause_count--;
+    if (m_pause_count == 0)
+        pause_simulation(false);
 }
 
 void SimulationView::update() {

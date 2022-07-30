@@ -20,8 +20,10 @@ FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolW
     auto tab_widget = add_widget<GUI::TabWidget>();
 
     tab_widget->on_tab_switch = [&](unsigned index) {
-        m_world.m_simulation_view->pause_simulation(index == 1);
-
+        if (index == 1)
+            m_world.m_simulation_view->push_pause();
+        else
+            m_world.m_simulation_view->pop_pause();
         m_tab = index;
     };
 
