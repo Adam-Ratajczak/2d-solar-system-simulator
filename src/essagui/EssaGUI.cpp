@@ -30,7 +30,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(Util::UString { "FocusedGUI - " + obj->name() }, "FocusedGUI");
+        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(Util::UString { obj->name() }, "FocusedGUI");
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ size().x() - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
