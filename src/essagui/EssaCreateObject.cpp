@@ -383,25 +383,29 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
 }
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
-    double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
-    double radius = m_radius_control->value() * 1000;
-    double theta = m_direction_xz_control->value();
-    double alpha = m_direction_yz_control->value();
-    double velocity = m_velocity_control->value();
+    try {
+        double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
+        double radius = m_radius_control->value() * 1000;
+        double theta = m_direction_xz_control->value();
+        double alpha = m_direction_yz_control->value();
+        double velocity = m_velocity_control->value();
 
-    if (!m_toggle_unit_button->is_active()) {
-        theta = theta / 180 * M_PI;
-        alpha = alpha / 180 * M_PI;
+        if (!m_toggle_unit_button->is_active()) {
+            theta = theta / 180 * M_PI;
+            alpha = alpha / 180 * M_PI;
+        }
+
+        Util::Vector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
+
+        auto pos = m_new_object_pos;
+        pos.z() = m_y_position_control->value();
+
+        Util::Color color = m_color_control->value();
+        auto name = m_name_textbox->get_content().encode();
+        return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
+    } catch (...) {
+        return nullptr;
     }
-
-    Util::Vector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
-
-    auto pos = m_new_object_pos;
-    pos.z() = m_y_position_control->value();
-
-    Util::Color color = m_color_control->value();
-    auto name = m_name_textbox->get_content().encode();
-    return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
 }
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
