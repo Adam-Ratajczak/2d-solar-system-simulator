@@ -55,7 +55,8 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
         auto subcontainer = info.add_widget<GUI::Container>();
         subcontainer->set_size({ Length::Auto, 30.0_px });
         subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-        subcontainer->add_widget<GUI::Textfield>()->set_content(name + ": ");
+        auto& name_label = subcontainer->add_widget<GUI::Textfield>()->set_content(name + ": ");
+        name_label.set_size({ Length::Auto, Length::Auto });
         auto value_label = subcontainer->add_widget<GUI::Textfield>();
         value_label->set_size({ 150.0_px, Length::Auto });
         auto unit_label = subcontainer->add_widget<GUI::Textfield>();
