@@ -14,7 +14,7 @@ SimulationInfo::SimulationInfo(GUI::Container& parent, SimulationView* sw)
     auto fps_container = add_widget<GUI::Container>();
     fps_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     auto fps_label = fps_container->add_widget<GUI::Textfield>();
-    fps_label->set_size({ { 30, Length::Percent }, Length::Auto });
+    fps_label->set_size({ 50.0_px, Length::Auto });
     fps_label->set_content("FPS: ");
 
     m_fps_field = fps_container->add_widget<GUI::Textfield>();
@@ -23,10 +23,11 @@ SimulationInfo::SimulationInfo(GUI::Container& parent, SimulationView* sw)
     auto speed_container = add_widget<GUI::Container>();
     speed_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     auto time_label = speed_container->add_widget<GUI::Textfield>();
-    time_label->set_size({ { 30, Length::Percent }, Length::Auto });
+    time_label->set_size({ 50.0_px, Length::Auto });
     time_label->set_content("Time: ");
 
     m_time_field = speed_container->add_widget<GUI::Textfield>();
+    m_time_field->set_size({ Length::Auto, Length::Auto });
     m_update_time();
 }
 
