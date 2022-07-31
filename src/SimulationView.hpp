@@ -88,7 +88,8 @@ public:
     bool m_measured = false;
 
     // FIXME: This should be in some Simulation object.
-    int speed() const { return m_speed; }
+    int speed() const { return is_paused() ? 0 : m_speed; }
+    int raw_speed() const { return m_speed; }
     void set_speed(int speed) { m_speed = speed; }
 
     int iterations() const { return m_iterations; }
@@ -100,7 +101,7 @@ public:
 
     void change_speed(bool state) { m_allow_change_speed = state; }
 
-    void pause_simulation(bool state);
+    bool is_paused() const { return m_pause_count > 0; }
     void push_pause();
     void pop_pause();
 
