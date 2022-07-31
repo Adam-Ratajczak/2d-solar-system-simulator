@@ -85,7 +85,6 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
                                              "\n"
                                              "Powered by:\n"
                                              "\u2022 EssaGUI (https://github.com/essa-software/EssaGUI)\n"
-                                             "\u2022 LLGL (https://github.com/sppmacd/llgl)\n"
                                              "\u2022 EssaUtil (https://github.com/essa-software/util)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
 
