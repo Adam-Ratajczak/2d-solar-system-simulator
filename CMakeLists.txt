@@ -11,9 +11,6 @@ if(ENABLE_PYSSA)
 endif()
 find_package(EssaGUI REQUIRED)
 
-# FIXME: This should be imported along with EssaGUI.
-find_package(GLEW REQUIRED)
-
 if(ENABLE_PYSSA)
     set(PYSSA_SOURCES 
         src/essagui/PythonREPL.cpp
@@ -65,7 +62,7 @@ function(setup_target targetname)
 endfunction()
 setup_target(essa)
 
-target_link_libraries(essa essa-gui LLGL::3D)
+target_link_libraries(essa EssaGUI::EssaGUI EssaGUI::LLGL-3D)
 if(ENABLE_PYSSA)
     message("Enabling PySSA")
     target_link_libraries(essa ${PYTHON_LIBRARIES})
