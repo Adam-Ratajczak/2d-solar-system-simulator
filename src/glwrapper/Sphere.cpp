@@ -106,7 +106,7 @@ void Sphere::draw(SimulationView const& sv) const {
     // HACK: Normally (e.g when using EssaGUI's draw_vertices) EssaGUI
     // makes sure that the view is applied. It's not done when doing
     // direct LLGL rendering, so we need to do this manually here.
-    sv.window().renderer().apply_view(sv.view());
+    sv.window().renderer().apply_view(sv.view(sv.focused_object()));
 
     auto model = llgl::Transform {}.translate(Util::Vector3f { m_position }).scale(m_radius);
     m_shader.set_sphere(*this);

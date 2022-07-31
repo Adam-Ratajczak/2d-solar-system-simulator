@@ -16,6 +16,7 @@
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <LLGL/Renderer/Transform.hpp>
 #include <LLGL/Window/Mouse.hpp>
+#include <algorithm>
 #include <cmath>
 #include <optional>
 #include <sstream>
@@ -29,7 +30,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             m_drag_mode = DragMode::Pan;
 
             m_world.for_each_object([&](Object& obj) {
-                auto obj_pos_screen = world_to_screen(obj.render_position());
+                auto obj_pos_screen = world_to_screen(&obj, obj.render_position());
                 auto distance = Util::get_distance(Util::Vector2f { obj_pos_screen.x(), obj_pos_screen.y() }, m_prev_mouse_pos);
                 if (distance < 30) {
                     set_focused_object(&obj, GUI::NotifyUser::Yes);
@@ -159,14 +160,14 @@ std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vect
     Math::Ray ray { { clip_space.x(), clip_space.y(), 0 }, { clip_space.x(), clip_space.y(), 1 } };
 
     // Transform a grid plane (z = 0) to the clip space.
-    Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix());
+    Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix(nullptr));
     /// std::cout << "[Coord] Mouse(Clip): " << clip_space << std::endl;
 
     // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
     auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
     if (object_pos_in_clip_space) {
         // Go back to world coordinates to get actual object position.
-        auto object_pos_in_world_space = llgl::Transform { matrix().inverted().convert<float>() }.transform_point(Util::Vector3f { object_pos_in_clip_space.value() });
+        auto object_pos_in_world_space = llgl::Transform { matrix(nullptr).inverted().convert<float>() }.transform_point(Util::Vector3f { object_pos_in_clip_space.value() });
 
         // std::cout << "[Coord] Object(Clip)->Object(World): " << *object_pos_in_clip_space << " -> " << object_pos_in_world_space << std::endl;
 
@@ -187,7 +188,7 @@ void SimulationView::draw_grid(GUI::Window& window) const {
     constexpr int major_gridline_interval = 4;
     auto major_gridline_spacing = spacing * major_gridline_interval;
     {
-        WorldDrawScope scope(*this);
+        WorldDrawScope scope(*this, nullptr);
         float bounds = 50 * spacing;
         // Vector3 start_coords = screen_to_world({ 0, 0 });
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
@@ -277,20 +278,35 @@ llgl::Transform SimulationView::camera_transform() const {
         .translate(Util::Vector3f { m_offset });
 }
 
-llgl::View SimulationView::view() const {
+llgl::View SimulationView::view(Object const* object) const {
+    double near = [&]() -> double {
+        if (object) {
+            auto position = camera_transform().transform_point(Util::Vector3f { object->render_position() });
+            return std::max(0.0, -position.z() * 0.99);
+        }
+        return 0.1 * scale();
+    }();
+
+    // std::cout << "near=" << near << " for ";
+    // if (object)
+    //     std::cout << object->name();
+    // else
+    //     std::cout << "nullptr";
+    // std::cout << "\n";
+
     llgl::View view;
-    view.set_perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() });
+    view.set_perspective({ m_fov.rad(), size().x() / size().y(), near, near * 8192 });
     view.set_viewport(Util::Recti { rect() });
     return view;
 }
 
-Util::Matrix4x4d SimulationView::matrix() const {
-    return (view().matrix() * camera_transform().matrix()).convert<double>();
+Util::Matrix4x4d SimulationView::matrix(Object const* object) const {
+    return (view(object).matrix() * camera_transform().matrix()).convert<double>();
 }
 
-Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
+Util::Vector3f SimulationView::world_to_screen(Object const* object, Util::Vector3d local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    auto clip_space = matrix() * Util::Vector4d { local_space };
+    auto clip_space = matrix(object) * Util::Vector4d { local_space };
     clip_space /= clip_space.w();
     return Util::Vector3f { clip_space_to_screen(Util::Vector3d { clip_space }), clip_space.z() };
 }
@@ -368,9 +384,9 @@ Object* SimulationView::focused_object() const {
     return {};
 }
 
-void SimulationView::apply_states() const {
+void SimulationView::apply_states(Object const* object) const {
     window().set_view_matrix(camera_transform().matrix());
-    window().set_view(view());
+    window().set_view(view(object));
 }
 
 Util::Vector2f SimulationView::clip_space_to_screen(Util::Vector3d clip_space) const {
@@ -486,7 +502,7 @@ WorldDrawScope const* WorldDrawScope::current() {
     return s_current_draw_scope;
 }
 
-WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, llgl::opengl::Shader* custom_shader)
+WorldDrawScope::WorldDrawScope(SimulationView const& view, Object const* object, ClearDepth clear_depth, llgl::opengl::Shader* custom_shader)
     : m_simulation_view(view)
     , m_previous_view(view.window().view()) {
 
@@ -496,7 +512,7 @@ WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_dept
     static llgl::opengl::shaders::Basic330Core basic_shader;
 
     view.window().set_shader(custom_shader ? custom_shader : &basic_shader);
-    m_simulation_view.apply_states();
+    m_simulation_view.apply_states(object);
 
     glEnable(GL_DEPTH_TEST);
 

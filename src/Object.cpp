@@ -213,7 +213,7 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
 }
 
 void Object::draw_label(SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
-    auto screen_position = sv.world_to_screen(position);
+    auto screen_position = sv.world_to_screen(this, position);
 
     // Don't draw labels of planets outside of clipping box
     if (screen_position.z() > 1 || screen_position.z() < -1)
