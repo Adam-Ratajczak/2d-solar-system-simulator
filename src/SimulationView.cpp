@@ -114,7 +114,7 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_is_dragging = false;
         m_drag_mode = DragMode::None;
     }
-    else if (event.type() == llgl::Event::Type::KeyPress && m_allow_change_speed) {
+    else if (event.type() == llgl::Event::Type::KeyPress) {
         if (event.event().key.shift) {
             if (m_speed != 0)
                 return;

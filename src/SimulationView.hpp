@@ -80,7 +80,6 @@ public:
     void set_offset_trails(bool b) { m_offset_trail = b; }
     bool offset_trails() const { return m_offset_trail; }
     void set_fixed_rotation_on_focus(bool b) { m_fixed_rotation_on_focus = b; }
-    bool set_fixed_rotation_on_focus() const { return m_fixed_rotation_on_focus; }
 
     void set_fov(Util::Angle fov) { m_fov = fov; }
 
@@ -98,8 +97,6 @@ public:
     World& world() { return m_world; }
     Object* focused_object() const;
     void set_focused_object(Object* obj, GUI::NotifyUser notify_user = GUI::NotifyUser::No);
-
-    void change_speed(bool state) { m_allow_change_speed = state; }
 
     bool is_paused() const { return m_pause_count > 0; }
     void push_pause();
@@ -179,8 +176,6 @@ private:
     bool m_show_trails = true;
     bool m_offset_trail = true;
     bool m_fixed_rotation_on_focus = true;
-
-    bool m_allow_change_speed = true;
 
     int m_iterations = 1;
 
