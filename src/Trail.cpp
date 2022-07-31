@@ -1,6 +1,7 @@
 #include "Trail.hpp"
 
 #include "Object.hpp"
+#include "SimulationView.hpp"
 
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/Vector.hpp>
@@ -83,6 +84,8 @@ void Trail::recalculate_with_offset(Util::Vector3d offset) {
 }
 
 void Trail::draw(GUI::Window& window) {
+    WorldDrawScope::verify();
+
     Util::DelayedInit<GUI::Window::ModelScope> scope;
     if (m_offset != Util::Vector3d()) {
         scope.construct(window, llgl::Transform {}.translate(Util::Vector3f { m_offset / AU }).matrix());

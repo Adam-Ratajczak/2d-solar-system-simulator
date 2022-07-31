@@ -43,14 +43,14 @@ public:
 
     // The Z coordinate is in the clip space. So if you want to do clipping,
     // you need to check if z is in range <-1, 1>.
-    Util::Vector3f world_to_screen(Util::Vector3d v) const;
+    Util::Vector3f world_to_screen(Object const*, Util::Vector3d v) const;
 
     Util::Vector3d screen_to_clip_space(Util::Vector2f) const;
     Util::Vector2f clip_space_to_screen(Util::Vector3d) const;
 
     llgl::Transform camera_transform() const;
-    llgl::View view() const;
-    Util::Matrix4x4d matrix() const;
+    llgl::View view(Object const*) const;
+    Util::Matrix4x4d matrix(Object const*) const;
 
     void reset() {
         m_offset = Util::Vector3d { 0, 0, 0 };
@@ -88,7 +88,8 @@ public:
     bool m_measured = false;
 
     // FIXME: This should be in some Simulation object.
-    int speed() const { return m_speed; }
+    int speed() const { return is_paused() ? 0 : m_speed; }
+    int raw_speed() const { return m_speed; }
     void set_speed(int speed) { m_speed = speed; }
 
     int iterations() const { return m_iterations; }
@@ -100,11 +101,11 @@ public:
 
     void change_speed(bool state) { m_allow_change_speed = state; }
 
-    void pause_simulation(bool state);
+    bool is_paused() const { return m_pause_count > 0; }
     void push_pause();
     void pop_pause();
 
-    void apply_states() const;
+    void apply_states(Object const*) const;
 
 #ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
@@ -186,7 +187,6 @@ private:
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
     int m_speed = 1;
-    int m_saved_speed = 1;
     int m_pause_count = 0;
 };
 
@@ -202,7 +202,7 @@ public:
         No
     };
 
-    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No, llgl::opengl::Shader* custom_shader = nullptr);
+    explicit WorldDrawScope(SimulationView const& view, Object const* object, ClearDepth = ClearDepth::No, llgl::opengl::Shader* custom_shader = nullptr);
     ~WorldDrawScope();
 
     static void verify();
