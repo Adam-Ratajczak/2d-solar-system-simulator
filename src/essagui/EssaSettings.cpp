@@ -134,14 +134,14 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
-        toggle_time_format->add_state("American", Util::SimulationClock::Format::AMERICAN, Util::Colors::blue);
-        toggle_time_format->add_state("Short", Util::SimulationClock::Format::SHORT_TIME, Util::Colors::blue);
-        toggle_time_format->add_state("Mid", Util::SimulationClock::Format::MID_TIME, Util::Colors::blue);
-        toggle_time_format->add_state("Long", Util::SimulationClock::Format::LONG_TIME, Util::Colors::blue);
-        toggle_time_format->add_state("No clock American", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, Util::Colors::blue);
-        toggle_time_format->add_state("No clock short", Util::SimulationClock::Format::NO_CLOCK_SHORT, Util::Colors::blue);
-        toggle_time_format->add_state("No clock mid", Util::SimulationClock::Format::NO_CLOCK_MID, Util::Colors::blue);
-        toggle_time_format->add_state("No clock long", Util::SimulationClock::Format::NO_CLOCK_LONG, Util::Colors::blue);
+        toggle_time_format->add_state("American", Util::SimulationClock::Format::AMERICAN, Util::Colors::Blue);
+        toggle_time_format->add_state("Short", Util::SimulationClock::Format::SHORT_TIME, Util::Colors::Blue);
+        toggle_time_format->add_state("Mid", Util::SimulationClock::Format::MID_TIME, Util::Colors::Blue);
+        toggle_time_format->add_state("Long", Util::SimulationClock::Format::LONG_TIME, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock American", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock short", Util::SimulationClock::Format::NO_CLOCK_SHORT, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock mid", Util::SimulationClock::Format::NO_CLOCK_MID, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock long", Util::SimulationClock::Format::NO_CLOCK_LONG, Util::Colors::Blue);
 
         m_on_restore_defaults.push_back([toggle_time_format]() {
             toggle_time_format->set_index(0);

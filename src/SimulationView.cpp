@@ -222,25 +222,25 @@ void SimulationView::draw_grid(GUI::Window& window) const {
         // TODO: Add real fog shader instead of THIS thing
         for (double x = start_coords.x(); x < end_coords.x(); x += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, .color = Util::Colors::Transparent });
             double factor = std::abs(0.5 - (x - start_coords.x()) / (end_coords.x() - start_coords.x())) * 2;
-            auto center_color = blend_color(color, Util::Colors::transparent, factor);
+            auto center_color = blend_color(color, Util::Colors::Transparent, factor);
             vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
             // FIXME: Make this duplicate vertex not needed
             vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, .color = Util::Colors::Transparent });
             index++;
         }
         index = 0;
         for (double y = start_coords.y(); y < end_coords.y(); y += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::Transparent });
             double factor = std::abs(0.5 - (y - start_coords.y()) / (end_coords.y() - start_coords.y())) * 2;
-            auto center_color = blend_color(color, Util::Colors::transparent, factor);
+            auto center_color = blend_color(color, Util::Colors::Transparent, factor);
             vertices.push_back(llgl::Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
             // FIXME: Make this duplicate vertex not needed
             vertices.push_back(llgl::Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::transparent });
+            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::Transparent });
             index++;
         }
 
@@ -304,10 +304,10 @@ void SimulationView::draw(GUI::Window& window) const {
     case Measure::Focus: {
         auto sizes = size();
         std::array<llgl::Vertex, 4> lines;
-        lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
-        lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::green };
-        lines[2] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::green };
-        lines[3] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::green };
+        lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::Green };
+        lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::Green };
+        lines[2] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::Green };
+        lines[3] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::Green };
         window.draw_vertices(llgl::opengl::PrimitiveType::Lines, lines);
         break;
     }
@@ -325,7 +325,7 @@ void SimulationView::draw(GUI::Window& window) const {
         debug_oss << "pause_count=" << m_pause_count << std::endl;
 
         GUI::TextDrawOptions debug_text;
-        debug_text.fill_color = Util::Colors::white;
+        debug_text.fill_color = Util::Colors::White;
         debug_text.font_size = 15;
         window.draw_text(Util::UString { debug_oss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
     }
