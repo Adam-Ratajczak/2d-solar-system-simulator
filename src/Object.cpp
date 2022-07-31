@@ -259,7 +259,7 @@ void Object::draw_gui(SimulationView const& view) {
 
     if (!view.show_labels())
         return;
-    draw_label(view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::white);
+    draw_label(view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {

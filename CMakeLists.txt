@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.19)
-project(out)
+project(essa)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
@@ -25,7 +25,7 @@ else()
 endif()
 
 add_executable(
-    out
+    essa
 
     src/ConfigLoader.cpp
     src/History.cpp
@@ -51,7 +51,7 @@ add_executable(
     ${PYSSA_SOURCES}
 )
 
-target_compile_options(out PUBLIC -fdiagnostics-color=always)
+target_compile_options(essa PUBLIC -fdiagnostics-color=always)
 
 function(setup_target targetname)
     target_compile_options(${targetname} PUBLIC -Werror=non-virtual-dtor)
@@ -63,12 +63,12 @@ function(setup_target targetname)
         target_compile_options(${targetname} PUBLIC -O3)
     endif()
 endfunction()
-setup_target(out)
+setup_target(essa)
 
-target_link_libraries(out essa-gui LLGL::3D)
+target_link_libraries(essa essa-gui LLGL::3D)
 if(ENABLE_PYSSA)
     message("Enabling PySSA")
-    target_link_libraries(out ${PYTHON_LIBRARIES})
-    target_include_directories(out PRIVATE ${PYTHON_INCLUDE_DIRS})
-    target_compile_definitions(out PRIVATE ENABLE_PYSSA=1)
+    target_link_libraries(essa ${PYTHON_LIBRARIES})
+    target_include_directories(essa PRIVATE ${PYTHON_INCLUDE_DIRS})
+    target_compile_definitions(essa PRIVATE ENABLE_PYSSA=1)
 endif()
