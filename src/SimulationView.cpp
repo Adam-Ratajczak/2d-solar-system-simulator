@@ -127,28 +127,28 @@ void SimulationView::handle_event(GUI::Event& event) {
             if (event.event().key.keycode == llgl::KeyCode::Right) {
                 if (m_speed > 0)
                     m_speed *= 2;
-                else if (m_speed == 0)
+                else if (m_speed == 0) {
+                    m_speed = 1;
                     pop_pause();
+                }
                 else
                     m_speed /= 2;
 
-                if (m_speed == 0) {
-                    m_speed = 1;
+                if (m_speed == 0)
                     push_pause();
-                }
             }
             else if (event.event().key.keycode == llgl::KeyCode::Left) {
                 if (m_speed < 0)
                     m_speed *= 2;
-                else if (m_speed == 0)
+                else if (m_speed == 0) {
+                    m_speed = -1;
                     pop_pause();
+                }
                 else
                     m_speed /= 2;
 
-                if (m_speed == 0) {
-                    m_speed = -1;
+                if (m_speed == 0)
                     push_pause();
-                }
             }
         }
     }
@@ -315,17 +315,6 @@ void SimulationView::draw(GUI::Window& window) const {
         break;
     }
 
-    std::ostringstream oss;
-    oss << m_world.date();
-    if (m_speed == 0)
-        oss << " (Paused";
-    else
-        oss << " (" << std::abs(m_speed) << "x";
-
-    if (m_speed < 0)
-        oss << ", Reversed";
-    oss << ")";
-
     std::ostringstream debugoss;
     auto mp = llgl::mouse_position();
     debugoss << "s=" << scale() << std::endl;
@@ -340,33 +329,19 @@ void SimulationView::draw(GUI::Window& window) const {
     window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
 }
 
-void SimulationView::pause_simulation(bool state) {
-    if (!state) {
-        m_speed = m_saved_speed;
-    }
-    else {
-        m_saved_speed = m_speed;
-        m_speed = 0;
-    }
-}
-
 void SimulationView::push_pause() {
-    if (m_pause_count == 0)
-        pause_simulation(true);
     m_pause_count++;
 }
 
 void SimulationView::pop_pause() {
     m_pause_count--;
-    if (m_pause_count == 0)
-        pause_simulation(false);
 }
 
 void SimulationView::update() {
     // FIXME: This doesn't quite match here like speed (The same
     //        comment about Simulation object)
-    if (m_speed != 0)
-        m_world.update(m_speed * m_iterations);
+    if (!is_paused())
+        m_world.update(speed() * m_iterations);
 
     // Handle focus
     if (m_focused_object) {

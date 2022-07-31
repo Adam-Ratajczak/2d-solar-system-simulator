@@ -43,15 +43,14 @@ void SimulationInfo::m_update_fps() {
 
 void SimulationInfo::m_update_time() {
     std::ostringstream oss;
-    oss << m_simulation_view->world().date();
-    if (m_simulation_view->speed() == 0)
-        oss << " (Paused";
-    else
-        oss << " (" << std::abs(m_simulation_view->speed()) << "x";
+    oss << m_simulation_view->world().date() << " (";
+    oss << std::abs(m_simulation_view->raw_speed()) << "x";
 
-    if (m_simulation_view->speed() < 0)
+    if (m_simulation_view->is_paused())
+        oss << ", Paused";
+    if (m_simulation_view->raw_speed() < 0)
         oss << ", Reversed";
-    oss << ")";
 
+    oss << ")";
     m_time_field->set_content(Util::UString { oss.str() });
 }
