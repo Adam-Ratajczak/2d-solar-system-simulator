@@ -80,6 +80,7 @@ public:
     void set_offset_trails(bool b) { m_offset_trail = b; }
     bool offset_trails() const { return m_offset_trail; }
     void set_fixed_rotation_on_focus(bool b) { m_fixed_rotation_on_focus = b; }
+    void set_display_debug_info(bool b) { m_display_debug_info = b; }
 
     void set_fov(Util::Angle fov) { m_fov = fov; }
 
@@ -176,6 +177,7 @@ private:
     bool m_show_trails = true;
     bool m_offset_trail = true;
     bool m_fixed_rotation_on_focus = true;
+    bool m_display_debug_info = false;
 
     int m_iterations = 1;
 

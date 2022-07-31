@@ -164,6 +164,10 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             this->m_simulation_view.set_offset_trails(state);
             this->m_simulation_view.world().reset_all_trails();
         });
+        add_toggle(display_settings, "Display debug info", [this](bool state) {
+            this->m_simulation_view.set_display_debug_info(state);
+        }, false);
+    }
 
     auto& controls_settings = tab_widget->add_tab("Controls");
     {

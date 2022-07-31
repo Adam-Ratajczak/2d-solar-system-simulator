@@ -315,18 +315,20 @@ void SimulationView::draw(GUI::Window& window) const {
         break;
     }
 
-    std::ostringstream debugoss;
-    auto mp = llgl::mouse_position();
-    debugoss << "s=" << scale() << std::endl;
-    debugoss << "off=" << offset() << std::endl;
-    debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
-    debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
-    debugoss << "pause_count=" << m_pause_count << std::endl;
+    if (m_display_debug_info) {
+        std::ostringstream debug_oss;
+        auto mp = llgl::mouse_position();
+        debug_oss << "s=" << scale() << std::endl;
+        debug_oss << "off=" << offset() << std::endl;
+        debug_oss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
+        debug_oss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
+        debug_oss << "pause_count=" << m_pause_count << std::endl;
 
-    GUI::TextDrawOptions debug_text;
-    debug_text.fill_color = Util::Colors::white;
-    debug_text.font_size = 15;
-    window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
+        GUI::TextDrawOptions debug_text;
+        debug_text.fill_color = Util::Colors::white;
+        debug_text.font_size = 15;
+        window.draw_text(Util::UString { debug_oss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
+    }
 }
 
 void SimulationView::push_pause() {
