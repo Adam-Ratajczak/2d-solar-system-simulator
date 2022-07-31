@@ -30,7 +30,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(Util::UString { "FocusedGUI - " + obj->name() }, "FocusedGUI");
+        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(Util::UString { obj->name() }, "FocusedGUI");
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ size().x() - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
@@ -40,8 +40,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
                 if (m_settings_gui->unfocus_on_wnd_close())
                     m_simulation_view->set_focused_object(nullptr);
 
-                if (m_simulation_view->speed() == 0)
-                    m_simulation_view->pause_simulation(false);
+                m_simulation_view->pop_pause();
             };
         }
     };
@@ -68,7 +67,12 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             if (m_settings_gui->pause_simulation_on_creative_mode()) {
                 m_create_object_gui->set_new_object(nullptr);
                 m_create_object_gui->forward_simulation_state(true);
-                m_simulation_view->pause_simulation(state);
+                if (state) {
+                    m_simulation_view->push_pause();
+                }
+                else {
+                    m_simulation_view->pop_pause();
+                }
             }
             m_draw_forward_simulation = state;
         };

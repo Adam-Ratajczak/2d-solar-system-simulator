@@ -28,6 +28,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         auto& layout = simulation_settings.set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
         layout.set_padding(10);
+
         auto iterations_control = simulation_settings.add_widget<GUI::ValueSlider>(1, 1000);
         iterations_control->set_name("Iterations");
         iterations_control->set_unit("i/t");
@@ -61,12 +62,33 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         };
     }
 
+    auto add_toggle = [&](GUI::Container& container, Util::UString title, auto on_change, bool default_value = true) {
+        auto toggle_container = container.add_widget<GUI::Container>();
+        auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
+        toggle_layout.set_spacing(10);
+        toggle_container->set_size({ Length::Auto, 30.0_px });
+        auto button_label = toggle_container->add_widget<GUI::Textfield>();
+        button_label->set_content(title + ": ");
+        button_label->set_size({ { 70, Length::Percent }, 30.0_px });
+        auto toggle = toggle_container->add_widget<GUI::TextButton>();
+        toggle->set_content("Off");
+        toggle->set_active_content("On");
+        toggle->set_toggleable(true);
+        toggle->set_active(true);
+        toggle->set_alignment(GUI::Align::Center);
+        toggle->on_change = std::move(on_change);
+        m_on_restore_defaults.push_back([toggle, default_value]() {
+            toggle->set_active(default_value);
+        });
+        return toggle;
+    };
+
     auto& display_settings = tab_widget->add_tab("Display");
-    display_settings.set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
     {
         auto& layout = display_settings.set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
         layout.set_padding(10);
+
         auto fov_control = display_settings.add_widget<GUI::ValueSlider>(20, 160, 1);
         fov_control->set_name("FOV");
         fov_control->set_unit("deg");
@@ -85,13 +107,13 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         toggle_sphere_mode_container->set_size({ Length::Auto, 30.0_px });
 
         auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
-        sphere_mode_label->set_content("Toggle Sphere mode: ");
+        sphere_mode_label->set_content("Sphere mode: ");
         sphere_mode_label->set_size({ { 60, Length::Percent }, Length::Auto });
 
         auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
-        toggle_sphere_mode->add_state("Full Sphere", Sphere::DrawMode::Full, theme().positive);
-        toggle_sphere_mode->add_state("Grid Sphere", Sphere::DrawMode::Grid, theme().negative);
-        toggle_sphere_mode->add_state("Fancy Sphere", Sphere::DrawMode::Fancy, theme().neutral);
+        toggle_sphere_mode->add_state("Full", Sphere::DrawMode::Full, theme().positive);
+        toggle_sphere_mode->add_state("Grid", Sphere::DrawMode::Grid, theme().negative);
+        toggle_sphere_mode->add_state("Fancy", Sphere::DrawMode::Fancy, theme().neutral);
         toggle_sphere_mode->set_alignment(GUI::Align::Center);
         m_on_restore_defaults.push_back([toggle_sphere_mode]() {
             toggle_sphere_mode->set_index(2);
@@ -107,19 +129,19 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         toggle_time_format_container->set_size({ Length::Auto, 30.0_px });
 
         auto toggle_time_format_label = toggle_time_format_container->add_widget<GUI::Textfield>();
-        toggle_time_format_label->set_content("Toggle time format: ");
+        toggle_time_format_label->set_content("Time format: ");
         toggle_time_format_label->set_size({ { 60, Length::Percent }, Length::Auto });
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
-        toggle_time_format->add_state("American format", Util::SimulationClock::Format::AMERICAN, Util::Colors::Blue);
-        toggle_time_format->add_state("Short format", Util::SimulationClock::Format::SHORT_TIME, Util::Colors::Blue);
-        toggle_time_format->add_state("Mid format", Util::SimulationClock::Format::MID_TIME, Util::Colors::Blue);
-        toggle_time_format->add_state("Long format", Util::SimulationClock::Format::LONG_TIME, Util::Colors::Blue);
-        toggle_time_format->add_state("No clock American format", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, Util::Colors::Blue);
-        toggle_time_format->add_state("No clock short format", Util::SimulationClock::Format::NO_CLOCK_SHORT, Util::Colors::Blue);
-        toggle_time_format->add_state("No clock mid format", Util::SimulationClock::Format::NO_CLOCK_MID, Util::Colors::Blue);
-        toggle_time_format->add_state("No clock long format", Util::SimulationClock::Format::NO_CLOCK_LONG, Util::Colors::Blue);
+        toggle_time_format->add_state("American", Util::SimulationClock::Format::AMERICAN, Util::Colors::Blue);
+        toggle_time_format->add_state("Short", Util::SimulationClock::Format::SHORT_TIME, Util::Colors::Blue);
+        toggle_time_format->add_state("Mid", Util::SimulationClock::Format::MID_TIME, Util::Colors::Blue);
+        toggle_time_format->add_state("Long", Util::SimulationClock::Format::LONG_TIME, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock American", Util::SimulationClock::Format::NO_CLOCK_AMERICAN, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock short", Util::SimulationClock::Format::NO_CLOCK_SHORT, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock mid", Util::SimulationClock::Format::NO_CLOCK_MID, Util::Colors::Blue);
+        toggle_time_format->add_state("No clock long", Util::SimulationClock::Format::NO_CLOCK_LONG, Util::Colors::Blue);
 
         m_on_restore_defaults.push_back([toggle_time_format]() {
             toggle_time_format->set_index(0);
@@ -129,68 +151,54 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             Util::SimulationClock::time_format = state;
         };
 
-        auto add_toggle = [&](Util::UString title, auto on_change, bool default_value = true) {
-            auto toggle_container = display_settings.add_widget<GUI::Container>();
-            auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
-            toggle_layout.set_spacing(10);
-            toggle_container->set_size({ Length::Auto, 30.0_px });
-            auto button_label = toggle_container->add_widget<GUI::Textfield>();
-            button_label->set_content(title + ": ");
-            button_label->set_size({ { 70, Length::Percent }, 30.0_px });
-            auto toggle = toggle_container->add_widget<GUI::TextButton>();
-            toggle->set_content("Off");
-            toggle->set_active_content("On");
-            toggle->set_toggleable(true);
-            toggle->set_active(true);
-            toggle->set_alignment(GUI::Align::Center);
-            toggle->on_change = std::move(on_change);
-            m_on_restore_defaults.push_back([toggle, default_value]() {
-                toggle->set_active(default_value);
-            });
-            return toggle;
-        };
-
-        auto show_labels_toggle = add_toggle("Show labels", [this](bool state) {
+        add_toggle(display_settings, "Show labels", [this](bool state) {
             this->m_simulation_view.toggle_label_visibility(state);
         });
-        auto show_grid_toggle = add_toggle("Show grid", [this](bool state) {
+        add_toggle(display_settings, "Show grid", [this](bool state) {
             this->m_simulation_view.set_show_grid(state);
         });
-        auto show_trails_toggle = add_toggle("Show trails", [this](bool state) {
+        add_toggle(display_settings, "Show trails", [this](bool state) {
             this->m_simulation_view.set_show_trails(state);
         });
-
-        auto offset_trails_toggle = add_toggle("Offset trails", [this](bool state) {
+        add_toggle(display_settings, "Offset trails", [this](bool state) {
             this->m_simulation_view.set_offset_trails(state);
             this->m_simulation_view.world().reset_all_trails();
         });
+        add_toggle(display_settings, "Display debug info", [this](bool state) {
+            this->m_simulation_view.set_display_debug_info(state);
+        }, false);
+    }
 
-        auto pause_on_creation_toggle = add_toggle("Pause when creative mode", [this](bool state) {
+    auto& controls_settings = tab_widget->add_tab("Controls");
+    {
+        auto& layout = controls_settings.set_layout<GUI::VerticalBoxLayout>();
+        layout.set_spacing(10);
+        layout.set_padding(10);
+
+        auto pause_on_creation_toggle = add_toggle(controls_settings, "Pause when adding object", [this](bool state) {
             m_pause_simulation_on_creative_mode = state;
         });
 
         auto fix_rotation_on_focused_object = add_toggle(
-            "Fix rotation on focused object", [this](bool state) {
+            controls_settings, "Fix rotation on focused object", [this](bool state) {
                 m_simulation_view.set_fixed_rotation_on_focus(state);
             },
             false);
 
         auto unfocus_after_obj_wnd_closed = add_toggle(
-            "Unfocus when object window closed", [this](bool state) {
+            controls_settings, "Unfocus when object window closed", [this](bool state) {
                 m_unfocus_on_wnd_close = state;
             },
             false);
     }
 
-    auto restore_sim_container = add_widget<GUI::Container>();
-    auto& restore_sim_layout = restore_sim_container->set_layout<GUI::HorizontalBoxLayout>();
-    restore_sim_layout.set_spacing(10);
-    restore_sim_container->set_size({ Length::Auto, 30.0_px });
+    auto restore_container = add_widget<GUI::Container>();
+    auto& restore_layout = restore_container->set_layout<GUI::HorizontalBoxLayout>();
+    restore_layout.set_spacing(10);
+    restore_container->set_size({ Length::Auto, 30.0_px });
 
-    auto restore_sim_label = restore_sim_container->add_widget<GUI::Textfield>();
-    restore_sim_label->set_content("Restore Simulation state: ");
-    auto restore_sim = restore_sim_container->add_widget<GUI::TextButton>();
-    restore_sim->set_content("Restore");
+    auto restore_sim = restore_container->add_widget<GUI::TextButton>();
+    restore_sim->set_content("Restore simulation");
     restore_sim->set_toggleable(false);
     restore_sim->set_alignment(GUI::Align::Center);
     restore_sim->override_button_colors().untoggleable.background = theme().neutral;
@@ -199,15 +207,8 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         reset_simulation();
     };
 
-    auto restore_defaults_container = add_widget<GUI::Container>();
-    auto& restore_defaults_layout = restore_defaults_container->set_layout<GUI::HorizontalBoxLayout>();
-    restore_defaults_layout.set_spacing(10);
-    restore_defaults_container->set_size({ Length::Auto, 30.0_px });
-
-    auto restore_defaults_label = restore_defaults_container->add_widget<GUI::Textfield>();
-    restore_defaults_label->set_content("Restore defaults: ");
-    auto restore_defaults = restore_defaults_container->add_widget<GUI::TextButton>();
-    restore_defaults->set_content("Restore");
+    auto restore_defaults = restore_container->add_widget<GUI::TextButton>();
+    restore_defaults->set_content("Restore defaults");
     restore_defaults->set_toggleable(false);
     restore_defaults->set_alignment(GUI::Align::Center);
     restore_defaults->override_button_colors().untoggleable.background = theme().neutral;

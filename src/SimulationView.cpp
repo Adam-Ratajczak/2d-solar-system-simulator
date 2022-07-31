@@ -114,7 +114,7 @@ void SimulationView::handle_event(GUI::Event& event) {
         m_is_dragging = false;
         m_drag_mode = DragMode::None;
     }
-    else if (event.type() == llgl::Event::Type::KeyPress && m_allow_change_speed) {
+    else if (event.type() == llgl::Event::Type::KeyPress) {
         if (event.event().key.shift) {
             if (m_speed != 0)
                 return;
@@ -127,18 +127,28 @@ void SimulationView::handle_event(GUI::Event& event) {
             if (event.event().key.keycode == llgl::KeyCode::Right) {
                 if (m_speed > 0)
                     m_speed *= 2;
-                else if (m_speed == 0)
+                else if (m_speed == 0) {
                     m_speed = 1;
+                    pop_pause();
+                }
                 else
                     m_speed /= 2;
+
+                if (m_speed == 0)
+                    push_pause();
             }
             else if (event.event().key.keycode == llgl::KeyCode::Left) {
                 if (m_speed < 0)
                     m_speed *= 2;
-                else if (m_speed == 0)
+                else if (m_speed == 0) {
                     m_speed = -1;
+                    pop_pause();
+                }
                 else
                     m_speed /= 2;
+
+                if (m_speed == 0)
+                    push_pause();
             }
         }
     }
@@ -305,45 +315,35 @@ void SimulationView::draw(GUI::Window& window) const {
         break;
     }
 
-    std::ostringstream oss;
-    oss << m_world.date();
-    if (m_speed == 0)
-        oss << " (Paused";
-    else
-        oss << " (" << std::abs(m_speed) << "x";
+    if (m_display_debug_info) {
+        std::ostringstream debug_oss;
+        auto mp = llgl::mouse_position();
+        debug_oss << "s=" << scale() << std::endl;
+        debug_oss << "off=" << offset() << std::endl;
+        debug_oss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
+        debug_oss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
+        debug_oss << "pause_count=" << m_pause_count << std::endl;
 
-    if (m_speed < 0)
-        oss << ", Reversed";
-    oss << ")";
-
-    std::ostringstream debugoss;
-    auto mp = llgl::mouse_position();
-    debugoss << "s=" << scale() << std::endl;
-    debugoss << "off=" << offset() << std::endl;
-    debugoss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;
-    debugoss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
-
-    GUI::TextDrawOptions debug_text;
-    debug_text.fill_color = Util::Colors::White;
-    debug_text.font_size = 15;
-    window.draw_text(Util::UString { debugoss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
+        GUI::TextDrawOptions debug_text;
+        debug_text.fill_color = Util::Colors::White;
+        debug_text.font_size = 15;
+        window.draw_text(Util::UString { debug_oss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
+    }
 }
 
-void SimulationView::pause_simulation(bool state) {
-    if (!state) {
-        m_speed = m_saved_speed;
-    }
-    else {
-        m_saved_speed = m_speed;
-        m_speed = 0;
-    }
+void SimulationView::push_pause() {
+    m_pause_count++;
+}
+
+void SimulationView::pop_pause() {
+    m_pause_count--;
 }
 
 void SimulationView::update() {
     // FIXME: This doesn't quite match here like speed (The same
     //        comment about Simulation object)
-    if (m_speed != 0)
-        m_world.update(m_speed * m_iterations);
+    if (!is_paused())
+        m_world.update(speed() * m_iterations);
 
     // Handle focus
     if (m_focused_object) {

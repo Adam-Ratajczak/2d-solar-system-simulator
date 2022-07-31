@@ -80,7 +80,7 @@ public:
     void set_offset_trails(bool b) { m_offset_trail = b; }
     bool offset_trails() const { return m_offset_trail; }
     void set_fixed_rotation_on_focus(bool b) { m_fixed_rotation_on_focus = b; }
-    bool set_fixed_rotation_on_focus() const { return m_fixed_rotation_on_focus; }
+    void set_display_debug_info(bool b) { m_display_debug_info = b; }
 
     void set_fov(Util::Angle fov) { m_fov = fov; }
 
@@ -88,7 +88,8 @@ public:
     bool m_measured = false;
 
     // FIXME: This should be in some Simulation object.
-    int speed() const { return m_speed; }
+    int speed() const { return is_paused() ? 0 : m_speed; }
+    int raw_speed() const { return m_speed; }
     void set_speed(int speed) { m_speed = speed; }
 
     int iterations() const { return m_iterations; }
@@ -98,8 +99,9 @@ public:
     Object* focused_object() const;
     void set_focused_object(Object* obj, GUI::NotifyUser notify_user = GUI::NotifyUser::No);
 
-    void change_speed(bool state) { m_allow_change_speed = state; }
-    void pause_simulation(bool state);
+    bool is_paused() const { return m_pause_count > 0; }
+    void push_pause();
+    void pop_pause();
 
     void apply_states() const;
 
@@ -175,14 +177,15 @@ private:
     bool m_show_trails = true;
     bool m_offset_trail = true;
     bool m_fixed_rotation_on_focus = true;
-
-    bool m_allow_change_speed = true;
+    bool m_display_debug_info = false;
 
     int m_iterations = 1;
 
     // FIXME: This doesn't quite match here (and also World). Maybe
     //        add some Simulation class.
-    int m_speed = 1, m_saved_speed = 1;
+    int m_speed = 1;
+    int m_saved_speed = 1;
+    int m_pause_count = 0;
 };
 
 // This class ensures that everything in the scope will be drawn using
