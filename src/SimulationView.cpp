@@ -278,10 +278,7 @@ llgl::Transform SimulationView::camera_transform() const {
 }
 
 llgl::Projection SimulationView::projection() const {
-    llgl::Projection projection;
-    projection.set_perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() });
-    projection.set_viewport(Util::Recti { rect() });
-    return projection;
+    return llgl::Projection::perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() }, Util::Recti { rect() });
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
