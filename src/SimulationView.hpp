@@ -49,7 +49,7 @@ public:
     Util::Vector2f clip_space_to_screen(Util::Vector3d) const;
 
     llgl::Transform camera_transform() const;
-    llgl::View view() const;
+    llgl::Projection projection() const;
     Util::Matrix4x4d matrix() const;
 
     void reset() {
@@ -209,5 +209,5 @@ public:
 private:
     SimulationView const& m_simulation_view;
     WorldDrawScope const* m_parent = nullptr;
-    llgl::View m_previous_view;
+    llgl::Projection m_previous_projection;
 };

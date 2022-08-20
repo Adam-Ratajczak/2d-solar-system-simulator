@@ -277,15 +277,15 @@ llgl::Transform SimulationView::camera_transform() const {
         .translate(Util::Vector3f { m_offset });
 }
 
-llgl::View SimulationView::view() const {
-    llgl::View view;
-    view.set_perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() });
-    view.set_viewport(Util::Recti { rect() });
-    return view;
+llgl::Projection SimulationView::projection() const {
+    llgl::Projection projection;
+    projection.set_perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() });
+    projection.set_viewport(Util::Recti { rect() });
+    return projection;
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
-    return (view().matrix() * camera_transform().matrix()).convert<double>();
+    return (projection().matrix() * camera_transform().matrix()).convert<double>();
 }
 
 Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
@@ -372,7 +372,7 @@ Object* SimulationView::focused_object() const {
 
 void SimulationView::apply_states() const {
     window().set_view_matrix(camera_transform().matrix());
-    window().set_view(view());
+    window().set_projection(projection());
 }
 
 Util::Vector2f SimulationView::clip_space_to_screen(Util::Vector3d clip_space) const {
@@ -490,7 +490,7 @@ WorldDrawScope const* WorldDrawScope::current() {
 
 WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, llgl::opengl::Shader* custom_shader)
     : m_simulation_view(view)
-    , m_previous_view(view.window().view()) {
+    , m_previous_projection(view.window().projection()) {
 
     if (s_current_draw_scope)
         return;
@@ -516,5 +516,5 @@ WorldDrawScope::~WorldDrawScope() {
 
     glDisable(GL_DEPTH_TEST);
     m_simulation_view.window().set_shader(nullptr);
-    m_simulation_view.window().set_view(m_previous_view);
+    m_simulation_view.window().set_projection(m_previous_projection);
 }
