@@ -6,6 +6,7 @@
 
 #include <EssaGUI/gui/NotifyUser.hpp>
 #include <EssaGUI/gui/Widget.hpp>
+#include <EssaGUI/gui/WorldView.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Constants.hpp>
 #include <EssaUtil/Matrix.hpp>
@@ -17,11 +18,11 @@
 class Object;
 class World;
 
-class SimulationView : public GUI::Widget
+class SimulationView : public GUI::WorldView
     , public PySSA::WrappedObject<SimulationView> {
 public:
     explicit SimulationView(GUI::Container& c, World& world)
-        : Widget(c)
+        : WorldView(c)
         , m_world(world) { reset(); }
 
     void set_offset(Util::Vector3d o) { m_offset = o; }
@@ -30,7 +31,7 @@ public:
     double scale() const { return m_zoom; }
     void apply_zoom(double v) { m_zoom *= v; }
     void reset_rotation() {
-        m_pitch = 0.7;
+        m_pitch = -0.7;
         m_pitch_from_object = 0;
         m_yaw = 0;
         m_yaw_from_object = 0;
@@ -48,7 +49,7 @@ public:
     Util::Vector3d screen_to_clip_space(Util::Vector2f) const;
     Util::Vector2f clip_space_to_screen(Util::Vector3d) const;
 
-    llgl::Transform camera_transform() const;
+    virtual llgl::Camera camera() const override;
     llgl::Projection projection() const;
     Util::Matrix4x4d matrix() const;
 
@@ -102,8 +103,6 @@ public:
     bool is_paused() const { return m_pause_count > 0; }
     void push_pause();
     void pop_pause();
-
-    void apply_states() const;
 
 #ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
@@ -186,28 +185,4 @@ private:
     int m_speed = 1;
     int m_saved_speed = 1;
     int m_pause_count = 0;
-};
-
-// This class ensures that everything in the scope will be drawn using
-// world transform (that is, in 3D, with depth enabled), Also, it takes
-// care of restoring all OpenGL states so that you can use SFML safely
-// after the scope.
-class WorldDrawScope {
-public:
-    // Can be used for doing multiple layers.
-    enum class ClearDepth {
-        Yes,
-        No
-    };
-
-    explicit WorldDrawScope(SimulationView const& view, ClearDepth = ClearDepth::No, llgl::opengl::Shader* custom_shader = nullptr);
-    ~WorldDrawScope();
-
-    static void verify();
-    static WorldDrawScope const* current();
-
-private:
-    SimulationView const& m_simulation_view;
-    WorldDrawScope const* m_parent = nullptr;
-    llgl::Projection m_previous_projection;
 };

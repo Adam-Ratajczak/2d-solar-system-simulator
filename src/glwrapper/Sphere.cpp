@@ -101,14 +101,9 @@ void SphereShader::on_bind(llgl::opengl::ShaderScope& scope) const {
 }
 
 void Sphere::draw(SimulationView const& sv) const {
-    WorldDrawScope::verify();
-
-    // HACK: Normally (e.g when using EssaGUI's draw_vertices) EssaGUI
-    // makes sure that the view is applied. It's not done when doing
-    // direct LLGL rendering, so we need to do this manually here.
-    sv.window().renderer().apply_projection(sv.projection());
+    GUI::WorldDrawScope::verify();
 
     auto model = llgl::Transform {}.translate(Util::Vector3f { m_position }).scale(m_radius);
     m_shader.set_sphere(*this);
-    sv.window().renderer().render_object(m_sphere, { .shader = &m_shader, .model_matrix = model.matrix(), .view_matrix = sv.camera_transform().matrix() });
+    sv.window().renderer().render_object(m_sphere, { .shader = &m_shader, .model_matrix = model.matrix(), .view_matrix = sv.camera().view_matrix() });
 }

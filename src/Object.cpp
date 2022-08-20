@@ -170,7 +170,7 @@ void Object::delete_most_attracting_object() {
 }
 
 void Object::draw(SimulationView const& view) {
-    WorldDrawScope::verify();
+    GUI::WorldDrawScope::verify();
 
     auto scaled_pos = render_position();
     auto& target = view.window();
@@ -187,7 +187,7 @@ void Object::draw(SimulationView const& view) {
 }
 
 void Object::draw_closest_approaches(SimulationView const& view) {
-    WorldDrawScope::verify();
+    GUI::WorldDrawScope::verify();
 
     std::vector<llgl::Vertex> closest_approaches_vertexes;
     for (auto& closest_approach_entry : m_closest_approaches) {

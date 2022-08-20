@@ -83,13 +83,13 @@ void SimulationView::handle_event(GUI::Event& event) {
             switch (m_drag_mode) {
             case DragMode::Pan: {
                 Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
-                set_offset(offset() + Util::Vector3d { llgl::Transform {}.rotate_z(-real_yaw()).transform_point(Util::Vector3f { qad_delta }) * scale() / 320 });
+                set_offset(offset() + Util::Vector3d { llgl::Transform {}.rotate_z(real_yaw()).transform_point(Util::Vector3f { qad_delta }) * scale() / 320 });
                 break;
             }
             case DragMode::Rotate: {
                 auto sizes = window().size();
-                m_yaw -= drag_delta.x() / sizes.x() * M_PI;
-                m_pitch += drag_delta.y() / sizes.y() * M_PI;
+                m_yaw += drag_delta.x() / sizes.x() * M_PI;
+                m_pitch -= drag_delta.y() / sizes.y() * M_PI;
                 break;
             }
             default:
@@ -187,7 +187,7 @@ void SimulationView::draw_grid(GUI::Window& window) const {
     constexpr int major_gridline_interval = 4;
     auto major_gridline_spacing = spacing * major_gridline_interval;
     {
-        WorldDrawScope scope(*this);
+        GUI::WorldDrawScope scope(*this);
         float bounds = 50 * spacing;
         // Vector3 start_coords = screen_to_world({ 0, 0 });
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
@@ -269,12 +269,12 @@ void SimulationView::draw_grid(GUI::Window& window) const {
         { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font(), guide_text);
 }
 
-llgl::Transform SimulationView::camera_transform() const {
-    return llgl::Transform {}
-        .translate({ 0, 0, -scale() })
-        .rotate_x(m_pitch)
-        .rotate_z(m_yaw)
-        .translate(Util::Vector3f { m_offset });
+llgl::Camera SimulationView::camera() const {
+    return llgl::Camera { projection() }
+        .translate(Util::Vector3f { -m_offset })
+        .rotate_z({ static_cast<float>(m_yaw), Util::Angle::Rad })
+        .rotate_x({ static_cast<float>(m_pitch), Util::Angle::Rad })
+        .translate({ 0, 0, scale() });
 }
 
 llgl::Projection SimulationView::projection() const {
@@ -282,7 +282,7 @@ llgl::Projection SimulationView::projection() const {
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
-    return (projection().matrix() * camera_transform().matrix()).convert<double>();
+    return (projection().matrix() * camera().view_matrix()).convert<double>();
 }
 
 Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
@@ -365,11 +365,6 @@ Object* SimulationView::focused_object() const {
     if (m_focused_object != nullptr)
         return m_focused_object;
     return {};
-}
-
-void SimulationView::apply_states() const {
-    window().set_view_matrix(camera_transform().matrix());
-    window().set_projection(projection());
 }
 
 Util::Vector2f SimulationView::clip_space_to_screen(Util::Vector3d clip_space) const {
@@ -474,44 +469,3 @@ bool SimulationView::python_set_focused_object(PySSA::Object const& object) {
 }
 
 #endif
-
-WorldDrawScope const* s_current_draw_scope = nullptr;
-
-void WorldDrawScope::verify() {
-    assert(s_current_draw_scope);
-}
-
-WorldDrawScope const* WorldDrawScope::current() {
-    return s_current_draw_scope;
-}
-
-WorldDrawScope::WorldDrawScope(SimulationView const& view, ClearDepth clear_depth, llgl::opengl::Shader* custom_shader)
-    : m_simulation_view(view)
-    , m_previous_projection(view.window().projection()) {
-
-    if (s_current_draw_scope)
-        return;
-
-    static llgl::opengl::shaders::Basic330Core basic_shader;
-
-    view.window().set_shader(custom_shader ? custom_shader : &basic_shader);
-    m_simulation_view.apply_states();
-
-    glEnable(GL_DEPTH_TEST);
-
-    if (clear_depth == ClearDepth::Yes)
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-    m_parent = s_current_draw_scope;
-    s_current_draw_scope = this;
-}
-
-WorldDrawScope::~WorldDrawScope() {
-    s_current_draw_scope = m_parent;
-    if (s_current_draw_scope)
-        return;
-
-    glDisable(GL_DEPTH_TEST);
-    m_simulation_view.window().set_shader(nullptr);
-    m_simulation_view.window().set_projection(m_previous_projection);
-}

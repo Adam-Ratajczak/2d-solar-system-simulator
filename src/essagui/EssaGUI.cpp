@@ -133,7 +133,7 @@ void EssaGUI::update() {
 void EssaGUI::draw(GUI::Window& window) const {
     if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
-            WorldDrawScope scope(*m_simulation_view);
+            GUI::WorldDrawScope scope(*m_simulation_view);
             m_create_object_gui->new_object()->draw(*m_simulation_view);
             m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(*m_simulation_view);
         }
