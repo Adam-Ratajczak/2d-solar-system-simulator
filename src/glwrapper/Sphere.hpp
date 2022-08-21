@@ -68,5 +68,5 @@ private:
     double m_radius {};
     Util::Color m_color;
     mutable SphereShader m_shader;
-    llgl::Sphere m_sphere;
+    Essa::Sphere m_sphere;
 };
