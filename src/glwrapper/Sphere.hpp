@@ -15,10 +15,10 @@
 
 #include "../SimulationView.hpp"
 
+#include <EssaEngine/3D/Sphere.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <LLGL/3D/Sphere.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
