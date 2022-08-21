@@ -157,23 +157,24 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     m_y_position_control->set_class_name("Dist");
 
     auto main_color_container = modify.add_widget<Container>();
-    main_color_container->set_size({ Length::Auto, 150.0_px });
-    auto& main_color_layout = main_color_container->set_layout<GUI::VerticalBoxLayout>();
+    main_color_container->set_size({ Length::Auto, 30.0_px });
+    auto& main_color_layout = main_color_container->set_layout<GUI::HorizontalBoxLayout>();
     main_color_layout.set_spacing(10);
     {
         auto color_label_textfield = main_color_container->add_widget<GUI::Textfield>();
-        color_label_textfield->set_content("COLOR");
-        color_label_textfield->set_alignment(GUI::Align::Center);
+        color_label_textfield->set_size({ 100.0_px, Length::Auto });
+        color_label_textfield->set_content("Color:");
+        color_label_textfield->set_alignment(GUI::Align::CenterLeft);
 
         m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
-        m_color_control->set_size({ Length::Auto, 100.0_px });
     }
     auto name_container = modify.add_widget<Container>();
-    name_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
     name_container->set_size({ Length::Auto, 30.0_px });
+    auto& name_layout = name_container->set_layout<GUI::HorizontalBoxLayout>();
+    name_layout.set_spacing(10);
     {
         auto name_textfield = name_container->add_widget<GUI::Textfield>();
-        name_textfield->set_size({ 150.0_px, Length::Auto });
+        name_textfield->set_size({ 100.0_px, Length::Auto });
         name_textfield->set_content("Name: ");
         name_textfield->set_alignment(GUI::Align::CenterLeft);
 
@@ -275,7 +276,7 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
     auto pos = m_new_object_pos;
     pos.z() = m_y_position_control->value();
 
-    Util::Color color = m_color_control->value();
+    Util::Color color = m_color_control->color();
     std::string name = m_name_textbox->get_content().encode();
 
     // FIXME: Trails should be calculated in realtime somehow
@@ -344,6 +345,6 @@ void FocusedObjectGUI::update_params() {
     m_mass_exponent_textbox->set_content(Util::UString { std::to_string(static_cast<int>(std::log10(mass))) });
     m_mass_textbox->set_content(Util::UString { std::to_string(mass / std::pow(10, (int)std::log10(mass))) });
 
-    m_color_control->set_value(m_focused->color());
+    m_color_control->set_color(m_focused->color());
     m_name_textbox->set_content(Util::UString { m_focused->name() });
 }

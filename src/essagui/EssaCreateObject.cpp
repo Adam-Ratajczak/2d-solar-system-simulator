@@ -47,16 +47,15 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
 
 void EssaCreateObject::m_create_name_and_color_container() {
     auto main_color_container = add_widget<Container>();
-    main_color_container->set_size({ Length::Auto, 150.0_px });
-    auto& main_color_layout = main_color_container->set_layout<GUI::VerticalBoxLayout>();
+    auto& main_color_layout = main_color_container->set_layout<GUI::HorizontalBoxLayout>();
     main_color_layout.set_spacing(10);
     {
         auto color_label_textfield = main_color_container->add_widget<GUI::Textfield>();
-        color_label_textfield->set_content("COLOR");
-        color_label_textfield->set_alignment(GUI::Align::Center);
+        color_label_textfield->set_size({ 100.0_px, Length::Auto });
+        color_label_textfield->set_content("Color:");
+        color_label_textfield->set_alignment(GUI::Align::CenterLeft);
 
         m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
-        m_color_control->set_size({ Length::Auto, 100.0_px });
         m_color_control->on_change = [this](auto) {
             m_forward_simulation_is_valid = false;
         };
@@ -66,7 +65,7 @@ void EssaCreateObject::m_create_name_and_color_container() {
     name_layout.set_spacing(10);
     {
         auto name_textfield = name_container->add_widget<GUI::Textfield>();
-        name_textfield->set_size({ 150.0_px, Length::Auto });
+        name_textfield->set_size({ 100.0_px, Length::Auto });
         name_textfield->set_content("Name: ");
         name_textfield->set_alignment(GUI::Align::CenterLeft);
 
@@ -400,7 +399,7 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
         auto pos = m_new_object_pos;
         pos.z() = m_y_position_control->value();
 
-        Util::Color color = m_color_control->value();
+        Util::Color color = m_color_control->color();
         auto name = m_name_textbox->get_content().encode();
         return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
     } catch (...) {
@@ -431,5 +430,5 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         tilt = { static_cast<float>(m_orbit_tilt_control->value()), Util::Angle::Deg };
     }
 
-    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->value(), m_name_textbox->get_content().encode(), 0.0_deg);
+    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->get_content().encode(), 0.0_deg);
 }

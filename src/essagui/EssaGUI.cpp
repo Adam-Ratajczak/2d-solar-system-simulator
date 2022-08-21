@@ -77,7 +77,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
             m_draw_forward_simulation = state;
         };
         create_menu.settings_container->set_layout<GUI::HorizontalBoxLayout>();
-        create_menu.settings_container->set_size({ 550.0_px, 680.0_px });
+        create_menu.settings_container->set_size({ 500.0_px, 530.0_px });
         m_create_object_gui = create_menu.settings_container->add_widget<EssaCreateObject>(*m_simulation_view);
     }
 
