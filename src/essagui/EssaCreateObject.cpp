@@ -241,7 +241,6 @@ std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(
 void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
     auto label = container.add_widget<GUI::Textfield>();
     label->set_content("Create Object");
-    label->set_size({ Length::Auto, 30.0_px });
     label->set_alignment(GUI::Align::Center);
 
     m_forward_simulation_ticks_control = container.add_widget<GUI::ValueSlider>(1, 1000);
