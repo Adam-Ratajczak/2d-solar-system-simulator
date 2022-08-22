@@ -201,7 +201,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
     restore_sim->set_content("Restore simulation");
     restore_sim->set_toggleable(false);
     restore_sim->set_alignment(GUI::Align::Center);
-    restore_sim->override_button_colors().untoggleable.background = theme().neutral;
+    restore_sim->override_button_colors().normal.set_colors(theme().neutral);
     restore_sim->set_tooltip_text("Restore Simulation to state from the beginning");
     restore_sim->on_click = [this]() {
         reset_simulation();
@@ -211,7 +211,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
     restore_defaults->set_content("Restore defaults");
     restore_defaults->set_toggleable(false);
     restore_defaults->set_alignment(GUI::Align::Center);
-    restore_defaults->override_button_colors().untoggleable.background = theme().neutral;
+    restore_defaults->override_button_colors().normal.set_colors(theme().neutral);
 
     restore_defaults->on_click = [this]() {
         for (auto& func : m_on_restore_defaults)

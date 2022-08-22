@@ -190,7 +190,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
     auto modify_button = button_container->add_widget<GUI::TextButton>();
     modify_button->set_content("Modify object");
-    modify_button->override_button_colors().untoggleable.background = theme().positive;
+    modify_button->override_button_colors().normal.set_colors(theme().positive);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
@@ -206,7 +206,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
     auto remove_button = button_container->add_widget<GUI::TextButton>();
     remove_button->set_content("Remove object");
-    remove_button->override_button_colors().untoggleable.background = theme().negative;
+    remove_button->override_button_colors().normal.set_colors(theme().negative);
     remove_button->on_click = [&]() {
         auto result = GUI::message_box(Util::UString { "Are you sure you want to delete object \"" + m_focused->name() + "\"?" }, "Delete object", GUI::MessageBox::Buttons::YesNo);
         if (result == GUI::MessageBox::ButtonRole::Yes) {
