@@ -98,7 +98,7 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         fov_control->set_tooltip_text("Field of View");
         fov_control->on_change = [this](double value) {
             if (value > 0)
-                m_simulation_view.set_fov(Util::Angle { static_cast<float>(value), Util::Angle::Unit::Deg });
+                m_simulation_view.set_fov(Util::Angle::degrees(static_cast<float>(value)));
         };
 
         auto toggle_sphere_mode_container = display_settings.add_widget<GUI::Container>();
@@ -164,9 +164,11 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
             this->m_simulation_view.set_offset_trails(state);
             this->m_simulation_view.world().reset_all_trails();
         });
-        add_toggle(display_settings, "Display debug info", [this](bool state) {
-            this->m_simulation_view.set_display_debug_info(state);
-        }, false);
+        add_toggle(
+            display_settings, "Display debug info", [this](bool state) {
+                this->m_simulation_view.set_display_debug_info(state);
+            },
+            false);
     }
 
     auto& controls_settings = tab_widget->add_tab("Controls");

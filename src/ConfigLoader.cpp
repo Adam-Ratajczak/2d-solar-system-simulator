@@ -99,8 +99,8 @@ bool ConfigLoader::parse_statement(World& world) {
                     read_distance_property("apoapsis"),
                     read_distance_property("periapsis"),
                     properties["direction"] == "right" ? false : true,
-                    Util::Angle(read_double_property("orbit_position"), Util::Angle::Unit::Deg),
-                    Util::Angle(read_double_property("orbit_tilt"), Util::Angle::Unit::Deg),
+                    Util::Angle::degrees(read_double_property("orbit_position")),
+                    Util::Angle::degrees(read_double_property("orbit_tilt")),
                     Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                     properties["name"],
                     0.0_deg));
@@ -112,8 +112,8 @@ bool ConfigLoader::parse_statement(World& world) {
                     read_distance_property("major_axis"),
                     read_double_property("eccencrity"),
                     properties["direction"] == "right" ? false : true,
-                    Util::Angle(read_double_property("orbit_position"), Util::Angle::Unit::Deg),
-                    Util::Angle(read_double_property("orbit_tilt"), Util::Angle::Unit::Deg),
+                    Util::Angle::degrees(read_double_property("orbit_position")),
+                    Util::Angle::degrees(read_double_property("orbit_tilt")),
                     Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
                     properties["name"],
                     0.0_deg));

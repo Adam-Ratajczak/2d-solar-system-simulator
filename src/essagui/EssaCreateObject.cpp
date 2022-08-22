@@ -418,15 +418,15 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         apogee = { static_cast<float>(m_apogee_control->value() * AU), Distance::Au };
         perigee = { static_cast<float>(m_perigee_control->value() * AU), Distance::Au };
 
-        angle = { static_cast<float>(m_orbit_angle_control->value()), Util::Angle::Rad };
-        tilt = { static_cast<float>(m_orbit_tilt_control->value()), Util::Angle::Rad };
+        angle = Util::Angle::radians(static_cast<float>(m_orbit_angle_control->value()));
+        tilt = Util::Angle::radians(static_cast<float>(m_orbit_tilt_control->value()));
     }
     else {
         apogee = { static_cast<float>(m_apogee_control->value() * 1000), Distance::Kilometer };
         perigee = { static_cast<float>(m_perigee_control->value() * 1000), Distance::Kilometer };
 
-        angle = { static_cast<float>(m_orbit_angle_control->value()), Util::Angle::Deg };
-        tilt = { static_cast<float>(m_orbit_tilt_control->value()), Util::Angle::Deg };
+        angle = Util::Angle::degrees(m_orbit_angle_control->value());
+        tilt = Util::Angle::degrees(m_orbit_tilt_control->value());
     }
 
     return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->get_content().encode(), 0.0_deg);

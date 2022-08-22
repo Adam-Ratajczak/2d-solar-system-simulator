@@ -272,8 +272,8 @@ void SimulationView::draw_grid(GUI::Window& window) const {
 llgl::Camera SimulationView::camera() const {
     return llgl::Camera { projection() }
         .translate(Util::Vector3f { -m_offset })
-        .rotate_z({ static_cast<float>(m_yaw), Util::Angle::Rad })
-        .rotate_x({ static_cast<float>(m_pitch), Util::Angle::Rad })
+        .rotate_z(Util::Angle::radians(static_cast<float>(m_yaw)))
+        .rotate_x(Util::Angle::radians(static_cast<float>(m_pitch)))
         .translate({ 0, 0, scale() });
 }
 
@@ -412,7 +412,7 @@ bool SimulationView::python_set_fov(PySSA::Object const& object) {
     auto v = object.as_double();
     if (!v)
         return false;
-    m_fov = Util::Angle(*v, Util::Angle::Unit::Deg);
+    m_fov = Util::Angle::degrees(*v);
     return true;
 }
 
