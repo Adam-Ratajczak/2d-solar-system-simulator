@@ -263,7 +263,7 @@ void SimulationView::draw_grid(GUI::Window& window) const {
 
     // FIXME: UB on size_t conversion
     GUI::TextDrawOptions guide_text;
-    guide_text.font_size = 15;
+    guide_text.font_size = theme().label_font_size;
     guide_text.text_align = GUI::Align::Center;
     window.draw_text_aligned_in_rect(Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(),
         { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font(), guide_text);
@@ -323,7 +323,7 @@ void SimulationView::draw(GUI::Window& window) const {
 
         GUI::TextDrawOptions debug_text;
         debug_text.fill_color = Util::Colors::White;
-        debug_text.font_size = 15;
+        debug_text.font_size = theme().label_font_size;
         window.draw_text(Util::UString { debug_oss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
     }
 }

@@ -220,7 +220,7 @@ void Object::draw_label(SimulationView const& sv, Util::Vector3d position, Util:
         return;
 
     GUI::TextDrawOptions text;
-    text.font_size = 15;
+    text.font_size = GUI::Application::the().theme().label_font_size;
     text.fill_color = color;
     sv.window().draw_text(string, GUI::Application::the().bold_font(), { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
 }
