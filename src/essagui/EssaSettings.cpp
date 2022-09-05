@@ -16,7 +16,7 @@ EssaSettings::EssaSettings(SimulationView& simulation_view)
     : m_simulation_view(simulation_view) {
 }
 
-void EssaSettings::on_add() {
+void EssaSettings::on_init() {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     auto title_label = add_widget<GUI::Textfield>();

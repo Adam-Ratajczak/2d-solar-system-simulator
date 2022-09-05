@@ -19,7 +19,7 @@
 EssaGUI::EssaGUI(World& world)
     : m_world(world) { }
 
-void EssaGUI::on_add() {
+void EssaGUI::on_init() {
     set_layout<GUI::BasicLayout>();
 
     m_simulation_view = add_widget<SimulationView>(m_world);

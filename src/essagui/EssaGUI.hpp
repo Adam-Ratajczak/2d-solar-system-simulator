@@ -29,7 +29,7 @@ class EssaGUI : public GUI::Container {
 public:
     explicit EssaGUI(World& world);
 
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     virtual void handle_event(GUI::Event&) override;
     virtual void draw(GUI::Window& window) const override;

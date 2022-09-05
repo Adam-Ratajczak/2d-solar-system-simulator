@@ -14,7 +14,7 @@ FocusedObjectGUI::FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w)
     , m_window(wnd) {
 }
 
-void FocusedObjectGUI::on_add() {
+void FocusedObjectGUI::on_init() {
     set_layout<GUI::VerticalBoxLayout>();
     add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
     set_background_color(Util::Color { 192, 192, 192, 30 });

@@ -6,7 +6,7 @@ class EssaSettings : public GUI::Container {
 public:
     explicit EssaSettings(SimulationView& simulation_view);
 
-    virtual void on_add() override;
+    virtual void on_init() override;
 
     bool pause_simulation_on_creative_mode() const { return m_pause_simulation_on_creative_mode; }
     bool unfocus_on_wnd_close() const { return m_unfocus_on_wnd_close; }

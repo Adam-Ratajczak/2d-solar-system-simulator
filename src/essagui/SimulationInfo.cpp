@@ -10,7 +10,7 @@ SimulationInfo::SimulationInfo(SimulationView* sw)
     : m_simulation_view(sw) {
 }
 
-void SimulationInfo::on_add() {
+void SimulationInfo::on_init() {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     auto fps_container = add_widget<GUI::Container>();

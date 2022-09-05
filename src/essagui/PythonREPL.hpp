@@ -13,7 +13,7 @@
 
 class PythonREPL : public GUI::Container {
 public:
-    virtual void on_add() override;
+    virtual void on_init() override;
 
 private:
     virtual void handle_event(GUI::Event&) override;

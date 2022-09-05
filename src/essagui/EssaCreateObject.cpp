@@ -15,7 +15,7 @@ EssaCreateObject::EssaCreateObject(SimulationView& simulation_view)
     , m_simulation_view(simulation_view) {
 }
 
-void EssaCreateObject::on_add() {
+void EssaCreateObject::on_init() {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     m_create_object_gui(*this);
