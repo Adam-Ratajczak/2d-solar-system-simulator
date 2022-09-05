@@ -21,8 +21,8 @@ class World;
 class SimulationView : public GUI::WorldView
     , public PySSA::WrappedObject<SimulationView> {
 public:
-    explicit SimulationView(GUI::Container& c, World& world)
-        : WorldView(c)
+    explicit SimulationView(World& world)
+        : WorldView()
         , m_world(world) { reset(); }
 
     void set_offset(Util::Vector3d o) { m_offset = o; }

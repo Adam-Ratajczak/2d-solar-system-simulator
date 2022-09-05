@@ -11,7 +11,8 @@
 
 class EssaCreateObject : public GUI::Container {
 public:
-    explicit EssaCreateObject(GUI::Container& container, SimulationView& simulation_view);
+    explicit EssaCreateObject(SimulationView& simulation_view);
+    virtual void on_add() override;
 
     void set_new_object(std::unique_ptr<Object> new_obj) { m_new_object = std::move(new_obj); }
     void recalculate_forward_simulation();
@@ -25,8 +26,8 @@ public:
     bool new_object_exist() const { return m_new_object != nullptr; }
 
 private:
-    GUI::Button* m_coords_button = nullptr;
-    GUI::Button* m_add_object_button = nullptr;
+    GUI::ImageButton* m_coords_button = nullptr;
+    GUI::ImageButton* m_add_object_button = nullptr;
 
     GUI::ValueSlider* m_forward_simulation_ticks_control = nullptr;
     GUI::ValueSlider* m_radius_control = nullptr;
@@ -47,10 +48,10 @@ private:
 
     GUI::ColorPicker* m_color_control = nullptr;
 
-    std::shared_ptr<Container> m_create_object_from_params_container = nullptr;
-    std::shared_ptr<Container> m_create_object_from_orbit_container = nullptr;
-    std::shared_ptr<Container> m_submit_create_container = nullptr;
-    std::shared_ptr<Container> m_submit_modify_container = nullptr;
+    Container* m_create_object_from_params_container = nullptr;
+    Container* m_create_object_from_orbit_container = nullptr;
+    Container* m_submit_create_container = nullptr;
+    Container* m_submit_modify_container = nullptr;
 
     std::shared_ptr<GUI::ImageButton> m_toggle_unit_button = nullptr;
     GUI::ImageButton* m_toggle_orbit_direction_button = nullptr;
@@ -71,10 +72,10 @@ private:
 
     SimulationView& m_simulation_view;
 
-    std::shared_ptr<GUI::ImageButton> m_create_toggle_unit_button(Container& parent);
-    std::shared_ptr<Container> m_create_object_from_params_gui(Container& parent);
-    std::shared_ptr<Container> m_create_object_from_orbit_gui(Container& parent);
-    std::shared_ptr<Container> m_create_submit_container(Container& parent);
+    std::shared_ptr<GUI::ImageButton> m_create_toggle_unit_button();
+    void m_create_object_from_params_gui(Container&);
+    void m_create_object_from_orbit_gui(Container&);
+    void m_create_submit_container(Container&);
 
     void m_create_name_and_color_container();
 

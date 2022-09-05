@@ -10,9 +10,12 @@
 #include <memory>
 #include <string>
 
-EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation_view)
-    : GUI::Container(c)
+EssaCreateObject::EssaCreateObject(SimulationView& simulation_view)
+    : GUI::Container()
     , m_simulation_view(simulation_view) {
+}
+
+void EssaCreateObject::on_add() {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     m_create_object_gui(*this);
@@ -21,28 +24,28 @@ EssaCreateObject::EssaCreateObject(GUI::Container& c, SimulationView& simulation
     mode_specific_options_container->set_size({ Length::Auto, 150.0_px });
     mode_specific_options_container->set_layout<GUI::BasicLayout>();
 
-    m_create_object_from_params_container = m_create_object_from_params_gui(*mode_specific_options_container);
+    m_create_object_from_params_container = mode_specific_options_container->add_widget<GUI::Container>();
+    m_create_object_from_params_gui(*m_create_object_from_params_container);
     m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_create_object_from_params_container->set_visible(true);
-    mode_specific_options_container->add_created_widget(m_create_object_from_params_container);
 
-    m_create_object_from_orbit_container = m_create_object_from_orbit_gui(*mode_specific_options_container);
+    m_create_object_from_orbit_container = mode_specific_options_container->add_widget<GUI::Container>();
+    m_create_object_from_orbit_gui(*m_create_object_from_orbit_container);
     m_create_object_from_orbit_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_create_object_from_orbit_container->set_visible(false);
-    mode_specific_options_container->add_created_widget(m_create_object_from_orbit_container);
 
     m_create_name_and_color_container();
 
     auto mode_specific_submit_container = add_widget<Container>();
     mode_specific_submit_container->set_size({ Length::Auto, 72.0_px });
     mode_specific_submit_container->set_layout<GUI::BasicLayout>();
-    m_toggle_unit_button = m_create_toggle_unit_button(*mode_specific_submit_container);
+    m_toggle_unit_button = m_create_toggle_unit_button();
 
-    m_submit_create_container = m_create_submit_container(*mode_specific_submit_container);
+    m_submit_create_container = mode_specific_submit_container->add_widget<GUI::Container>();
+    m_create_submit_container(*m_submit_create_container);
     m_submit_create_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     m_submit_create_container->set_visible(true);
     m_submit_create_container->add_created_widget(m_toggle_unit_button);
-    mode_specific_submit_container->add_created_widget(m_submit_create_container);
 }
 
 void EssaCreateObject::m_create_name_and_color_container() {
@@ -79,13 +82,13 @@ void EssaCreateObject::m_create_name_and_color_container() {
     }
 }
 
-std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI::Container& parent) {
-    auto container = std::make_shared<GUI::Container>(parent);
-    container->set_size({ Length::Auto, 72.0_px });
-    auto& submit_layout = container->set_layout<GUI::HorizontalBoxLayout>();
+void EssaCreateObject::m_create_submit_container(Container& container) {
+    container.set_size({ Length::Auto, 72.0_px });
+    auto& submit_layout = container.set_layout<GUI::HorizontalBoxLayout>();
     submit_layout.set_spacing(10);
     {
-        m_coords_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("coordsButton.png"));
+        m_coords_button = container.add_widget<GUI::ImageButton>();
+        m_coords_button->set_image(&resource_manager().require_texture("coordsButton.png"));
         m_coords_button->on_click = [this]() {
             if (m_automatic_orbit_calculation) {
                 m_simulation_view.start_focus_measure([&](Object* focusing) {
@@ -104,7 +107,8 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
         };
         m_coords_button->set_tooltip_text("Set position");
 
-        auto creative_mode_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("toggleCreativeModeButton.png"));
+        auto creative_mode_button = container.add_widget<GUI::ImageButton>();
+        creative_mode_button->set_image(&resource_manager().require_texture("toggleCreativeModeButton.png"));
         creative_mode_button->set_toggleable(true);
         creative_mode_button->set_tooltip_text("Toggle automatic orbit calculation");
 
@@ -116,7 +120,8 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
             m_automatic_orbit_calculation = state;
         };
 
-        m_toggle_orbit_direction_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("orbitDirectionButton.png"));
+        m_toggle_orbit_direction_button = container.add_widget<GUI::ImageButton>();
+        m_toggle_orbit_direction_button->set_image(&resource_manager().require_texture("orbitDirectionButton.png"));
         m_toggle_orbit_direction_button->set_toggleable(true);
         m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
         m_toggle_orbit_direction_button->on_change = [this](bool state) {
@@ -124,7 +129,8 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
         };
         m_toggle_orbit_direction_button->set_visible(false);
 
-        m_require_orbit_point_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("requireOrbitPointButton.png"));
+        m_require_orbit_point_button = container.add_widget<GUI::ImageButton>();
+        m_require_orbit_point_button->set_image(&resource_manager().require_texture("requireOrbitPointButton.png"));
         m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
         m_require_orbit_point_button->on_click = [this]() {
             if (!m_new_object) {
@@ -137,9 +143,10 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
             });
         };
 
-        container->add_widget<Widget>(); // spacer
+        container.add_widget<Widget>(); // spacer
 
-        m_add_object_button = container->add_widget<GUI::ImageButton>(resource_manager().require_texture("addObjectButton.png"));
+        m_add_object_button = container.add_widget<GUI::ImageButton>();
+        m_add_object_button->set_image(&resource_manager().require_texture("addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
             if (m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content().encode())) {
                 GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
@@ -153,8 +160,6 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_submit_container(GUI:
             m_simulation_view.m_measured = false;
         };
     }
-
-    return container;
 }
 
 void EssaCreateObject::recalculate_forward_simulation() {
@@ -182,8 +187,9 @@ void EssaCreateObject::recalculate_forward_simulation() {
     m_forward_simulation_is_valid = true;
 }
 
-std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(GUI::Container& parent) {
-    auto button = std::make_shared<GUI::ImageButton>(parent, resource_manager().require_texture("toggleUnitButton.png"));
+std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button() {
+    auto button = std::make_shared<GUI::ImageButton>();
+    button->set_image(&resource_manager().require_texture("toggleUnitButton.png"));
     button->set_toggleable(true);
     button->on_change = [this](bool state) {
         m_prev_unit_state = state;
@@ -243,7 +249,9 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
     label->set_content("Create Object");
     label->set_alignment(GUI::Align::Center);
 
-    m_forward_simulation_ticks_control = container.add_widget<GUI::ValueSlider>(1, 1000);
+    m_forward_simulation_ticks_control = container.add_widget<GUI::ValueSlider>();
+    m_forward_simulation_ticks_control->set_min(1);
+    m_forward_simulation_ticks_control->set_max(1000);
     m_forward_simulation_ticks_control->set_name("Simulate");
     m_forward_simulation_ticks_control->set_unit("ticks");
     m_forward_simulation_ticks_control->set_tooltip_text("How many ticks should be forward-simulated");
@@ -251,7 +259,9 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_radius_control = container.add_widget<GUI::ValueSlider>(0, 500000);
+    m_radius_control = container.add_widget<GUI::ValueSlider>();
+    m_radius_control->set_min(0);
+    m_radius_control->set_max(500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
     m_radius_control->on_change = [this](auto) {
@@ -299,51 +309,57 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
     }
 }
 
-std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_params_gui(GUI::Container& parent) {
-    auto container = std::make_shared<GUI::Container>(parent);
-    container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+void EssaCreateObject::m_create_object_from_params_gui(Container& container) {
+    container.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
-    m_velocity_control = container->add_widget<GUI::ValueSlider>(0, 50000);
+    m_velocity_control = container.add_widget<GUI::ValueSlider>();
+    m_velocity_control->set_min(0);
+    m_velocity_control->set_min(50000);
     m_velocity_control->set_name("Velocity");
     m_velocity_control->set_unit("m/s");
     m_velocity_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_direction_xz_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
+    m_direction_xz_control = container.add_widget<GUI::ValueSlider>();
+    m_direction_xz_control->set_min(0);
+    m_direction_xz_control->set_max(360);
     m_direction_xz_control->set_name("Direction X");
     m_direction_xz_control->set_unit("[deg]");
-    m_direction_xz_control->set_class_name("Util::Angle");
+    m_direction_xz_control->set_class_name("Angle");
     m_direction_xz_control->slider().set_wraparound(true);
     m_direction_xz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_direction_yz_control = container->add_widget<GUI::ValueSlider>(-90, 90, 1);
+    m_direction_yz_control = container.add_widget<GUI::ValueSlider>();
+    m_direction_yz_control->set_min(-90);
+    m_direction_yz_control->set_max(90);
     m_direction_yz_control->set_name("Direction Y");
     m_direction_yz_control->set_unit("[deg]");
-    m_direction_yz_control->set_class_name("Util::Angle");
+    m_direction_yz_control->set_class_name("Angle");
     m_direction_yz_control->slider().set_wraparound(true);
     m_direction_yz_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_y_position_control = container->add_widget<GUI::ValueSlider>(-0.05 * AU, 0.05 * AU);
+    m_y_position_control = container.add_widget<GUI::ValueSlider>();
+    m_y_position_control->set_min(-0.05 * AU);
+    m_y_position_control->set_max(0.05 * AU);
     m_y_position_control->set_name("Y position");
     m_y_position_control->set_unit("km");
     m_y_position_control->set_class_name("Dist");
     m_y_position_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
-
-    return container;
 }
 
-std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui(GUI::Container& parent) {
-    auto container = std::make_shared<GUI::Container>(parent);
-    container->set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
+void EssaCreateObject::m_create_object_from_orbit_gui(Container& container) {
+    container.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
-    m_apogee_control = container->add_widget<GUI::ValueSlider>(0, 0.05 * AU);
+    m_apogee_control = container.add_widget<GUI::ValueSlider>();
+    m_apogee_control->set_min(0);
+    m_apogee_control->set_max(0.05 * AU);
     m_apogee_control->set_name("Apogee");
     m_apogee_control->set_unit("km");
     m_apogee_control->set_class_name("Dist");
@@ -351,7 +367,9 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
         m_forward_simulation_is_valid = false;
     };
 
-    m_perigee_control = container->add_widget<GUI::ValueSlider>(0, 0.05 * AU);
+    m_perigee_control = container.add_widget<GUI::ValueSlider>();
+    m_perigee_control->set_min(0);
+    m_perigee_control->set_max(0.05 * AU);
     m_perigee_control->set_name("Perigee");
     m_perigee_control->set_unit("km");
     m_perigee_control->set_class_name("Dist");
@@ -359,16 +377,20 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
         m_forward_simulation_is_valid = false;
     };
 
-    m_orbit_angle_control = container->add_widget<GUI::ValueSlider>(0, 360, 1);
-    m_orbit_angle_control->set_name("Util::Angle");
+    m_orbit_angle_control = container.add_widget<GUI::ValueSlider>();
+    m_orbit_angle_control->set_min(0);
+    m_orbit_angle_control->set_max(360);
+    m_orbit_angle_control->set_name("Angle");
     m_orbit_angle_control->set_unit("[deg]");
-    m_orbit_angle_control->set_class_name("Util::Angle");
+    m_orbit_angle_control->set_class_name("Angle");
     m_orbit_angle_control->slider().set_wraparound(true);
     m_orbit_angle_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_orbit_tilt_control = container->add_widget<GUI::ValueSlider>(-90, 90, 1);
+    m_orbit_tilt_control = container.add_widget<GUI::ValueSlider>();
+    m_orbit_tilt_control->set_min(-90);
+    m_orbit_tilt_control->set_max(90);
     m_orbit_tilt_control->set_name("Tilt");
     m_orbit_tilt_control->set_unit("[deg]");
     m_orbit_tilt_control->set_class_name("Util::Angle");
@@ -376,8 +398,6 @@ std::shared_ptr<GUI::Container> EssaCreateObject::m_create_object_from_orbit_gui
     m_orbit_tilt_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
-
-    return container;
 }
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {

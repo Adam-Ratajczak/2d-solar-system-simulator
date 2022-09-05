@@ -2,18 +2,18 @@
 
 #ifdef ENABLE_PYSSA
 
-#include <EssaGUI/gui/ArrowButton.hpp>
-#include <EssaGUI/gui/Console.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/Textbox.hpp>
-#include <EssaGUI/gui/Widget.hpp>
+#    include <EssaGUI/gui/ArrowButton.hpp>
+#    include <EssaGUI/gui/Console.hpp>
+#    include <EssaGUI/gui/Container.hpp>
+#    include <EssaGUI/gui/Textbox.hpp>
+#    include <EssaGUI/gui/Widget.hpp>
 
-#include <deque>
-#include <vector>
+#    include <deque>
+#    include <vector>
 
 class PythonREPL : public GUI::Container {
 public:
-    explicit PythonREPL(GUI::WidgetTreeRoot& c);
+    virtual void on_add() override;
 
 private:
     virtual void handle_event(GUI::Event&) override;

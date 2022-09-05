@@ -4,10 +4,12 @@
 
 class EssaSettings : public GUI::Container {
 public:
-    explicit EssaSettings(GUI::Container& container, SimulationView& simulation_view);
+    explicit EssaSettings(SimulationView& simulation_view);
 
-    bool pause_simulation_on_creative_mode()const {return m_pause_simulation_on_creative_mode;}
-    bool unfocus_on_wnd_close()const {return m_unfocus_on_wnd_close;}
+    virtual void on_add() override;
+
+    bool pause_simulation_on_creative_mode() const { return m_pause_simulation_on_creative_mode; }
+    bool unfocus_on_wnd_close() const { return m_unfocus_on_wnd_close; }
 
     // FIXME: This should be somewhere else, maybe in SimulationView.
     void set_world_file(std::string wf) { m_world_file = std::move(wf); }

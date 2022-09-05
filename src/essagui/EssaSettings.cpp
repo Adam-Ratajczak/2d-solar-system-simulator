@@ -12,9 +12,11 @@
 
 #include <fstream>
 
-EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
-    : GUI::Container(c)
-    , m_simulation_view(simulation_view) {
+EssaSettings::EssaSettings(SimulationView& simulation_view)
+    : m_simulation_view(simulation_view) {
+}
+
+void EssaSettings::on_add() {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     auto title_label = add_widget<GUI::Textfield>();
@@ -29,7 +31,9 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         layout.set_spacing(10);
         layout.set_padding(10);
 
-        auto iterations_control = simulation_settings.add_widget<GUI::ValueSlider>(1, 1000);
+        auto iterations_control = simulation_settings.add_widget<GUI::ValueSlider>();
+        iterations_control->set_min(1);
+        iterations_control->set_max(1000);
         iterations_control->set_name("Iterations");
         iterations_control->set_unit("i/t");
         m_on_restore_defaults.push_back([iterations_control]() {
@@ -42,7 +46,10 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         };
         iterations_control->set_class_name("Simulation");
 
-        auto tick_length_control = simulation_settings.add_widget<GUI::ValueSlider>(60, 60 * 60 * 24, 60);
+        auto tick_length_control = simulation_settings.add_widget<GUI::ValueSlider>();
+        tick_length_control->set_min(60);
+        tick_length_control->set_max(60 * 60 * 24);
+        tick_length_control->set_step(60);
         tick_length_control->set_name("Tick Length");
         tick_length_control->set_unit("s/t");
         m_on_restore_defaults.push_back([tick_length_control]() {
@@ -89,7 +96,9 @@ EssaSettings::EssaSettings(GUI::Container& c, SimulationView& simulation_view)
         layout.set_spacing(10);
         layout.set_padding(10);
 
-        auto fov_control = display_settings.add_widget<GUI::ValueSlider>(20, 160, 1);
+        auto fov_control = display_settings.add_widget<GUI::ValueSlider>();
+        fov_control->set_min(20);
+        fov_control->set_max(160);
         fov_control->set_name("FOV");
         fov_control->set_unit("deg");
         m_on_restore_defaults.push_back([fov_control]() {

@@ -4,8 +4,7 @@
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/ArrowButton.hpp>
 
-PythonREPL::PythonREPL(GUI::WidgetTreeRoot& c)
-    : Container(c) {
+void PythonREPL::on_add() {
     auto& layout = set_layout<GUI::VerticalBoxLayout>();
     m_console = add_widget<GUI::Console>();
     m_textbox = add_widget<GUI::Textbox>();

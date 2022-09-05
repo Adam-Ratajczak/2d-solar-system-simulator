@@ -8,11 +8,13 @@
 #include <iomanip>
 #include <memory>
 
-FocusedObjectGUI::FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolWindow* wnd, World& w)
-    : GUI::Container(c)
-    , m_focused(o)
+FocusedObjectGUI::FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w)
+    : m_focused(o)
     , m_world(w)
     , m_window(wnd) {
+}
+
+void FocusedObjectGUI::on_add() {
     set_layout<GUI::VerticalBoxLayout>();
     add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
     set_background_color(Util::Color { 192, 192, 192, 30 });
@@ -96,7 +98,9 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     title->set_font_size(30);
     title->set_content("Modify object");
 
-    m_radius_control = modify.add_widget<GUI::ValueSlider>(0, 500000);
+    m_radius_control = modify.add_widget<GUI::ValueSlider>();
+    m_radius_control->set_min(0);
+    m_radius_control->set_max(500000);
     m_radius_control->set_name("Radius");
     m_radius_control->set_unit("km");
 
@@ -135,23 +139,29 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
         mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
     }
 
-    m_velocity_control = modify.add_widget<GUI::ValueSlider>(0, 50000);
+    m_velocity_control = modify.add_widget<GUI::ValueSlider>();
+    m_velocity_control->set_max(50000);
     m_velocity_control->set_name("Velocity");
     m_velocity_control->set_unit("m/s");
 
-    m_direction_xz_control = modify.add_widget<GUI::ValueSlider>(0, 360, 1);
+    m_direction_xz_control = modify.add_widget<GUI::ValueSlider>();
+    m_direction_xz_control->set_max(360);
     m_direction_xz_control->set_name("Direction X");
     m_direction_xz_control->set_unit("[deg]");
     m_direction_xz_control->set_class_name("Angle");
     m_direction_xz_control->slider().set_wraparound(true);
 
-    m_direction_yz_control = modify.add_widget<GUI::ValueSlider>(-90, 90, 1);
+    m_direction_yz_control = modify.add_widget<GUI::ValueSlider>();
+    m_direction_yz_control->set_min(-90);
+    m_direction_yz_control->set_max(90);
     m_direction_yz_control->set_name("Direction Y");
     m_direction_yz_control->set_unit("[deg]");
     m_direction_yz_control->set_class_name("Angle");
     m_direction_yz_control->slider().set_wraparound(true);
 
-    m_y_position_control = modify.add_widget<GUI::ValueSlider>(-0.05 * AU, 0.05 * AU);
+    m_y_position_control = modify.add_widget<GUI::ValueSlider>();
+    m_y_position_control->set_min(-0.05 * AU);
+    m_y_position_control->set_max(0.05 * AU);
     m_y_position_control->set_name("Y position");
     m_y_position_control->set_unit("km");
     m_y_position_control->set_class_name("Dist");

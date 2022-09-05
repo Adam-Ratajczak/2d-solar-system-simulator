@@ -16,12 +16,13 @@
 #include <memory>
 #include <string>
 
-EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
-    : Container(wtr)
-    , m_world(world) {
+EssaGUI::EssaGUI(World& world)
+    : m_world(world) { }
+
+void EssaGUI::on_add() {
     set_layout<GUI::BasicLayout>();
 
-    m_simulation_view = add_widget<SimulationView>(world);
+    m_simulation_view = add_widget<SimulationView>(m_world);
     m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
     // m_simulation_view->set_visible(false);
     m_world.m_simulation_view = m_simulation_view;
@@ -34,7 +35,7 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ size().x() - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
-            auto focused_object_gui = focused_object_window.window->set_main_widget<FocusedObjectGUI>(obj, focused_object_window.window, world);
+            auto& focused_object_gui = focused_object_window.window->set_main_widget<FocusedObjectGUI>(obj, focused_object_window.window, m_world);
             focused_object_gui.update_params();
             focused_object_window.window->on_close = [&]() {
                 if (m_settings_gui->unfocus_on_wnd_close())
@@ -52,7 +53,8 @@ EssaGUI::EssaGUI(GUI::WidgetTreeRoot& wtr, World& world)
         });
     };
 
-    auto home_button = add_widget<GUI::ImageButton>(resource_manager().require_texture("homeButton.png"));
+    auto home_button = add_widget<GUI::ImageButton>();
+    home_button->set_image(&resource_manager().require_texture("homeButton.png"));
     home_button->set_position({ 10.0_px_o, 10.0_px_o });
     home_button->on_click = [this]() {
         m_simulation_view->reset();

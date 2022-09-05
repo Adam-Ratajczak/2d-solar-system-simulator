@@ -17,9 +17,9 @@
 #include <EssaGUI/gui/TextButton.hpp>
 #include <EssaGUI/gui/Textbox.hpp>
 #include <EssaGUI/gui/Textfield.hpp>
+#include <EssaGUI/gui/ToolWindow.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
 #include <EssaGUI/gui/Widget.hpp>
-#include <EssaGUI/gui/ToolWindow.hpp>
 
 #include <memory>
 #include <random>
@@ -27,7 +27,9 @@
 
 class EssaGUI : public GUI::Container {
 public:
-    explicit EssaGUI(GUI::WidgetTreeRoot&, World& world);
+    explicit EssaGUI(World& world);
+
+    virtual void on_add() override;
 
     virtual void handle_event(GUI::Event&) override;
     virtual void draw(GUI::Window& window) const override;

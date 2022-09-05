@@ -15,9 +15,10 @@
 
 class FocusedObjectGUI : public GUI::Container {
 public:
-    FocusedObjectGUI(GUI::WidgetTreeRoot& c, Object* o, GUI::ToolWindow* wnd, World& w);
+    FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w);
 
-    void update() override;
+    virtual void on_add() override;
+    virtual void update() override;
     void update_params();
 
 private:

@@ -6,9 +6,11 @@
 #include <EssaUtil/Units.hpp>
 #include <string>
 
-SimulationInfo::SimulationInfo(GUI::Container& parent, SimulationView* sw)
-    : GUI::Container(parent)
-    , m_simulation_view(sw) {
+SimulationInfo::SimulationInfo(SimulationView* sw)
+    : m_simulation_view(sw) {
+}
+
+void SimulationInfo::on_add() {
     set_layout<GUI::VerticalBoxLayout>().set_spacing(10);
 
     auto fps_container = add_widget<GUI::Container>();
