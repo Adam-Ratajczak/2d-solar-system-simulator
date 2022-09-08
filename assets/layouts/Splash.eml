@@ -1,0 +1,52 @@
+@ToolWindow {
+    title: "ESSA"
+    width: 600
+    height: 500
+    center_on_screen: true
+    main_widget: @Container {
+        layout: @VerticalBoxLayout {
+            padding: 10
+            spacing: 10
+        }
+
+        @ImageWidget {
+            image: asset("splash_full_v1.png")
+            height: 160px
+        }
+
+        @Container {
+            layout: @HorizontalBoxLayout {
+                padding: 10
+                spacing: 20
+            }
+
+            define Essa_SplashColumn : @Container {
+                layout: @VerticalBoxLayout {
+                    spacing: 10
+                }
+            }
+
+            define Essa_SplashButton : @TextButton {
+                height: 40px
+            }
+
+            @Essa_SplashColumn {
+                @Essa_SplashButton open_solar_system {
+                    content: "Open Solar System"
+                }
+                @Essa_SplashButton open_file {
+                    content: "Open file"
+                }
+                @Essa_SplashButton create_empty {
+                    content: "Create empty"
+                }
+            }
+
+            @Essa_SplashColumn {
+                @Essa_SplashButton about {
+                    content: "About..."
+                }
+            }
+        }
+    }
+}

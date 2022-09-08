@@ -17,65 +17,27 @@
 EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
     : GUI::ToolWindow(wnd)
     , m_essa_settings(essa_settings) {
-    set_title("ESSA");
-    set_size({ 600, 500 });
-    center_on_screen();
+    (void)load_from_eml_resource(resource_manager().require<EML::EMLResource>("Splash.eml"));
 
-    auto& container = set_main_widget<GUI::Container>();
-    auto& container_layout = container.set_layout<GUI::VerticalBoxLayout>();
-    container_layout.set_padding(GUI::Boxf::all_equal(10));
-    container_layout.set_spacing(10);
-
-    static llgl::opengl::Texture& logo_image = [this]() -> llgl::opengl::Texture& {
-        auto& texture = resource_manager().require_texture("splash_full_v1.png");
-        texture.set_filtering(llgl::opengl::Texture::Filtering::Linear);
-        return texture;
-    }();
-
-    auto logo = container.add_widget<GUI::ImageWidget>();
-    logo->set_size({ Length::Auto, 160.0_px });
-    logo->set_image(logo_image);
-
-    auto button_space = container.add_widget<GUI::Container>();
-    auto& button_space_layout = button_space->set_layout<GUI::HorizontalBoxLayout>();
-    button_space_layout.set_padding(GUI::Boxf::all_equal(10));
-    button_space_layout.set_spacing(20);
-
-    auto add_button = [](GUI::Container* container, Util::UString label, std::function<void()> on_click) {
-        auto button = container->add_widget<GUI::TextButton>();
-        button->set_size({ Length::Auto, 40.0_px });
-        button->set_content(std::move(label));
-        button->on_click = std::move(on_click);
-    };
-
-    auto button_space_column1 = button_space->add_widget<GUI::Container>();
-    auto& button_space_column1_layout = button_space_column1->set_layout<GUI::VerticalBoxLayout>();
-    button_space_column1_layout.set_spacing(10);
-
-    add_button(button_space_column1, "Open Solar System", [this]() {
+    auto main_widget = static_cast<GUI::Container*>(this->main_widget());
+    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_solar_system")->on_click = [this]() {
         m_essa_settings.load_world("../worlds/solar.essa");
         close();
-    });
-
-    add_button(button_space_column1, "Open file", [this]() {
+    };
+    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_file")->on_click = [this]() {
         auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
         prompt.add_desired_extension(".essa");
         prompt.run();
 
-        if (prompt.result().has_value())
+        if (prompt.result().has_value()) {
             m_essa_settings.load_world(prompt.result().value().encode());
+            close();
+        }
+    };
+    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("create_empty")->on_click = [this]() {
         close();
-    });
-
-    add_button(button_space_column1, "Empty world", [this]() {
-        close();
-    });
-
-    auto button_space_column2 = button_space->add_widget<GUI::Container>();
-    auto& button_space_column2_layout = button_space_column2->set_layout<GUI::VerticalBoxLayout>();
-    button_space_column2_layout.set_spacing(10);
-
-    add_button(button_space_column2, "About...", [this]() {
+    };
+    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("about")->on_click = [this]() {
         constexpr char const AboutString[] = "ESSA - Extremely Sophiscated Space Application\n"
                                              "\n"
                                              "Copyright (c) 2022 Adam2004yt, sppmacd\n"
@@ -89,7 +51,7 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
                                              "\u2022 Python (https://github.com/python/cpython";
 
         GUI::message_box(AboutString, "About", GUI::MessageBox::Buttons::Ok);
-    });
+    };
 }
 
 void EssaSplash::handle_event(llgl::Event event) {
