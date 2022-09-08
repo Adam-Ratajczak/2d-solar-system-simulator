@@ -32,19 +32,19 @@ void FocusedObjectGUI::on_init() {
     auto& info = tab_widget->add_tab("General info");
     auto& info_layout = info.set_layout<GUI::VerticalBoxLayout>();
     info_layout.set_spacing(5);
-    info_layout.set_padding(10);
+    info_layout.set_padding(GUI::Boxf::all_equal(10));
     m_create_info_gui(info);
 
     auto& modify = tab_widget->add_tab("Modify object");
     auto& modify_layout = modify.set_layout<GUI::VerticalBoxLayout>();
     modify_layout.set_spacing(5);
-    modify_layout.set_padding(10);
+    modify_layout.set_padding(GUI::Boxf::all_equal(10));
     m_create_modify_gui(modify);
 
     auto& view = tab_widget->add_tab("View options");
     auto& view_layout = view.set_layout<GUI::VerticalBoxLayout>();
     view_layout.set_spacing(5);
-    view_layout.set_padding(10);
+    view_layout.set_padding(GUI::Boxf::all_equal(10));
     m_create_view_gui(view);
 }
 

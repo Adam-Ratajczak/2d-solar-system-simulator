@@ -29,7 +29,7 @@ void EssaSettings::on_init() {
     {
         auto& layout = simulation_settings.set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
-        layout.set_padding(10);
+        layout.set_padding(GUI::Boxf::all_equal(10));
 
         auto iterations_control = simulation_settings.add_widget<GUI::ValueSlider>();
         iterations_control->set_min(1);
@@ -94,7 +94,7 @@ void EssaSettings::on_init() {
     {
         auto& layout = display_settings.set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
-        layout.set_padding(10);
+        layout.set_padding(GUI::Boxf::all_equal(10));
 
         auto fov_control = display_settings.add_widget<GUI::ValueSlider>();
         fov_control->set_min(20);
@@ -184,7 +184,7 @@ void EssaSettings::on_init() {
     {
         auto& layout = controls_settings.set_layout<GUI::VerticalBoxLayout>();
         layout.set_spacing(10);
-        layout.set_padding(10);
+        layout.set_padding(GUI::Boxf::all_equal(10));
 
         auto pause_on_creation_toggle = add_toggle(controls_settings, "Pause when adding object", [this](bool state) {
             m_pause_simulation_on_creative_mode = state;

@@ -23,7 +23,7 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
 
     auto& container = set_main_widget<GUI::Container>();
     auto& container_layout = container.set_layout<GUI::VerticalBoxLayout>();
-    container_layout.set_padding(10);
+    container_layout.set_padding(GUI::Boxf::all_equal(10));
     container_layout.set_spacing(10);
 
     static llgl::opengl::Texture& logo_image = [this]() -> llgl::opengl::Texture& {
@@ -38,7 +38,7 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
 
     auto button_space = container.add_widget<GUI::Container>();
     auto& button_space_layout = button_space->set_layout<GUI::HorizontalBoxLayout>();
-    button_space_layout.set_padding(10);
+    button_space_layout.set_padding(GUI::Boxf::all_equal(10));
     button_space_layout.set_spacing(20);
 
     auto add_button = [](GUI::Container* container, Util::UString label, std::function<void()> on_click) {

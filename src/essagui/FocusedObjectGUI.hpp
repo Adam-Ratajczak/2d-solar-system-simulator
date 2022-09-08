@@ -24,7 +24,7 @@ public:
 private:
     void set_most_massive_data_visible(bool);
 
-    virtual float intrinsic_padding() const override { return 5; }
+    virtual GUI::Boxf intrinsic_padding() const override { return GUI::Boxf::all_equal(5); }
 
     Object* m_focused = nullptr;
     GUI::ToolWindow* m_window = nullptr;
