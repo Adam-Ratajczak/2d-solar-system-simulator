@@ -53,7 +53,7 @@ public:
     void set_draw_mode(DrawMode mode) { m_mode = mode; }
     void set_light_position(Util::Vector3d pos) { m_light_position = pos; }
 
-    void draw(SimulationView const&) const;
+    void draw(GUI::Window& window, SimulationView const&) const;
 
     double radius() const { return m_radius; }
     Util::Color color() const { return m_color; }

@@ -14,8 +14,8 @@
 
 #include <algorithm>
 
-EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
-    : GUI::ToolWindow(wnd)
+EssaSplash::EssaSplash(GUI::HostWindow& window, EssaSettings& essa_settings)
+    : GUI::ToolWindow(window)
     , m_essa_settings(essa_settings) {
     (void)load_from_eml_resource(resource_manager().require<EML::EMLResource>("Splash.eml"));
 
@@ -25,7 +25,7 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
         close();
     };
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_file")->on_click = [this]() {
-        auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
+        auto& prompt = host_window().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
         prompt.add_desired_extension(".essa");
         prompt.run();
 
@@ -50,7 +50,7 @@ EssaSplash::EssaSplash(GUI::Window& wnd, EssaSettings& essa_settings)
                                              "\u2022 EssaUtil (https://github.com/essa-software/util)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
 
-        GUI::message_box(AboutString, "About", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box(host_window(), AboutString, "About", GUI::MessageBox::Buttons::Ok);
     };
 }
 

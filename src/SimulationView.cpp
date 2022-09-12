@@ -87,7 +87,7 @@ void SimulationView::handle_event(GUI::Event& event) {
                 break;
             }
             case DragMode::Rotate: {
-                auto sizes = window().size();
+                auto sizes = raw_size();
                 m_yaw += drag_delta.x() / sizes.x() * M_PI;
                 m_pitch -= drag_delta.y() / sizes.y() * M_PI;
                 break;
@@ -248,7 +248,7 @@ void SimulationView::draw_grid(GUI::Window& window) const {
     }
 
     // guide
-    Util::Vector2f guide_start { size().x() - 200.f, size().y() - 30.f };
+    Util::Vector2f guide_start { raw_size().x() - 200.f, raw_size().y() - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
     Util::Vector2f guide_end = guide_start - Util::Vector2f(spacing * 300 / scale(), 0);
     std::array<llgl::Vertex, 6> guide;
@@ -278,7 +278,7 @@ llgl::Camera SimulationView::camera() const {
 }
 
 llgl::Projection SimulationView::projection() const {
-    return llgl::Projection::perspective({ m_fov.rad(), size().x() / size().y(), 0.1 * scale(), 1000 * scale() }, Util::Recti { rect() });
+    return llgl::Projection::perspective({ m_fov.rad(), raw_size().x() / raw_size().y(), 0.1 * scale(), 1000 * scale() }, Util::Recti { rect() });
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
@@ -295,11 +295,11 @@ Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const
 void SimulationView::draw(GUI::Window& window) const {
     if (m_show_grid)
         draw_grid(window);
-    m_world.draw(*this);
+    m_world.draw(window, *this);
 
     switch (m_measure) {
     case Measure::Focus: {
-        auto sizes = size();
+        auto sizes = raw_size();
         std::array<llgl::Vertex, 4> lines;
         lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::Green };
         lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::Green };
@@ -368,11 +368,11 @@ Object* SimulationView::focused_object() const {
 }
 
 Util::Vector2f SimulationView::clip_space_to_screen(Util::Vector3d clip_space) const {
-    return { (clip_space.x() + 1) / 2 * size().x(), size().y() - (clip_space.y() + 1) / 2 * size().y() };
+    return { (clip_space.x() + 1) / 2 * raw_size().x(), raw_size().y() - (clip_space.y() + 1) / 2 * raw_size().y() };
 }
 
 Util::Vector3d SimulationView::screen_to_clip_space(Util::Vector2f viewport) const {
-    return { (viewport.x() - size().x() / 2.0) * 2 / size().x(), -(viewport.y() - size().y() / 2.0) * 2 / size().y(), 1 };
+    return { (viewport.x() - raw_size().x() / 2.0) * 2 / raw_size().x(), -(viewport.y() - raw_size().y() / 2.0) * 2 / raw_size().y(), 1 };
 }
 
 #ifdef ENABLE_PYSSA

@@ -145,17 +145,17 @@ bool World::exist_object_with_name(const std::string name) const {
     return false;
 }
 
-void World::draw(SimulationView const& view) const {
+void World::draw(GUI::Window& window, SimulationView const& view) const {
     {
         GUI::WorldDrawScope scope { view, GUI::WorldDrawScope::ClearDepth::Yes };
         for (auto& p : m_object_list) {
             if (!p->deleted())
-                p->draw(view);
+                p->draw(window, view);
         }
     }
     for (auto& p : m_object_list)
         if (!p->deleted())
-            p->draw_gui(view);
+            p->draw_gui(window, view);
 }
 
 Object* World::get_object_by_name(std::string const& name) {

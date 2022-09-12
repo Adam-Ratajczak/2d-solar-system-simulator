@@ -9,7 +9,7 @@ void PythonREPL::on_init() {
     m_console = add_widget<GUI::Console>();
     m_textbox = add_widget<GUI::Textbox>();
     m_textbox->set_position({ 0.0_px, 0.0_px_o });
-    m_textbox->set_data_type(GUI::Textbox::Type::TEXT);
+    m_textbox->set_type(GUI::Textbox::Type::TEXT);
     m_textbox->set_placeholder("PySSA Command");
     m_textbox->set_focused();
 }
@@ -20,7 +20,7 @@ void PythonREPL::handle_event(GUI::Event& event) {
         if (!m_textbox->is_focused())
             break;
         if (event.event().key.keycode == llgl::KeyCode::Enter) {
-            auto content = m_textbox->get_content();
+            auto content = m_textbox->content();
             m_commands.push_back(content);
             m_curr_command = m_commands.size();
             content = content + "\n";

@@ -31,9 +31,9 @@ void EssaGUI::on_init() {
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = GUI::Application::the().open_or_focus_tool_window(Util::UString { obj->name() }, "FocusedGUI");
+        auto focused_object_window = host_window().open_or_focus_tool_window(Util::UString { obj->name() }, "FocusedGUI");
         if (focused_object_window.opened) {
-            focused_object_window.window->set_position({ size().x() - 550, 50 });
+            focused_object_window.window->set_position({ raw_size().x() - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
             auto& focused_object_gui = focused_object_window.window->set_main_widget<FocusedObjectGUI>(obj, focused_object_window.window, m_world);
             focused_object_gui.update_params();
@@ -47,7 +47,7 @@ void EssaGUI::on_init() {
     };
 
     m_world.on_reset = [&]() {
-        GUI::Application::the().for_each_overlay([](GUI::Overlay& wnd) {
+        host_window().for_each_overlay([](GUI::Overlay& wnd) {
             if (wnd.id() == "FocusedGUI")
                 wnd.close();
         });
@@ -86,7 +86,7 @@ void EssaGUI::on_init() {
     {
         auto& load_world = menu->add_entry(resource_manager().require_texture("loadWorld.png"), "Load world", GUI::SettingsMenu::Expandable::No);
         load_world.on_toggle = [this](bool) {
-            auto& prompt = GUI::Application::the().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
+            auto& prompt = host_window().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
             prompt.add_desired_extension(".essa");
             prompt.run();
 
@@ -116,11 +116,11 @@ void EssaGUI::on_init() {
 
 void EssaGUI::open_python_repl() {
 #ifdef ENABLE_PYSSA
-    auto& python_repl_window = GUI::Application::the().open_overlay<GUI::ToolWindow>();
+    auto& python_repl_window = host_window().open_overlay<GUI::ToolWindow>();
     python_repl_window.set_title("PySSA");
     python_repl_window.set_position({ 600, 750 });
     python_repl_window.set_size({ 700, 250 });
-    GUI::Application::the().focus_overlay(python_repl_window);
+    host_window().focus_overlay(python_repl_window);
     python_repl_window.set_main_widget<PythonREPL>();
 #else
     GUI::message_box("PySSA is not enabled on this build. Use Linux build with -DENABLE_PYSSA=1 instead.", "Error", GUI::MessageBox::Buttons::Ok);
@@ -136,13 +136,13 @@ void EssaGUI::draw(GUI::Window& window) const {
     if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
             GUI::WorldDrawScope scope(*m_simulation_view);
-            m_create_object_gui->new_object()->draw(*m_simulation_view);
-            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(*m_simulation_view);
+            m_create_object_gui->new_object()->draw(window, *m_simulation_view);
+            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(window, *m_simulation_view);
         }
         // FIXME: This should be drawn above grid.
-        m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches_gui(*m_simulation_view);
-        m_create_object_gui->new_object()->draw_gui(*m_simulation_view);
-        m_create_object_gui->forward_simulated_world().draw(*m_simulation_view);
+        m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches_gui(window, *m_simulation_view);
+        m_create_object_gui->new_object()->draw_gui(window, *m_simulation_view);
+        m_create_object_gui->forward_simulated_world().draw(window, *m_simulation_view);
     }
 }
 

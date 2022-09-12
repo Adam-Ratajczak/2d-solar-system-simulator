@@ -10,13 +10,13 @@
 #include <iostream>
 
 int main() {
-    GUI::Window window { { 1000, 1000 }, "ESSA" };
     // TODO: set framerate limit
 
     World world;
 
-    GUI::Application application { window };
-    auto& gui = application.set_main_widget<EssaGUI>(world);
+    GUI::Application application;
+    auto& host_window = application.create_host_window({ 1000, 1000 }, "ESSA");
+    auto& gui = host_window.set_main_widget<EssaGUI>(world);
 
     world.reset(nullptr);
 
@@ -29,7 +29,7 @@ int main() {
 #endif
 
     // Display splash
-    auto& splash = GUI::Application::the().open_overlay<EssaSplash>(gui.settings_gui());
+    auto& splash = host_window.open_overlay<EssaSplash>(gui.settings_gui());
     splash.run();
 
     application.run();

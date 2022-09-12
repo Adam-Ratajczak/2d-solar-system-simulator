@@ -59,8 +59,9 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
         auto subcontainer = info.add_widget<GUI::Container>();
         subcontainer->set_size({ Length::Auto, 30.0_px });
         subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-        auto& name_label = subcontainer->add_widget<GUI::Textfield>()->set_content(name + ": ");
-        name_label.set_size({ Length::Auto, Length::Auto });
+        auto name_label = subcontainer->add_widget<GUI::Textfield>();
+        name_label->set_content(name + ": ");
+        name_label->set_size({ Length::Auto, Length::Auto });
         auto value_label = subcontainer->add_widget<GUI::Textfield>();
         value_label->set_size({ 150.0_px, Length::Auto });
         auto unit_label = subcontainer->add_widget<GUI::Textfield>();
@@ -118,7 +119,8 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
         m_mass_textbox = mass_container->add_widget<GUI::Textbox>();
         m_mass_textbox->set_limit(6);
         m_mass_textbox->set_content("1.0");
-        m_mass_textbox->set_min_max_values(1, 9.9);
+        m_mass_textbox->set_min(1);
+        m_mass_textbox->set_max(9.9);
 
         auto mass_value_container = mass_container->add_widget<GUI::Container>();
         mass_value_container->set_layout<GUI::HorizontalBoxLayout>();
@@ -130,13 +132,13 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
             m_mass_exponent_textbox = mass_value_container->add_widget<GUI::Textbox>();
             m_mass_exponent_textbox->set_limit(2);
             m_mass_exponent_textbox->set_content("1");
-            m_mass_exponent_textbox->set_min_max_values(1, 40);
+            m_mass_exponent_textbox->set_min(1);
+            m_mass_exponent_textbox->set_max(40);
 
             auto mass_unit_textfield = mass_value_container->add_widget<GUI::Textfield>();
             mass_unit_textfield->set_content(" kg ");
             mass_unit_textfield->set_alignment(GUI::Align::Center);
         }
-        mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
     }
 
     m_velocity_control = modify.add_widget<GUI::ValueSlider>();
@@ -190,7 +192,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
         m_name_textbox = name_container->add_widget<GUI::Textbox>();
         m_name_textbox->set_limit(20);
-        m_name_textbox->set_data_type(GUI::Textbox::TEXT);
+        m_name_textbox->set_type(GUI::Textbox::TEXT);
         m_name_textbox->set_content("Planet");
     }
 
@@ -204,8 +206,8 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
-        if (m_world.exist_object_with_name(m_name_textbox->get_content().encode()) && m_focused->name() != m_name_textbox->get_content().encode()) {
-            GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
+        if (m_world.exist_object_with_name(m_name_textbox->content().encode()) && m_focused->name() != m_name_textbox->content().encode()) {
+            GUI::message_box(host_window(), "Object with name: \"" + m_name_textbox->content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
             return;
         }
         m_focused->delete_object();
@@ -218,7 +220,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     remove_button->set_content("Remove object");
     remove_button->override_button_colors().normal.set_colors(theme().negative);
     remove_button->on_click = [&]() {
-        auto result = GUI::message_box(Util::UString { "Are you sure you want to delete object \"" + m_focused->name() + "\"?" }, "Delete object", GUI::MessageBox::Buttons::YesNo);
+        auto result = GUI::message_box(host_window(), Util::UString { "Are you sure you want to delete object \"" + m_focused->name() + "\"?" }, "Delete object", GUI::MessageBox::Buttons::YesNo);
         if (result == GUI::MessageBox::ButtonRole::Yes) {
             m_focused->delete_object();
             m_focused = nullptr;
@@ -272,7 +274,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
 }
 
 std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
-    double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
+    double mass = std::stod(m_mass_textbox->content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->content().encode()));
     double radius = m_radius_control->value() * 1000;
     double theta = m_direction_xz_control->value();
     double alpha = m_direction_yz_control->value();
@@ -287,7 +289,7 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
     pos.z() = m_y_position_control->value();
 
     Util::Color color = m_color_control->color();
-    std::string name = m_name_textbox->get_content().encode();
+    std::string name = m_name_textbox->content().encode();
 
     // FIXME: Trails should be calculated in realtime somehow
     return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000000);

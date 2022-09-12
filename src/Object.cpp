@@ -169,24 +169,23 @@ void Object::delete_most_attracting_object() {
     m_trail.reset();
 }
 
-void Object::draw(SimulationView const& view) {
+void Object::draw(GUI::Window& window, SimulationView const& view) {
     GUI::WorldDrawScope::verify();
 
     auto scaled_pos = render_position();
-    auto& target = view.window();
 
     s_sphere->set_radius(m_radius / AU);
     s_sphere->set_position(scaled_pos);
     s_sphere->set_color(m_color);
     if (m_world)
         s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Util::Vector3d());
-    s_sphere->draw(view);
+    s_sphere->draw(window, view);
 
     if (view.show_trails())
-        m_trail.draw(view.window());
+        m_trail.draw(window);
 }
 
-void Object::draw_closest_approaches(SimulationView const& view) {
+void Object::draw_closest_approaches(GUI::Window& window, SimulationView const& view) {
     GUI::WorldDrawScope::verify();
 
     std::vector<llgl::Vertex> closest_approaches_vertexes;
@@ -197,10 +196,10 @@ void Object::draw_closest_approaches(SimulationView const& view) {
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
         closest_approaches_vertexes.push_back(llgl::Vertex { .position = Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, .color = other_color });
     }
-    view.window().draw_vertices(llgl::opengl::PrimitiveType::Lines, closest_approaches_vertexes);
+    window.draw_vertices(llgl::opengl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
-void Object::draw_closest_approaches_gui(SimulationView const& view) {
+void Object::draw_closest_approaches_gui(GUI::Window& window, SimulationView const& view) {
     for (auto& closest_approach_entry : m_closest_approaches) {
         if (closest_approach_entry.second.distance > AU / 10)
             continue;
@@ -208,11 +207,11 @@ void Object::draw_closest_approaches_gui(SimulationView const& view) {
         std::ostringstream oss;
         auto str = Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string();
         oss << "CA with " << closest_approach_entry.first->name() << ": " << str.encode();
-        draw_label(view, position, Util::UString { oss.str() }, closest_approach_entry.first->m_color);
+        draw_label(window, view, position, Util::UString { oss.str() }, closest_approach_entry.first->m_color);
     }
 }
 
-void Object::draw_label(SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
+void Object::draw_label(GUI::Window& window, SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
     auto screen_position = sv.world_to_screen(position);
 
     // Don't draw labels of planets outside of clipping box
@@ -222,7 +221,7 @@ void Object::draw_label(SimulationView const& sv, Util::Vector3d position, Util:
     GUI::TextDrawOptions text;
     text.font_size = GUI::Application::the().theme().label_font_size;
     text.fill_color = color;
-    sv.window().draw_text(string, GUI::Application::the().bold_font(), { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
+    window.draw_text(string, GUI::Application::the().bold_font(), { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
 }
 
 void Object::delete_object() {
@@ -255,11 +254,11 @@ void Object::reset_history() {
     m_trail.reset();
 }
 
-void Object::draw_gui(SimulationView const& view) {
+void Object::draw_gui(GUI::Window& window, SimulationView const& view) {
 
     if (!view.show_labels())
         return;
-    draw_label(view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
+    draw_label(window, view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {

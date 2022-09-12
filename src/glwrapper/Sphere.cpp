@@ -100,10 +100,10 @@ void SphereShader::on_bind(llgl::opengl::ShaderScope& scope) const {
     }
 }
 
-void Sphere::draw(SimulationView const& sv) const {
+void Sphere::draw(GUI::Window& window, SimulationView const& sv) const {
     GUI::WorldDrawScope::verify();
 
     auto model = llgl::Transform {}.translate(Util::Vector3f { m_position }).scale(m_radius);
     m_shader.set_sphere(*this);
-    sv.window().renderer().render_object(m_sphere, { .shader = &m_shader, .model_matrix = model.matrix(), .view_matrix = sv.camera().view_matrix() });
+    window.renderer().render_object(m_sphere, { .shader = &m_shader, .model_matrix = model.matrix(), .view_matrix = sv.camera().view_matrix() });
 }

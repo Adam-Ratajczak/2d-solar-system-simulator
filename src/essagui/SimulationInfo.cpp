@@ -39,7 +39,7 @@ void SimulationInfo::do_update() {
 }
 
 void SimulationInfo::m_update_fps() {
-    m_fps = widget_tree_root().tps();
+    m_fps = GUI::Application::the().tps();
     m_fps_field->set_content(Util::UString { std::to_string(m_fps) });
 }
 

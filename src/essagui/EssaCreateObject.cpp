@@ -74,7 +74,7 @@ void EssaCreateObject::m_create_name_and_color_container() {
 
         m_name_textbox = name_container->add_widget<GUI::Textbox>();
         m_name_textbox->set_limit(20);
-        m_name_textbox->set_data_type(GUI::Textbox::TEXT);
+        m_name_textbox->set_type(GUI::Textbox::TEXT);
         m_name_textbox->set_content("Planet");
         m_name_textbox->on_change = [this](auto) {
             m_forward_simulation_is_valid = false;
@@ -134,7 +134,7 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
         m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
         m_require_orbit_point_button->on_click = [this]() {
             if (!m_new_object) {
-                GUI::Application::the().spawn_notification("You need to specify initial coords of the object", GUI::Application::NotificationLevel::Error);
+                host_window().spawn_notification("You need to specify initial coords of the object", GUI::HostWindow::NotificationLevel::Error);
                 return;
             }
             m_simulation_view.start_coords_measure([this](Util::Vector3d coords) {
@@ -148,8 +148,8 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
         m_add_object_button = container.add_widget<GUI::ImageButton>();
         m_add_object_button->set_image(&resource_manager().require_texture("addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
-            if (m_simulation_view.world().exist_object_with_name(m_name_textbox->get_content().encode())) {
-                GUI::message_box("Object with name: \"" + m_name_textbox->get_content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
+            if (m_simulation_view.world().exist_object_with_name(m_name_textbox->content().encode())) {
+                GUI::message_box(host_window(), "Object with name: \"" + m_name_textbox->content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
                 return;
             }
 
@@ -281,7 +281,8 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
         m_mass_textbox = mass_container->add_widget<GUI::Textbox>();
         m_mass_textbox->set_limit(6);
         m_mass_textbox->set_content("1.0");
-        m_mass_textbox->set_min_max_values(1, 9.9);
+        m_mass_textbox->set_min(1);
+        m_mass_textbox->set_max(9.9);
         m_mass_textbox->on_change = [this](auto) {
             m_forward_simulation_is_valid = false;
         };
@@ -296,7 +297,8 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
             m_mass_exponent_textbox = mass_value_container->add_widget<GUI::Textbox>();
             m_mass_exponent_textbox->set_limit(2);
             m_mass_exponent_textbox->set_content("1");
-            m_mass_exponent_textbox->set_min_max_values(1, 40);
+            m_mass_exponent_textbox->set_min(1);
+            m_mass_exponent_textbox->set_max(40);
             m_mass_exponent_textbox->on_change = [this](auto) {
                 m_forward_simulation_is_valid = false;
             };
@@ -305,7 +307,6 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
             mass_unit_textfield->set_content(" kg ");
             mass_unit_textfield->set_alignment(GUI::Align::Center);
         }
-        mass_layout.set_multipliers({ 5.f / 3, 5.f / 3, 5.f / 9, 5.f / 9, 5.f / 9 });
     }
 }
 
@@ -402,7 +403,7 @@ void EssaCreateObject::m_create_object_from_orbit_gui(Container& container) {
 
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
     try {
-        double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
+        double mass = std::stod(m_mass_textbox->content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->content().encode()));
         double radius = m_radius_control->value() * 1000;
         double theta = m_direction_xz_control->value();
         double alpha = m_direction_yz_control->value();
@@ -419,7 +420,7 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
         pos.z() = m_y_position_control->value();
 
         Util::Color color = m_color_control->color();
-        auto name = m_name_textbox->get_content().encode();
+        auto name = m_name_textbox->content().encode();
         return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
     } catch (...) {
         return nullptr;
@@ -429,7 +430,7 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
 std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
     if (!m_focused)
         return nullptr;
-    double mass = std::stod(m_mass_textbox->get_content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->get_content().encode()));
+    double mass = std::stod(m_mass_textbox->content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->content().encode()));
     Distance radius = { static_cast<float>(m_radius_control->value() * 1000), Distance::Kilometer };
     Distance apogee, perigee;
     Util::Angle angle, tilt;
@@ -449,5 +450,5 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         tilt = Util::Angle::degrees(m_orbit_tilt_control->value());
     }
 
-    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->get_content().encode(), 0.0_deg);
+    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->content().encode(), 0.0_deg);
 }

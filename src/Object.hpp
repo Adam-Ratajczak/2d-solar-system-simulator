@@ -49,13 +49,13 @@ public:
     static Sphere& sphere();
 
     // Draw the object in world's coordinates.
-    void draw(SimulationView const&);
+    void draw(GUI::Window&, SimulationView const&);
 
     // Draw the GUI layer of the object (without world transform)
-    void draw_gui(SimulationView const&);
+    void draw_gui(GUI::Window&, SimulationView const&);
 
-    void draw_closest_approaches(SimulationView const&);
-    void draw_closest_approaches_gui(SimulationView const&);
+    void draw_closest_approaches(GUI::Window& window, SimulationView const&);
+    void draw_closest_approaches_gui(GUI::Window& window, SimulationView const&);
 
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
@@ -129,7 +129,7 @@ private:
     void nonphysical_update();
 
     // Draws label in at 3d position but not projected (in GUI layer).
-    void draw_label(SimulationView const&, Util::Vector3d position, Util::UString string, Util::Color) const;
+    void draw_label(GUI::Window& window, SimulationView const&, Util::Vector3d position, Util::UString string, Util::Color) const;
 
 #ifdef ENABLE_PYSSA
     PySSA::Object python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs);
