@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GL/glew.h>
-
 #include "pyssa/WrappedObject.hpp"
 
 #include <EssaGUI/gui/NotifyUser.hpp>
@@ -11,7 +9,7 @@
 #include <EssaUtil/Constants.hpp>
 #include <EssaUtil/Matrix.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <LLGL/Renderer/Transform.hpp>
+
 #include <functional>
 #include <optional>
 
@@ -49,9 +47,11 @@ public:
     Util::Vector3d screen_to_clip_space(Util::Vector2f) const;
     Util::Vector2f clip_space_to_screen(Util::Vector3d) const;
 
-    virtual llgl::Camera camera() const override;
+    llgl::Camera camera() const;
     llgl::Projection projection() const;
     Util::Matrix4x4d matrix() const;
+
+    llgl::Renderer& renderer() const;
 
     void reset() {
         m_offset = Util::Vector3d { 0, 0, 0 };

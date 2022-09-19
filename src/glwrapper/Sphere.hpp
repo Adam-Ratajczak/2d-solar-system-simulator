@@ -19,24 +19,32 @@
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <LLGL/OpenGL/ShaderBases/Transform.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
 
 class Sphere;
 
-class SphereShader : public llgl::opengl::Shader {
+class SphereShader : public llgl::Shader
+    , public llgl::ShaderBases::Transform {
 public:
-    SphereShader();
+    using Vertex = Essa::Model::Vertex;
 
-    virtual llgl::opengl::AttributeMapping attribute_mapping() const { return { 0, 100, 100, 100 }; };
+    auto uniforms() {
+        return llgl::UniformList { m_fancy, m_radius, m_color, m_light_position }
+        + llgl::ShaderBases::Transform::uniforms();
+    }
 
-    void set_sphere(Sphere const& sphere) { m_sphere = &sphere; }
+    std::string_view source(llgl::ShaderType type) const;
+
+    void load_sphere(Sphere const& sphere);
 
 private:
-    Sphere const* m_sphere = nullptr;
-
-    virtual void on_bind(llgl::opengl::ShaderScope& scope) const;
+    llgl::Uniform<bool> m_fancy { "fancy" };
+    llgl::Uniform<float> m_radius { "radius" };
+    llgl::Uniform<Util::Colorf> m_color { "color" };
+    llgl::Uniform<Util::Vector3f> m_light_position { "lightPosition" };
 };
 
 class Sphere {

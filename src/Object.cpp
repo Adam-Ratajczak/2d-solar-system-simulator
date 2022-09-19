@@ -2,6 +2,7 @@
 
 #include "SimulationView.hpp"
 #include "World.hpp"
+#include "glwrapper/Helpers.hpp"
 #include "glwrapper/Sphere.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
@@ -11,7 +12,7 @@
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
 
-#include <GL/gl.h>
+
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <cmath>
 #include <cstring>
@@ -182,21 +183,24 @@ void Object::draw(GUI::Window& window, SimulationView const& view) {
     s_sphere->draw(window, view);
 
     if (view.show_trails())
-        m_trail.draw(window);
+        m_trail.draw(view);
 }
 
 void Object::draw_closest_approaches(GUI::Window& window, SimulationView const& view) {
     GUI::WorldDrawScope::verify();
 
-    std::vector<llgl::Vertex> closest_approaches_vertexes;
+    using Vertex = Essa::Shaders::Basic::Vertex;
+    static Essa::Shaders::Basic shader;
+
+    std::vector<Vertex> closest_approaches_vertexes;
     for (auto& closest_approach_entry : m_closest_approaches) {
         if (closest_approach_entry.second.distance > AU / 10)
             continue;
-        closest_approaches_vertexes.push_back(llgl::Vertex { .position = Util::Vector3f { closest_approach_entry.second.this_position / AU }, .color = Util::Color { m_color.r, m_color.g, m_color.b, 100 } });
+        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.this_position / AU }, Util::Color { m_color.r, m_color.g, m_color.b, 100 }, {} });
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
-        closest_approaches_vertexes.push_back(llgl::Vertex { .position = Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, .color = other_color });
+        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, other_color, {} });
     }
-    window.draw_vertices(llgl::opengl::PrimitiveType::Lines, closest_approaches_vertexes);
+    GL::draw_with_temporary_vao<Vertex>(window.renderer(), shader, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
 void Object::draw_closest_approaches_gui(GUI::Window& window, SimulationView const& view) {

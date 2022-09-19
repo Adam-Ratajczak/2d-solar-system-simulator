@@ -1,6 +1,7 @@
 #include "SimulationView.hpp"
 
 #include "World.hpp"
+#include "glwrapper/Helpers.hpp"
 #include "math/Ray.hpp"
 
 #include <EssaGUI/gfx/Window.hpp>
@@ -11,10 +12,12 @@
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <LLGL/Core/Transform.hpp>
+#include <LLGL/OpenGL/PrimitiveType.hpp>
+#include <LLGL/OpenGL/Projection.hpp>
 #include <LLGL/OpenGL/Shader.hpp>
-#include <LLGL/OpenGL/Shaders/Basic330Core.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/Renderer/Transform.hpp>
+
 #include <LLGL/Window/Mouse.hpp>
 #include <cmath>
 #include <optional>
@@ -204,8 +207,12 @@ void SimulationView::draw_grid(GUI::Window& window) const {
         Util::Color const major_grid_line_color { 87, 87, 108 };
         Util::Color const grid_line_color { 25, 25, 37 };
 
-        // TODO: Create proper API for it.
-        std::vector<llgl::Vertex> vertices;
+        static Essa::Shaders::Basic shader;
+        shader.set_transform({},
+            camera().view_matrix(),
+            projection().matrix());
+
+        std::vector<Essa::Shaders::Basic::Vertex> vertices;
 
         int index = 0;
 
@@ -220,46 +227,47 @@ void SimulationView::draw_grid(GUI::Window& window) const {
 
         // FIXME: Calculate bounds depending on window size instead of hardcoding them
         // TODO: Add real fog shader instead of THIS thing
+
         for (double x = start_coords.x(); x < end_coords.x(); x += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, .color = Util::Colors::Transparent });
+            vertices.push_back({ { static_cast<float>(x), static_cast<float>(start_coords.y()), 0 }, Util::Colors::Transparent, {} });
             double factor = std::abs(0.5 - (x - start_coords.x()) / (end_coords.x() - start_coords.x())) * 2;
             auto center_color = blend_color(color, Util::Colors::Transparent, factor);
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
+            vertices.push_back({ { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, center_color, {} });
             // FIXME: Make this duplicate vertex not needed
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, .color = center_color });
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, .color = Util::Colors::Transparent });
+            vertices.push_back({ { static_cast<float>(x), static_cast<float>(center_coords.y()), 0 }, center_color, {} });
+            vertices.push_back({ { static_cast<float>(x), static_cast<float>(end_coords.y()), 0 }, Util::Colors::Transparent, {} });
             index++;
         }
         index = 0;
         for (double y = start_coords.y(); y < end_coords.y(); y += spacing) {
             auto color = index % major_gridline_interval == 2 ? major_grid_line_color : grid_line_color;
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::Transparent });
+            vertices.push_back({ { static_cast<float>(start_coords.x()), static_cast<float>(y), 0 }, Util::Colors::Transparent, {} });
             double factor = std::abs(0.5 - (y - start_coords.y()) / (end_coords.y() - start_coords.y())) * 2;
             auto center_color = blend_color(color, Util::Colors::Transparent, factor);
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
+            vertices.push_back({ { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, center_color, {} });
             // FIXME: Make this duplicate vertex not needed
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, .color = center_color });
-            vertices.push_back(llgl::Vertex { .position = { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, .color = Util::Colors::Transparent });
+            vertices.push_back({ { static_cast<float>(center_coords.x()), static_cast<float>(y), 0 }, center_color, {} });
+            vertices.push_back({ { static_cast<float>(end_coords.x()), static_cast<float>(y), 0 }, Util::Colors::Transparent, {} });
             index++;
         }
 
-        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, vertices);
+        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(window.renderer(), shader, llgl::PrimitiveType::Lines, vertices);
     }
 
     // guide
     Util::Vector2f guide_start { raw_size().x() - 200.f, raw_size().y() - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
     Util::Vector2f guide_end = guide_start - Util::Vector2f(spacing * 300 / scale(), 0);
-    std::array<llgl::Vertex, 6> guide;
+    std::array<Gfx::Vertex, 6> guide;
     Util::Color const guide_color { 127, 127, 127 };
-    guide[0] = llgl::Vertex { .position = Util::Vector3f(guide_start, 0), .color = guide_color };
-    guide[1] = llgl::Vertex { .position = Util::Vector3f(guide_end, 0), .color = guide_color };
-    guide[2] = llgl::Vertex { .position = Util::Vector3f(guide_start - Util::Vector2f(0, 5), 0), .color = guide_color };
-    guide[3] = llgl::Vertex { .position = Util::Vector3f(guide_start + Util::Vector2f(0, 5), 0), .color = guide_color };
-    guide[4] = llgl::Vertex { .position = Util::Vector3f(guide_end - Util::Vector2f(0, 5), 0), .color = guide_color };
-    guide[5] = llgl::Vertex { .position = Util::Vector3f(guide_end + Util::Vector2f(0, 5), 0), .color = guide_color };
-    window.draw_vertices(llgl::opengl::PrimitiveType::Lines, guide);
+    guide[0] = { guide_start, guide_color, {} };
+    guide[1] = { guide_end, guide_color, {} };
+    guide[2] = { guide_start - Util::Vector2f(0, 5), guide_color, {} };
+    guide[3] = { guide_start + Util::Vector2f(0, 5), guide_color, {} };
+    guide[4] = { guide_end - Util::Vector2f(0, 5), guide_color, {} };
+    guide[5] = { guide_end + Util::Vector2f(0, 5), guide_color, {} };
+    window.draw_vertices(llgl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
     GUI::TextDrawOptions guide_text;
@@ -292,6 +300,10 @@ Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const
     return Util::Vector3f { clip_space_to_screen(Util::Vector3d { clip_space }), clip_space.z() };
 }
 
+llgl::Renderer& SimulationView::renderer() const {
+    return host_window().window().renderer();
+}
+
 void SimulationView::draw(GUI::Window& window) const {
     if (m_show_grid)
         draw_grid(window);
@@ -300,12 +312,12 @@ void SimulationView::draw(GUI::Window& window) const {
     switch (m_measure) {
     case Measure::Focus: {
         auto sizes = raw_size();
-        std::array<llgl::Vertex, 4> lines;
-        lines[0] = llgl::Vertex { .position = Util::Vector3f { 0, static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::Green };
-        lines[1] = llgl::Vertex { .position = Util::Vector3f { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()), 0 }, .color = Util::Colors::Green };
-        lines[2] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), 0, 0 }, .color = Util::Colors::Green };
-        lines[3] = llgl::Vertex { .position = Util::Vector3f { static_cast<float>(m_prev_mouse_pos.x()), sizes.y(), 0 }, .color = Util::Colors::Green };
-        window.draw_vertices(llgl::opengl::PrimitiveType::Lines, lines);
+        std::array<Gfx::Vertex, 4> lines;
+        lines[0] = Gfx::Vertex { { 0, static_cast<float>(m_prev_mouse_pos.y()) }, Util::Colors::Green, {} };
+        lines[1] = Gfx::Vertex { { sizes.x(), static_cast<float>(m_prev_mouse_pos.y()) }, Util::Colors::Green, {} };
+        lines[2] = Gfx::Vertex { { static_cast<float>(m_prev_mouse_pos.x()), 0 }, Util::Colors::Green, {} };
+        lines[3] = Gfx::Vertex { { static_cast<float>(m_prev_mouse_pos.x()), sizes.y() }, Util::Colors::Green, {} };
+        window.draw_vertices(llgl::PrimitiveType::Lines, lines);
         break;
     }
     default:

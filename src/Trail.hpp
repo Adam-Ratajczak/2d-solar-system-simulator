@@ -1,11 +1,23 @@
 #pragma once
 
 #include "SimulationView.hpp"
+#include <EssaEngine/3D/Shaders/Basic.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <list>
 
 class Trail {
-    std::vector<llgl::Vertex> m_vertexes;
+    struct Vertex : public Essa::Shaders::Basic::Vertex {
+        Vertex(Util::Vector3f pos, Util::Colorf color)
+            : Essa::Shaders::Basic::Vertex(pos, color, {}) { }
+
+        Vertex()
+            : Essa::Shaders::Basic::Vertex({}, {}, {}) { }
+
+        auto& position() { return value<0>(); }
+        auto& position() const { return value<0>(); }
+    };
+
+    std::vector<Vertex> m_vertexes;
     int m_append_offset = 1;
     int m_length = 0;
     Util::Vector3d m_offset;
@@ -19,7 +31,7 @@ class Trail {
 
 public:
     Trail(size_t max_trail_size, Util::Color color);
-    void draw(GUI::Window&);
+    void draw(SimulationView const&) const;
     void push_back(Util::Vector3d pos);
     void reset();
     void set_offset(Util::Vector3d offset) { m_offset = offset; }

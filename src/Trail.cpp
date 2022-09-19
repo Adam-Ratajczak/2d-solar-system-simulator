@@ -1,10 +1,15 @@
 #include "Trail.hpp"
 
 #include "Object.hpp"
+#include "glwrapper/Helpers.hpp"
 
+#include <EssaEngine/3D/Shaders/Basic.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/Vector.hpp>
+#include <LLGL/Core/Transform.hpp>
+#include <LLGL/OpenGL/PrimitiveType.hpp>
 #include <LLGL/OpenGL/Vertex.hpp>
+#include <LLGL/OpenGL/VertexArray.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -38,14 +43,14 @@ std::pair<Util::Vector3f, Util::Vector3f> Trail::m_get_last_two_entries() const 
     if (i2 < 0)
         i2 += m_vertexes.size();
 
-    return std::make_pair(m_vertexes[i1].position, m_vertexes[i2].position);
+    return std::make_pair(m_vertexes[i1].value<0>(), m_vertexes[i2].value<0>());
 }
 
 void Trail::push_back(Util::Vector3d pos) {
     // Ensure that the trail always has the beginning
     if (m_length == 1) {
         assert(m_append_offset == 1);
-        m_vertexes[m_append_offset] = llgl::Vertex { .position = Util::Vector3f { pos / AU }, .color = m_color };
+        m_vertexes[m_append_offset] = Vertex { Util::Vector3f { pos / AU }, m_color };
         m_append_offset++;
         m_length++;
     }
@@ -56,13 +61,13 @@ void Trail::push_back(Util::Vector3d pos) {
             return;
         }
     }
-    m_vertexes[m_append_offset] = llgl::Vertex { .position = Util::Vector3f { pos / AU }, .color = m_color };
+    m_vertexes[m_append_offset] = Vertex { Util::Vector3f { pos / AU }, m_color };
 
     m_append_offset++;
     if (m_length < m_vertexes.size())
         m_length++;
     if (m_append_offset == m_vertexes.size()) {
-        m_vertexes[0] = llgl::Vertex { .position = Util::Vector3f { pos / AU }, .color = m_color };
+        m_vertexes[0] = Vertex { Util::Vector3f { pos / AU }, m_color };
         m_append_offset = 1;
     }
 
@@ -78,30 +83,30 @@ void Trail::recalculate_with_offset(Util::Vector3d offset) {
     if (m_offset == offset)
         return;
     for (size_t s = 0; s < m_length; s++)
-        m_vertexes[s].position = m_vertexes[s].position + Util::Vector3f { m_offset / AU - offset / AU };
+        m_vertexes[s].value<0>() = m_vertexes[s].value<0>() + Util::Vector3f { m_offset / AU - offset / AU };
     m_offset = offset;
 }
 
-void Trail::draw(GUI::Window& window) {
-    Util::DelayedInit<GUI::Window::ModelScope> scope;
-    if (m_offset != Util::Vector3d()) {
-        scope.construct(window, llgl::Transform {}.translate(Util::Vector3f { m_offset / AU }).matrix());
-    }
+void Trail::draw(SimulationView const& sv) const {
+    static Essa::Shaders::Basic shader;
+    shader.set_transform(llgl::Transform {}.translate(Util::Vector3f { m_offset / AU }).matrix(),
+        sv.camera().view_matrix(),
+        sv.projection().matrix());
 
     if (m_length != m_vertexes.size()) {
-        window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
     }
     else {
-        window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
-        window.draw_vertices(llgl::opengl::PrimitiveType::LineStrip, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, llgl::PrimitiveType::LineStrip, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
     }
 }
 
 void Trail::change_current(Util::Vector3d pos) {
     assert(m_length > 0);
     if (m_append_offset == 1)
-        m_vertexes[m_length - 1].position = Util::Vector3f { pos / AU };
-    m_vertexes[m_append_offset - 1].position = Util::Vector3f { pos / AU };
+        m_vertexes[m_length - 1].value<0>() = Util::Vector3f { pos / AU };
+    m_vertexes[m_append_offset - 1].value<0>() = Util::Vector3f { pos / AU };
 }
 
 std::ostream& operator<<(std::ostream& out, Trail const& trail) {
