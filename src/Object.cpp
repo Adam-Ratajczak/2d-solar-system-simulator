@@ -275,7 +275,7 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
     Util::Vector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
-    pos = pos.rotate(rotation.rad());
+    pos = pos.rotate_z(rotation.rad());
     pos += this->m_pos;
 
     auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::Vector3d {}, color, name, T / (3600 * 24));
@@ -315,7 +315,7 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
     Util::Vector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
-    pos = pos.rotate(rotation.rad());
+    pos = pos.rotate_z(rotation.rad());
     pos += this->m_pos;
 
     auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::Vector3d {}, color, name, T / (3600 * 24));
