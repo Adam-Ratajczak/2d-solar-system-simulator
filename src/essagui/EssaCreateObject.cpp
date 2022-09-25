@@ -4,7 +4,7 @@
 
 #include <EssaGUI/gui/MessageBox.hpp>
 #include <EssaGUI/gui/ValueSlider.hpp>
-#include <EssaUtil/Units.hpp>
+#include <EssaUtil/Length.hpp>
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -21,29 +21,29 @@ void EssaCreateObject::on_init() {
     m_create_object_gui(*this);
 
     auto mode_specific_options_container = add_widget<Container>();
-    mode_specific_options_container->set_size({ Length::Auto, 150.0_px });
+    mode_specific_options_container->set_size({ Util::Length::Auto, 150.0_px });
     mode_specific_options_container->set_layout<GUI::BasicLayout>();
 
     m_create_object_from_params_container = mode_specific_options_container->add_widget<GUI::Container>();
     m_create_object_from_params_gui(*m_create_object_from_params_container);
-    m_create_object_from_params_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    m_create_object_from_params_container->set_size({ { 100, Util::Length::Percent }, { 100, Util::Length::Percent } });
     m_create_object_from_params_container->set_visible(true);
 
     m_create_object_from_orbit_container = mode_specific_options_container->add_widget<GUI::Container>();
     m_create_object_from_orbit_gui(*m_create_object_from_orbit_container);
-    m_create_object_from_orbit_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    m_create_object_from_orbit_container->set_size({ { 100, Util::Length::Percent }, { 100, Util::Length::Percent } });
     m_create_object_from_orbit_container->set_visible(false);
 
     m_create_name_and_color_container();
 
     auto mode_specific_submit_container = add_widget<Container>();
-    mode_specific_submit_container->set_size({ Length::Auto, 72.0_px });
+    mode_specific_submit_container->set_size({ Util::Length::Auto, 72.0_px });
     mode_specific_submit_container->set_layout<GUI::BasicLayout>();
     m_toggle_unit_button = m_create_toggle_unit_button();
 
     m_submit_create_container = mode_specific_submit_container->add_widget<GUI::Container>();
     m_create_submit_container(*m_submit_create_container);
-    m_submit_create_container->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    m_submit_create_container->set_size({ { 100, Util::Length::Percent }, { 100, Util::Length::Percent } });
     m_submit_create_container->set_visible(true);
     m_submit_create_container->add_created_widget(m_toggle_unit_button);
 }
@@ -54,7 +54,7 @@ void EssaCreateObject::m_create_name_and_color_container() {
     main_color_layout.set_spacing(10);
     {
         auto color_label_textfield = main_color_container->add_widget<GUI::Textfield>();
-        color_label_textfield->set_size({ 100.0_px, Length::Auto });
+        color_label_textfield->set_size({ 100.0_px, Util::Length::Auto });
         color_label_textfield->set_content("Color:");
         color_label_textfield->set_alignment(GUI::Align::CenterLeft);
 
@@ -68,7 +68,7 @@ void EssaCreateObject::m_create_name_and_color_container() {
     name_layout.set_spacing(10);
     {
         auto name_textfield = name_container->add_widget<GUI::Textfield>();
-        name_textfield->set_size({ 100.0_px, Length::Auto });
+        name_textfield->set_size({ 100.0_px, Util::Length::Auto });
         name_textfield->set_content("Name: ");
         name_textfield->set_alignment(GUI::Align::CenterLeft);
 
@@ -83,7 +83,7 @@ void EssaCreateObject::m_create_name_and_color_container() {
 }
 
 void EssaCreateObject::m_create_submit_container(Container& container) {
-    container.set_size({ Length::Auto, 72.0_px });
+    container.set_size({ Util::Length::Auto, 72.0_px });
     auto& submit_layout = container.set_layout<GUI::HorizontalBoxLayout>();
     submit_layout.set_spacing(10);
     {
@@ -274,7 +274,7 @@ void EssaCreateObject::m_create_object_gui(GUI::Container& container) {
         mass_layout.set_spacing(10);
 
         auto mass_textfield = mass_container->add_widget<GUI::Textfield>();
-        mass_textfield->set_size({ 150.0_px, Length::Auto });
+        mass_textfield->set_size({ 150.0_px, Util::Length::Auto });
         mass_textfield->set_content("Mass: ");
         mass_textfield->set_alignment(GUI::Align::CenterLeft);
 

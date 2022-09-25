@@ -23,7 +23,7 @@ void EssaGUI::on_init() {
     set_layout<GUI::BasicLayout>();
 
     m_simulation_view = add_widget<SimulationView>(m_world);
-    m_simulation_view->set_size({ { 100, Length::Percent }, { 100, Length::Percent } });
+    m_simulation_view->set_size({ { 100, Util::Length::Percent }, { 100, Util::Length::Percent } });
     // m_simulation_view->set_visible(false);
     m_world.m_simulation_view = m_simulation_view;
 

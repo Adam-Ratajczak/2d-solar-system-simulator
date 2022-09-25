@@ -16,7 +16,7 @@ FocusedObjectGUI::FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w)
 
 void FocusedObjectGUI::on_init() {
     set_layout<GUI::VerticalBoxLayout>();
-    add_widget<GUI::Container>()->set_size({ Length::Auto, 10.0_px });
+    add_widget<GUI::Container>()->set_size({ Util::Length::Auto, 10.0_px });
     set_background_color(Util::Color { 192, 192, 192, 30 });
 
     auto tab_widget = add_widget<GUI::TabWidget>();
@@ -50,23 +50,23 @@ void FocusedObjectGUI::on_init() {
 
 void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     auto title = info.add_widget<GUI::Textfield>();
-    title->set_size({ Length::Auto, 40.0_px });
+    title->set_size({ Util::Length::Auto, 40.0_px });
     title->set_alignment(GUI::Align::Center);
     title->set_font_size(30);
     title->set_content("General information");
 
     auto add_field = [&](Util::UString name, bool is_most_massive_data) -> Field {
         auto subcontainer = info.add_widget<GUI::Container>();
-        subcontainer->set_size({ Length::Auto, 30.0_px });
+        subcontainer->set_size({ Util::Length::Auto, 30.0_px });
         subcontainer->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
         auto name_label = subcontainer->add_widget<GUI::Textfield>();
         name_label->set_content(name + ": ");
-        name_label->set_size({ Length::Auto, Length::Auto });
+        name_label->set_size({ Util::Length::Auto, Util::Length::Auto });
         auto value_label = subcontainer->add_widget<GUI::Textfield>();
-        value_label->set_size({ 150.0_px, Length::Auto });
+        value_label->set_size({ 150.0_px, Util::Length::Auto });
         auto unit_label = subcontainer->add_widget<GUI::Textfield>();
         unit_label->set_alignment(GUI::Align::CenterRight);
-        unit_label->set_size({ 50.0_px, Length::Auto });
+        unit_label->set_size({ 50.0_px, Util::Length::Auto });
 
         if (is_most_massive_data)
             m_fields.push_back(subcontainer);
@@ -78,7 +78,7 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     m_absolute_velocity_textfield = add_field("Absolute velocity", false);
 
     m_orbiting_title = info.add_widget<GUI::Textfield>();
-    m_orbiting_title->set_size({ Length::Auto, 35.0_px });
+    m_orbiting_title->set_size({ Util::Length::Auto, 35.0_px });
     m_orbiting_title->set_alignment(GUI::Align::Center);
     m_orbiting_title->set_font_size(20);
     m_orbiting_title->set_class_name("most_massive_data");
@@ -94,7 +94,7 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
 
 void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     auto title = modify.add_widget<GUI::Textfield>();
-    title->set_size({ Length::Auto, 40.0_px });
+    title->set_size({ Util::Length::Auto, 40.0_px });
     title->set_alignment(GUI::Align::Center);
     title->set_font_size(30);
     title->set_content("Modify object");
@@ -106,13 +106,13 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     m_radius_control->set_unit("km");
 
     auto mass_container = modify.add_widget<GUI::Container>();
-    mass_container->set_size({ Length::Auto, 30.0_px });
+    mass_container->set_size({ Util::Length::Auto, 30.0_px });
     {
         auto& mass_layout = mass_container->set_layout<GUI::HorizontalBoxLayout>();
         mass_layout.set_spacing(10);
 
         auto mass_textfield = mass_container->add_widget<GUI::Textfield>();
-        mass_textfield->set_size({ 150.0_px, Length::Auto });
+        mass_textfield->set_size({ 150.0_px, Util::Length::Auto });
         mass_textfield->set_content("Mass: ");
         mass_textfield->set_alignment(GUI::Align::CenterLeft);
 
@@ -169,24 +169,24 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     m_y_position_control->set_class_name("Dist");
 
     auto main_color_container = modify.add_widget<Container>();
-    main_color_container->set_size({ Length::Auto, 30.0_px });
+    main_color_container->set_size({ Util::Length::Auto, 30.0_px });
     auto& main_color_layout = main_color_container->set_layout<GUI::HorizontalBoxLayout>();
     main_color_layout.set_spacing(10);
     {
         auto color_label_textfield = main_color_container->add_widget<GUI::Textfield>();
-        color_label_textfield->set_size({ 100.0_px, Length::Auto });
+        color_label_textfield->set_size({ 100.0_px, Util::Length::Auto });
         color_label_textfield->set_content("Color:");
         color_label_textfield->set_alignment(GUI::Align::CenterLeft);
 
         m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
     }
     auto name_container = modify.add_widget<Container>();
-    name_container->set_size({ Length::Auto, 30.0_px });
+    name_container->set_size({ Util::Length::Auto, 30.0_px });
     auto& name_layout = name_container->set_layout<GUI::HorizontalBoxLayout>();
     name_layout.set_spacing(10);
     {
         auto name_textfield = name_container->add_widget<GUI::Textfield>();
-        name_textfield->set_size({ 100.0_px, Length::Auto });
+        name_textfield->set_size({ 100.0_px, Util::Length::Auto });
         name_textfield->set_content("Name: ");
         name_textfield->set_alignment(GUI::Align::CenterLeft);
 
@@ -198,7 +198,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
     auto button_container = modify.add_widget<GUI::Container>();
     button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    button_container->set_size({ Length::Auto, 30.0_px });
+    button_container->set_size({ Util::Length::Auto, 30.0_px });
 
     auto modify_button = button_container->add_widget<GUI::TextButton>();
     modify_button->set_content("Modify object");
@@ -231,14 +231,14 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
 
 void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
     auto title = parent.add_widget<GUI::Textfield>();
-    title->set_size({ Length::Auto, 40.0_px });
+    title->set_size({ Util::Length::Auto, 40.0_px });
     title->set_alignment(GUI::Align::Center);
     title->set_font_size(30);
     title->set_content("Change object view");
 
     auto default_view_button_container = parent.add_widget<GUI::Container>();
     default_view_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    default_view_button_container->set_size({ Length::Auto, 30.0_px });
+    default_view_button_container->set_size({ Util::Length::Auto, 30.0_px });
 
     auto default_view_textfield = default_view_button_container->add_widget<GUI::Textfield>();
     default_view_textfield->set_content("Hide focused object window");
@@ -253,7 +253,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
 
     auto light_source_button_container = parent.add_widget<GUI::Container>();
     light_source_button_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
-    light_source_button_container->set_size({ Length::Auto, 30.0_px });
+    light_source_button_container->set_size({ Util::Length::Auto, 30.0_px });
 
     auto light_source_textfield = light_source_button_container->add_widget<GUI::Textfield>();
     light_source_textfield->set_content("Toggle Light source options");

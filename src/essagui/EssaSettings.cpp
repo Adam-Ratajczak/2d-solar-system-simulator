@@ -21,7 +21,7 @@ void EssaSettings::on_init() {
 
     auto title_label = add_widget<GUI::Textfield>();
     title_label->set_content("Settings");
-    title_label->set_size({ Length::Auto, 30.0_px });
+    title_label->set_size({ Util::Length::Auto, 30.0_px });
     title_label->set_alignment(GUI::Align::Center);
 
     auto tab_widget = add_widget<GUI::TabWidget>();
@@ -62,7 +62,7 @@ void EssaSettings::on_init() {
         };
 
         auto reset_trails_button = simulation_settings.add_widget<GUI::TextButton>();
-        reset_trails_button->set_size({ Length::Auto, 30.0_px });
+        reset_trails_button->set_size({ Util::Length::Auto, 30.0_px });
         reset_trails_button->set_content("Clear Trails");
         reset_trails_button->on_click = [&]() {
             m_simulation_view.world().reset_all_trails();
@@ -73,10 +73,10 @@ void EssaSettings::on_init() {
         auto toggle_container = container.add_widget<GUI::Container>();
         auto& toggle_layout = toggle_container->set_layout<GUI::HorizontalBoxLayout>();
         toggle_layout.set_spacing(10);
-        toggle_container->set_size({ Length::Auto, 30.0_px });
+        toggle_container->set_size({ Util::Length::Auto, 30.0_px });
         auto button_label = toggle_container->add_widget<GUI::Textfield>();
         button_label->set_content(title + ": ");
-        button_label->set_size({ { 70, Length::Percent }, 30.0_px });
+        button_label->set_size({ { 70, Util::Length::Percent }, 30.0_px });
         auto toggle = toggle_container->add_widget<GUI::TextButton>();
         toggle->set_content("Off");
         toggle->set_active_content("On");
@@ -113,11 +113,11 @@ void EssaSettings::on_init() {
         auto toggle_sphere_mode_container = display_settings.add_widget<GUI::Container>();
         auto& toggle_sphere_mode_layout = toggle_sphere_mode_container->set_layout<GUI::HorizontalBoxLayout>();
         toggle_sphere_mode_layout.set_spacing(10);
-        toggle_sphere_mode_container->set_size({ Length::Auto, 30.0_px });
+        toggle_sphere_mode_container->set_size({ Util::Length::Auto, 30.0_px });
 
         auto sphere_mode_label = toggle_sphere_mode_container->add_widget<GUI::Textfield>();
         sphere_mode_label->set_content("Sphere mode: ");
-        sphere_mode_label->set_size({ { 60, Length::Percent }, Length::Auto });
+        sphere_mode_label->set_size({ { 60, Util::Length::Percent }, Util::Length::Auto });
 
         auto toggle_sphere_mode = toggle_sphere_mode_container->add_widget<GUI::StateTextButton<Sphere::DrawMode>>();
         toggle_sphere_mode->add_state("Full", Sphere::DrawMode::Full, theme().positive);
@@ -135,11 +135,11 @@ void EssaSettings::on_init() {
         auto toggle_time_format_container = display_settings.add_widget<GUI::Container>();
         auto& toggle_time_format_layout = toggle_time_format_container->set_layout<GUI::HorizontalBoxLayout>();
         toggle_time_format_layout.set_spacing(10);
-        toggle_time_format_container->set_size({ Length::Auto, 30.0_px });
+        toggle_time_format_container->set_size({ Util::Length::Auto, 30.0_px });
 
         auto toggle_time_format_label = toggle_time_format_container->add_widget<GUI::Textfield>();
         toggle_time_format_label->set_content("Time format: ");
-        toggle_time_format_label->set_size({ { 60, Length::Percent }, Length::Auto });
+        toggle_time_format_label->set_size({ { 60, Util::Length::Percent }, Util::Length::Auto });
 
         auto toggle_time_format = toggle_time_format_container->add_widget<GUI::StateTextButton<Util::SimulationClock::Format>>();
         toggle_time_format->set_alignment(GUI::Align::Center);
@@ -206,7 +206,7 @@ void EssaSettings::on_init() {
     auto restore_container = add_widget<GUI::Container>();
     auto& restore_layout = restore_container->set_layout<GUI::HorizontalBoxLayout>();
     restore_layout.set_spacing(10);
-    restore_container->set_size({ Length::Auto, 30.0_px });
+    restore_container->set_size({ Util::Length::Auto, 30.0_px });
 
     auto restore_sim = restore_container->add_widget<GUI::TextButton>();
     restore_sim->set_content("Restore simulation");
