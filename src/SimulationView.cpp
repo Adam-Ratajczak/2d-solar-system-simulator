@@ -4,6 +4,7 @@
 #include "glwrapper/Helpers.hpp"
 #include "math/Ray.hpp"
 
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaGUI/gui/NotifyUser.hpp>
@@ -270,11 +271,11 @@ void SimulationView::draw_grid(GUI::Window& window) const {
     window.draw_vertices(llgl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
-    GUI::TextDrawOptions guide_text;
-    guide_text.font_size = theme().label_font_size;
-    guide_text.text_align = GUI::Align::Center;
-    window.draw_text_aligned_in_rect(Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(),
-        { guide_start - Util::Vector2f(0, 10), guide_end - guide_start }, GUI::Application::the().font(), guide_text);
+    Gfx::Text guide_text { Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(), GUI::Application::the().font() };
+    guide_text.set_font_size(theme().label_font_size);
+    guide_text.set_fill_color(Util::Colors::White);
+    guide_text.align(GUI::Align::Center, { guide_start - Util::Vector2f(0, 10), guide_end - guide_start });
+    guide_text.draw(window);
 }
 
 llgl::Camera SimulationView::camera() const {
@@ -333,10 +334,11 @@ void SimulationView::draw(GUI::Window& window) const {
         debug_oss << "pitch=" << m_pitch << " $ " << m_pitch_from_object << std::endl;
         debug_oss << "pause_count=" << m_pause_count << std::endl;
 
-        GUI::TextDrawOptions debug_text;
-        debug_text.fill_color = Util::Colors::White;
-        debug_text.font_size = theme().label_font_size;
-        window.draw_text(Util::UString { debug_oss.str() }, GUI::Application::the().fixed_width_font(), { 600, 20 }, debug_text);
+        Gfx::Text debug_text { Util::UString { debug_oss.str() }, GUI::Application::the().fixed_width_font() };
+        debug_text.set_fill_color(Util::Colors::White);
+        debug_text.set_font_size(theme().label_font_size);
+        debug_text.set_position({ 600, 20 });
+        debug_text.draw(window);
     }
 }
 

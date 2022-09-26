@@ -6,12 +6,12 @@
 #include "glwrapper/Sphere.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
+#include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
-
 
 #include <LLGL/OpenGL/Vertex.hpp>
 #include <cmath>
@@ -222,10 +222,11 @@ void Object::draw_label(GUI::Window& window, SimulationView const& sv, Util::Vec
     if (screen_position.z() > 1 || screen_position.z() < -1)
         return;
 
-    GUI::TextDrawOptions text;
-    text.font_size = GUI::Application::the().theme().label_font_size;
-    text.fill_color = color;
-    window.draw_text(string, GUI::Application::the().bold_font(), { std::roundf(screen_position.x()), std::roundf(screen_position.y()) }, text);
+    Gfx::Text text { string, GUI::Application::the().bold_font() };
+    text.set_font_size(GUI::Application::the().theme().label_font_size);
+    text.set_fill_color(color);
+    text.set_position({ std::roundf(screen_position.x()), std::roundf(screen_position.y()) });
+    text.draw(window);
 }
 
 void Object::delete_object() {
