@@ -27,7 +27,7 @@ public:
     SimulationView* m_simulation_view {};
 
     void update(int steps);
-    void draw(GUI::Window& window, SimulationView const& view) const;
+    void draw(Gfx::Painter& window, SimulationView const& view) const;
     void add_object(std::unique_ptr<Object>);
     void reset(ConfigLoader* loader);
     Object* get_object_by_name(std::string const& name);

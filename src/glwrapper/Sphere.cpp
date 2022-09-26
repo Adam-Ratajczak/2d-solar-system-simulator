@@ -84,7 +84,7 @@ std::string_view SphereShader::source(llgl::ShaderType type) const {
     ESSA_UNREACHABLE;
 }
 
-void Sphere::draw(GUI::Window& window, SimulationView const& sv) const {
+void Sphere::draw(Gfx::Painter& window, SimulationView const& sv) const {
     GUI::WorldDrawScope::verify();
 
     auto model = llgl::Transform {}.translate(Util::Vector3f { m_position }).scale(m_radius);

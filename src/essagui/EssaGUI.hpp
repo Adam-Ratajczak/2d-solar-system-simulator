@@ -32,7 +32,7 @@ public:
     virtual void on_init() override;
 
     virtual void handle_event(GUI::Event&) override;
-    virtual void draw(GUI::Window& window) const override;
+    virtual void draw(Gfx::Painter& window) const override;
 
     SimulationView& simulation_view() const { return *m_simulation_view; }
 

@@ -170,7 +170,7 @@ void Object::delete_most_attracting_object() {
     m_trail.reset();
 }
 
-void Object::draw(GUI::Window& window, SimulationView const& view) {
+void Object::draw(Gfx::Painter& painter, SimulationView const& view) {
     GUI::WorldDrawScope::verify();
 
     auto scaled_pos = render_position();
@@ -180,13 +180,13 @@ void Object::draw(GUI::Window& window, SimulationView const& view) {
     s_sphere->set_color(m_color);
     if (m_world)
         s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Util::Vector3d());
-    s_sphere->draw(window, view);
+    s_sphere->draw(painter, view);
 
     if (view.show_trails())
         m_trail.draw(view);
 }
 
-void Object::draw_closest_approaches(GUI::Window& window, SimulationView const& view) {
+void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const& view) {
     GUI::WorldDrawScope::verify();
 
     using Vertex = Essa::Shaders::Basic::Vertex;
@@ -200,10 +200,10 @@ void Object::draw_closest_approaches(GUI::Window& window, SimulationView const& 
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
         closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, other_color, {} });
     }
-    GL::draw_with_temporary_vao<Vertex>(window.renderer(), shader, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
+    GL::draw_with_temporary_vao<Vertex>(painter.renderer(), shader, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
-void Object::draw_closest_approaches_gui(GUI::Window& window, SimulationView const& view) {
+void Object::draw_closest_approaches_gui(Gfx::Painter& painter, SimulationView const& view) {
     for (auto& closest_approach_entry : m_closest_approaches) {
         if (closest_approach_entry.second.distance > AU / 10)
             continue;
@@ -211,11 +211,11 @@ void Object::draw_closest_approaches_gui(GUI::Window& window, SimulationView con
         std::ostringstream oss;
         auto str = Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string();
         oss << "CA with " << closest_approach_entry.first->name() << ": " << str.encode();
-        draw_label(window, view, position, Util::UString { oss.str() }, closest_approach_entry.first->m_color);
+        draw_label(painter, view, position, Util::UString { oss.str() }, closest_approach_entry.first->m_color);
     }
 }
 
-void Object::draw_label(GUI::Window& window, SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
+void Object::draw_label(Gfx::Painter& painter, SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
     auto screen_position = sv.world_to_screen(position);
 
     // Don't draw labels of planets outside of clipping box
@@ -226,7 +226,7 @@ void Object::draw_label(GUI::Window& window, SimulationView const& sv, Util::Vec
     text.set_font_size(GUI::Application::the().theme().label_font_size);
     text.set_fill_color(color);
     text.set_position({ std::roundf(screen_position.x()), std::roundf(screen_position.y()) });
-    text.draw(window);
+    text.draw(painter);
 }
 
 void Object::delete_object() {
@@ -259,11 +259,11 @@ void Object::reset_history() {
     m_trail.reset();
 }
 
-void Object::draw_gui(GUI::Window& window, SimulationView const& view) {
+void Object::draw_gui(Gfx::Painter& painter, SimulationView const& view) {
 
     if (!view.show_labels())
         return;
-    draw_label(window, view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
+    draw_label(painter, view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {

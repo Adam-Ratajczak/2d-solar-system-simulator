@@ -132,17 +132,17 @@ void EssaGUI::update() {
         m_create_object_gui->recalculate_forward_simulation();
 }
 
-void EssaGUI::draw(GUI::Window& window) const {
+void EssaGUI::draw(Gfx::Painter& painter) const {
     if (m_create_object_gui->new_object() && m_draw_forward_simulation) {
         {
-            GUI::WorldDrawScope scope(*m_simulation_view);
-            m_create_object_gui->new_object()->draw(window, *m_simulation_view);
-            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(window, *m_simulation_view);
+            GUI::WorldDrawScope scope(painter);
+            m_create_object_gui->new_object()->draw(painter, *m_simulation_view);
+            m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches(painter, *m_simulation_view);
         }
         // FIXME: This should be drawn above grid.
-        m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches_gui(window, *m_simulation_view);
-        m_create_object_gui->new_object()->draw_gui(window, *m_simulation_view);
-        m_create_object_gui->forward_simulated_world().draw(window, *m_simulation_view);
+        m_create_object_gui->forward_simulated_new_object()->draw_closest_approaches_gui(painter, *m_simulation_view);
+        m_create_object_gui->new_object()->draw_gui(painter, *m_simulation_view);
+        m_create_object_gui->forward_simulated_world().draw(painter, *m_simulation_view);
     }
 }
 

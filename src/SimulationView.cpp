@@ -185,13 +185,13 @@ void SimulationView::set_focused_object(Object* obj, GUI::NotifyUser notify_user
         on_change_focus(m_focused_object);
 }
 
-void SimulationView::draw_grid(GUI::Window& window) const {
+void SimulationView::draw_grid(Gfx::Painter& painter) const {
     constexpr float zoom_step_exponent = 2;
     auto spacing = std::pow(zoom_step_exponent, std::round(std::log2(m_zoom / 2) / std::log2(zoom_step_exponent)));
     constexpr int major_gridline_interval = 4;
     auto major_gridline_spacing = spacing * major_gridline_interval;
     {
-        GUI::WorldDrawScope scope(*this);
+        GUI::WorldDrawScope scope(painter);
         float bounds = 50 * spacing;
         // Vector3 start_coords = screen_to_world({ 0, 0 });
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
@@ -253,7 +253,7 @@ void SimulationView::draw_grid(GUI::Window& window) const {
             index++;
         }
 
-        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(window.renderer(), shader, llgl::PrimitiveType::Lines, vertices);
+        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(painter.renderer(), shader, llgl::PrimitiveType::Lines, vertices);
     }
 
     // guide
@@ -268,14 +268,14 @@ void SimulationView::draw_grid(GUI::Window& window) const {
     guide[3] = { guide_start + Util::Vector2f(0, 5), guide_color, {} };
     guide[4] = { guide_end - Util::Vector2f(0, 5), guide_color, {} };
     guide[5] = { guide_end + Util::Vector2f(0, 5), guide_color, {} };
-    window.draw_vertices(llgl::PrimitiveType::Lines, guide);
+    painter.draw_vertices(llgl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
     Gfx::Text guide_text { Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(), GUI::Application::the().font() };
     guide_text.set_font_size(theme().label_font_size);
     guide_text.set_fill_color(Util::Colors::White);
     guide_text.align(GUI::Align::Center, { guide_start - Util::Vector2f(0, 10), guide_end - guide_start });
-    guide_text.draw(window);
+    guide_text.draw(painter);
 }
 
 llgl::Camera SimulationView::camera() const {
@@ -305,7 +305,7 @@ llgl::Renderer& SimulationView::renderer() const {
     return host_window().window().renderer();
 }
 
-void SimulationView::draw(GUI::Window& window) const {
+void SimulationView::draw(Gfx::Painter& window) const {
     if (m_show_grid)
         draw_grid(window);
     m_world.draw(window, *this);

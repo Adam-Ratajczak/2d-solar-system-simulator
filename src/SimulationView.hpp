@@ -112,12 +112,12 @@ public:
 
 private:
     virtual void handle_event(GUI::Event&) override;
-    virtual void draw(GUI::Window&) const override;
+    virtual void draw(Gfx::Painter&) const override;
     virtual void update() override;
 
     virtual bool accepts_focus() const override { return true; }
 
-    void draw_grid(GUI::Window&) const;
+    void draw_grid(Gfx::Painter&) const;
 
 #ifdef ENABLE_PYSSA
     PySSA::Object python_reset(PySSA::Object const& args, PySSA::Object const& kwargs);
