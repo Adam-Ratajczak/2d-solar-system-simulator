@@ -8,7 +8,8 @@ void PythonREPL::on_init() {
     auto& layout = set_layout<GUI::VerticalBoxLayout>();
     m_console = add_widget<GUI::Console>();
     m_textbox = add_widget<GUI::Textbox>();
-    m_textbox->set_position({ 0.0_px, 0.0_px_o });
+    m_textbox->set_position({ 0.0_px, {} });
+    m_textbox->set_vertical_alignment(GUI::Widget::Alignment::End);
     m_textbox->set_type(GUI::Textbox::Type::TEXT);
     m_textbox->set_placeholder("PySSA Command");
     m_textbox->set_focused();

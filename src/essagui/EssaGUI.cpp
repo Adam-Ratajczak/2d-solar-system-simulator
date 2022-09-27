@@ -55,7 +55,8 @@ void EssaGUI::on_init() {
 
     auto home_button = add_widget<GUI::ImageButton>();
     home_button->set_image(&resource_manager().require_texture("homeButton.png"));
-    home_button->set_position({ 10.0_px_o, 10.0_px_o });
+    home_button->set_position({ 10.0_px, 10.0_px });
+    home_button->set_alignments(GUI::Widget::Alignment::End, GUI::Widget::Alignment::End);
     home_button->on_click = [this]() {
         m_simulation_view->reset();
     };
@@ -111,7 +112,8 @@ void EssaGUI::on_init() {
 
     auto fps_counter = add_widget<SimulationInfo>(m_simulation_view);
     fps_counter->set_size({ 600.0_px, 50.0_px });
-    fps_counter->set_position({ 20.0_px, 0.0_px_o });
+    fps_counter->set_position({ 10.0_px, 10.0_px });
+    fps_counter->set_vertical_alignment(GUI::Widget::Alignment::End);
 }
 
 void EssaGUI::open_python_repl() {
