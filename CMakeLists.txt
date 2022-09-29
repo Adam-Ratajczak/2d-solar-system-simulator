@@ -42,9 +42,6 @@ add_executable(
 
     src/glwrapper/Sphere.cpp
 
-    src/math/Plane.cpp
-    src/math/Ray.cpp
-
     ${PYSSA_SOURCES}
 )
 

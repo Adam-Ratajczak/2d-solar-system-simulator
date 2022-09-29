@@ -2,8 +2,6 @@
 
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
-#include "math/Ray.hpp"
-
 #include <EssaGUI/gfx/Text.hpp>
 #include <EssaGUI/gfx/Window.hpp>
 #include <EssaGUI/gui/Application.hpp>
@@ -11,6 +9,7 @@
 #include <EssaGUI/gui/TextAlign.hpp>
 #include <EssaGUI/gui/WidgetTreeRoot.hpp>
 #include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/Math/Ray.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <LLGL/Core/Transform.hpp>
@@ -160,10 +159,10 @@ void SimulationView::handle_event(GUI::Event& event) {
 
 std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vector2f screen) const {
     auto clip_space = screen_to_clip_space(screen);
-    Math::Ray ray { { clip_space.x(), clip_space.y(), 0 }, { clip_space.x(), clip_space.y(), 1 } };
+    Util::Math::Ray ray { { clip_space.x(), clip_space.y(), 0 }, { clip_space.x(), clip_space.y(), 1 } };
 
     // Transform a grid plane (z = 0) to the clip space.
-    Math::Plane plane = Math::Plane(0, 0, 1, 0).transformed(matrix());
+    Util::Math::Plane plane = Util::Math::Plane(0, 0, 1, 0).transformed(matrix());
     /// std::cout << "[Coord] Mouse(Clip): " << clip_space << std::endl;
 
     // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
