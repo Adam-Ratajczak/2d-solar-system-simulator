@@ -32,7 +32,7 @@ public:
     Object(Object&& other) = delete;
     Object& operator=(Object&& other) = delete;
 
-    Util::Vector3d render_position() const { return m_pos / AU; }
+    Util::Vector3d render_position() const { return m_pos / Util::Constants::AU; }
 
     std::string name() const { return m_name; }
 
@@ -68,7 +68,7 @@ public:
     // the given point.
     void require_orbit_point(Util::Vector3d);
 
-    double mass() const { return m_gravity_factor / G; }
+    double mass() const { return m_gravity_factor / Util::Constants::Gravity; }
     double gravity_factor() const { return m_gravity_factor; }
 
     Util::Vector3d pos() const { return m_pos; }

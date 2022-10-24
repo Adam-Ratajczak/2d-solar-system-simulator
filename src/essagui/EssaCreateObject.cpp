@@ -205,7 +205,7 @@ std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(
 
             for (auto& d : dist) {
                 d->set_unit("AU");
-                d->set_value(d->value() / AU * 1000);
+                d->set_value(d->value() / Util::Constants::AU * 1000);
                 d->slider().set_range(0, 100, 0.1);
             }
             this->m_y_position_control->slider().set_range(-50, 50, 0.1);
@@ -225,10 +225,10 @@ std::shared_ptr<GUI::ImageButton> EssaCreateObject::m_create_toggle_unit_button(
 
             for (auto& d : dist) {
                 d->set_unit("km");
-                d->set_value(d->value() / 1000 * AU);
-                d->slider().set_range(0, 0.1 * AU, 0.1);
+                d->set_value(d->value() / 1000 * Util::Constants::AU);
+                d->slider().set_range(0, 0.1 * Util::Constants::AU, 0.1);
             }
-            this->m_y_position_control->slider().set_range(-50 * AU, 50 * AU, 100);
+            this->m_y_position_control->slider().set_range(-50 * Util::Constants::AU, 50 * Util::Constants::AU, 100);
 
             for (auto& a : angle) {
                 a->set_unit("[deg]");
@@ -345,8 +345,8 @@ void EssaCreateObject::m_create_object_from_params_gui(Container& container) {
     };
 
     m_y_position_control = container.add_widget<GUI::ValueSlider>();
-    m_y_position_control->set_min(-0.05 * AU);
-    m_y_position_control->set_max(0.05 * AU);
+    m_y_position_control->set_min(-0.05 * Util::Constants::AU);
+    m_y_position_control->set_max(0.05 * Util::Constants::AU);
     m_y_position_control->set_name("Y position");
     m_y_position_control->set_unit("km");
     m_y_position_control->set_class_name("Dist");
@@ -360,7 +360,7 @@ void EssaCreateObject::m_create_object_from_orbit_gui(Container& container) {
 
     m_apogee_control = container.add_widget<GUI::ValueSlider>();
     m_apogee_control->set_min(0);
-    m_apogee_control->set_max(0.05 * AU);
+    m_apogee_control->set_max(0.05 * Util::Constants::AU);
     m_apogee_control->set_name("Apogee");
     m_apogee_control->set_unit("km");
     m_apogee_control->set_class_name("Dist");
@@ -370,7 +370,7 @@ void EssaCreateObject::m_create_object_from_orbit_gui(Container& container) {
 
     m_perigee_control = container.add_widget<GUI::ValueSlider>();
     m_perigee_control->set_min(0);
-    m_perigee_control->set_max(0.05 * AU);
+    m_perigee_control->set_max(0.05 * Util::Constants::AU);
     m_perigee_control->set_name("Perigee");
     m_perigee_control->set_unit("km");
     m_perigee_control->set_class_name("Dist");
@@ -436,8 +436,8 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
     Util::Angle angle, tilt;
 
     if (m_toggle_unit_button->is_active()) {
-        apogee = { static_cast<float>(m_apogee_control->value() * AU), Distance::Au };
-        perigee = { static_cast<float>(m_perigee_control->value() * AU), Distance::Au };
+        apogee = { static_cast<float>(m_apogee_control->value() * Util::Constants::AU), Distance::Au };
+        perigee = { static_cast<float>(m_perigee_control->value() * Util::Constants::AU), Distance::Au };
 
         angle = Util::Angle::radians(static_cast<float>(m_orbit_angle_control->value()));
         tilt = Util::Angle::radians(static_cast<float>(m_orbit_tilt_control->value()));

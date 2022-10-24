@@ -27,10 +27,8 @@ static Util::DelayedInit<Sphere> s_sphere;
 
 Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, std::string name, unsigned period)
     : m_trail(std::max(2U, std::max(period * 2, (unsigned)500)), color)
-    // FIXME: Share the sphere as it is identical for all objects and
-    //        takes most of the object's used memory.
     , m_history(1000, { pos, vel })
-    , m_gravity_factor(mass * G)
+    , m_gravity_factor(mass * Util::Constants::Gravity)
     , m_radius(radius)
     , m_pos(pos)
     , m_vel(vel)
@@ -175,11 +173,11 @@ void Object::draw(Gfx::Painter& painter, SimulationView const& view) {
 
     auto scaled_pos = render_position();
 
-    s_sphere->set_radius(m_radius / AU);
+    s_sphere->set_radius(m_radius / Util::Constants::AU);
     s_sphere->set_position(scaled_pos);
     s_sphere->set_color(m_color);
     if (m_world)
-        s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / AU : Util::Vector3d());
+        s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / Util::Constants::AU : Util::Vector3d());
     s_sphere->draw(painter, view);
 
     if (view.show_trails())
@@ -194,20 +192,20 @@ void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const
 
     std::vector<Vertex> closest_approaches_vertexes;
     for (auto& closest_approach_entry : m_closest_approaches) {
-        if (closest_approach_entry.second.distance > AU / 10)
+        if (closest_approach_entry.second.distance > Util::Constants::AU / 10)
             continue;
-        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.this_position / AU }, Util::Color { m_color.r, m_color.g, m_color.b, 100 }, {} });
+        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.this_position / Util::Constants::AU }, Util::Color { m_color.r, m_color.g, m_color.b, 100 }, {} });
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
-        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.other_object_position / AU }, other_color, {} });
+        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.other_object_position / Util::Constants::AU }, other_color, {} });
     }
     GL::draw_with_temporary_vao<Vertex>(painter.renderer(), shader, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
 void Object::draw_closest_approaches_gui(Gfx::Painter& painter, SimulationView const& view) {
     for (auto& closest_approach_entry : m_closest_approaches) {
-        if (closest_approach_entry.second.distance > AU / 10)
+        if (closest_approach_entry.second.distance > Util::Constants::AU / 10)
             continue;
-        auto position = (closest_approach_entry.second.this_position + closest_approach_entry.second.other_object_position) / (2 * AU);
+        auto position = (closest_approach_entry.second.this_position + closest_approach_entry.second.other_object_position) / (2 * Util::Constants::AU);
         std::ostringstream oss;
         auto str = Util::unit_display(closest_approach_entry.second.distance, Util::Quantity::Length).to_string();
         oss << "CA with " << closest_approach_entry.first->name() << ": " << str.encode();
@@ -499,14 +497,14 @@ bool Object::python_set_radius(PySSA::Object const& value) {
 }
 
 PySSA::Object Object::python_get_mass() const {
-    return PySSA::Object::create(m_gravity_factor * G);
+    return PySSA::Object::create(m_gravity_factor * Util::Constants::Gravity);
 }
 
 bool Object::python_set_mass(PySSA::Object const& value) {
     auto maybe_value = value.as_double();
     if (!maybe_value.has_value())
         return false;
-    m_gravity_factor = maybe_value.value() / G;
+    m_gravity_factor = maybe_value.value() / Util::Constants::Gravity;
     return true;
 }
 

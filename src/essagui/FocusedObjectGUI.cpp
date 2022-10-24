@@ -162,8 +162,8 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     m_direction_yz_control->slider().set_wraparound(true);
 
     m_y_position_control = modify.add_widget<GUI::ValueSlider>();
-    m_y_position_control->set_min(-0.05 * AU);
-    m_y_position_control->set_max(0.05 * AU);
+    m_y_position_control->set_min(-0.05 * Util::Constants::AU);
+    m_y_position_control->set_max(0.05 * Util::Constants::AU);
     m_y_position_control->set_name("Y position");
     m_y_position_control->set_unit("km");
     m_y_position_control->set_class_name("Dist");

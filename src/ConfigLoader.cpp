@@ -49,7 +49,7 @@ bool ConfigLoader::parse_statement(World& world) {
         if (unit == "km")
             return Distance(std::stod(it->second.substr(0, underscore_index)) * 1000, Distance::Unit::Kilometer);
         if (unit == "AU")
-            return Distance(std::stod(it->second.substr(0, underscore_index)) * AU, Distance::Unit::Au);
+            return Distance(std::stod(it->second.substr(0, underscore_index)) * Util::Constants::AU, Distance::Unit::Au);
         throw std::runtime_error("invalid unit");
     };
 

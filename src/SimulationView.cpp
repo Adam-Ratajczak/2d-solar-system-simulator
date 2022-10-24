@@ -107,7 +107,7 @@ void SimulationView::handle_event(GUI::Event& event) {
             if (object_pos_in_world_space) {
                 m_measured = true;
                 if (m_on_coord_measure) {
-                    m_on_coord_measure(*object_pos_in_world_space * AU);
+                    m_on_coord_measure(*object_pos_in_world_space * Util::Constants::AU);
                 }
             }
         }
@@ -270,7 +270,7 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
     painter.draw_vertices(llgl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
-    Gfx::Text guide_text { Util::unit_display(spacing / 2 / zoom_step_exponent * AU, Util::Quantity::Length).to_string(), GUI::Application::the().font() };
+    Gfx::Text guide_text { Util::unit_display(spacing / 2 / zoom_step_exponent * Util::Constants::AU, Util::Quantity::Length).to_string(), GUI::Application::the().font() };
     guide_text.set_font_size(theme().label_font_size);
     guide_text.set_fill_color(Util::Colors::White);
     guide_text.align(GUI::Align::Center, { guide_start - Util::Vector2f(0, 10), guide_end - guide_start });
@@ -346,6 +346,7 @@ void SimulationView::push_pause() {
 }
 
 void SimulationView::pop_pause() {
+    assert(m_pause_count > 0);
     m_pause_count--;
 }
 
