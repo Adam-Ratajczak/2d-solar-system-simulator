@@ -315,7 +315,7 @@ void EssaCreateObject::m_create_object_from_params_gui(Container& container) {
 
     m_velocity_control = container.add_widget<GUI::ValueSlider>();
     m_velocity_control->set_min(0);
-    m_velocity_control->set_min(50000);
+    m_velocity_control->set_max(50000);
     m_velocity_control->set_name("Velocity");
     m_velocity_control->set_unit("m/s");
     m_velocity_control->on_change = [this](double) {
