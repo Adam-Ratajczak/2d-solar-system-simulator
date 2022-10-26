@@ -3,7 +3,7 @@ planet
     mass=2e30
     radius=1e6_km;
 
-orbitting_planet
+orbiting_planet
     name=planet
     around=star
     mass=2e20
@@ -11,7 +11,7 @@ orbitting_planet
     apoapsis=1_AU
     periapsis=1_AU;
 
-orbitting_planet
+orbiting_planet
     name=moon
     around=planet
     mass=2e22

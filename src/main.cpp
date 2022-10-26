@@ -18,7 +18,7 @@ int main() {
     auto& host_window = application.create_host_window({ 1000, 1000 }, "ESSA");
     auto& gui = host_window.set_main_widget<EssaGUI>(world);
 
-    world.reset(nullptr);
+    world.reset({});
 
     // PySSA test
 #ifdef ENABLE_PYSSA

@@ -29,7 +29,7 @@ public:
     void update(int steps);
     void draw(Gfx::Painter& window, SimulationView const& view) const;
     void add_object(std::unique_ptr<Object>);
-    void reset(ConfigLoader* loader);
+    void reset(std::optional<std::string> const& filename);
     Object* get_object_by_name(std::string const& name);
 
     Util::SimulationClock::time_point date() const { return m_date; }

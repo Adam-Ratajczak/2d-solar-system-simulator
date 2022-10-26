@@ -232,14 +232,7 @@ void EssaSettings::on_init() {
 }
 
 void EssaSettings::reset_simulation() {
-
-    std::ifstream file_in(m_world_file);
-    if (!file_in.good()) {
-        // TODO: Display msgbox and abort loading
-        std::cout << "Failed to load world file " << m_world_file << std::endl;
-    }
-    ConfigLoader loader { file_in };
-    m_simulation_view.world().reset(&loader);
+    m_simulation_view.world().reset(m_world_file);
     m_simulation_view.reset();
 }
 

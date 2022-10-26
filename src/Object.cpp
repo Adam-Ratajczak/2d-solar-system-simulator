@@ -246,7 +246,7 @@ Object::Info Object::get_info() const {
         info.perigee = m_pe;
         info.perigee_velocity = m_pe_vel;
         info.orbit_period = m_orbit_len;
-        info.orbit_eccencrity = eccencrity;
+        info.orbit_eccentrity = eccentrity;
     }
 
     return info;
@@ -281,8 +281,8 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
     result->m_ap = apogee.value();
     result->m_pe = perigee.value();
 
-    result->eccencrity = std::sqrt(1 - (b * b) / (a * a));
-    // std::cout << result.eccencrity << "\n";
+    result->eccentrity = std::sqrt(1 - (b * b) / (a * a));
+    // std::cout << result.eccentrity << "\n";
 
     double velocity_constant = (2 * GM) / (apogee.value() + perigee.value());
 
@@ -321,8 +321,8 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
     result->m_ap = 0;
     result->m_pe = std::numeric_limits<double>::max();
 
-    result->eccencrity = ecc;
-    // std::cout << result.eccencrity << "\n";
+    result->eccentrity = ecc;
+    // std::cout << result.eccentrity << "\n";
 
     double velocity_constant = (2 * GM) / (a * 2 - a * ecc);
 

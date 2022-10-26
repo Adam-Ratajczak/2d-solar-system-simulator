@@ -53,7 +53,7 @@ private:
     Field m_perigee_textfield;
     Field m_perigee_velocity_textfield;
     Field m_orbit_period_textfield;
-    Field m_orbit_eccencrity_textfield;
+    Field m_orbit_eccentrity_textfield;
 
     GUI::ValueSlider* m_radius_control = nullptr;
     GUI::ValueSlider* m_velocity_control = nullptr;

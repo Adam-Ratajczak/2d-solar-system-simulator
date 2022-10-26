@@ -110,7 +110,7 @@ public:
         double perigee = 0; // in AU
         double perigee_velocity = 0;
         double orbit_period = 0;
-        double orbit_eccencrity = 0;
+        double orbit_eccentrity = 0;
     };
 
     Info get_info() const;
@@ -168,7 +168,7 @@ private:
     double m_ap = 0, m_pe = std::numeric_limits<double>::max();
     double m_ap_vel = 0, m_pe_vel = 0;
     float m_prev_zoom;
-    double m_orbit_len, eccencrity;
+    double m_orbit_len, eccentrity;
     double m_gravity_factor {};
     double m_radius {};
 

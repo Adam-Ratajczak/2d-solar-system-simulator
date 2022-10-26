@@ -1,4 +1,6 @@
 // keep first!
+#include <EssaUtil/Error.hpp>
+#include <EssaUtil/GenericParser.hpp>
 #include <GL/glew.h>
 
 #include "ConfigLoader.hpp"
@@ -166,7 +168,7 @@ Object* World::get_object_by_name(std::string const& name) {
     return nullptr;
 }
 
-void World::reset(ConfigLoader* loader) {
+void World::reset(std::optional<std::string> const& filename) {
     if (on_reset)
         on_reset();
 
@@ -175,8 +177,28 @@ void World::reset(ConfigLoader* loader) {
     m_date = Util::SimulationTime::create(1990, 4, 20);
     m_object_history.clear_history(0);
     m_light_source = nullptr;
-    if (loader)
-        loader->load(*this);
+
+    auto load = [this, &filename]() -> Config::ErrorOr<void> {
+        auto config = TRY(ConfigLoader::load(*filename, *this));
+        TRY(config.apply(*this));
+        return {};
+    };
+
+    if (filename) {
+        auto maybe_error = load();
+        if (maybe_error.is_error()) {
+            std::visit(
+                Util::Overloaded {
+                    [](Util::ParseError const& error) {
+                        fmt::print("World loading failed: {} at {}:{}\n", error.message, error.location.start.line + 1, error.location.start.column + 1);
+                    },
+                    [](Util::OsError const& error) {
+                        fmt::print("World loading failed: {}: {}\n", error.function, strerror(error.error));
+                    },
+                },
+                maybe_error.release_error_variant());
+        }
+    }
 }
 
 void World::reset_all_trails() {

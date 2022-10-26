@@ -1,7 +1,7 @@
 planet name=Sun mass=1.98892e30 radius=695700000 colorb=0;
 light_source Sun;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=3.3e23
     radius=2439000.0
@@ -13,7 +13,7 @@ orbitting_planet
     colorr=80 colorg=78 colorb=81
     name=Mercury;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=4.8465e24
     radius=6051000.0
@@ -25,7 +25,7 @@ orbitting_planet
     colorr=255 colorg=243 colorb=232
     name=Venus;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=5.9742e24
     radius=6371000.0
@@ -37,7 +37,7 @@ orbitting_planet
     colorr=53 colorg=112 colorb=171
     name=Earth;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=6.39e23
     radius=3389000.0
@@ -49,7 +49,7 @@ orbitting_planet
     colorr=185 colorg=87 colorb=50
     name=Mars;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=1.8982e27
     radius=69911000.0
@@ -61,7 +61,7 @@ orbitting_planet
     colorr=234 colorg=157 colorb=113
     name=Jupiter;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=5.6836e26
     radius=58232000.0
@@ -73,7 +73,7 @@ orbitting_planet
     colorr=222 colorg=194 colorb=114
     name=Saturn;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=8.6810e25
     radius=25362000.0
@@ -85,7 +85,7 @@ orbitting_planet
     colorr=186 colorg=227 colorb=245
     name=Uranus;
 
-orbitting_planet
+orbiting_planet
     around=Sun
     mass=1.024e26
     radius=24622000.0
@@ -97,7 +97,7 @@ orbitting_planet
     colorr=97 colorg=147 colorb=197
     name=Neptune;
 
-orbitting_planet
+orbiting_planet
     around=Earth
     mass=7.342e22
     radius=1737000

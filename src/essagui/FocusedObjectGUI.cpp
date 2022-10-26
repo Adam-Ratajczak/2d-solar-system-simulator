@@ -89,7 +89,7 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     m_perigee_textfield = add_field("Perigee", true);
     m_perigee_velocity_textfield = add_field("Perigee velocity", true);
     m_orbit_period_textfield = add_field("Orbit period", true);
-    m_orbit_eccencrity_textfield = add_field("Orbit eccencrity", true);
+    m_orbit_eccentrity_textfield = add_field("Orbit eccentrity", true);
 }
 
 void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
@@ -338,7 +338,7 @@ void FocusedObjectGUI::update_params() {
     m_perigee_textfield.set_content_from_unit_value(Util::unit_display(info.perigee, Util::Quantity::Length));
     m_perigee_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.perigee_velocity, Util::Quantity::Velocity));
     m_orbit_period_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_period, Util::Quantity::Time));
-    m_orbit_eccencrity_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_eccencrity, Util::Quantity::None));
+    m_orbit_eccentrity_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_eccentrity, Util::Quantity::None));
 
     for (auto& f : m_fields)
         f->set_visible(m_focused->most_attracting_object() != nullptr);

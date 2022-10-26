@@ -2,21 +2,77 @@
 
 #include "Object.hpp"
 
+#include <EssaUtil/GenericParser.hpp>
+#include <EssaUtil/Stream.hpp>
 #include <istream>
 #include <memory>
 #include <optional>
 
-class ConfigLoader
-{
-public:
-    explicit ConfigLoader(std::istream& in)
-    : m_in(in) {}
+namespace Config {
 
-    void load(World& world);
+struct Planet {
+    double mass;
+    Distance radius;
+    Util::Color color;
+    Util::UString name;
+    double trail_length;
+};
+
+struct AbsolutePlanet : public Planet {
+    Util::Vector3d position;
+    Util::Vector3d velocity;
+};
+
+enum class Direction {
+    Clockwise,
+    CounterClockwise
+};
+
+struct OrbitingPlanet : public Planet {
+    Util::UString around;
+    Direction direction;
+    Util::Angle orbit_position;
+    Util::Angle orbit_tilt;
+};
+
+struct ApPeDefinedOrbitingPlanet : public OrbitingPlanet {
+    Distance apoapsis;
+    Distance periapsis;
+};
+
+struct EccentrityDefinedOrbitingPlanet : public OrbitingPlanet {
+    Distance major_axis;
+    double eccentrity;
+};
+
+struct LightSource {
+    Util::UString planet_name;
+};
+
+using Statement = std::variant<AbsolutePlanet, ApPeDefinedOrbitingPlanet, EccentrityDefinedOrbitingPlanet, LightSource>;
+
+template<class T>
+using ErrorOr = Util::ErrorOr<T, Util::ParseError, Util::OsError>;
+
+struct Config {
+    std::vector<Statement> statements;
+
+    ErrorOr<void> apply(World&);
+};
+
+}
+
+class ConfigLoader {
+public:
+    static Config::ErrorOr<Config::Config> load(std::string const& filename, World& world);
 
 private:
-    bool parse_statement(World& world);
-    std::optional<std::pair<std::string, std::string>> parse_key_value_pair(std::istream& in);
+    explicit ConfigLoader(Util::Lexer& lexer)
+        : m_lexer(lexer) { }
 
-    std::istream& m_in;
+    Config::ErrorOr<Config::Config> parse_config();
+    Config::ErrorOr<Config::Statement> parse_statement();
+    Config::ErrorOr<std::pair<std::string, std::string>> parse_key_value_pair();
+
+    Util::Lexer& m_lexer;
 };

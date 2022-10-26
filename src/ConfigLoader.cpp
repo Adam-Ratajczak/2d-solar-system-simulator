@@ -2,46 +2,69 @@
 
 #include "World.hpp"
 
+#include <EssaUtil/GenericParser.hpp>
+#include <EssaUtil/Stream/File.hpp>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 
-void ConfigLoader::load(World& world) {
-    while (true) {
-        if (!parse_statement(world))
-            break;
-    }
+Config::ErrorOr<Config::Config> ConfigLoader::load(std::string const& filename, World& world) {
+    Util::ReadableFileStream stream = TRY(Util::ReadableFileStream::open(filename));
+    Util::Lexer lexer { stream };
+    ConfigLoader loader { lexer };
+    return loader.parse_config();
 }
 
-bool ConfigLoader::parse_statement(World& world) {
-    std::string line;
-    if (!std::getline(m_in, line, ';'))
-        return {};
+Config::ErrorOr<Config::Config> ConfigLoader::parse_config() {
+    Config::Config config;
+    TRY(m_lexer.consume_while(isspace));
+    while (!m_lexer.is_eof()) {
+        config.statements.push_back(TRY(parse_statement()));
+        TRY(m_lexer.consume_while(isspace));
+        if (TRY(m_lexer.peek()) != ';') {
+            return Util::ParseError { "Expected ';'", m_lexer.location() };
+        }
+        TRY(m_lexer.consume()); // ;
+        TRY(m_lexer.consume_while(isspace));
+    }
+    return config;
+}
 
-    std::istringstream line_stream(line);
-
-    std::string keyword;
-    if (!(line_stream >> keyword)) {
-        std::cout << "Expected keyword ('planet', 'orbitting_planet' or 'light_source')" << std::endl;
-        return {};
+class PropertyMap {
+public:
+    void insert(std::pair<std::string, std::string>&& pair) {
+        m_properties.insert(std::forward<decltype(pair)>(pair));
     }
 
-    std::map<std::string, std::string> properties;
+    bool contains(std::string const& name) {
+        return m_properties.contains(name);
+    }
 
-    auto read_double_property = [&](std::string const& name, double default_value = 0) {
-        auto it = properties.find(name);
-        if (it == properties.end())
+    auto get(std::string const& name, std::string const& default_value = "") -> std::string {
+        auto it = m_properties.find(name);
+        if (it == m_properties.end()) {
             return default_value;
-        return std::stod(it->second);
+        }
+        return it->second;
+    }
+
+    auto get_double(std::string const& name, double default_value = 0) const -> Config::ErrorOr<double> {
+        auto it = m_properties.find(name);
+        if (it == m_properties.end())
+            return default_value;
+        try {
+            return std::stod(it->second);
+        } catch (...) {
+            return Util::ParseError { "Invalid number", {} };
+        }
     };
 
-    auto read_distance_property = [&](std::string const& name) -> Distance {
-        auto it = properties.find(name);
-        if (it == properties.end())
-            return {};
+    auto get_distance(std::string const& name) const -> Config::ErrorOr<Distance> {
+        auto it = m_properties.find(name);
+        if (it == m_properties.end())
+            return Distance {};
         auto underscore_index = it->second.find("_");
         if (underscore_index == std::string::npos)
-            return Distance { static_cast<float>(read_double_property(name)), Distance::Unit::Meter };
+            return Distance { static_cast<float>(TRY(get_double(name))), Distance::Unit::Meter };
         auto unit = it->second.substr(underscore_index + 1);
         // std::cout << name << ": " << unit << std::endl;
         if (unit == "m")
@@ -50,118 +73,197 @@ bool ConfigLoader::parse_statement(World& world) {
             return Distance(std::stod(it->second.substr(0, underscore_index)) * 1000, Distance::Unit::Kilometer);
         if (unit == "AU")
             return Distance(std::stod(it->second.substr(0, underscore_index)) * Util::Constants::AU, Distance::Unit::Au);
-        throw std::runtime_error("invalid unit");
+        return Util::ParseError { "Invalid unit", {} };
     };
 
-    // FIXME: It would be better with TRY().
-    try {
-        std::cout << keyword << std::endl;
-        if (keyword == "planet") {
-            while (true) {
-                auto property = parse_key_value_pair(line_stream);
-                if (!property.has_value())
-                    break;
-                properties.insert(property.value());
-            }
+    auto get_int(std::string const& name, int default_value) const -> Config::ErrorOr<int> {
+        auto it = m_properties.find(name);
+        if (it == m_properties.end())
+            return default_value;
+        try {
+            return std::stoi(it->second);
+        } catch (...) {
+            return Util::ParseError { name + " is an invalid number", {} };
+        }
+    };
 
-            // FIXME: This has no overflow checking etc...
-            world.add_object(std::make_unique<Object>(
-                read_double_property("mass", 1),
-                read_distance_property("radius").value(),
-                Util::Vector3d { read_double_property("posx"), read_double_property("posy"), read_double_property("posz") },
-                Util::Vector3d { read_double_property("velx"), read_double_property("vely"), read_double_property("velz") },
-                Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
-                properties["name"],
-                read_double_property("trail_length", 1000 * 3600 * 24)));
-        }
-        else if (keyword == "orbitting_planet") {
-            while (true) {
-                auto property = parse_key_value_pair(line_stream);
-                if (!property.has_value())
-                    break;
-                properties.insert(property.value());
+    auto get_byte(std::string const& name, uint8_t default_value) const -> Config::ErrorOr<uint8_t> {
+        auto it = m_properties.find(name);
+        if (it == m_properties.end())
+            return default_value;
+        try {
+            auto value = std::stoi(it->second);
+            if (value < 0 || value > 255) {
+                return Util::ParseError { name + " must be in range 0..256", {} };
             }
+            return static_cast<uint8_t>(value);
+        } catch (...) {
+            return Util::ParseError { name + " is an invalid number", {} };
+        }
+    };
 
-            auto around = properties["around"];
-            if (around.empty()) {
-                std::cout << "You need to specify 'around' for 'orbitting_planet'" << std::endl;
-                return {};
-            }
-            auto around_object = world.get_object_by_name(around);
-            if (!around_object) {
-                std::cout << "'around' object doesn't exist: " << around << std::endl;
-                return {};
-            }
-            if (read_distance_property("apoapsis").value() != 0 && read_distance_property("periapsis").value() != 0) {
-                world.add_object(around_object->create_object_relative_to_ap_pe(
-                    read_double_property("mass"),
-                    read_distance_property("radius"),
-                    read_distance_property("apoapsis"),
-                    read_distance_property("periapsis"),
-                    properties["direction"] == "right" ? false : true,
-                    Util::Angle::degrees(read_double_property("orbit_position")),
-                    Util::Angle::degrees(read_double_property("orbit_tilt")),
-                    Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
-                    properties["name"],
-                    0.0_deg));
-            }
-            else {
-                world.add_object(around_object->create_object_relative_to_maj_ecc(
-                    read_double_property("mass"),
-                    read_distance_property("radius"),
-                    read_distance_property("major_axis"),
-                    read_double_property("eccencrity"),
-                    properties["direction"] == "right" ? false : true,
-                    Util::Angle::degrees(read_double_property("orbit_position")),
-                    Util::Angle::degrees(read_double_property("orbit_tilt")),
-                    Util::Color { (uint8_t)read_double_property("colorr", 255), (uint8_t)read_double_property("colorg", 255), (uint8_t)read_double_property("colorb", 255) },
-                    properties["name"],
-                    0.0_deg));
-            }
-        }
-        else if (keyword == "light_source") {
-            std::string name;
-            if (!(line_stream >> name)) {
-                std::cout << "Expected light source name" << std::endl;
-                return false;
-            }
-            if (!world.set_light_source(name)) {
-                std::cout << "Light source planet not found" << std::endl;
-                return false;
-            }
-        }
-        else {
-            std::cout << "Invalid keyword: " << keyword << ". Must be 'planet', 'orbitting_planet' or 'light_source'." << std::endl;
-            return false;
-        }
-    } catch (std::exception& e) {
-        std::cout << "Some of the values are invalid: " << e.what() << std::endl;
-        return false;
+private:
+    std::map<std::string, std::string> m_properties;
+};
+
+Config::ErrorOr<Config::Statement> ConfigLoader::parse_statement() {
+    std::string keyword = TRY(m_lexer.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
+    if (keyword.empty()) {
+        return Util::ParseError { "Expected keyword", m_lexer.location() };
     }
-    return true;
+
+    TRY(m_lexer.consume_while(isspace));
+
+    auto read_properties = [this]() -> Config::ErrorOr<PropertyMap> {
+        PropertyMap properties;
+        while (true) {
+            properties.insert(TRY(parse_key_value_pair()));
+            TRY(m_lexer.consume_while(isspace));
+            auto peek = TRY(m_lexer.peek());
+            if (!peek) {
+                return Util::ParseError { "Expected ';' after property list", m_lexer.location() };
+            }
+            if (!isalpha(*peek)) {
+                return properties;
+            }
+        }
+    };
+
+    auto read_planet_common_properties = [&](PropertyMap& properties, Config::Planet& planet) -> Config::ErrorOr<void> {
+        planet.mass = TRY(properties.get_double("mass"));
+        planet.radius = TRY(properties.get_distance("radius"));
+        planet.color = { TRY(properties.get_byte("colorr", 255)), TRY(properties.get_byte("colorg", 255)), TRY(properties.get_byte("colorb", 255)) };
+        planet.name = Util::UString { properties.get("name") };
+        planet.trail_length = TRY(properties.get_int("trail_length", 600));
+        return {};
+    };
+
+    if (keyword == "planet") {
+        PropertyMap properties = TRY(read_properties());
+        Config::AbsolutePlanet planet;
+        TRY(read_planet_common_properties(properties, planet));
+        planet.position = { TRY(properties.get_double("posx")), TRY(properties.get_double("posy")), TRY(properties.get_double("posz")) };
+        planet.velocity = { TRY(properties.get_double("velx")), TRY(properties.get_double("vely")), TRY(properties.get_double("velz")) };
+        return planet;
+    }
+    if (keyword == "orbiting_planet") {
+        PropertyMap properties = TRY(read_properties());
+        Config::AbsolutePlanet planet;
+
+        auto read_orbiting_planet_common_properties = [&](Config::OrbitingPlanet& planet) -> Config::ErrorOr<void> {
+            TRY(read_planet_common_properties(properties, planet));
+            planet.orbit_position = Util::Angle::degrees(TRY(properties.get_double("orbit_position")));
+            planet.orbit_tilt = Util::Angle::degrees(TRY(properties.get_double("orbit_tilt")));
+            planet.around = Util::UString { properties.get("around") };
+            planet.direction = properties.get("direction") == "left" ? Config::Direction::CounterClockwise : Config::Direction::Clockwise;
+            return {};
+        };
+
+        if (properties.contains("apoapsis") && properties.contains("periapsis")) {
+            Config::ApPeDefinedOrbitingPlanet planet;
+            TRY(read_orbiting_planet_common_properties(planet));
+            planet.apoapsis = TRY(properties.get_distance("apoapsis"));
+            planet.periapsis = TRY(properties.get_distance("periapsis"));
+            return planet;
+        }
+        if (properties.contains("major_axis") && properties.contains("eccentrity")) {
+            Config::EccentrityDefinedOrbitingPlanet planet;
+            TRY(read_orbiting_planet_common_properties(planet));
+            planet.major_axis = TRY(properties.get_distance("major_axis"));
+            planet.eccentrity = TRY(properties.get_double("eccentrity"));
+            return planet;
+        }
+        return Util::ParseError { "orbiting_planet must define apoapsis+periapsis or major_axis+eccentrity", m_lexer.location() };
+    }
+    if (keyword == "light_source") {
+        auto name = TRY(m_lexer.consume_while(isalnum));
+        return Config::LightSource { Util::UString { name } };
+    }
+
+    return Util::ParseError { "Invalid statement keyword: '" + keyword + "'", m_lexer.location() };
 }
 
-std::optional<std::pair<std::string, std::string>> ConfigLoader::parse_key_value_pair(std::istream& in) {
-    std::string name;
-    in >> std::ws;
-    while (isalnum(in.peek()) || in.peek() == '_') {
-        name += in.get();
+Config::ErrorOr<std::pair<std::string, std::string>> ConfigLoader::parse_key_value_pair() {
+    TRY(m_lexer.consume_while(isspace));
+    std::string name = TRY(m_lexer.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
+
+    TRY(m_lexer.consume_while(isspace));
+    auto equal = TRY(m_lexer.consume());
+    if (equal != '=') {
+        return Util::ParseError { "Expected '='", m_lexer.location() };
     }
 
-    in >> std::ws;
+    TRY(m_lexer.consume_while(isspace));
+    auto value = TRY(m_lexer.consume_while([](uint8_t c) { return c != ';' && !isspace(c); }));
 
-    if (in.get() != '=') {
-        std::cout << "Expected '='" << std::endl;
-        return {};
+    // fmt::print("'{}'='{}'\n", name, value);
+    return std::pair { name, value };
+}
+
+Config::ErrorOr<void> Config::Config::apply(World& world) {
+    // TODO: Use UString in Object
+    for (auto const& stmt : statements) {
+        TRY(std::visit(
+            Util::Overloaded {
+                [&world](AbsolutePlanet const& planet) -> ErrorOr<void> {
+                    fmt::print("{}\n", planet.name.encode());
+                    world.add_object(std::make_unique<Object>(
+                        planet.mass,
+                        planet.radius.value(),
+                        planet.position,
+                        planet.velocity,
+                        planet.color,
+                        planet.name.encode(),
+                        planet.trail_length));
+                    return {};
+                },
+                [&world](ApPeDefinedOrbitingPlanet const& planet) -> ErrorOr<void> {
+                    auto* around = world.get_object_by_name(planet.around.encode());
+                    if (!around) {
+                        return Util::ParseError { "Invalid planet for orbiting around: '" + planet.around.encode() + "'" };
+                    }
+                    fmt::print("{}\n", planet.name.encode());
+                    world.add_object(around->create_object_relative_to_ap_pe(
+                        planet.mass,
+                        planet.radius,
+                        planet.apoapsis,
+                        planet.periapsis,
+                        planet.direction == Direction::Clockwise,
+                        planet.orbit_position,
+                        planet.orbit_tilt,
+                        planet.color,
+                        planet.name.encode(),
+                        0.0_deg));
+                    return {};
+                },
+                [&world](EccentrityDefinedOrbitingPlanet const& planet) -> ErrorOr<void> {
+                    auto* around = world.get_object_by_name(planet.around.encode());
+                    if (!around) {
+                        return Util::ParseError { "Invalid planet for orbiting around: '" + planet.around.encode() + "'" };
+                    }
+                    world.add_object(around->create_object_relative_to_maj_ecc(
+                        planet.mass,
+                        planet.radius,
+                        planet.major_axis,
+                        planet.eccentrity,
+                        planet.direction == Direction::Clockwise,
+                        planet.orbit_position,
+                        planet.orbit_tilt,
+                        planet.color,
+                        planet.name.encode(),
+                        0.0_deg));
+                    return {};
+                },
+                [&world](LightSource const& source) -> ErrorOr<void> {
+                    auto* planet = world.get_object_by_name(source.planet_name.encode());
+                    if (!planet) {
+                        return Util::ParseError { "Invalid planet for light source: '" + source.planet_name.encode() + "'" };
+                    }
+                    world.set_light_source(planet);
+                    return {};
+                },
+            },
+            stmt));
     }
-
-    in >> std::ws;
-
-    std::string value;
-    if (!(in >> value)) {
-        std::cout << "Expected value" << std::endl;
-        return {};
-    }
-    // std::cout << name << "=" << value << std::endl;
-    return { { name, value } };
+    return {};
 }
