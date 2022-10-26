@@ -22,10 +22,10 @@ void FocusedObjectGUI::on_init() {
     auto tab_widget = add_widget<GUI::TabWidget>();
 
     tab_widget->on_tab_switch = [&](unsigned index) {
-        if (index == 1)
-            m_world.m_simulation_view->push_pause();
-        else
+        if (m_tab == 1 && index != 1)
             m_world.m_simulation_view->pop_pause();
+        else if (index == 1)
+            m_world.m_simulation_view->push_pause();
         m_tab = index;
     };
 
