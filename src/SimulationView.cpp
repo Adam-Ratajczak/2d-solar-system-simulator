@@ -420,7 +420,7 @@ bool SimulationView::python_set_offset(PySSA::Object const& object) {
 }
 
 PySSA::Object SimulationView::python_get_fov() const {
-    return PySSA::Object::create(m_fov.rad());
+    return PySSA::Object::create(m_fov.deg());
 }
 
 bool SimulationView::python_set_fov(PySSA::Object const& object) {
