@@ -2,21 +2,21 @@
 
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
+#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
-#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/TextAlign.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
-#include <EssaUtil/DelayedInit.hpp>
-#include <EssaUtil/Math/Ray.hpp>
-#include <EssaUtil/UnitDisplay.hpp>
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Projection.hpp>
 #include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/Math/Ray.hpp>
+#include <EssaUtil/UnitDisplay.hpp>
+#include <EssaUtil/Vector.hpp>
 
 #include <Essa/LLGL/Window/Mouse.hpp>
 #include <cmath>
@@ -397,6 +397,7 @@ void SimulationView::setup_python_bindings(TypeSetup type_setup) {
     type_setup.add_attribute<&SimulationView::python_get_fov, &SimulationView::python_set_fov>("fov", "Field of view");
     type_setup.add_attribute<&SimulationView::python_get_yaw, &SimulationView::python_set_yaw>("yaw");
     type_setup.add_attribute<&SimulationView::python_get_pitch, &SimulationView::python_set_pitch>("pitch");
+    type_setup.add_attribute<&SimulationView::python_get_world, nullptr>("world");
     type_setup.add_attribute<&SimulationView::python_get_zoom, &SimulationView::python_set_zoom>("zoom");
     type_setup.add_attribute<&SimulationView::python_get_focused_object, &SimulationView::python_set_focused_object>("focused_object");
 }
