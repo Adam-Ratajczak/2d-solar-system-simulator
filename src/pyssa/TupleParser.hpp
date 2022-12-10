@@ -2,11 +2,10 @@
 
 #ifdef ENABLE_PYSSA
 
-#include "Object.hpp"
-#include "WrappedObject.hpp"
-#include <string>
-#include <type_traits>
-#include <utility>
+#    include "Object.hpp"
+#    include "WrappedObject.hpp"
+#    include <type_traits>
+#    include <utility>
 
 namespace PySSA {
 
@@ -25,8 +24,8 @@ requires(!std::is_reference_v<T>) struct Arg {
     Arg(T arg_, char const* keyword_ = "")
         : arg(std::forward<T>(arg_))
         , keyword(keyword_) {
-            // std::cout << keyword_ << " " << typeid(arg).name() << "\n";
-        }
+        // std::cout << keyword_ << " " << typeid(arg).name() << "\n";
+    }
 };
 
 };
@@ -81,12 +80,12 @@ requires(std::is_base_of_v<WrappedObject<UnderlyingT>, UnderlyingT>) struct Conv
 };
 
 template<>
-struct ConvertToPy<std::string*> {
+struct ConvertToPy<Util::UString*> {
     const char* data;
     static constexpr size_t PyArgCount = 1;
 
-    void write_arg(std::string* ut) const {
-        *ut = data;
+    void write_arg(Util::UString* ut) const {
+        *ut = Util::UString { data };
     }
 
     static consteval bool check_format_string(size_t& index, char const* format_string) {
@@ -112,7 +111,7 @@ struct GetArg<Arg::CheckedType<UT>, 1> {
 };
 
 template<>
-struct GetArg<std::string*, 0> {
+struct GetArg<Util::UString*, 0> {
     static constexpr auto get(auto& ctp) {
         return &ctp.data;
     }

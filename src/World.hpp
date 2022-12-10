@@ -30,7 +30,7 @@ public:
     void draw(Gfx::Painter& window, SimulationView const& view) const;
     void add_object(std::unique_ptr<Object>);
     void reset(std::optional<std::string> const& filename);
-    Object* get_object_by_name(std::string const& name);
+    Object* get_object_by_name(Util::UString const& name);
 
     Util::SimulationClock::time_point date() const { return m_date; }
 
@@ -57,9 +57,9 @@ public:
     std::unique_ptr<Object>& last_object() { return m_object_list.back(); }
 
     void set_forces();
-    bool exist_object_with_name(const std::string name) const;
+    bool exist_object_with_name(Util::UString const& name) const;
 
-    bool set_light_source(std::string const& name) {
+    bool set_light_source(Util::UString const& name) {
         m_light_source = get_object_by_name(name);
         std::cout << name << "??? " << m_light_source << std::endl;
         return m_light_source != nullptr;

@@ -71,7 +71,7 @@ public:
     }
 
     static Object none();
-    static Object create(std::string const&);
+    static Object create(Util::UString const&);
     static Object create(int);
     static Object create(double);
 
@@ -116,13 +116,13 @@ public:
     }
 
     Object get_attribute(Object const& name);
-    Object get_attribute(std::string const& name) { return get_attribute(Object::create(name)); }
+    Object get_attribute(Util::UString const& name) { return get_attribute(Object::create(name)); }
     void set_attribute(Object const& name, Object const& value);
-    void set_attribute(std::string const& name, Object const& value) { set_attribute(Object::create(name), value); }
+    void set_attribute(Util::UString const& name, Object const& value) { set_attribute(Object::create(name), value); }
 
     Object call(Object const& args, Object const& kwargs = {}) const;
 
-    std::optional<std::string> as_string() const;
+    std::optional<Util::UString> as_string() const;
     std::optional<int> as_int() const;
     std::optional<double> as_double() const;
     std::optional<std::vector<Object>> as_list() const;
@@ -130,8 +130,8 @@ public:
     std::optional<Util::Vector3d> as_vector() const;
     std::optional<Util::Color> as_color() const;
 
-    std::string str() const;
-    std::string repr() const;
+    Util::UString str() const;
+    Util::UString repr() const;
 
 private:
     PyObject* m_object; // Initialized in Object()

@@ -6,9 +6,9 @@
 #include "glwrapper/Sphere.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
+#include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
-#include <Essa/GUI/Application.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
@@ -25,7 +25,7 @@
 
 static Util::DelayedInit<Sphere> s_sphere;
 
-Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, std::string name, unsigned period)
+Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, Util::UString name, unsigned period)
     : m_trail(std::max(2U, std::max(period * 2, (unsigned)500)), color)
     , m_history(1000, { pos, vel })
     , m_gravity_factor(mass * Util::Constants::Gravity)
@@ -33,7 +33,7 @@ Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d ve
     , m_pos(pos)
     , m_vel(vel)
     , m_color(color)
-    , m_name(name)
+    , m_name(std::move(name))
     , m_orbit_len(period) {
     m_trail.push_back(m_pos);
 }
@@ -264,7 +264,7 @@ void Object::draw_gui(Gfx::Painter& painter, SimulationView const& view) {
     draw_label(painter, view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
@@ -300,13 +300,12 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
 
     return result;
 }
-std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
 
-void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {
+void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
     m_world->add_object(create_object_relative_to_ap_pe(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
 
     double GM = m_gravity_factor;
     double a = semi_major.value();
@@ -426,7 +425,7 @@ Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const
             &period))
         return {};
 
-    return new Object(mass, radius, pos, vel, color, name, period);
+    return new Object(mass, radius, pos, vel, color, Util::UString { name }, period);
 }
 
 PySSA::Object Object::python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs) {

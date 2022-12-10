@@ -148,7 +148,7 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
         m_add_object_button = container.add_widget<GUI::ImageButton>();
         m_add_object_button->set_image(&resource_manager().require_texture("addObjectButton.png"));
         m_add_object_button->on_click = [this]() {
-            if (m_simulation_view.world().exist_object_with_name(m_name_textbox->content().encode())) {
+            if (m_simulation_view.world().exist_object_with_name(m_name_textbox->content())) {
                 GUI::message_box(host_window(), "Object with name: \"" + m_name_textbox->content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
                 return;
             }
@@ -420,7 +420,7 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
         pos.z() = m_y_position_control->value();
 
         Util::Color color = m_color_control->color();
-        auto name = m_name_textbox->content().encode();
+        auto name = m_name_textbox->content();
         return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000);
     } catch (...) {
         return nullptr;
@@ -450,5 +450,5 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         tilt = Util::Angle::degrees(m_orbit_tilt_control->value());
     }
 
-    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->content().encode(), 0.0_deg);
+    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->content(), 0.0_deg);
 }

@@ -77,7 +77,7 @@ Object Environment::eval_string(std::string const& str) {
     return Object::take(PyEval_EvalCode(code_object.leak_object(), m_globals, m_locals));
 }
 
-std::vector<std::string> Environment::generate_exception_message() const {
+std::vector<Util::UString> Environment::generate_exception_message() const {
     // https://stackoverflow.com/questions/1418015/how-to-get-python-exception-text
     PyObject* type;
     PyObject* value;
@@ -101,7 +101,7 @@ std::vector<std::string> Environment::generate_exception_message() const {
             return { "format_exception_only :(" };
         formatted_list = format_exception.call(Object::tuple(Object::share(type), Object::share(value), Object::share(traceback)));
     }
-    std::vector<std::string> result;
+    std::vector<Util::UString> result;
     auto list = formatted_list.as_list();
     for (auto& element : list.value()) {
         result.push_back(element.str());

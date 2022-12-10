@@ -206,7 +206,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->set_alignment(GUI::Align::Center);
     modify_button->on_click = [&]() {
-        if (m_world.exist_object_with_name(m_name_textbox->content().encode()) && m_focused->name() != m_name_textbox->content().encode()) {
+        if (m_world.exist_object_with_name(m_name_textbox->content()) && m_focused->name() != m_name_textbox->content()) {
             GUI::message_box(host_window(), "Object with name: \"" + m_name_textbox->content() + "\" already exist!", "Error!", GUI::MessageBox::Buttons::Ok);
             return;
         }
@@ -289,7 +289,7 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
     pos.z() = m_y_position_control->value();
 
     Util::Color color = m_color_control->color();
-    std::string name = m_name_textbox->content().encode();
+    Util::UString name = m_name_textbox->content();
 
     // FIXME: Trails should be calculated in realtime somehow
     return std::make_unique<Object>(mass, radius, pos, vel, color, name, 1000000);

@@ -19,7 +19,7 @@ public:
     bool run_script(std::string const& path);
     Object eval_string(std::string const&);
 
-    std::vector<std::string> generate_exception_message() const;
+    std::vector<Util::UString> generate_exception_message() const;
 
 private:
     World& m_world;

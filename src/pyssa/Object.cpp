@@ -9,9 +9,9 @@ Object Object::none() {
     return o;
 }
 
-Object Object::create(std::string const& str) {
+Object Object::create(Util::UString const& str) {
     Object o;
-    o.m_object = PyUnicode_FromString(str.c_str());
+    o.m_object = PyUnicode_FromString(str.encode().c_str());
     return o;
 }
 
@@ -55,11 +55,11 @@ Object Object::call(Object const& args, Object const& kwargs) const {
     return Object::take(PyObject_Call(m_object, args.share_object(), kwargs.share_object()));
 }
 
-std::optional<std::string> Object::as_string() const {
+std::optional<Util::UString> Object::as_string() const {
     Py_ssize_t size;
     auto data = PyUnicode_AsUTF8AndSize(m_object, &size);
     assert(size >= 0);
-    return std::string { data, static_cast<size_t>(size) };
+    return Util::UString { { data, static_cast<size_t>(size) } };
 }
 
 std::optional<int> Object::as_int() const {
@@ -168,18 +168,18 @@ std::optional<Util::Color> Object::as_color() const {
     return Util::Color { static_cast<uint8_t>(r.value()), static_cast<uint8_t>(g.value()), static_cast<uint8_t>(b.value()) };
 }
 
-std::string Object::str() const {
+Util::UString Object::str() const {
     Py_ssize_t size;
     auto data = PyUnicode_AsUTF8AndSize(PyObject_Str(m_object), &size);
     assert(size >= 0);
-    return std::string { data, static_cast<size_t>(size) };
+    return Util::UString { { data, static_cast<size_t>(size) } };
 }
 
-std::string Object::repr() const {
+Util::UString Object::repr() const {
     Py_ssize_t size;
     auto data = PyUnicode_AsUTF8AndSize(PyObject_Repr(m_object), &size);
     assert(size >= 0);
-    return std::string { data, static_cast<size_t>(size) };
+    return Util::UString { { data, static_cast<size_t>(size) } };
 }
 
 }

@@ -18,10 +18,9 @@
 #include <string>
 #include <vector>
 
-// TODO: Port to Util::UString where appropriate
 class Object : public PySSA::WrappedObject<Object> {
 public:
-    Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, std::string string, unsigned period);
+    Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, Util::UString name, unsigned period);
 
 #ifdef ENABLE_PYSSA
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -34,7 +33,7 @@ public:
 
     Util::Vector3d render_position() const { return m_pos / Util::Constants::AU; }
 
-    std::string name() const { return m_name; }
+    Util::UString name() const { return m_name; }
 
     // Called before each force calculation pass (currently Leapfrog step)
     void clear_forces();
@@ -58,9 +57,9 @@ public:
     void draw_closest_approaches_gui(Gfx::Painter& window, SimulationView const&);
 
     void calculate_propieties();
-    std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
-    std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation);
-    void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, std::string name, Util::Angle rotation = 0.0_rad);
+    std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
+    std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
+    void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation = 0.0_rad);
 
     std::unique_ptr<Object> clone_for_forward_simulation() const;
 
@@ -173,7 +172,7 @@ private:
     double m_radius {};
 
     Util::SimulationClock::time_point m_creation_date, m_deletion_date;
-    std::string m_name;
+    Util::UString m_name;
     Util::Color m_color;
 
     double m_max_attraction = 0;

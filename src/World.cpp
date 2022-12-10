@@ -138,7 +138,7 @@ void World::update(int steps) {
     }
 }
 
-bool World::exist_object_with_name(const std::string name) const {
+bool World::exist_object_with_name(Util::UString const& name) const {
     for (const auto& obj : m_object_list) {
         if (obj->name() == name && !obj->deleted())
             return true;
@@ -160,7 +160,7 @@ void World::draw(Gfx::Painter& painter, SimulationView const& view) const {
             p->draw_gui(painter, view);
 }
 
-Object* World::get_object_by_name(std::string const& name) {
+Object* World::get_object_by_name(Util::UString const& name) {
     for (auto& obj : m_object_list) {
         if (obj->name() == name)
             return obj.get();
@@ -260,7 +260,7 @@ PySSA::Object World::python_add_object(PySSA::Object const& args, PySSA::Object 
 }
 
 PySSA::Object World::python_get_object_by_name(PySSA::Object const& args, PySSA::Object const& kwargs) {
-    std::string name = "test";
+    Util::UString name = "test";
     if (!PySSA::parse_arguments(args, kwargs, "s", PySSA::Arg::Arg { &name, "name" }))
         return {};
 

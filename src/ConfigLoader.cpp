@@ -214,12 +214,12 @@ Config::ErrorOr<void> Config::Config::apply(World& world) {
                         planet.position,
                         planet.velocity,
                         planet.color,
-                        planet.name.encode(),
+                        planet.name,
                         planet.trail_length));
                     return {};
                 },
                 [&world](ApPeDefinedOrbitingPlanet const& planet) -> ErrorOr<void> {
-                    auto* around = world.get_object_by_name(planet.around.encode());
+                    auto* around = world.get_object_by_name(planet.around);
                     if (!around) {
                         return Util::ParseError { "Invalid planet for orbiting around: '" + planet.around.encode() + "'" };
                     }
@@ -233,12 +233,12 @@ Config::ErrorOr<void> Config::Config::apply(World& world) {
                         planet.orbit_position,
                         planet.orbit_tilt,
                         planet.color,
-                        planet.name.encode(),
+                        planet.name,
                         0.0_deg));
                     return {};
                 },
                 [&world](EccentrityDefinedOrbitingPlanet const& planet) -> ErrorOr<void> {
-                    auto* around = world.get_object_by_name(planet.around.encode());
+                    auto* around = world.get_object_by_name(planet.around);
                     if (!around) {
                         return Util::ParseError { "Invalid planet for orbiting around: '" + planet.around.encode() + "'" };
                     }
@@ -251,12 +251,12 @@ Config::ErrorOr<void> Config::Config::apply(World& world) {
                         planet.orbit_position,
                         planet.orbit_tilt,
                         planet.color,
-                        planet.name.encode(),
+                        planet.name,
                         0.0_deg));
                     return {};
                 },
                 [&world](LightSource const& source) -> ErrorOr<void> {
-                    auto* planet = world.get_object_by_name(source.planet_name.encode());
+                    auto* planet = world.get_object_by_name(source.planet_name);
                     if (!planet) {
                         return Util::ParseError { "Invalid planet for light source: '" + source.planet_name.encode() + "'" };
                     }
