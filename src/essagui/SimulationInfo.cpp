@@ -1,8 +1,8 @@
 #include "SimulationInfo.hpp"
 #include "../World.hpp"
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/Textfield.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 #include <EssaUtil/Units.hpp>
 #include <string>
 

@@ -2,23 +2,23 @@
 
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
-#include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gfx/Window.hpp>
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/NotifyUser.hpp>
-#include <EssaGUI/gui/TextAlign.hpp>
-#include <EssaGUI/gui/WidgetTreeRoot.hpp>
+#include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/NotifyUser.hpp>
+#include <Essa/GUI/TextAlign.hpp>
+#include <Essa/GUI/WidgetTreeRoot.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/Math/Ray.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <LLGL/Core/Transform.hpp>
-#include <LLGL/OpenGL/PrimitiveType.hpp>
-#include <LLGL/OpenGL/Projection.hpp>
-#include <LLGL/OpenGL/Shader.hpp>
-#include <LLGL/OpenGL/Vertex.hpp>
+#include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
+#include <Essa/LLGL/OpenGL/Projection.hpp>
+#include <Essa/LLGL/OpenGL/Shader.hpp>
+#include <Essa/LLGL/OpenGL/Vertex.hpp>
 
-#include <LLGL/Window/Mouse.hpp>
+#include <Essa/LLGL/Window/Mouse.hpp>
 #include <cmath>
 #include <optional>
 #include <sstream>

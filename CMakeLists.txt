@@ -9,7 +9,7 @@ option(ENABLE_PYSSA "Enable PySSA" 1)
 if(ENABLE_PYSSA)
     find_package(PythonLibs 3.5 REQUIRED)
 endif()
-find_package(EssaGUI REQUIRED)
+find_package(Essa REQUIRED)
 
 if(ENABLE_PYSSA)
     set(PYSSA_SOURCES 
@@ -59,7 +59,7 @@ function(setup_target targetname)
 endfunction()
 setup_target(essa)
 
-target_link_libraries(essa EssaGUI::EssaGUI EssaGUI::EssaEngine-3D)
+target_link_libraries(essa Essa::GUI Essa::Engine-3D)
 if(ENABLE_PYSSA)
     message("Enabling PySSA")
     target_link_libraries(essa ${PYTHON_LIBRARIES})

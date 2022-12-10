@@ -2,11 +2,11 @@
 
 #ifdef ENABLE_PYSSA
 
-#    include <EssaGUI/gui/ArrowButton.hpp>
-#    include <EssaGUI/gui/Console.hpp>
-#    include <EssaGUI/gui/Container.hpp>
-#    include <EssaGUI/gui/Textbox.hpp>
-#    include <EssaGUI/gui/Widget.hpp>
+#    include <Essa/GUI/Widgets/ArrowButton.hpp>
+#    include <Essa/GUI/Widgets/Console.hpp>
+#    include <Essa/GUI/Widgets/Container.hpp>
+#    include <Essa/GUI/Widgets/Textbox.hpp>
+#    include <Essa/GUI/Widgets/Widget.hpp>
 
 #    include <deque>
 #    include <vector>

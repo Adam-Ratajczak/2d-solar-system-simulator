@@ -6,7 +6,7 @@
 #include "essagui/EssaSplash.hpp"
 #include "pyssa/Environment.hpp"
 
-#include <EssaGUI/gui/Application.hpp>
+#include <Essa/GUI/Application.hpp>
 #include <iostream>
 
 int main() {
@@ -30,7 +30,7 @@ int main() {
 
     // Display splash
     auto& splash = host_window.open_overlay<EssaSplash>(gui.settings_gui());
-    splash.run();
+    splash.show_modal();
 
     application.run();
     return EXIT_SUCCESS;

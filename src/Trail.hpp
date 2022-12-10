@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SimulationView.hpp"
-#include <EssaEngine/3D/Shaders/Basic.hpp>
+#include <Essa/Engine/3D/Shaders/Basic.hpp>
 #include <EssaUtil/Vector.hpp>
 #include <list>
 

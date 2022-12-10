@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EssaSettings.hpp"
-#include <EssaGUI/gui/ToolWindow.hpp>
+#include <Essa/GUI/Overlays/ToolWindow.hpp>
 
 class EssaSplash : public GUI::ToolWindow {
 public:

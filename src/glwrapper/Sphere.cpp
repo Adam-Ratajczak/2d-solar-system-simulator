@@ -5,8 +5,8 @@
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 
-#include <LLGL/Core/Transform.hpp>
-#include <LLGL/OpenGL/Shader.hpp>
+#include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstddef>

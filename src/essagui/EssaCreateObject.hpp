@@ -3,10 +3,10 @@
 #include "../SimulationView.hpp"
 #include "../World.hpp"
 
-#include <EssaGUI/gui/ColorPicker.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/ImageButton.hpp>
-#include <EssaGUI/gui/ValueSlider.hpp>
+#include <Essa/GUI/Widgets/ColorPicker.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/ImageButton.hpp>
+#include <Essa/GUI/Widgets/ValueSlider.hpp>
 #include <memory>
 
 class EssaCreateObject : public GUI::Container {

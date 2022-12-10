@@ -1,6 +1,6 @@
 #pragma once
 #include "../SimulationView.hpp"
-#include <EssaGUI/gui/Container.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
 
 class EssaSettings : public GUI::Container {
 public:

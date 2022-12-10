@@ -1,7 +1,7 @@
 #pragma once
 
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/Textfield.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 
 #include "../SimulationView.hpp"
 

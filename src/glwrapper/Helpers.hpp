@@ -1,8 +1,8 @@
 #pragma once
 
-#include <EssaEngine/3D/Shaders/Basic.hpp>
-#include <LLGL/Core/Transform.hpp>
-#include <LLGL/OpenGL/Renderer.hpp>
+#include <Essa/Engine/3D/Shaders/Basic.hpp>
+#include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/Renderer.hpp>
 
 namespace GL {
 

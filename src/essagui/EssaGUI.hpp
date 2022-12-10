@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EssaGUI/gui/MessageBox.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
 
 #include "../Object.hpp"
 #include "../SimulationView.hpp"
@@ -8,18 +8,18 @@
 #include "EssaCreateObject.hpp"
 #include "EssaSettings.hpp"
 #include "FocusedObjectGUI.hpp"
-#include <EssaGUI/gui/Button.hpp>
-#include <EssaGUI/gui/ColorPicker.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/SettingsMenu.hpp>
-#include <EssaGUI/gui/Slider.hpp>
-#include <EssaGUI/gui/StateTextButton.hpp>
-#include <EssaGUI/gui/TextButton.hpp>
-#include <EssaGUI/gui/Textbox.hpp>
-#include <EssaGUI/gui/Textfield.hpp>
-#include <EssaGUI/gui/ToolWindow.hpp>
-#include <EssaGUI/gui/ValueSlider.hpp>
-#include <EssaGUI/gui/Widget.hpp>
+#include <Essa/GUI/Widgets/Button.hpp>
+#include <Essa/GUI/Widgets/ColorPicker.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/SettingsMenu.hpp>
+#include <Essa/GUI/Widgets/Slider.hpp>
+#include <Essa/GUI/Widgets/StateTextButton.hpp>
+#include <Essa/GUI/Widgets/TextButton.hpp>
+#include <Essa/GUI/Widgets/Textbox.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
+#include <Essa/GUI/Overlays/ToolWindow.hpp>
+#include <Essa/GUI/Widgets/ValueSlider.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
 
 #include <memory>
 #include <random>

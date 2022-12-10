@@ -1,8 +1,8 @@
 #include "PythonREPL.hpp"
 
 #include "../pyssa/Environment.hpp"
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/ArrowButton.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/ArrowButton.hpp>
 
 void PythonREPL::on_init() {
     auto& layout = set_layout<GUI::VerticalBoxLayout>();

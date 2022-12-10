@@ -2,9 +2,9 @@
 
 #include "pyssa/WrappedObject.hpp"
 
-#include <EssaGUI/gui/NotifyUser.hpp>
-#include <EssaGUI/gui/Widget.hpp>
-#include <EssaGUI/gui/WorldView.hpp>
+#include <Essa/GUI/NotifyUser.hpp>
+#include <Essa/GUI/Widgets/Widget.hpp>
+#include <Essa/GUI/Widgets/WorldView.hpp>
 #include <EssaUtil/Angle.hpp>
 #include <EssaUtil/Constants.hpp>
 #include <EssaUtil/Matrix.hpp>

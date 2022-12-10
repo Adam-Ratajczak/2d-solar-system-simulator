@@ -6,14 +6,14 @@
 #include "glwrapper/Sphere.hpp"
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
-#include <EssaGUI/gfx/Text.hpp>
-#include <EssaGUI/gfx/Window.hpp>
-#include <EssaGUI/gui/Application.hpp>
+#include <Essa/GUI/Graphics/Text.hpp>
+#include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/GUI/Application.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
 
-#include <LLGL/OpenGL/Vertex.hpp>
+#include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <cmath>
 #include <cstring>
 #include <iomanip>

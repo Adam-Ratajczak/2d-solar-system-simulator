@@ -1,8 +1,8 @@
 #include "FocusedObjectGUI.hpp"
 
 #include "../Object.hpp"
-#include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaGUI/gui/TabWidget.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/Widgets/TabWidget.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <cmath>
 #include <iomanip>

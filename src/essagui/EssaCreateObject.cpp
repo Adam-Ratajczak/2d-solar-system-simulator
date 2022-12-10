@@ -2,8 +2,8 @@
 
 #include "EssaGUI.hpp"
 
-#include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaGUI/gui/ValueSlider.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/Widgets/ValueSlider.hpp>
 #include <EssaUtil/Length.hpp>
 #include <cmath>
 #include <iostream>

@@ -5,11 +5,11 @@
 #include "PythonREPL.hpp"
 #include "SimulationInfo.hpp"
 
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/FilePrompt.hpp>
-#include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaGUI/gui/Overlay.hpp>
-#include <EssaGUI/gui/ToolWindow.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlay.hpp>
+#include <Essa/GUI/Overlays/FilePrompt.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/Overlays/ToolWindow.hpp>
 #include <cmath>
 #include <filesystem>
 #include <iostream>
@@ -92,7 +92,7 @@ void EssaGUI::on_init() {
         load_world.on_toggle = [this](bool) {
             auto& prompt = host_window().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
             prompt.add_desired_extension(".essa");
-            prompt.run();
+            prompt.show_modal();
 
             if (prompt.result().has_value())
                 m_settings_gui->load_world(prompt.result().value().encode());

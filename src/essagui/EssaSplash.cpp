@@ -3,14 +3,14 @@
 #include "EssaGUI.hpp"
 #include "EssaSettings.hpp"
 
-#include <EssaGUI/gui/Application.hpp>
-#include <EssaGUI/gui/Container.hpp>
-#include <EssaGUI/gui/FilePrompt.hpp>
-#include <EssaGUI/gui/ImageWidget.hpp>
-#include <EssaGUI/gui/MessageBox.hpp>
-#include <EssaGUI/gui/TextButton.hpp>
-#include <EssaGUI/gui/Textfield.hpp>
-#include <EssaGUI/gui/ToolWindow.hpp>
+#include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Overlays/FilePrompt.hpp>
+#include <Essa/GUI/Overlays/MessageBox.hpp>
+#include <Essa/GUI/Overlays/ToolWindow.hpp>
+#include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/ImageWidget.hpp>
+#include <Essa/GUI/Widgets/TextButton.hpp>
+#include <Essa/GUI/Widgets/Textfield.hpp>
 
 #include <algorithm>
 
@@ -27,7 +27,7 @@ EssaSplash::EssaSplash(GUI::HostWindow& window, EssaSettings& essa_settings)
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_file")->on_click = [this]() {
         auto& prompt = host_window().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
         prompt.add_desired_extension(".essa");
-        prompt.run();
+        prompt.show_modal();
 
         if (prompt.result().has_value()) {
             m_essa_settings.load_world(prompt.result().value().encode());

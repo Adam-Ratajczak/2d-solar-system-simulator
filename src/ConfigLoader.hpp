@@ -67,12 +67,12 @@ public:
     static Config::ErrorOr<Config::Config> load(std::string const& filename, World& world);
 
 private:
-    explicit ConfigLoader(Util::Lexer& lexer)
-        : m_lexer(lexer) { }
+    explicit ConfigLoader(Util::TextReader& reader)
+        : m_reader(reader) { }
 
     Config::ErrorOr<Config::Config> parse_config();
     Config::ErrorOr<Config::Statement> parse_statement();
-    Config::ErrorOr<std::pair<std::string, std::string>> parse_key_value_pair();
+    Config::ErrorOr<std::pair<Util::UString, Util::UString>> parse_key_value_pair();
 
-    Util::Lexer& m_lexer;
+    Util::TextReader& m_reader;
 };

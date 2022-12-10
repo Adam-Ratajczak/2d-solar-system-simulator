@@ -9,37 +9,37 @@
 
 Config::ErrorOr<Config::Config> ConfigLoader::load(std::string const& filename, World& world) {
     Util::ReadableFileStream stream = TRY(Util::ReadableFileStream::open(filename));
-    Util::Lexer lexer { stream };
-    ConfigLoader loader { lexer };
+    Util::TextReader reader { stream };
+    ConfigLoader loader { reader };
     return loader.parse_config();
 }
 
 Config::ErrorOr<Config::Config> ConfigLoader::parse_config() {
     Config::Config config;
-    TRY(m_lexer.consume_while(isspace));
-    while (!m_lexer.is_eof()) {
+    TRY(m_reader.consume_while(isspace));
+    while (!m_reader.is_eof()) {
         config.statements.push_back(TRY(parse_statement()));
-        TRY(m_lexer.consume_while(isspace));
-        if (TRY(m_lexer.peek()) != ';') {
-            return Util::ParseError { "Expected ';'", m_lexer.location() };
+        TRY(m_reader.consume_while(isspace));
+        if (TRY(m_reader.peek()) != ';') {
+            return Util::ParseError { "Expected ';'", m_reader.location() };
         }
-        TRY(m_lexer.consume()); // ;
-        TRY(m_lexer.consume_while(isspace));
+        TRY(m_reader.consume()); // ;
+        TRY(m_reader.consume_while(isspace));
     }
     return config;
 }
 
 class PropertyMap {
 public:
-    void insert(std::pair<std::string, std::string>&& pair) {
+    void insert(std::pair<Util::UString, Util::UString>&& pair) {
         m_properties.insert(std::forward<decltype(pair)>(pair));
     }
 
-    bool contains(std::string const& name) {
+    bool contains(Util::UString const& name) {
         return m_properties.contains(name);
     }
 
-    auto get(std::string const& name, std::string const& default_value = "") -> std::string {
+    auto get(Util::UString const& name, Util::UString const& default_value = "") -> Util::UString {
         auto it = m_properties.find(name);
         if (it == m_properties.end()) {
             return default_value;
@@ -47,81 +47,82 @@ public:
         return it->second;
     }
 
-    auto get_double(std::string const& name, double default_value = 0) const -> Config::ErrorOr<double> {
+    auto get_double(Util::UString const& name, double default_value = 0) const -> Config::ErrorOr<double> {
         auto it = m_properties.find(name);
         if (it == m_properties.end())
             return default_value;
         try {
-            return std::stod(it->second);
+            return it->second.parse<double>();
         } catch (...) {
             return Util::ParseError { "Invalid number", {} };
         }
     };
 
-    auto get_distance(std::string const& name) const -> Config::ErrorOr<Distance> {
+    auto get_distance(Util::UString const& name) const -> Config::ErrorOr<Distance> {
         auto it = m_properties.find(name);
         if (it == m_properties.end())
             return Distance {};
         auto underscore_index = it->second.find("_");
-        if (underscore_index == std::string::npos)
+        if (!underscore_index)
             return Distance { static_cast<float>(TRY(get_double(name))), Distance::Unit::Meter };
-        auto unit = it->second.substr(underscore_index + 1);
+        auto unit = it->second.substring(underscore_index.value() + 1);
         // std::cout << name << ": " << unit << std::endl;
+        auto value = TRY(it->second.substring(0, underscore_index.value()).parse<float>());
         if (unit == "m")
-            return Distance(std::stod(it->second.substr(0, underscore_index)), Distance::Unit::Meter);
+            return Distance(value, Distance::Unit::Meter);
         if (unit == "km")
-            return Distance(std::stod(it->second.substr(0, underscore_index)) * 1000, Distance::Unit::Kilometer);
+            return Distance(value * 1000, Distance::Unit::Kilometer);
         if (unit == "AU")
-            return Distance(std::stod(it->second.substr(0, underscore_index)) * Util::Constants::AU, Distance::Unit::Au);
+            return Distance(value * Util::Constants::AU, Distance::Unit::Au);
         return Util::ParseError { "Invalid unit", {} };
     };
 
-    auto get_int(std::string const& name, int default_value) const -> Config::ErrorOr<int> {
+    auto get_int(Util::UString const& name, int default_value) const -> Config::ErrorOr<int> {
         auto it = m_properties.find(name);
         if (it == m_properties.end())
             return default_value;
         try {
-            return std::stoi(it->second);
+            return it->second.parse<int>();
         } catch (...) {
-            return Util::ParseError { name + " is an invalid number", {} };
+            return Util::ParseError { name.encode() + " is an invalid number", {} };
         }
     };
 
-    auto get_byte(std::string const& name, uint8_t default_value) const -> Config::ErrorOr<uint8_t> {
+    auto get_byte(Util::UString const& name, uint8_t default_value) const -> Config::ErrorOr<uint8_t> {
         auto it = m_properties.find(name);
         if (it == m_properties.end())
             return default_value;
         try {
-            auto value = std::stoi(it->second);
+            auto value = std::stoi(it->second.encode());
             if (value < 0 || value > 255) {
-                return Util::ParseError { name + " must be in range 0..256", {} };
+                return Util::ParseError { name.encode() + " must be in range 0..256", {} };
             }
             return static_cast<uint8_t>(value);
         } catch (...) {
-            return Util::ParseError { name + " is an invalid number", {} };
+            return Util::ParseError { name.encode() + " is an invalid number", {} };
         }
     };
 
 private:
-    std::map<std::string, std::string> m_properties;
+    std::map<Util::UString, Util::UString> m_properties;
 };
 
 Config::ErrorOr<Config::Statement> ConfigLoader::parse_statement() {
-    std::string keyword = TRY(m_lexer.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
-    if (keyword.empty()) {
-        return Util::ParseError { "Expected keyword", m_lexer.location() };
+    auto keyword = TRY(m_reader.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
+    if (keyword.is_empty()) {
+        return Util::ParseError { "Expected keyword", m_reader.location() };
     }
 
-    TRY(m_lexer.consume_while(isspace));
+    TRY(m_reader.consume_while(isspace));
 
     auto read_properties = [this]() -> Config::ErrorOr<PropertyMap> {
         PropertyMap properties;
         while (true) {
             properties.insert(TRY(parse_key_value_pair()));
-            TRY(m_lexer.consume_while(isspace));
-            auto peek = TRY(m_lexer.peek());
+            TRY(m_reader.consume_while(isspace));
+            auto peek = TRY(m_reader.peek());
             if (!peek) {
-                return Util::ParseError { "Expected ';' after property list", m_lexer.location() };
+                return Util::ParseError { "Expected ';' after property list", m_reader.location() };
             }
             if (!isalpha(*peek)) {
                 return properties;
@@ -173,31 +174,31 @@ Config::ErrorOr<Config::Statement> ConfigLoader::parse_statement() {
             planet.eccentrity = TRY(properties.get_double("eccentrity"));
             return planet;
         }
-        return Util::ParseError { "orbiting_planet must define apoapsis+periapsis or major_axis+eccentrity", m_lexer.location() };
+        return Util::ParseError { "orbiting_planet must define apoapsis+periapsis or major_axis+eccentrity", m_reader.location() };
     }
     if (keyword == "light_source") {
-        auto name = TRY(m_lexer.consume_while(isalnum));
+        auto name = TRY(m_reader.consume_while(isalnum));
         return Config::LightSource { Util::UString { name } };
     }
 
-    return Util::ParseError { "Invalid statement keyword: '" + keyword + "'", m_lexer.location() };
+    return Util::ParseError { "Invalid statement keyword: '" + keyword.encode() + "'", m_reader.location() };
 }
 
-Config::ErrorOr<std::pair<std::string, std::string>> ConfigLoader::parse_key_value_pair() {
-    TRY(m_lexer.consume_while(isspace));
-    std::string name = TRY(m_lexer.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
+Config::ErrorOr<std::pair<Util::UString, Util::UString>> ConfigLoader::parse_key_value_pair() {
+    TRY(m_reader.consume_while(isspace));
+    Util::UString name = TRY(m_reader.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
 
-    TRY(m_lexer.consume_while(isspace));
-    auto equal = TRY(m_lexer.consume());
+    TRY(m_reader.consume_while(isspace));
+    auto equal = TRY(m_reader.consume());
     if (equal != '=') {
-        return Util::ParseError { "Expected '='", m_lexer.location() };
+        return Util::ParseError { "Expected '='", m_reader.location() };
     }
 
-    TRY(m_lexer.consume_while(isspace));
-    auto value = TRY(m_lexer.consume_while([](uint8_t c) { return c != ';' && !isspace(c); }));
+    TRY(m_reader.consume_while(isspace));
+    auto value = TRY(m_reader.consume_while([](uint8_t c) { return c != ';' && !isspace(c); }));
 
     // fmt::print("'{}'='{}'\n", name, value);
-    return std::pair { name, value };
+    return std::pair { std::move(name), std::move(value) };
 }
 
 Config::ErrorOr<void> Config::Config::apply(World& world) {

@@ -3,13 +3,13 @@
 #include "Object.hpp"
 #include "glwrapper/Helpers.hpp"
 
-#include <EssaEngine/3D/Shaders/Basic.hpp>
+#include <Essa/Engine/3D/Shaders/Basic.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <LLGL/Core/Transform.hpp>
-#include <LLGL/OpenGL/PrimitiveType.hpp>
-#include <LLGL/OpenGL/Vertex.hpp>
-#include <LLGL/OpenGL/VertexArray.hpp>
+#include <Essa/LLGL/Core/Transform.hpp>
+#include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
+#include <Essa/LLGL/OpenGL/Vertex.hpp>
+#include <Essa/LLGL/OpenGL/VertexArray.hpp>
 #include <cmath>
 #include <iostream>
 
