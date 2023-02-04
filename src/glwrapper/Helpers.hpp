@@ -7,11 +7,11 @@
 namespace GL {
 
 template<class Vertex>
-void draw_with_temporary_vao(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader,
+void draw_with_temporary_vao(llgl::Renderer& renderer, llgl::ShaderImpl auto& shader, auto uniforms,
     llgl::PrimitiveType pt, std::span<Vertex const> vertices) {
     static llgl::VertexArray<Vertex> vao;
     vao.upload_vertices(vertices);
-    renderer.draw_vertices(vao, llgl::DrawState { shader, pt });
+    renderer.draw_vertices(vao, llgl::DrawState { shader, uniforms, pt });
 };
 
 }

@@ -151,8 +151,9 @@ void EssaGUI::draw(Gfx::Painter& painter) const {
     }
 }
 
-void EssaGUI::handle_event(GUI::Event& event) {
-    if (event.type() == llgl::Event::Type::KeyPress && event.event().key.keycode == llgl::KeyCode::Tilde) {
+GUI::Widget::EventHandlerResult EssaGUI::on_key_press(GUI::Event::KeyPress const& event) {
+    if (event.code() == llgl::KeyCode::Tilde) {
         open_python_repl();
     }
+    return GUI::Widget::EventHandlerResult::NotAccepted;
 }

@@ -62,7 +62,7 @@ void main() {
 }
 )~~~";
 
-void SphereShader::load_sphere(Sphere const& sphere) {
+void SphereShader::Uniforms::load_sphere(Sphere const& sphere) {
     m_color = sphere.color();
     m_radius = sphere.radius();
     if (sphere.mode() == Sphere::DrawMode::Fancy) {
@@ -88,7 +88,7 @@ void Sphere::draw(Gfx::Painter& window, SimulationView const& sv) const {
     GUI::WorldDrawScope::verify();
 
     auto model = llgl::Transform {}.translate(Util::Vector3f { m_position }).scale(m_radius);
-    m_shader.load_sphere(*this);
-    m_shader.set_transform(model.matrix(), sv.camera().view_matrix(), sv.projection().matrix());
-    m_sphere.render(window.renderer(), m_shader);
+    m_shader_uniforms.load_sphere(*this);
+    m_shader_uniforms.set_transform(model.matrix(), sv.camera().view_matrix(), sv.projection().matrix());
+    m_sphere.render(window.renderer(), m_shader, m_shader_uniforms);
 }

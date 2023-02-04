@@ -17,34 +17,38 @@
 
 #include <Essa/Engine/3D/Sphere.hpp>
 #include <Essa/GUI/Graphics/Window.hpp>
+#include <Essa/LLGL/OpenGL/Shader.hpp>
+#include <Essa/LLGL/OpenGL/ShaderBases/Transform.hpp>
 #include <EssaUtil/Color.hpp>
 #include <EssaUtil/Vector.hpp>
-#include <Essa/LLGL/OpenGL/ShaderBases/Transform.hpp>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
 
 class Sphere;
 
-class SphereShader : public llgl::Shader
-    , public llgl::ShaderBases::Transform {
+class SphereShader : public llgl::Shader {
+
 public:
     using Vertex = Essa::Model::Vertex;
 
-    auto uniforms() {
-        return llgl::UniformList { m_fancy, m_radius, m_color, m_light_position }
-        + llgl::ShaderBases::Transform::uniforms();
-    }
+    struct Uniforms : public llgl::ShaderBases::Transform {
+        bool m_fancy;
+        float m_radius;
+        Util::Colorf m_color;
+        Util::Vector3f m_light_position;
+
+        static inline auto mapping = llgl::make_uniform_mapping(
+                                         llgl::Uniform { "fancy", &Uniforms::m_fancy },
+                                         llgl::Uniform { "radius", &Uniforms::m_radius },
+                                         llgl::Uniform { "color", &Uniforms::m_color },
+                                         llgl::Uniform { "lightPosition", &Uniforms::m_light_position })
+            | llgl::ShaderBases::Transform::mapping;
+
+        void load_sphere(Sphere const& sphere);
+    };
 
     std::string_view source(llgl::ShaderType type) const;
-
-    void load_sphere(Sphere const& sphere);
-
-private:
-    llgl::Uniform<bool> m_fancy { "fancy" };
-    llgl::Uniform<float> m_radius { "radius" };
-    llgl::Uniform<Util::Colorf> m_color { "color" };
-    llgl::Uniform<Util::Vector3f> m_light_position { "lightPosition" };
 };
 
 class Sphere {
@@ -76,5 +80,6 @@ private:
     double m_radius {};
     Util::Color m_color;
     mutable SphereShader m_shader;
+    mutable SphereShader::Uniforms m_shader_uniforms;
     Essa::Sphere m_sphere;
 };

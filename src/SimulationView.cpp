@@ -23,138 +23,144 @@
 #include <optional>
 #include <sstream>
 
-void SimulationView::handle_event(GUI::Event& event) {
-    if (event.type() == llgl::Event::Type::MouseButtonPress) {
-        m_prev_mouse_pos = Util::Vector2f { Util::Vector2i { event.event().mouse_button.position } };
-        // std::cout << "SV MouseButtonPressed " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
-        m_prev_drag_pos = m_prev_mouse_pos;
-        if (event.event().mouse_button.button == llgl::MouseButton::Left) {
-            m_drag_mode = DragMode::Pan;
+GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_press(GUI::Event::MouseButtonPress const& event) {
+    m_prev_mouse_pos = Util::Vector2f { Util::Vector2i { event.local_position() } };
+    // std::cout << "SV MouseButtonPressed " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
+    m_prev_drag_pos = m_prev_mouse_pos;
+    if (event.button() == llgl::MouseButton::Left) {
+        m_drag_mode = DragMode::Pan;
 
-            m_world.for_each_object([&](Object& obj) {
-                auto obj_pos_screen = world_to_screen(obj.render_position());
-                auto distance = Util::get_distance(Util::Vector2f { obj_pos_screen.x(), obj_pos_screen.y() }, m_prev_mouse_pos);
-                if (distance < 30) {
-                    set_focused_object(&obj, GUI::NotifyUser::Yes);
-                    return;
-                }
-            });
-
-            if (m_measure == Measure::Coords)
-                m_measure = Measure::None;
-            if (m_measure == Measure::Focus && m_focused_object != nullptr) {
-                m_measure = Measure::None;
-                m_measured = true;
-                if (m_on_focus_measure) {
-                    m_on_focus_measure(m_focused_object);
-                }
-                m_focused_object = nullptr;
-            }
-
-            event.set_handled();
-        }
-        else if (llgl::is_mouse_button_pressed(llgl::MouseButton::Right)) {
-            m_measure = Measure::None;
-            m_drag_mode = DragMode::Rotate;
-        }
-    }
-    else if (event.type() == llgl::Event::Type::MouseScroll) {
-        // TODO: Check mouse wheel
-        if (event.event().mouse_scroll.delta > 0)
-            apply_zoom(1 / 1.1);
-        else
-            apply_zoom(1.1);
-    }
-    else if (event.type() == llgl::Event::Type::MouseMove) {
-        Util::Vector2f mouse_pos { Util::Vector2i { event.event().mouse_move.position } };
-        m_prev_mouse_pos = mouse_pos;
-        // std::cout << "SV MouseMoved " << Vector3 { m_prev_mouse_pos } << std::endl;
-
-        // DRAG
-        auto drag_delta = m_prev_drag_pos - mouse_pos;
-
-        if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(drag_delta.x()) > 20 || std::abs(drag_delta.y()) > 20)) {
-            m_is_dragging = true;
-
-            if (m_drag_mode == DragMode::Pan && m_focused_object) {
-                m_focused_object = nullptr;
-                m_offset.z() = 0;
-            }
-        }
-
-        if (m_is_dragging) {
-            switch (m_drag_mode) {
-            case DragMode::Pan: {
-                Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
-                set_offset(offset() + Util::Vector3d { llgl::Transform {}.rotate_z(real_yaw()).transform_point(Util::Vector3f { qad_delta }) * scale() / 320 });
-                break;
-            }
-            case DragMode::Rotate: {
-                auto sizes = raw_size();
-                m_yaw += drag_delta.x() / sizes.x() * M_PI;
-                m_pitch -= drag_delta.y() / sizes.y() * M_PI;
-                break;
-            }
-            default:
-                break;
-            }
-            m_prev_drag_pos = mouse_pos;
-        }
-
-        // Coord measure
-        if (m_measure == Measure::Coords) {
-            auto object_pos_in_world_space = screen_to_world_on_grid(mouse_pos);
-            if (object_pos_in_world_space) {
-                m_measured = true;
-                if (m_on_coord_measure) {
-                    m_on_coord_measure(*object_pos_in_world_space * Util::Constants::AU);
-                }
-            }
-        }
-    }
-    else if (event.type() == llgl::Event::Type::MouseButtonRelease) {
-        // std::cout << "SV MouseButtonReleased " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
-        m_is_dragging = false;
-        m_drag_mode = DragMode::None;
-    }
-    else if (event.type() == llgl::Event::Type::KeyPress) {
-        if (event.event().key.shift) {
-            if (m_speed != 0)
+        m_world.for_each_object([&](Object& obj) {
+            auto obj_pos_screen = world_to_screen(obj.render_position());
+            auto distance = Util::get_distance(Util::Vector2f { obj_pos_screen.x(), obj_pos_screen.y() }, m_prev_mouse_pos);
+            if (distance < 30) {
+                set_focused_object(&obj, GUI::NotifyUser::Yes);
                 return;
-            if (event.event().key.keycode == llgl::KeyCode::Right)
-                m_world.update(1);
-            else if (event.event().key.keycode == llgl::KeyCode::Left)
-                m_world.update(-1);
-        }
-        else {
-            if (event.event().key.keycode == llgl::KeyCode::Right) {
-                if (m_speed > 0)
-                    m_speed *= 2;
-                else if (m_speed == 0) {
-                    m_speed = 1;
-                    pop_pause();
-                }
-                else
-                    m_speed /= 2;
-
-                if (m_speed == 0)
-                    push_pause();
             }
-            else if (event.event().key.keycode == llgl::KeyCode::Left) {
-                if (m_speed < 0)
-                    m_speed *= 2;
-                else if (m_speed == 0) {
-                    m_speed = -1;
-                    pop_pause();
-                }
-                else
-                    m_speed /= 2;
+        });
 
-                if (m_speed == 0)
-                    push_pause();
+        if (m_measure == Measure::Coords)
+            m_measure = Measure::None;
+        if (m_measure == Measure::Focus && m_focused_object != nullptr) {
+            m_measure = Measure::None;
+            m_measured = true;
+            if (m_on_focus_measure) {
+                m_on_focus_measure(m_focused_object);
+            }
+            m_focused_object = nullptr;
+        }
+
+        return EventHandlerResult::Accepted;
+    }
+    else if (llgl::is_mouse_button_pressed(llgl::MouseButton::Right)) {
+        m_measure = Measure::None;
+        m_drag_mode = DragMode::Rotate;
+    }
+    return EventHandlerResult::NotAccepted;
+}
+
+GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_release(GUI::Event::MouseButtonRelease const& event) {
+    m_is_dragging = false;
+    m_drag_mode = DragMode::None;
+    return EventHandlerResult::NotAccepted;
+}
+
+GUI::Widget::EventHandlerResult SimulationView::on_mouse_scroll(GUI::Event::MouseScroll const& event) {
+    // TODO: Check mouse wheel
+    if (event.delta() > 0)
+        apply_zoom(1 / 1.1);
+    else
+        apply_zoom(1.1);
+    return EventHandlerResult::NotAccepted;
+}
+
+GUI::Widget::EventHandlerResult SimulationView::on_mouse_move(GUI::Event::MouseMove const& event) {
+    Util::Vector2f mouse_pos { Util::Vector2i { event.local_position() } };
+    m_prev_mouse_pos = mouse_pos;
+    // std::cout << "SV MouseMoved " << Vector3 { m_prev_mouse_pos } << std::endl;
+
+    // DRAG
+    auto drag_delta = m_prev_drag_pos - mouse_pos;
+
+    if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(drag_delta.x()) > 20 || std::abs(drag_delta.y()) > 20)) {
+        m_is_dragging = true;
+
+        if (m_drag_mode == DragMode::Pan && m_focused_object) {
+            m_focused_object = nullptr;
+            m_offset.z() = 0;
+        }
+    }
+
+    if (m_is_dragging) {
+        switch (m_drag_mode) {
+        case DragMode::Pan: {
+            Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
+            set_offset(offset() + Util::Vector3d { llgl::Transform {}.rotate_z(real_yaw()).transform_point(Util::Vector3f { qad_delta }) * scale() / 320 });
+            break;
+        }
+        case DragMode::Rotate: {
+            auto sizes = raw_size();
+            m_yaw += drag_delta.x() / sizes.x() * M_PI;
+            m_pitch -= drag_delta.y() / sizes.y() * M_PI;
+            break;
+        }
+        default:
+            break;
+        }
+        m_prev_drag_pos = mouse_pos;
+    }
+
+    // Coord measure
+    if (m_measure == Measure::Coords) {
+        auto object_pos_in_world_space = screen_to_world_on_grid(mouse_pos);
+        if (object_pos_in_world_space) {
+            m_measured = true;
+            if (m_on_coord_measure) {
+                m_on_coord_measure(*object_pos_in_world_space * Util::Constants::AU);
             }
         }
     }
+    return EventHandlerResult::NotAccepted;
+}
+
+GUI::Widget::EventHandlerResult SimulationView::on_key_press(GUI::Event::KeyPress const& event) {
+    if (event.modifiers().shift) {
+        if (m_speed != 0)
+            return GUI::Widget::EventHandlerResult::NotAccepted;
+        if (event.code() == llgl::KeyCode::Right)
+            m_world.update(1);
+        else if (event.code() == llgl::KeyCode::Left)
+            m_world.update(-1);
+    }
+    else {
+        if (event.code() == llgl::KeyCode::Right) {
+            if (m_speed > 0)
+                m_speed *= 2;
+            else if (m_speed == 0) {
+                m_speed = 1;
+                pop_pause();
+            }
+            else
+                m_speed /= 2;
+
+            if (m_speed == 0)
+                push_pause();
+        }
+        else if (event.code() == llgl::KeyCode::Left) {
+            if (m_speed < 0)
+                m_speed *= 2;
+            else if (m_speed == 0) {
+                m_speed = -1;
+                pop_pause();
+            }
+            else
+                m_speed /= 2;
+
+            if (m_speed == 0)
+                push_pause();
+        }
+    }
+    return EventHandlerResult::NotAccepted;
 }
 
 std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vector2f screen) const {
@@ -208,7 +214,8 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
         Util::Color const grid_line_color { 25, 25, 37 };
 
         static Essa::Shaders::Basic shader;
-        shader.set_transform({},
+        Essa::Shaders::Basic::Uniforms uniforms;
+        uniforms.set_transform({},
             camera().view_matrix(),
             projection().matrix());
 
@@ -252,7 +259,7 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
             index++;
         }
 
-        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(painter.renderer(), shader, llgl::PrimitiveType::Lines, vertices);
+        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(painter.renderer(), shader, uniforms, llgl::PrimitiveType::Lines, vertices);
     }
 
     // guide

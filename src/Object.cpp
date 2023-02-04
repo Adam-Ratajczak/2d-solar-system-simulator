@@ -189,6 +189,8 @@ void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const
 
     using Vertex = Essa::Shaders::Basic::Vertex;
     static Essa::Shaders::Basic shader;
+    Essa::Shaders::Basic::Uniforms uniforms;
+    uniforms.set_model(view.matrix().convert<float>());
 
     std::vector<Vertex> closest_approaches_vertexes;
     for (auto& closest_approach_entry : m_closest_approaches) {
@@ -198,7 +200,7 @@ void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
         closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.other_object_position / Util::Constants::AU }, other_color, {} });
     }
-    GL::draw_with_temporary_vao<Vertex>(painter.renderer(), shader, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
+    GL::draw_with_temporary_vao<Vertex>(painter.renderer(), shader, uniforms, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
 void Object::draw_closest_approaches_gui(Gfx::Painter& painter, SimulationView const& view) {

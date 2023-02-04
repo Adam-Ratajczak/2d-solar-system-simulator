@@ -111,7 +111,11 @@ public:
     static constexpr char const* PythonClassName = "SimulationView";
 
 private:
-    virtual void handle_event(GUI::Event&) override;
+    virtual EventHandlerResult on_mouse_button_press(GUI::Event::MouseButtonPress const&) override;
+    virtual EventHandlerResult on_mouse_button_release(GUI::Event::MouseButtonRelease const&) override;
+    virtual EventHandlerResult on_mouse_scroll(GUI::Event::MouseScroll const&) override;
+    virtual EventHandlerResult on_mouse_move(GUI::Event::MouseMove const&) override;
+    virtual EventHandlerResult on_key_press(GUI::Event::KeyPress const&) override;
     virtual void draw(Gfx::Painter&) const override;
     virtual void update() override;
 

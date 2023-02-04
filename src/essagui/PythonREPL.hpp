@@ -16,7 +16,7 @@ public:
     virtual void on_init() override;
 
 private:
-    virtual void handle_event(GUI::Event&) override;
+    virtual EventHandlerResult on_key_press(GUI::Event::KeyPress const&) override;
     GUI::Console* m_console {};
     GUI::Textbox* m_textbox {};
 

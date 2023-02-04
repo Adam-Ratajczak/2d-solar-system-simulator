@@ -54,11 +54,17 @@ EssaSplash::EssaSplash(GUI::HostWindow& window, EssaSettings& essa_settings)
     };
 }
 
-void EssaSplash::handle_event(llgl::Event event) {
+void EssaSplash::handle_event(GUI::Event const& event) {
     GUI::ToolWindow::handle_event(event);
 
-    GUI::Event gui_event { event };
-    if (gui_event.type() == llgl::Event::Type::MouseButtonPress && !full_rect().contains(Util::Vector2f { gui_event.mouse_position() } + position())
-        || gui_event.type() == llgl::Event::Type::KeyPress && gui_event.event().key.keycode == llgl::KeyCode::Escape)
-        close();
+    if (auto e = event.get<GUI::Event::MouseButtonPress>(); e) {
+        if (!rect().contains(e->local_position())) {
+            close();
+        }
+    }
+    else if (auto e = event.get<GUI::Event::KeyPress>(); e) {
+        if (e->code() == llgl::KeyCode::Escape) {
+            close();
+        }
+    }
 }

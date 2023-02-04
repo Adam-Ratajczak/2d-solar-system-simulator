@@ -4,12 +4,12 @@
 #include "glwrapper/Helpers.hpp"
 
 #include <Essa/Engine/3D/Shaders/Basic.hpp>
-#include <EssaUtil/DelayedInit.hpp>
-#include <EssaUtil/Vector.hpp>
 #include <Essa/LLGL/Core/Transform.hpp>
 #include <Essa/LLGL/OpenGL/PrimitiveType.hpp>
 #include <Essa/LLGL/OpenGL/Vertex.hpp>
 #include <Essa/LLGL/OpenGL/VertexArray.hpp>
+#include <EssaUtil/DelayedInit.hpp>
+#include <EssaUtil/Vector.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -89,16 +89,17 @@ void Trail::recalculate_with_offset(Util::Vector3d offset) {
 
 void Trail::draw(SimulationView const& sv) const {
     static Essa::Shaders::Basic shader;
-    shader.set_transform(llgl::Transform {}.translate(Util::Vector3f { m_offset / Util::Constants::AU }).matrix(),
+    Essa::Shaders::Basic::Uniforms uniforms;
+    uniforms.set_transform(llgl::Transform {}.translate(Util::Vector3f { m_offset / Util::Constants::AU }).matrix(),
         sv.camera().view_matrix(),
         sv.projection().matrix());
 
     if (m_length != m_vertexes.size()) {
-        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
     }
     else {
-        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, llgl::PrimitiveType::LineStrip, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
-        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
     }
 }
 

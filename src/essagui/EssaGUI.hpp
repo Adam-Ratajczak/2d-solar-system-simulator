@@ -31,7 +31,6 @@ public:
 
     virtual void on_init() override;
 
-    virtual void handle_event(GUI::Event&) override;
     virtual void draw(Gfx::Painter& window) const override;
 
     SimulationView& simulation_view() const { return *m_simulation_view; }
@@ -41,6 +40,7 @@ public:
 private:
     World& m_world;
     virtual void update() override;
+    virtual EventHandlerResult on_key_press(GUI::Event::KeyPress const&) override;
 
     SimulationView* m_simulation_view = nullptr;
     EssaCreateObject* m_create_object_gui = nullptr;
