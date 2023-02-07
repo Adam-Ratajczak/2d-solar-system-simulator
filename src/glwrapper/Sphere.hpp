@@ -16,7 +16,7 @@
 #include "../SimulationView.hpp"
 
 #include <Essa/Engine/3D/Sphere.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/LLGL/OpenGL/Shader.hpp>
 #include <Essa/LLGL/OpenGL/ShaderBases/Transform.hpp>
 #include <EssaUtil/Color.hpp>
