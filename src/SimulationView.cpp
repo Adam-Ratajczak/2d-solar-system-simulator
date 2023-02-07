@@ -95,7 +95,14 @@ GUI::Widget::EventHandlerResult SimulationView::on_mouse_move(GUI::Event::MouseM
         switch (m_drag_mode) {
         case DragMode::Pan: {
             Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
-            set_offset(offset() + Util::Vector3d { llgl::Transform {}.rotate_z(real_yaw()).transform_point(Util::Vector3f { qad_delta }) * scale() / 320 });
+            set_offset(offset()
+                + (llgl::Transform {}
+                        .rotate_z(real_yaw())
+                        .transform_point(Util::Cs::Point3f::from_deprecated_vector(qad_delta))
+                        .to_vector()
+                    * scale() / 320)
+                      .cast<double>()
+                      .to_deprecated_vector());
             break;
         }
         case DragMode::Rotate: {
@@ -175,11 +182,12 @@ std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vect
     auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
     if (object_pos_in_clip_space) {
         // Go back to world coordinates to get actual object position.
-        auto object_pos_in_world_space = llgl::Transform { matrix().inverted().convert<float>() }.transform_point(Util::Vector3f { object_pos_in_clip_space.value() });
+        auto object_pos_in_world_space = llgl::Transform { matrix().inverted().convert<float>() }
+                                             .transform_point(Util::Cs::Point3f::from_deprecated_vector(object_pos_in_clip_space.value()));
 
         // std::cout << "[Coord] Object(Clip)->Object(World): " << *object_pos_in_clip_space << " -> " << object_pos_in_world_space << std::endl;
 
-        return Util::Vector3d { object_pos_in_world_space };
+        return object_pos_in_world_space.cast<double>().to_deprecated_vector();
     }
     return {};
 }
@@ -302,9 +310,9 @@ Util::Matrix4x4d SimulationView::matrix() const {
 
 Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    auto clip_space = matrix() * Util::Vector4d { local_space };
+    auto clip_space = (matrix() * Util::Cs::Point4d { Util::Cs::Point3d::from_deprecated_vector(local_space), 1 }).to_vector();
     clip_space /= clip_space.w();
-    return Util::Vector3f { clip_space_to_screen(Util::Vector3d { clip_space }), clip_space.z() };
+    return Util::Vector3f { clip_space_to_screen(Util::Cs::Vector3d { clip_space }.to_deprecated_vector()), clip_space.z() };
 }
 
 llgl::Renderer& SimulationView::renderer() const {

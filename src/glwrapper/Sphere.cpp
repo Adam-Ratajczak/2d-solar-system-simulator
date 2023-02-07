@@ -87,7 +87,7 @@ std::string_view SphereShader::source(llgl::ShaderType type) const {
 void Sphere::draw(Gfx::Painter& window, SimulationView const& sv) const {
     GUI::WorldDrawScope::verify();
 
-    auto model = llgl::Transform {}.translate(Util::Vector3f { m_position }).scale(m_radius);
+    auto model = llgl::Transform {}.translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { m_position })).scale(m_radius);
     m_shader_uniforms.load_sphere(*this);
     m_shader_uniforms.set_transform(model.matrix(), sv.camera().view_matrix(), sv.projection().matrix());
     m_sphere.render(window.renderer(), m_shader, m_shader_uniforms);

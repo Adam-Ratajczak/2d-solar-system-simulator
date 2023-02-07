@@ -90,7 +90,7 @@ void Trail::recalculate_with_offset(Util::Vector3d offset) {
 void Trail::draw(SimulationView const& sv) const {
     static Essa::Shaders::Basic shader;
     Essa::Shaders::Basic::Uniforms uniforms;
-    uniforms.set_transform(llgl::Transform {}.translate(Util::Vector3f { m_offset / Util::Constants::AU }).matrix(),
+    uniforms.set_transform(llgl::Transform {}.translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { m_offset / Util::Constants::AU })).matrix(),
         sv.camera().view_matrix(),
         sv.projection().matrix());
 
