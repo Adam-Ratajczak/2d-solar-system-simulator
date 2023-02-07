@@ -8,7 +8,7 @@
 #include "pyssa/TupleParser.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>

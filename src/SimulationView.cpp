@@ -4,7 +4,7 @@
 #include "glwrapper/Helpers.hpp"
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
-#include <Essa/GUI/Graphics/Window.hpp>
+
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/TextAlign.hpp>
 #include <Essa/GUI/WidgetTreeRoot.hpp>
@@ -24,7 +24,7 @@
 #include <sstream>
 
 GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_press(GUI::Event::MouseButtonPress const& event) {
-    m_prev_mouse_pos = Util::Vector2f { Util::Vector2i { event.local_position() } };
+    m_prev_mouse_pos = event.local_position().cast<float>().to_deprecated_vector();
     // std::cout << "SV MouseButtonPressed " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
     m_prev_drag_pos = m_prev_mouse_pos;
     if (event.button() == llgl::MouseButton::Left) {
@@ -75,12 +75,12 @@ GUI::Widget::EventHandlerResult SimulationView::on_mouse_scroll(GUI::Event::Mous
 }
 
 GUI::Widget::EventHandlerResult SimulationView::on_mouse_move(GUI::Event::MouseMove const& event) {
-    Util::Vector2f mouse_pos { Util::Vector2i { event.local_position() } };
-    m_prev_mouse_pos = mouse_pos;
+    auto mouse_pos = event.local_position().cast<float>();
+    m_prev_mouse_pos = mouse_pos.to_deprecated_vector();
     // std::cout << "SV MouseMoved " << Vector3 { m_prev_mouse_pos } << std::endl;
 
     // DRAG
-    auto drag_delta = m_prev_drag_pos - mouse_pos;
+    auto drag_delta = m_prev_drag_pos - mouse_pos.to_deprecated_vector();
 
     if (m_drag_mode != DragMode::None && !m_is_dragging && (std::abs(drag_delta.x()) > 20 || std::abs(drag_delta.y()) > 20)) {
         m_is_dragging = true;
@@ -107,12 +107,12 @@ GUI::Widget::EventHandlerResult SimulationView::on_mouse_move(GUI::Event::MouseM
         default:
             break;
         }
-        m_prev_drag_pos = mouse_pos;
+        m_prev_drag_pos = mouse_pos.to_deprecated_vector();
     }
 
     // Coord measure
     if (m_measure == Measure::Coords) {
-        auto object_pos_in_world_space = screen_to_world_on_grid(mouse_pos);
+        auto object_pos_in_world_space = screen_to_world_on_grid(mouse_pos.to_deprecated_vector());
         if (object_pos_in_world_space) {
             m_measured = true;
             if (m_on_coord_measure) {
@@ -263,24 +263,24 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
     }
 
     // guide
-    Util::Vector2f guide_start { raw_size().x() - 200.f, raw_size().y() - 30.f };
+    Util::Cs::Point2f guide_start { raw_size().x() - 200.f, raw_size().y() - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
-    Util::Vector2f guide_end = guide_start - Util::Vector2f(spacing * 300 / scale(), 0);
+    Util::Cs::Point2f guide_end = guide_start - Util::Cs::Vector2f(spacing * 300 / scale(), 0);
     std::array<Gfx::Vertex, 6> guide;
     Util::Color const guide_color { 127, 127, 127 };
-    guide[0] = { guide_start, guide_color, {} };
-    guide[1] = { guide_end, guide_color, {} };
-    guide[2] = { guide_start - Util::Vector2f(0, 5), guide_color, {} };
-    guide[3] = { guide_start + Util::Vector2f(0, 5), guide_color, {} };
-    guide[4] = { guide_end - Util::Vector2f(0, 5), guide_color, {} };
-    guide[5] = { guide_end + Util::Vector2f(0, 5), guide_color, {} };
+    guide[0] = { (guide_start).to_deprecated_vector(), guide_color, {} };
+    guide[1] = { (guide_end).to_deprecated_vector(), guide_color, {} };
+    guide[2] = { (guide_start - Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
+    guide[3] = { (guide_start + Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
+    guide[4] = { (guide_end - Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
+    guide[5] = { (guide_end + Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
     painter.draw_vertices(llgl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
     Gfx::Text guide_text { Util::unit_display(spacing / 2 / zoom_step_exponent * Util::Constants::AU, Util::Quantity::Length).to_string(), GUI::Application::the().font() };
     guide_text.set_font_size(theme().label_font_size);
     guide_text.set_fill_color(Util::Colors::White);
-    guide_text.align(GUI::Align::Center, { guide_start - Util::Vector2f(0, 10), guide_end - guide_start });
+    guide_text.align(GUI::Align::Center, { guide_start - Util::Cs::Vector2f(0, 10), (guide_end - guide_start).to_size() });
     guide_text.draw(painter);
 }
 
@@ -308,7 +308,7 @@ Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const
 }
 
 llgl::Renderer& SimulationView::renderer() const {
-    return host_window().window().renderer();
+    return host_window().renderer();
 }
 
 void SimulationView::draw(Gfx::Painter& window) const {
