@@ -58,7 +58,7 @@ void EssaSplash::handle_event(GUI::Event const& event) {
     GUI::ToolWindow::handle_event(event);
 
     if (auto e = event.get<GUI::Event::MouseButtonPress>(); e) {
-        if (!rect().contains(e->local_position())) {
+        if (!full_rect().contains(e->local_position() + Util::Cs::Vector2f::from_deprecated_vector(position()))) {
             close();
         }
     }
