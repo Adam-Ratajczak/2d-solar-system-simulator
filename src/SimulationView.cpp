@@ -176,7 +176,6 @@ std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vect
 
     // Transform a grid plane (z = 0) to the clip space.
     Util::Math::Plane plane = Util::Math::Plane(0, 0, 1, 0).transformed(matrix());
-    /// std::cout << "[Coord] Mouse(Clip): " << clip_space << std::endl;
 
     // Calculate intersection of mouse ray and the grid. This will be our object position in clip space.
     auto object_pos_in_clip_space = ray.intersection_with_plane(plane);
@@ -184,8 +183,6 @@ std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vect
         // Go back to world coordinates to get actual object position.
         auto object_pos_in_world_space = llgl::Transform { matrix().inverted().convert<float>() }
                                              .transform_point(Util::Cs::Point3f::from_deprecated_vector(object_pos_in_clip_space.value()));
-
-        // std::cout << "[Coord] Object(Clip)->Object(World): " << *object_pos_in_clip_space << " -> " << object_pos_in_world_space << std::endl;
 
         return object_pos_in_world_space.cast<double>().to_deprecated_vector();
     }
