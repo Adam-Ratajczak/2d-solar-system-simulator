@@ -68,6 +68,7 @@ private:
     GUI::ColorPicker* m_color_control = nullptr;
 
     GUI::TextButton* m_light_source_button = nullptr;
+    GUI::TextButton* m_lagrange_button = nullptr;
 
     Util::Vector3d m_new_object_pos;
 

@@ -7,8 +7,11 @@
 #include "pyssa/Object.hpp"
 #include "pyssa/TupleParser.hpp"
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Graphics/Drawing/Ellipse.hpp>
+#include <Essa/GUI/Graphics/Painter.hpp>
 #include <Essa/GUI/Graphics/Text.hpp>
 
+#include <EssaUtil/Constants.hpp>
 #include <EssaUtil/DelayedInit.hpp>
 #include <EssaUtil/UnitDisplay.hpp>
 #include <EssaUtil/Units.hpp>
@@ -260,6 +263,33 @@ void Object::reset_history() {
 }
 
 void Object::draw_gui(Gfx::Painter& painter, SimulationView const& view) {
+    if (m_display_lagrange_points) {
+        if (!m_most_attracting_object) {
+            return;
+        }
+        auto diff = m_most_attracting_object->pos() - pos();
+
+        auto l1_2_dist = diff.length() * std::cbrt(mass() / (3 * m_most_attracting_object->mass()));
+
+        auto l1 = (m_pos + diff.with_length(l1_2_dist)) / Util::Constants::AU;
+        auto l2 = (m_pos - diff.with_length(l1_2_dist)) / Util::Constants::AU;
+
+        auto draw_lagrange_point = [&](Util::Vector3d position, Util::UString const& label) {
+            draw_label(painter, view, position,
+                Util::UString(fmt::format("{}-{} {}", m_name.encode(), m_most_attracting_object->name().encode(), label.encode())),
+                Util::Colors::Orange);
+
+            painter.draw(Gfx::Drawing::Ellipse(Util::Vector2f(view.world_to_screen(l1)), { 2, 2 },
+                Gfx::Drawing::Fill::solid(Util::Colors::Orange)));
+        };
+
+        painter.draw_line({ Util::Vector2f(view.world_to_screen(m_most_attracting_object->render_position())),
+                              Util::Vector2f(view.world_to_screen(l2)) },
+            Gfx::LineDrawOptions { .color = Util::Colors::Gray });
+
+        draw_lagrange_point(l1, "L1");
+        draw_lagrange_point(l2, "L2");
+    }
 
     if (!view.show_labels())
         return;

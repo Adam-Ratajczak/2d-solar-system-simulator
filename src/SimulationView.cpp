@@ -360,6 +360,9 @@ void SimulationView::push_pause() {
 void SimulationView::pop_pause() {
     assert(m_pause_count > 0);
     m_pause_count--;
+    if (m_pause_count == 0) {
+        m_speed = 1;
+    }
 }
 
 void SimulationView::update() {

@@ -56,6 +56,8 @@ public:
     void draw_closest_approaches(Gfx::Painter& window, SimulationView const&);
     void draw_closest_approaches_gui(Gfx::Painter& window, SimulationView const&);
 
+    void set_display_lagrange_points(bool display) { m_display_lagrange_points = display; }
+
     void calculate_propieties();
     std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
     std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
@@ -185,4 +187,6 @@ private:
         double distance {};
     };
     std::map<Object*, ClosestApproachEntry> m_closest_approaches;
+
+    bool m_display_lagrange_points = false;
 };

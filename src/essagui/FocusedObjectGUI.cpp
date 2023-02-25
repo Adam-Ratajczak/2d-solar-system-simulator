@@ -242,6 +242,8 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
 
     auto default_view_textfield = default_view_button_container->add_widget<GUI::Textfield>();
     default_view_textfield->set_content("Hide focused object window");
+    default_view_textfield->set_size({ 66.6_perc, Util::Length::Initial });
+
     auto default_view_button = default_view_button_container->add_widget<GUI::TextButton>();
     default_view_button->set_content("Hide");
     default_view_button->set_alignment(GUI::Align::Center);
@@ -257,6 +259,7 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
 
     auto light_source_textfield = light_source_button_container->add_widget<GUI::Textfield>();
     light_source_textfield->set_content("Toggle Light source options");
+    light_source_textfield->set_size({ 66.6_perc, Util::Length::Initial });
 
     m_light_source_button = light_source_button_container->add_widget<GUI::TextButton>();
     m_light_source_button->set_content("Make a lightsource");
@@ -270,6 +273,23 @@ void FocusedObjectGUI::m_create_view_gui(GUI::Container& parent) {
             m_world.set_light_source(m_focused);
         else
             m_world.set_light_source(nullptr);
+    };
+
+    auto lagrange_container = parent.add_widget<GUI::Container>();
+    lagrange_container->set_layout<GUI::HorizontalBoxLayout>().set_spacing(10);
+    lagrange_container->set_size({ Util::Length::Auto, 30.0_px });
+
+    auto lagrange_textfield = lagrange_container->add_widget<GUI::Textfield>();
+    lagrange_textfield->set_content("Display Lagrange points");
+    lagrange_textfield->set_size({ 66.6_perc, Util::Length::Initial });
+
+    m_lagrange_button = lagrange_container->add_widget<GUI::TextButton>();
+    m_lagrange_button->set_content("Off");
+    m_lagrange_button->set_active_content("On");
+    m_lagrange_button->set_alignment(GUI::Align::Center);
+    m_lagrange_button->set_toggleable(true);
+    m_lagrange_button->on_change = [&](bool state) {
+        m_focused->set_display_lagrange_points(state);
     };
 }
 
