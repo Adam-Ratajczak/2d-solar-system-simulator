@@ -4,7 +4,6 @@
 #include "FocusedObjectGUI.hpp"
 #include "PythonREPL.hpp"
 #include "SimulationInfo.hpp"
-#include "ToolsMenu.hpp"
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/EMLResource.hpp>
