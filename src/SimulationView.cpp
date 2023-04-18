@@ -307,7 +307,7 @@ Util::Matrix4x4d SimulationView::matrix() const {
 
 Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    auto clip_space = (matrix() * Util::Cs::Point4d { Util::Cs::Point3d::from_deprecated_vector(local_space), 1 });
+    auto clip_space = (matrix() * Util::Cs::Point4d { Util::Cs::Point3d::from_deprecated_vector(local_space), 1.0 });
     clip_space /= clip_space.w();
     return Util::Vector3f { clip_space_to_screen(Util::Cs::Vector3d { clip_space.to_vector() }.to_deprecated_vector()), clip_space.z() };
 }
