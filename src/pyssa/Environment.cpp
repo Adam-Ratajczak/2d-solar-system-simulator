@@ -57,8 +57,7 @@ bool Environment::run_script(std::string const& path) {
     }
 
     static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wstring_converter;
-
-    Py_SetProgramName(wstring_converter.from_bytes(path).c_str());
+    
     PyRun_SimpleString(script.c_str());
     return true;
 }
