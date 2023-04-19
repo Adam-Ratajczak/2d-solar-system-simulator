@@ -36,9 +36,9 @@ public:
     }
 
     static constexpr bool CanBeCreatedFromPython = requires(Object const& o) {
-        T::create_for_python(o, o);
-        (char const*)T::PythonClassName;
-    };
+                                                       T::create_for_python(o, o);
+                                                       (char const*)T::PythonClassName;
+                                                   };
 
     static PyTypeObject& type_object();
 
@@ -123,11 +123,14 @@ protected:
 
         template<Method method>
         void add_method(char const* name, char const* doc = "") const {
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wcast-function-type"
             m_funcs.methods.push_back(PyMethodDef {
                 .ml_name = name,
-                .ml_meth = (PyCFunction)MethodWrapper<method>::wrapper,
+                .ml_meth = reinterpret_cast<PyCFunction>(MethodWrapper<method>::wrapper),
                 .ml_flags = METH_VARARGS | METH_KEYWORDS,
                 .ml_doc = doc });
+#    pragma GCC diagnostic pop
         }
 
         template<Getter getter, Setter setter>

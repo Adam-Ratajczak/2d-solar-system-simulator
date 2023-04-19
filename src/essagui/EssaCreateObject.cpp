@@ -124,7 +124,7 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
         m_toggle_orbit_direction_button->set_image(&resource_manager().require_texture("orbitDirectionButton.png"));
         m_toggle_orbit_direction_button->set_toggleable(true);
         m_toggle_orbit_direction_button->set_tooltip_text("Toggle orbitting body direction");
-        m_toggle_orbit_direction_button->on_change = [this](bool state) {
+        m_toggle_orbit_direction_button->on_change = [this](bool) {
             m_forward_simulation_is_valid = false;
         };
         m_toggle_orbit_direction_button->set_visible(false);

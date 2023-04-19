@@ -64,9 +64,9 @@ void Trail::push_back(Util::Vector3d pos) {
     m_vertexes[m_append_offset] = Vertex { Util::Vector3f { pos / Util::Constants::AU }, m_color };
 
     m_append_offset++;
-    if (m_length < m_vertexes.size())
+    if (static_cast<size_t>(m_length) < m_vertexes.size())
         m_length++;
-    if (m_append_offset == m_vertexes.size()) {
+    if (static_cast<size_t>(m_append_offset) == m_vertexes.size()) {
         m_vertexes[0] = Vertex { Util::Vector3f { pos / Util::Constants::AU }, m_color };
         m_append_offset = 1;
     }
@@ -82,7 +82,7 @@ void Trail::reset() {
 void Trail::recalculate_with_offset(Util::Vector3d offset) {
     if (m_offset == offset)
         return;
-    for (size_t s = 0; s < m_length; s++)
+    for (int s = 0; s < m_length; s++)
         m_vertexes[s].value<0>() = m_vertexes[s].value<0>() + Util::Vector3f { m_offset / Util::Constants::AU - offset / Util::Constants::AU };
     m_offset = offset;
 }
@@ -94,7 +94,7 @@ void Trail::draw(SimulationView const& sv) const {
         sv.camera().view_matrix(),
         sv.projection().matrix());
 
-    if (m_length != m_vertexes.size()) {
+    if (static_cast<size_t>(m_length) != m_vertexes.size()) {
         GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
     }
     else {

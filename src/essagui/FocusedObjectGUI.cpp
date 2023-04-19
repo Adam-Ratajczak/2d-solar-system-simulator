@@ -10,8 +10,8 @@
 
 FocusedObjectGUI::FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w)
     : m_focused(o)
-    , m_world(w)
-    , m_window(wnd) {
+    , m_window(wnd)
+    , m_world(w) {
 }
 
 void FocusedObjectGUI::on_init() {

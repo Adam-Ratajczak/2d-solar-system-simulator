@@ -7,7 +7,7 @@
 #include <iostream>
 #include <sstream>
 
-Config::ErrorOr<Config::Config> ConfigLoader::load(std::string const& filename, World& world) {
+Config::ErrorOr<Config::Config> ConfigLoader::load(std::string const& filename, World&) {
     Util::ReadableFileStream stream = TRY(Util::ReadableFileStream::open(filename));
     Util::TextReader reader { stream };
     ConfigLoader loader { reader };
@@ -21,7 +21,7 @@ Config::ErrorOr<Config::Config> ConfigLoader::parse_config() {
         config.statements.push_back(TRY(parse_statement()));
         TRY(m_reader.consume_while(isspace));
         if (TRY(m_reader.peek()) != ';') {
-            return Util::ParseError { "Expected ';'", m_reader.location() };
+            return Util::ParseError { "Expected ';'", { m_reader.location(), {} } };
         }
         TRY(m_reader.consume()); // ;
         TRY(m_reader.consume_while(isspace));
@@ -110,7 +110,7 @@ private:
 Config::ErrorOr<Config::Statement> ConfigLoader::parse_statement() {
     auto keyword = TRY(m_reader.consume_while([](uint8_t c) { return isalpha(c) || c == '_'; }));
     if (keyword.is_empty()) {
-        return Util::ParseError { "Expected keyword", m_reader.location() };
+        return Util::ParseError { "Expected keyword", { m_reader.location(), {} } };
     }
 
     TRY(m_reader.consume_while(isspace));
@@ -122,7 +122,7 @@ Config::ErrorOr<Config::Statement> ConfigLoader::parse_statement() {
             TRY(m_reader.consume_while(isspace));
             auto peek = TRY(m_reader.peek());
             if (!peek) {
-                return Util::ParseError { "Expected ';' after property list", m_reader.location() };
+                return Util::ParseError { "Expected ';' after property list", { m_reader.location(), {} } };
             }
             if (!isalpha(*peek)) {
                 return properties;
@@ -174,14 +174,14 @@ Config::ErrorOr<Config::Statement> ConfigLoader::parse_statement() {
             planet.eccentrity = TRY(properties.get_double("eccentrity"));
             return planet;
         }
-        return Util::ParseError { "orbiting_planet must define apoapsis+periapsis or major_axis+eccentrity", m_reader.location() };
+        return Util::ParseError { "orbiting_planet must define apoapsis+periapsis or major_axis+eccentrity", { m_reader.location(), {} } };
     }
     if (keyword == "light_source") {
         auto name = TRY(m_reader.consume_while(isalnum));
         return Config::LightSource { Util::UString { name } };
     }
 
-    return Util::ParseError { "Invalid statement keyword: '" + keyword.encode() + "'", m_reader.location() };
+    return Util::ParseError { "Invalid statement keyword: '" + keyword.encode() + "'", { m_reader.location(), {} } };
 }
 
 Config::ErrorOr<std::pair<Util::UString, Util::UString>> ConfigLoader::parse_key_value_pair() {
@@ -191,7 +191,7 @@ Config::ErrorOr<std::pair<Util::UString, Util::UString>> ConfigLoader::parse_key
     TRY(m_reader.consume_while(isspace));
     auto equal = TRY(m_reader.consume());
     if (equal != '=') {
-        return Util::ParseError { "Expected '='", m_reader.location() };
+        return Util::ParseError { "Expected '='", { m_reader.location(), {} } };
     }
 
     TRY(m_reader.consume_while(isspace));

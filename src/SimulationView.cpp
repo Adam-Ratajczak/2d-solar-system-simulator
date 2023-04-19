@@ -59,7 +59,7 @@ GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_press(GUI::Event
     return EventHandlerResult::NotAccepted;
 }
 
-GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_release(GUI::Event::MouseButtonRelease const& event) {
+GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_release(GUI::Event::MouseButtonRelease const&) {
     m_is_dragging = false;
     m_drag_mode = DragMode::None;
     return EventHandlerResult::NotAccepted;
@@ -338,7 +338,6 @@ void SimulationView::draw(Gfx::Painter& window) const {
 
     if (m_display_debug_info) {
         std::ostringstream debug_oss;
-        auto mp = llgl::mouse_position();
         debug_oss << "s=" << scale() << std::endl;
         debug_oss << "off=" << offset() << std::endl;
         debug_oss << "yaw=" << m_yaw << " $ " << m_yaw_from_object << std::endl;

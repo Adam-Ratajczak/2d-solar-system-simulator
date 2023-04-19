@@ -9,7 +9,19 @@ option(ENABLE_PYSSA "Enable PySSA" 1)
 if(ENABLE_PYSSA)
     find_package(PythonLibs 3.5 REQUIRED)
 endif()
-find_package(Essa REQUIRED)
+
+
+if(USE_LOCAL_ESSA_FRAMEWORK)
+    find_package(Essa)
+else()
+    include(FetchContent)
+    FetchContent_Declare(Essa
+        GIT_REPOSITORY https://github.com/essa-software/EssaGUI.git
+        GIT_TAG 4500cf811c0b9f31ee7bb97f81e0583af454f3c2
+        OVERRIDE_FIND_PACKAGE
+    )
+    FetchContent_MakeAvailable(Essa)
+endif()
 
 if(ENABLE_PYSSA)
     set(PYSSA_SOURCES 
@@ -47,22 +59,21 @@ add_executable(
 
 target_compile_options(essa PUBLIC -fdiagnostics-color=always)
 
-function(setup_target targetname)
-    target_compile_options(${targetname} PUBLIC -Werror=non-virtual-dtor)
-
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address)
-        target_link_options(${targetname} PUBLIC -fsanitize=undefined,address)
-    else()
-        target_compile_options(${targetname} PUBLIC -O3)
-    endif()
-endfunction()
-setup_target(essa)
+essautil_setup_target(essa)
 
 target_link_libraries(essa Essa::GUI Essa::Engine-3D)
+target_include_directories(essa PUBLIC ${Essa_SOURCE_DIR}) # FIXME: This should be automatic
+
+install(TARGETS essa DESTINATION bin)
+
 if(ENABLE_PYSSA)
     message("Enabling PySSA")
     target_link_libraries(essa ${PYTHON_LIBRARIES})
     target_include_directories(essa PRIVATE ${PYTHON_INCLUDE_DIRS})
     target_compile_definitions(essa PRIVATE ENABLE_PYSSA=1)
 endif()
+
+essautil_setup_packaging()
+
+set(CPACK_IGNORE_FILES *.hpp;*.h)
+include(CPack)

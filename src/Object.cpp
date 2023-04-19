@@ -31,13 +31,13 @@ static Util::DelayedInit<Sphere> s_sphere;
 Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, Util::UString name, unsigned period)
     : m_trail(std::max(2U, std::max(period * 2, (unsigned)500)), color)
     , m_history(1000, { pos, vel })
-    , m_gravity_factor(mass * Util::Constants::Gravity)
-    , m_radius(radius)
     , m_pos(pos)
     , m_vel(vel)
-    , m_color(color)
+    , m_orbit_len(period)
+    , m_gravity_factor(mass * Util::Constants::Gravity)
+    , m_radius(radius)
     , m_name(std::move(name))
-    , m_orbit_len(period) {
+    , m_color(color) {
     m_trail.push_back(m_pos);
 }
 
@@ -427,7 +427,6 @@ void Object::setup_python_bindings(TypeSetup setup) {
 }
 
 Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs) {
-    PyObject* world = nullptr;
     double mass = 0;
     double radius = 0;
     Util::Vector3d pos;

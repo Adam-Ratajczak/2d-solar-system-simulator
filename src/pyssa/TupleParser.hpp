@@ -17,13 +17,14 @@ struct CheckedType {
 };
 
 template<class T>
-requires(!std::is_reference_v<T>) struct Arg {
+    requires(!std::is_reference_v<T>)
+struct Arg {
     char const* keyword = "";
     T arg;
 
     Arg(T arg_, char const* keyword_ = "")
-        : arg(std::forward<T>(arg_))
-        , keyword(keyword_) {
+        : keyword(keyword_)
+        , arg(std::forward<T>(arg_)) {
         // std::cout << keyword_ << " " << typeid(arg).name() << "\n";
     }
 };
@@ -55,14 +56,15 @@ struct GetArg {
 // Check if a type can be used as target for Python arguments.
 template<class CppType>
 concept IsConvertibleToPython = requires(ConvertToPy<CppType> ctp, size_t& index, char const* format_string) {
-    ctp.PyArgCount;
-    // ctp.write_arg(cppt);
-    { ConvertToPy<CppType>::check_format_string(index, format_string) } -> std::same_as<bool>;
-};
+                                    ctp.PyArgCount;
+                                    // ctp.write_arg(cppt);
+                                    { ConvertToPy<CppType>::check_format_string(index, format_string) } -> std::same_as<bool>;
+                                };
 
 // Specializations of ConvertToPy for every supported type.
 template<class UnderlyingT>
-requires(std::is_base_of_v<WrappedObject<UnderlyingT>, UnderlyingT>) struct ConvertToPy<Arg::CheckedType<UnderlyingT>> {
+    requires(std::is_base_of_v<WrappedObject<UnderlyingT>, UnderlyingT>)
+struct ConvertToPy<Arg::CheckedType<UnderlyingT>> {
     PyObject* pyobject;
     static constexpr size_t PyArgCount = 2;
 
@@ -98,7 +100,7 @@ struct ConvertToPy<Util::UString*> {
 // Specializations of GetArg
 template<class UT>
 struct GetArg<Arg::CheckedType<UT>, 0> {
-    static constexpr auto get(auto& ctp) {
+    static constexpr auto get(auto&) {
         return &UT::type_object();
     }
 };
@@ -119,7 +121,7 @@ struct GetArg<Util::UString*, 0> {
 
 // A struct which contains args to be written by PyArg_ParseTuple()
 template<class T, class... Ts>
-requires IsConvertibleToPython<T>
+    requires IsConvertibleToPython<T>
 class ConvertToPyAll : public ConvertToPyAll<Ts...> {
 protected:
     using ThisCTP = ConvertToPy<T>;
@@ -145,7 +147,7 @@ public:
 };
 
 template<class T>
-requires IsConvertibleToPython<T>
+    requires IsConvertibleToPython<T>
 class ConvertToPyAll<T> {
 protected:
     using ThisCTP = ConvertToPy<T>;

@@ -186,17 +186,17 @@ void EssaSettings::on_init() {
         layout.set_spacing(10);
         layout.set_padding(GUI::Boxf::all_equal(10));
 
-        auto pause_on_creation_toggle = add_toggle(controls_settings, "Pause when adding object", [this](bool state) {
+        add_toggle(controls_settings, "Pause when adding object", [this](bool state) {
             m_pause_simulation_on_creative_mode = state;
         });
 
-        auto fix_rotation_on_focused_object = add_toggle(
+        add_toggle(
             controls_settings, "Fix rotation on focused object", [this](bool state) {
                 m_simulation_view.set_fixed_rotation_on_focus(state);
             },
             false);
 
-        auto unfocus_after_obj_wnd_closed = add_toggle(
+        add_toggle(
             controls_settings, "Unfocus when object window closed", [this](bool state) {
                 m_unfocus_on_wnd_close = state;
             },
