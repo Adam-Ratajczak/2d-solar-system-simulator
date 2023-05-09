@@ -10,18 +10,13 @@ if(ENABLE_PYSSA)
     find_package(PythonLibs 3.5 REQUIRED)
 endif()
 
-
-if(USE_LOCAL_ESSA_FRAMEWORK)
-    find_package(Essa)
-else()
-    include(FetchContent)
-    FetchContent_Declare(Essa
-        GIT_REPOSITORY https://github.com/essa-software/EssaGUI.git
-        GIT_TAG 4500cf811c0b9f31ee7bb97f81e0583af454f3c2
-        OVERRIDE_FIND_PACKAGE
-    )
-    FetchContent_MakeAvailable(Essa)
-endif()
+include(FetchContent)
+FetchContent_Declare(Essa
+    GIT_REPOSITORY https://github.com/essa-software/EssaGUI.git
+    GIT_TAG baaa4c439767bc562a16691ce6448a2dcf7d29fb
+    OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(Essa)
 
 if(ENABLE_PYSSA)
     set(PYSSA_SOURCES 
@@ -33,9 +28,12 @@ else()
     set(PYSSA_SOURCES)
 endif()
 
-add_executable(
-    essa
+essa_executable(essa
+    LIBS
+    Essa::GUI
+    Essa::Engine-3D
 
+    SOURCES
     src/ConfigLoader.cpp
     src/History.cpp
     src/Object.cpp
@@ -56,12 +54,8 @@ add_executable(
 
     ${PYSSA_SOURCES}
 )
+essa_resources(essa assets)
 
-target_compile_options(essa PUBLIC -fdiagnostics-color=always)
-
-essautil_setup_target(essa)
-
-target_link_libraries(essa Essa::GUI Essa::Engine-3D)
 target_include_directories(essa PUBLIC ${Essa_SOURCE_DIR}) # FIXME: This should be automatic
 
 install(TARGETS essa DESTINATION bin)

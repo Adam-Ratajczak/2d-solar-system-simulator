@@ -298,7 +298,8 @@ llgl::Camera SimulationView::camera() const {
 }
 
 llgl::Projection SimulationView::projection() const {
-    return llgl::Projection::perspective({ m_fov.rad(), raw_size().x() / raw_size().y(), 0.1 * scale(), 1000 * scale() }, Util::Recti { rect() });
+    return llgl::Projection::perspective({ m_fov.rad(), raw_size().aspect_ratio(), 0.1 * scale(), 1000 * scale() },
+        Util::Recti { rect() });
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
