@@ -205,6 +205,8 @@ void WrappedObject<T>::setup_python_bindings_internal(PyTypeObject& type) {
 
 template<class T>
 PyTypeObject& WrappedObject<T>::type_object() {
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wmissing-field-initializers"
     static PyTypeObject type_object = []() {
         PyTypeObject type { PyVarObject_HEAD_INIT(nullptr, 0) };
         type.tp_name = T::PythonClassName;
@@ -215,6 +217,7 @@ PyTypeObject& WrappedObject<T>::type_object() {
         setup_python_bindings_internal(type);
         return type;
     }();
+#    pragma GCC diagnostic pop
     assert(PyType_Ready(&type_object) >= 0);
     return type_object;
 }
