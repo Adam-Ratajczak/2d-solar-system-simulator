@@ -32,7 +32,7 @@ GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_press(GUI::Event
 
         m_world.for_each_object([&](Object& obj) {
             auto obj_pos_screen = world_to_screen(obj.render_position());
-            auto distance = Util::get_distance(Util::Vector2f { obj_pos_screen.x(), obj_pos_screen.y() }, m_prev_mouse_pos);
+            auto distance = Util::get_distance(Util::DeprecatedVector2f { obj_pos_screen.x(), obj_pos_screen.y() }, m_prev_mouse_pos);
             if (distance < 30) {
                 set_focused_object(&obj, GUI::NotifyUser::Yes);
                 return;
@@ -94,11 +94,11 @@ GUI::Widget::EventHandlerResult SimulationView::on_mouse_move(GUI::Event::MouseM
     if (m_is_dragging) {
         switch (m_drag_mode) {
         case DragMode::Pan: {
-            Util::Vector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
+            Util::DeprecatedVector3d qad_delta { -drag_delta.x(), drag_delta.y(), 0 };
             set_offset(offset()
                 + (llgl::Transform {}
                         .rotate_z(real_yaw())
-                        .transform_point(Util::Cs::Point3f::from_deprecated_vector(qad_delta))
+                        .transform_point(Util::Point3f::from_deprecated_vector(qad_delta))
                         .to_vector()
                     * scale() / 320)
                       .cast<double>()
@@ -170,7 +170,7 @@ GUI::Widget::EventHandlerResult SimulationView::on_key_press(GUI::Event::KeyPres
     return EventHandlerResult::NotAccepted;
 }
 
-std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vector2f screen) const {
+std::optional<Util::DeprecatedVector3d> SimulationView::screen_to_world_on_grid(Util::DeprecatedVector2f screen) const {
     auto clip_space = screen_to_clip_space(screen);
     Util::Math::Ray ray { { clip_space.x(), clip_space.y(), 0 }, { clip_space.x(), clip_space.y(), 1 } };
 
@@ -182,7 +182,7 @@ std::optional<Util::Vector3d> SimulationView::screen_to_world_on_grid(Util::Vect
     if (object_pos_in_clip_space) {
         // Go back to world coordinates to get actual object position.
         auto object_pos_in_world_space = llgl::Transform { matrix().inverted().convert<float>() }
-                                             .transform_point(Util::Cs::Point3f::from_deprecated_vector(object_pos_in_clip_space.value()));
+                                             .transform_point(object_pos_in_clip_space.value().cast<float>());
 
         return object_pos_in_world_space.cast<double>().to_deprecated_vector();
     }
@@ -207,13 +207,13 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
         // start_coords.x -= std::remainder(start_coords.x, spacing * major_gridline_interval) + spacing;
         // start_coords.y -= std::remainder(start_coords.y, spacing * major_gridline_interval) + spacing;
         // Vector3 end_coords = screen_to_world({ size().x, size().y });
-        Util::Vector3d start_coords = { -bounds, -bounds, 0 };
+        Util::DeprecatedVector3d start_coords = { -bounds, -bounds, 0 };
         start_coords.x() -= std::round(m_offset.x() / major_gridline_spacing) * major_gridline_spacing;
         start_coords.y() -= std::round(m_offset.y() / major_gridline_spacing) * major_gridline_spacing;
-        Util::Vector3d end_coords = { bounds, bounds, 0 };
+        Util::DeprecatedVector3d end_coords = { bounds, bounds, 0 };
         end_coords.x() -= std::round(m_offset.x() / major_gridline_spacing) * major_gridline_spacing;
         end_coords.y() -= std::round(m_offset.y() / major_gridline_spacing) * major_gridline_spacing;
-        Util::Vector3d center_coords = (start_coords + end_coords) / 2.0;
+        Util::DeprecatedVector3d center_coords = (start_coords + end_coords) / 2.0;
 
         Util::Color const major_grid_line_color { 87, 87, 108 };
         Util::Color const grid_line_color { 25, 25, 37 };
@@ -268,30 +268,30 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
     }
 
     // guide
-    Util::Cs::Point2f guide_start { raw_size().x() - 200.f, raw_size().y() - 30.f };
+    Util::Point2f guide_start { raw_size().x() - 200.f, raw_size().y() - 30.f };
     // HACK: this *100 should be calculated from perspective somehow
-    Util::Cs::Point2f guide_end = guide_start - Util::Cs::Vector2f(spacing * 300 / scale(), 0);
+    Util::Point2f guide_end = guide_start - Util::Vector2f(spacing * 300 / scale(), 0);
     std::array<Gfx::Vertex, 6> guide;
     Util::Color const guide_color { 127, 127, 127 };
-    guide[0] = { (guide_start).to_deprecated_vector(), guide_color, {} };
-    guide[1] = { (guide_end).to_deprecated_vector(), guide_color, {} };
-    guide[2] = { (guide_start - Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
-    guide[3] = { (guide_start + Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
-    guide[4] = { (guide_end - Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
-    guide[5] = { (guide_end + Util::Cs::Vector2f(0, 5)).to_deprecated_vector(), guide_color, {} };
+    guide[0] = { guide_start, guide_color, {} };
+    guide[1] = { guide_end, guide_color, {} };
+    guide[2] = { guide_start - Util::Vector2f(0, 5), guide_color, {} };
+    guide[3] = { guide_start + Util::Vector2f(0, 5), guide_color, {} };
+    guide[4] = { guide_end - Util::Vector2f(0, 5), guide_color, {} };
+    guide[5] = { guide_end + Util::Vector2f(0, 5), guide_color, {} };
     painter.draw_vertices(llgl::PrimitiveType::Lines, guide);
 
     // FIXME: UB on size_t conversion
     Gfx::Text guide_text { Util::unit_display(spacing / 2 / zoom_step_exponent * Util::Constants::AU, Util::Quantity::Length).to_string(), GUI::Application::the().font() };
     guide_text.set_font_size(theme().label_font_size);
     guide_text.set_fill_color(Util::Colors::White);
-    guide_text.align(GUI::Align::Center, { guide_start - Util::Cs::Vector2f(0, 10), (guide_end - guide_start).to_size() });
+    guide_text.align(GUI::Align::Center, { guide_start - Util::Vector2f(0, 10), (guide_end - guide_start).to_size() });
     guide_text.draw(painter);
 }
 
 llgl::Camera SimulationView::camera() const {
     return llgl::Camera { projection() }
-        .translate(Util::Vector3f { -m_offset })
+        .translate(Util::Vector3f::from_deprecated_vector(-m_offset))
         .rotate_z(Util::Angle::radians(static_cast<float>(m_yaw)))
         .rotate_x(Util::Angle::radians(static_cast<float>(m_pitch)))
         .translate({ 0, 0, scale() });
@@ -299,18 +299,18 @@ llgl::Camera SimulationView::camera() const {
 
 llgl::Projection SimulationView::projection() const {
     return llgl::Projection::perspective({ m_fov.rad(), raw_size().aspect_ratio(), 0.1 * scale(), 1000 * scale() },
-        Util::Recti { rect() });
+        Util::Recti { this->absolute_rect() });
 }
 
 Util::Matrix4x4d SimulationView::matrix() const {
     return (projection().matrix() * camera().view_matrix()).convert<double>();
 }
 
-Util::Vector3f SimulationView::world_to_screen(Util::Vector3d local_space) const {
+Util::DeprecatedVector3f SimulationView::world_to_screen(Util::DeprecatedVector3d local_space) const {
     // https://learnopengl.com/Getting-started/Coordinate-Systems
-    auto clip_space = (matrix() * Util::Cs::Point4d { Util::Cs::Point3d::from_deprecated_vector(local_space), 1.0 });
+    auto clip_space = (matrix() * Util::Point4d { Util::Point3d::from_deprecated_vector(local_space), 1.0 });
     clip_space /= clip_space.w();
-    return Util::Vector3f { clip_space_to_screen(Util::Cs::Vector3d { clip_space.to_vector() }.to_deprecated_vector()), clip_space.z() };
+    return Util::DeprecatedVector3f { clip_space_to_screen(Util::Vector3d { clip_space.to_vector() }.to_deprecated_vector()), clip_space.z() };
 }
 
 llgl::Renderer& SimulationView::renderer() const {
@@ -376,7 +376,7 @@ void SimulationView::update() {
         set_offset(-m_focused_object->render_position());
 
         if (m_focused_object->most_attracting_object() && m_fixed_rotation_on_focus) {
-            Util::Vector3d a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
+            Util::DeprecatedVector3d a = m_focused_object->pos() - m_focused_object->most_attracting_object()->pos();
 
             m_pitch_from_object = std::atan2(a.y(), a.z()) - M_PI / 2;
             m_yaw_from_object = std::atan2(a.y(), a.x()) + M_PI / 2;
@@ -396,11 +396,11 @@ Object* SimulationView::focused_object() const {
     return {};
 }
 
-Util::Vector2f SimulationView::clip_space_to_screen(Util::Vector3d clip_space) const {
+Util::DeprecatedVector2f SimulationView::clip_space_to_screen(Util::DeprecatedVector3d clip_space) const {
     return { (clip_space.x() + 1) / 2 * raw_size().x(), raw_size().y() - (clip_space.y() + 1) / 2 * raw_size().y() };
 }
 
-Util::Vector3d SimulationView::screen_to_clip_space(Util::Vector2f viewport) const {
+Util::DeprecatedVector3d SimulationView::screen_to_clip_space(Util::DeprecatedVector2f viewport) const {
     return { (viewport.x() - raw_size().x() / 2.0) * 2 / raw_size().x(), -(viewport.y() - raw_size().y() / 2.0) * 2 / raw_size().y(), 1 };
 }
 

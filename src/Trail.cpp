@@ -33,7 +33,7 @@ Trail::Trail(size_t max_trail_size, Util::Color color)
     m_length++;
 }
 
-std::pair<Util::Vector3f, Util::Vector3f> Trail::m_get_last_two_entries() const {
+std::pair<Util::Point3f, Util::Point3f> Trail::m_get_last_two_entries() const {
     int i1 = m_append_offset;
     int i2 = m_append_offset - 1;
 
@@ -46,11 +46,11 @@ std::pair<Util::Vector3f, Util::Vector3f> Trail::m_get_last_two_entries() const 
     return std::make_pair(m_vertexes[i1].value<0>(), m_vertexes[i2].value<0>());
 }
 
-void Trail::push_back(Util::Vector3d pos) {
+void Trail::push_back(Util::Point3d pos) {
     // Ensure that the trail always has the beginning
     if (m_length == 1) {
         assert(m_append_offset == 1);
-        m_vertexes[m_append_offset] = Vertex { Util::Vector3f { pos / Util::Constants::AU }, m_color };
+        m_vertexes[m_append_offset] = Vertex { pos.cast<float>() / Util::Constants::AU, m_color };
         m_append_offset++;
         m_length++;
     }
@@ -61,13 +61,13 @@ void Trail::push_back(Util::Vector3d pos) {
             return;
         }
     }
-    m_vertexes[m_append_offset] = Vertex { Util::Vector3f { pos / Util::Constants::AU }, m_color };
+    m_vertexes[m_append_offset] = Vertex { pos.cast<float>() / Util::Constants::AU, m_color };
 
     m_append_offset++;
     if (static_cast<size_t>(m_length) < m_vertexes.size())
         m_length++;
     if (static_cast<size_t>(m_append_offset) == m_vertexes.size()) {
-        m_vertexes[0] = Vertex { Util::Vector3f { pos / Util::Constants::AU }, m_color };
+        m_vertexes[0] = Vertex { pos.cast<float>() / Util::Constants::AU, m_color };
         m_append_offset = 1;
     }
 
@@ -83,14 +83,14 @@ void Trail::recalculate_with_offset(Util::Vector3d offset) {
     if (m_offset == offset)
         return;
     for (int s = 0; s < m_length; s++)
-        m_vertexes[s].value<0>() = m_vertexes[s].value<0>() + Util::Vector3f { m_offset / Util::Constants::AU - offset / Util::Constants::AU };
+        m_vertexes[s].value<0>() = m_vertexes[s].value<0>() + m_offset.cast<float>() / Util::Constants::AU - offset.cast<float>() / Util::Constants::AU;
     m_offset = offset;
 }
 
 void Trail::draw(SimulationView const& sv) const {
     static Essa::Shaders::Basic shader;
     Essa::Shaders::Basic::Uniforms uniforms;
-    uniforms.set_transform(llgl::Transform {}.translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { m_offset / Util::Constants::AU })).matrix(),
+    uniforms.set_transform(llgl::Transform {}.translate(m_offset.cast<float>() / Util::Constants::AU).matrix(),
         sv.camera().view_matrix(),
         sv.projection().matrix());
 
@@ -103,11 +103,11 @@ void Trail::draw(SimulationView const& sv) const {
     }
 }
 
-void Trail::change_current(Util::Vector3d pos) {
+void Trail::change_current(Util::Point3d pos) {
     assert(m_length > 0);
     if (m_append_offset == 1)
-        m_vertexes[m_length - 1].value<0>() = Util::Vector3f { pos / Util::Constants::AU };
-    m_vertexes[m_append_offset - 1].value<0>() = Util::Vector3f { pos / Util::Constants::AU };
+        m_vertexes[m_length - 1].value<0>() = pos.cast<float>() / Util::Constants::AU;
+    m_vertexes[m_append_offset - 1].value<0>() = pos.cast<float>() / Util::Constants::AU;
 }
 
 std::ostream& operator<<(std::ostream& out, Trail const& trail) {

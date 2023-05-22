@@ -98,7 +98,7 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
                 });
             }
             else {
-                m_simulation_view.start_coords_measure([&](Util::Vector3d pos) {
+                m_simulation_view.start_coords_measure([&](Util::DeprecatedVector3d pos) {
                     m_add_object_button->set_visible(true);
                     m_forward_simulation_is_valid = false;
                     m_new_object_pos = pos;
@@ -137,7 +137,7 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
                 host_window().spawn_notification("You need to specify initial coords of the object", GUI::HostWindow::NotificationLevel::Error);
                 return;
             }
-            m_simulation_view.start_coords_measure([this](Util::Vector3d coords) {
+            m_simulation_view.start_coords_measure([this](Util::DeprecatedVector3d coords) {
                 assert(m_new_object);
                 m_new_object->require_orbit_point(coords);
             });
@@ -414,7 +414,7 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_params() const {
             alpha = alpha / 180 * M_PI;
         }
 
-        Util::Vector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
+        Util::DeprecatedVector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
 
         auto pos = m_new_object_pos;
         pos.z() = m_y_position_control->value();

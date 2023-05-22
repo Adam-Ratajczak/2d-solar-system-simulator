@@ -58,7 +58,7 @@ private:
     GUI::ImageButton* m_require_orbit_point_button = nullptr;
 
     World m_forward_simulated_world;
-    Util::Vector3d m_new_object_pos;
+    Util::DeprecatedVector3d m_new_object_pos;
 
     std::unique_ptr<Object> m_new_object;
 

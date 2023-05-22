@@ -19,8 +19,8 @@ struct Planet {
 };
 
 struct AbsolutePlanet : public Planet {
-    Util::Vector3d position;
-    Util::Vector3d velocity;
+    Util::DeprecatedVector3d position;
+    Util::DeprecatedVector3d velocity;
 };
 
 enum class Direction {

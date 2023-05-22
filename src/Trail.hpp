@@ -7,7 +7,7 @@
 
 class Trail {
     struct Vertex : public Essa::Shaders::Basic::Vertex {
-        Vertex(Util::Vector3f pos, Util::Colorf color)
+        Vertex(Util::Point3f pos, Util::Colorf color)
             : Essa::Shaders::Basic::Vertex(pos, color, {}) { }
 
         Vertex()
@@ -27,16 +27,16 @@ class Trail {
 
     const Util::Color m_color;
 
-    std::pair<Util::Vector3f, Util::Vector3f> m_get_last_two_entries() const;
+    std::pair<Util::Point3f, Util::Point3f> m_get_last_two_entries() const;
 
 public:
     Trail(size_t max_trail_size, Util::Color color);
     void draw(SimulationView const&) const;
-    void push_back(Util::Vector3d pos);
+    void push_back(Util::Point3d pos);
     void reset();
     void set_offset(Util::Vector3d offset) { m_offset = offset; }
     void recalculate_with_offset(Util::Vector3d offset);
-    void change_current(Util::Vector3d pos);
+    void change_current(Util::Point3d pos);
     void set_enable_min_step(bool b) { m_enable_min_step = b; }
 
 private:

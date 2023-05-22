@@ -68,6 +68,7 @@ void EssaGUI::on_init() {
 
     auto menu = add_widget<GUI::SettingsMenu>();
     menu->set_position({ 10.0_px, 10.0_px });
+    menu->set_size({ 100_perc, 100_perc });
     {
         auto& create_menu = menu->add_entry(resource_manager().require_texture("createButton.png"), "Create new object");
         create_menu.on_toggle = [this](bool state) {

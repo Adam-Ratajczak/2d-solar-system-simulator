@@ -27,7 +27,7 @@ Object Object::create(double v) {
     return o;
 }
 
-Object Object::create(Util::Vector3d const& vector) {
+Object Object::create(Util::DeprecatedVector3d const& vector) {
     auto tuple = PySSA::Object::empty_tuple(3);
     tuple.set_tuple_item(0, PySSA::Object::create(vector.x()));
     tuple.set_tuple_item(1, PySSA::Object::create(vector.y()));
@@ -102,7 +102,7 @@ std::optional<std::vector<Object>> Object::as_tuple() const {
     return list;
 }
 
-std::optional<Util::Vector3d> Object::as_vector() const {
+std::optional<Util::DeprecatedVector3d> Object::as_vector() const {
     auto object_as_tuple = as_tuple();
     if (!object_as_tuple.has_value())
         return {};
@@ -126,7 +126,7 @@ std::optional<Util::Vector3d> Object::as_vector() const {
         PyErr_SetString(PyExc_TypeError, "'z' coordinate must be a float");
         return {};
     }
-    return Util::Vector3d(x.value(), y.value(), z.value());
+    return Util::DeprecatedVector3d(x.value(), y.value(), z.value());
 }
 
 std::optional<Util::Color> Object::as_color() const {

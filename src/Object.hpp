@@ -20,7 +20,7 @@
 
 class Object : public PySSA::WrappedObject<Object> {
 public:
-    Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, Util::UString name, unsigned period);
+    Object(double mass, double radius, Util::DeprecatedVector3d pos, Util::DeprecatedVector3d vel, Util::Color color, Util::UString name, unsigned period);
 
 #ifdef ENABLE_PYSSA
     static Object* create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -31,7 +31,7 @@ public:
     Object(Object&& other) = delete;
     Object& operator=(Object&& other) = delete;
 
-    Util::Vector3d render_position() const { return m_pos / Util::Constants::AU; }
+    Util::DeprecatedVector3d render_position() const { return m_pos / Util::Constants::AU; }
 
     Util::UString name() const { return m_name; }
 
@@ -67,18 +67,18 @@ public:
 
     // Calculates velocity and direction so that the orbit passes through
     // the given point.
-    void require_orbit_point(Util::Vector3d);
+    void require_orbit_point(Util::DeprecatedVector3d);
 
     double mass() const { return m_gravity_factor / Util::Constants::Gravity; }
     double gravity_factor() const { return m_gravity_factor; }
 
-    Util::Vector3d pos() const { return m_pos; }
-    void set_pos(const Util::Vector3d& pos) { m_pos = pos; }
+    Util::DeprecatedVector3d pos() const { return m_pos; }
+    void set_pos(const Util::DeprecatedVector3d& pos) { m_pos = pos; }
 
-    Util::Vector3d vel() const { return m_vel; }
-    void set_vel(const Util::Vector3d& vel) { m_vel = vel; }
+    Util::DeprecatedVector3d vel() const { return m_vel; }
+    void set_vel(const Util::DeprecatedVector3d& vel) { m_vel = vel; }
 
-    Util::Vector3d acc() const { return m_attraction_factor; }
+    Util::DeprecatedVector3d acc() const { return m_attraction_factor; }
 
     Util::Color color() const { return m_color; }
 
@@ -130,7 +130,7 @@ private:
     void nonphysical_update();
 
     // Draws label in at 3d position but not projected (in GUI layer).
-    void draw_label(Gfx::Painter&, SimulationView const&, Util::Vector3d position, Util::UString string, Util::Color) const;
+    void draw_label(Gfx::Painter&, SimulationView const&, Util::DeprecatedVector3d position, Util::UString string, Util::Color) const;
 
 #ifdef ENABLE_PYSSA
     PySSA::Object python_attraction(PySSA::Object const& args, PySSA::Object const& kwargs);
@@ -154,12 +154,12 @@ private:
     History m_history;
 
     // NOTE: We only keep that for Python. It's not used anywhere.
-    Util::Vector3d attraction(const Object&);
+    Util::DeprecatedVector3d attraction(const Object&);
     void recalculate_trails_with_offset();
 
-    Util::Vector3d m_pos;
-    Util::Vector3d m_vel;
-    Util::Vector3d m_attraction_factor;
+    Util::DeprecatedVector3d m_pos;
+    Util::DeprecatedVector3d m_vel;
+    Util::DeprecatedVector3d m_attraction_factor;
 
     bool m_deleted = false;
     bool m_is_forward_simulated = false;
@@ -182,8 +182,8 @@ private:
     Object* m_most_attracting_object = nullptr;
 
     struct ClosestApproachEntry {
-        Util::Vector3d this_position;
-        Util::Vector3d other_object_position;
+        Util::DeprecatedVector3d this_position;
+        Util::DeprecatedVector3d other_object_position;
         double distance {};
     };
     std::map<Object*, ClosestApproachEntry> m_closest_approaches;

@@ -83,7 +83,7 @@ public:
         return tuple;
     }
 
-    static Object create(Util::Vector3d const&);
+    static Object create(Util::DeprecatedVector3d const&);
     static Object create(Util::Color const&);
 
     void set_tuple_item(Py_ssize_t i, Object const& object) {
@@ -127,7 +127,7 @@ public:
     std::optional<double> as_double() const;
     std::optional<std::vector<Object>> as_list() const;
     std::optional<std::vector<Object>> as_tuple() const;
-    std::optional<Util::Vector3d> as_vector() const;
+    std::optional<Util::DeprecatedVector3d> as_vector() const;
     std::optional<Util::Color> as_color() const;
 
     Util::UString str() const;

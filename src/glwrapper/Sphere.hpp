@@ -36,7 +36,7 @@ public:
         bool m_fancy;
         float m_radius;
         Util::Colorf m_color;
-        Util::Vector3f m_light_position;
+        Util::Point3f m_light_position;
 
         static inline auto mapping = llgl::make_uniform_mapping(
                                          llgl::Uniform { "fancy", &Uniforms::m_fancy },
@@ -60,23 +60,23 @@ public:
     };
 
     void set_color(Util::Color color) { m_color = color; }
-    void set_position(Util::Vector3d pos) { m_position = pos; }
+    void set_position(Util::DeprecatedVector3d pos) { m_position = pos; }
     void set_radius(double radius) { m_radius = radius; }
     void set_draw_mode(DrawMode mode) { m_mode = mode; }
-    void set_light_position(Util::Vector3d pos) { m_light_position = pos; }
+    void set_light_position(Util::Point3d pos) { m_light_position = pos; }
 
     void draw(Gfx::Painter& window, SimulationView const&) const;
 
     double radius() const { return m_radius; }
     Util::Color color() const { return m_color; }
-    Util::Vector3d position() const { return m_position; }
+    Util::DeprecatedVector3d position() const { return m_position; }
     DrawMode mode() const { return m_mode; }
-    Util::Vector3d light_position() const { return m_light_position; }
+    Util::Point3d light_position() const { return m_light_position; }
 
 private:
     DrawMode m_mode = DrawMode::Full;
-    Util::Vector3d m_position;
-    Util::Vector3d m_light_position;
+    Util::DeprecatedVector3d m_position;
+    Util::Point3d m_light_position;
     double m_radius {};
     Util::Color m_color;
     mutable SphereShader m_shader;

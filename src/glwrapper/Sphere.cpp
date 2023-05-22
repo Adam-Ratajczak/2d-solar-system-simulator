@@ -67,7 +67,7 @@ void SphereShader::Uniforms::load_sphere(Sphere const& sphere) {
     m_radius = sphere.radius();
     if (sphere.mode() == Sphere::DrawMode::Fancy) {
         m_fancy = true;
-        m_light_position = Util::Vector3f { sphere.light_position() };
+        m_light_position = sphere.light_position().cast<float>();
     }
     else {
         m_fancy = false;
@@ -87,7 +87,7 @@ std::string_view SphereShader::source(llgl::ShaderType type) const {
 void Sphere::draw(Gfx::Painter& window, SimulationView const& sv) const {
     GUI::WorldDrawScope::verify();
 
-    auto model = llgl::Transform {}.translate(Util::Cs::Vector3f::from_deprecated_vector(Util::Vector3f { m_position })).scale(m_radius);
+    auto model = llgl::Transform {}.translate(Util::Vector3f::from_deprecated_vector(Util::DeprecatedVector3f { m_position })).scale(m_radius);
     m_shader_uniforms.load_sphere(*this);
     m_shader_uniforms.set_transform(model.matrix(), sv.camera().view_matrix(), sv.projection().matrix());
     m_sphere.render(window.renderer(), m_shader, m_shader_uniforms);

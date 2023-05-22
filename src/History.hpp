@@ -7,7 +7,7 @@
 
 class History {
     struct Entry {
-        Util::Vector3d pos, vel;
+        Util::DeprecatedVector3d pos, vel;
     };
 
     std::list<Entry> m_entry_list;

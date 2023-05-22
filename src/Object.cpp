@@ -1,5 +1,6 @@
 #include "Object.hpp"
 
+#include "EssaUtil/CoordinateSystem.hpp"
 #include "SimulationView.hpp"
 #include "World.hpp"
 #include "glwrapper/Helpers.hpp"
@@ -28,7 +29,7 @@
 
 static Util::DelayedInit<Sphere> s_sphere;
 
-Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d vel, Util::Color color, Util::UString name, unsigned period)
+Object::Object(double mass, double radius, Util::DeprecatedVector3d pos, Util::DeprecatedVector3d vel, Util::Color color, Util::UString name, unsigned period)
     : m_trail(std::max(2U, std::max(period * 2, (unsigned)500)), color)
     , m_history(1000, { pos, vel })
     , m_pos(pos)
@@ -38,7 +39,7 @@ Object::Object(double mass, double radius, Util::Vector3d pos, Util::Vector3d ve
     , m_radius(radius)
     , m_name(std::move(name))
     , m_color(color) {
-    m_trail.push_back(m_pos);
+    m_trail.push_back(Util::Point3d::from_deprecated_vector(m_pos));
 }
 
 Sphere& Object::sphere() {
@@ -49,10 +50,10 @@ Sphere& Object::sphere() {
     return *s_sphere;
 }
 
-Util::Vector3d Object::attraction(const Object& other) {
-    Util::Vector3d dist = this->m_pos - other.m_pos;
+Util::DeprecatedVector3d Object::attraction(const Object& other) {
+    Util::DeprecatedVector3d dist = this->m_pos - other.m_pos;
     double force = other.m_gravity_factor / dist.length_squared();
-    Util::Vector3d normalized_dist = dist.normalized();
+    Util::DeprecatedVector3d normalized_dist = dist.normalized();
     return normalized_dist * force;
 }
 
@@ -62,13 +63,13 @@ bool Object::deleted() const {
 
 void Object::update_forces_against(Object& object) {
     // TODO: Collisions
-    Util::Vector3d dist = this->m_pos - object.m_pos;
+    Util::DeprecatedVector3d dist = this->m_pos - object.m_pos;
     // denominator: R^2*normalized(dist)
     double denominator = dist.length_squared();
     denominator *= std::sqrt(denominator);
     auto attraction_base = dist / denominator;
 
-    auto calculate_attraction = [&](Util::Vector3d& this_attraction, Util::Vector3d& other_attraction) mutable {
+    auto calculate_attraction = [&](Util::DeprecatedVector3d& this_attraction, Util::DeprecatedVector3d& other_attraction) mutable {
         this_attraction = attraction_base * object.m_gravity_factor;
         m_attraction_factor -= this_attraction;
 
@@ -76,7 +77,7 @@ void Object::update_forces_against(Object& object) {
         object.m_attraction_factor += other_attraction;
     };
 
-    Util::Vector3d this_attraction, other_attraction;
+    Util::DeprecatedVector3d this_attraction, other_attraction;
 
     calculate_attraction(this_attraction, other_attraction);
 
@@ -104,7 +105,7 @@ void Object::nonphysical_update() {
         recalculate_trails_with_offset();
     else {
         m_trail.recalculate_with_offset({});
-        m_trail.push_back(m_pos);
+        m_trail.push_back(Util::Point3d::from_deprecated_vector(m_pos));
     }
 
     if (m_most_attracting_object == nullptr)
@@ -123,7 +124,7 @@ void Object::nonphysical_update() {
 }
 
 void Object::clear_forces() {
-    m_attraction_factor = Util::Vector3d();
+    m_attraction_factor = Util::DeprecatedVector3d();
     m_max_attraction = 0;
 }
 
@@ -154,15 +155,15 @@ void Object::update(int speed) {
 void Object::recalculate_trails_with_offset() {
     if (!m_most_attracting_object || m_is_forward_simulated) {
         m_trail.recalculate_with_offset({});
-        m_trail.push_back(m_pos);
+        m_trail.push_back(Util::Point3d::from_deprecated_vector(m_pos));
         return;
     }
 
     if (m_most_attracting_object != m_old_most_attracting_object)
-        m_trail.recalculate_with_offset(m_most_attracting_object->m_pos);
+        m_trail.recalculate_with_offset(Util::Vector3d::from_deprecated_vector(m_most_attracting_object->m_pos));
     else
-        m_trail.set_offset(m_most_attracting_object->m_pos);
-    m_trail.push_back(m_pos - m_most_attracting_object->m_pos);
+        m_trail.set_offset(Util::Vector3d::from_deprecated_vector(m_most_attracting_object->m_pos));
+    m_trail.push_back(Util::Point3d::from_deprecated_vector(m_pos - m_most_attracting_object->m_pos));
 }
 
 void Object::delete_most_attracting_object() {
@@ -180,7 +181,7 @@ void Object::draw(Gfx::Painter& painter, SimulationView const& view) {
     s_sphere->set_position(scaled_pos);
     s_sphere->set_color(m_color);
     if (m_world)
-        s_sphere->set_light_position(m_world->light_source() ? m_world->light_source()->pos() / Util::Constants::AU : Util::Vector3d());
+        s_sphere->set_light_position(m_world->light_source() ? Util::Point3d::from_deprecated_vector(m_world->light_source()->pos()) / Util::Constants::AU : Util::Point3d());
     s_sphere->draw(painter, view);
 
     if (view.show_trails())
@@ -199,9 +200,17 @@ void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const
     for (auto& closest_approach_entry : m_closest_approaches) {
         if (closest_approach_entry.second.distance > Util::Constants::AU / 10)
             continue;
-        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.this_position / Util::Constants::AU }, Util::Color { m_color.r, m_color.g, m_color.b, 100 }, {} });
+        closest_approaches_vertexes.push_back(Vertex {
+            Util::Point3f::from_deprecated_vector(closest_approach_entry.second.this_position) / Util::Constants::AU,
+            Util::Color { m_color.r, m_color.g, m_color.b, 100 },
+            {},
+        });
         Util::Color other_color { closest_approach_entry.first->m_color.r, closest_approach_entry.first->m_color.g, closest_approach_entry.first->m_color.b, 100 };
-        closest_approaches_vertexes.push_back(Vertex { Util::Vector3f { closest_approach_entry.second.other_object_position / Util::Constants::AU }, other_color, {} });
+        closest_approaches_vertexes.push_back(Vertex {
+            Util::Point3f::from_deprecated_vector(closest_approach_entry.second.other_object_position) / Util::Constants::AU,
+            other_color,
+            {},
+        });
     }
     GL::draw_with_temporary_vao<Vertex>(painter.renderer(), shader, uniforms, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
@@ -218,7 +227,7 @@ void Object::draw_closest_approaches_gui(Gfx::Painter& painter, SimulationView c
     }
 }
 
-void Object::draw_label(Gfx::Painter& painter, SimulationView const& sv, Util::Vector3d position, Util::UString string, Util::Color color) const {
+void Object::draw_label(Gfx::Painter& painter, SimulationView const& sv, Util::DeprecatedVector3d position, Util::UString string, Util::Color color) const {
     auto screen_position = sv.world_to_screen(position);
 
     // Don't draw labels of planets outside of clipping box
@@ -274,17 +283,19 @@ void Object::draw_gui(Gfx::Painter& painter, SimulationView const& view) {
         auto l1 = (m_pos + diff.with_length(l1_2_dist)) / Util::Constants::AU;
         auto l2 = (m_pos - diff.with_length(l1_2_dist)) / Util::Constants::AU;
 
-        auto draw_lagrange_point = [&](Util::Vector3d position, Util::UString const& label) {
+        auto draw_lagrange_point = [&](Util::DeprecatedVector3d position, Util::UString const& label) {
             draw_label(painter, view, position,
                 Util::UString(fmt::format("{}-{} {}", m_name.encode(), m_most_attracting_object->name().encode(), label.encode())),
                 Util::Colors::Orange);
 
-            painter.draw(Gfx::Drawing::Ellipse(Util::Vector2f(view.world_to_screen(l1)), { 2, 2 },
+            painter.draw(Gfx::Drawing::Ellipse(Util::Point2f::from_deprecated_vector(Util::DeprecatedVector2f(view.world_to_screen(l1))), { 2, 2 },
                 Gfx::Drawing::Fill::solid(Util::Colors::Orange)));
         };
 
-        painter.draw_line({ Util::Vector2f(view.world_to_screen(m_most_attracting_object->render_position())),
-                              Util::Vector2f(view.world_to_screen(l2)) },
+        painter.draw_line({
+                              Util::Point2f::from_deprecated_vector(Util::DeprecatedVector2f(view.world_to_screen(m_most_attracting_object->render_position()))),
+                              Util::Point2f::from_deprecated_vector(Util::DeprecatedVector2f(view.world_to_screen(l2))),
+                          },
             Gfx::LineDrawOptions { .color = Util::Colors::Gray });
 
         draw_lagrange_point(l1, "L1");
@@ -305,11 +316,11 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
-    Util::Vector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
+    Util::DeprecatedVector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
     pos = pos.rotate_z(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::Vector3d {}, color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::DeprecatedVector3d {}, color, name, T / (3600 * 24));
     result->m_ap = apogee.value();
     result->m_pe = perigee.value();
 
@@ -322,7 +333,7 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
     result->m_pe_vel = std::sqrt(2 * GM / perigee.value() - velocity_constant);
     double velocity = std::sqrt(2 * GM / Util::get_distance(pos, this->m_pos) - velocity_constant);
 
-    Util::Vector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
+    Util::DeprecatedVector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
 
     if (direction)
         vel = -vel;
@@ -344,11 +355,11 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
-    Util::Vector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
+    Util::DeprecatedVector3d pos(std::cos(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(theta.rad()) * std::cos(alpha.rad()) * a, std::sin(alpha.rad()) * a);
     pos = pos.rotate_z(rotation.rad());
     pos += this->m_pos;
 
-    auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::Vector3d {}, color, name, T / (3600 * 24));
+    auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::DeprecatedVector3d {}, color, name, T / (3600 * 24));
     result->m_ap = 0;
     result->m_pe = std::numeric_limits<double>::max();
 
@@ -361,7 +372,7 @@ std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, D
     result->m_pe_vel = std::sqrt(2 * GM / (a - a * ecc) - velocity_constant);
     double velocity = std::sqrt(2 * GM / Util::get_distance(pos, this->m_pos) - velocity_constant);
 
-    Util::Vector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
+    Util::DeprecatedVector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
 
     if (direction)
         vel = -vel;
@@ -388,7 +399,7 @@ std::unique_ptr<Object> Object::clone_for_forward_simulation() const {
     return object;
 }
 
-void Object::require_orbit_point(Util::Vector3d pos) {
+void Object::require_orbit_point(Util::DeprecatedVector3d pos) {
     std::cout << "TODO: require_orbit_point " << pos << std::endl;
 }
 
@@ -429,8 +440,8 @@ void Object::setup_python_bindings(TypeSetup setup) {
 Object* Object::create_for_python(PySSA::Object const& args, PySSA::Object const& kwargs) {
     double mass = 0;
     double radius = 0;
-    Util::Vector3d pos;
-    Util::Vector3d vel;
+    Util::DeprecatedVector3d pos;
+    Util::DeprecatedVector3d vel;
     Util::Color color;
     char const* name = "Planet";
     unsigned period = 1;

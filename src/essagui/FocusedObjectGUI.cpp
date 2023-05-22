@@ -303,7 +303,7 @@ std::unique_ptr<Object> FocusedObjectGUI::m_create_object_from_params() const {
     theta = theta / 180 * M_PI;
     alpha = alpha / 180 * M_PI;
 
-    Util::Vector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
+    Util::DeprecatedVector3d vel(std::cos(theta) * std::cos(alpha) * velocity, std::sin(theta) * std::cos(alpha) * velocity, std::sin(alpha) * velocity);
 
     auto pos = m_new_object_pos;
     pos.z() = m_y_position_control->value();

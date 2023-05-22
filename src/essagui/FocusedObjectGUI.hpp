@@ -70,7 +70,7 @@ private:
     GUI::TextButton* m_light_source_button = nullptr;
     GUI::TextButton* m_lagrange_button = nullptr;
 
-    Util::Vector3d m_new_object_pos;
+    Util::DeprecatedVector3d m_new_object_pos;
 
     void m_create_info_gui(GUI::Container& info);
     void m_create_modify_gui(GUI::Container& modify);
