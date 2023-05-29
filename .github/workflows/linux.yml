@@ -14,7 +14,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Dependency install
-      run: sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libglew-dev ninja-build libfmt-dev
+      run: sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libglew-dev ninja-build
+    - name: Install fmt
+      run: |
+        git clone https://github.com/fmtlib/fmt fmt --depth 1 --branch 9.1.0
+        mkdir fmt/build
+        cd fmt/build
+        cmake .. -GNinja -DBUILD_SHARED_LIBS=1 -DFMT_TEST=0
+        ninja
+        sudo ninja install
     - name: Build & install EssaGUI
       run: |
         git clone https://github.com/essa-software/EssaGUI.git
