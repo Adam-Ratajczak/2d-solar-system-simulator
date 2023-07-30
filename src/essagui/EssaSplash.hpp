@@ -5,7 +5,7 @@
 
 class EssaSplash : public GUI::ToolWindow {
 public:
-    explicit EssaSplash(GUI::HostWindow&, EssaSettings& essa_settings);
+    explicit EssaSplash(GUI::MDI::Host&, EssaSettings& essa_settings);
 
 private:
     virtual void handle_event(GUI::Event const&) override;

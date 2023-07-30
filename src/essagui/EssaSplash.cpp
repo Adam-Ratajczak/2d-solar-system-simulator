@@ -14,7 +14,7 @@
 
 #include <algorithm>
 
-EssaSplash::EssaSplash(GUI::HostWindow& window, EssaSettings& essa_settings)
+EssaSplash::EssaSplash(GUI::MDI::Host& window, EssaSettings& essa_settings)
     : GUI::ToolWindow(window)
     , m_essa_settings(essa_settings) {
     (void)load_from_eml_resource(resource_manager().require<EML::EMLResource>("Splash.eml"));

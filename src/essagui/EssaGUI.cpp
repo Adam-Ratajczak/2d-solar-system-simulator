@@ -32,7 +32,7 @@ void EssaGUI::on_init() {
         if (obj == nullptr)
             return;
 
-        auto focused_object_window = host_window().open_or_focus_tool_window(Util::UString { obj->name() }, "FocusedGUI");
+        auto focused_object_window = host_window().legacy_mdi_host()->open_or_focus_window(Util::UString { obj->name() }, "FocusedGUI");
         if (focused_object_window.opened) {
             focused_object_window.window->set_position({ raw_size().x() - 550, 50 });
             focused_object_window.window->set_size({ 500, 600 });
@@ -51,7 +51,7 @@ void EssaGUI::on_init() {
     };
 
     m_world.on_reset = [&]() {
-        host_window().for_each_overlay([](GUI::Overlay& wnd) {
+        host_window().legacy_mdi_host()->for_each_overlay([](GUI::Overlay& wnd) {
             if (wnd.id() == "FocusedGUI")
                 wnd.close();
         });
@@ -127,7 +127,7 @@ void EssaGUI::open_python_repl() {
     python_repl_window.set_title("PySSA");
     python_repl_window.set_position({ 600, 750 });
     python_repl_window.set_size({ 700, 250 });
-    host_window().focus_overlay(python_repl_window);
+    host_window().legacy_mdi_host()->focus_overlay(python_repl_window);
     python_repl_window.set_main_widget<PythonREPL>();
 #else
     GUI::message_box("PySSA is not enabled on this build. Use Linux build with -DENABLE_PYSSA=1 instead.", "Error", GUI::MessageBox::Buttons::Ok);
