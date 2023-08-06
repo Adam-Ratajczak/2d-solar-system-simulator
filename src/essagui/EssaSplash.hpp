@@ -3,12 +3,12 @@
 #include "EssaSettings.hpp"
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
 
-class EssaSplash : public GUI::ToolWindow {
+class EssaSplash : public GUI::WindowRoot {
 public:
-    explicit EssaSplash(GUI::MDI::Host&, EssaSettings& essa_settings);
+    explicit EssaSplash(GUI::WidgetTreeRoot&, EssaSettings& essa_settings);
 
 private:
-    virtual void handle_event(GUI::Event const&) override;
+    virtual GUI::Widget::EventHandlerResult handle_event(GUI::Event const&) override;
 
     EssaSettings& m_essa_settings;
 };

@@ -3,6 +3,7 @@
     width: 600
     height: 500
     center_on_screen: true
+
     main_widget: @Container {
         layout: @VerticalBoxLayout {
             padding: 10

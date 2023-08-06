@@ -3,7 +3,7 @@
 #include "EssaGUI.hpp"
 
 #include <Essa/GUI/Overlays/MessageBox.hpp>
-#include <Essa/GUI/Overlays/NotificationWindow.hpp>
+#include <Essa/GUI/Widgets/NotificationContainer.hpp>
 #include <Essa/GUI/Widgets/ValueSlider.hpp>
 #include <EssaUtil/Length.hpp>
 #include <cmath>
@@ -135,7 +135,7 @@ void EssaCreateObject::m_create_submit_container(Container& container) {
         m_require_orbit_point_button->set_tooltip_text("Recalculate apoapsis/periapsis so that the orbit passes the point");
         m_require_orbit_point_button->on_click = [this]() {
             if (!m_new_object) {
-                static_cast<EssaGUI&>(*widget_tree_root().main_widget()).notification_window().spawn_notification("You need to specify initial coords of the object", GUI::NotificationWindow::Level::Error);
+                static_cast<EssaGUI&>(*window_root().window().main_widget()).notification_window().spawn_notification("You need to specify initial coords of the object", GUI::NotificationContainer::Level::Error);
                 return;
             }
             m_simulation_view.start_coords_measure([this](Util::DeprecatedVector3d coords) {

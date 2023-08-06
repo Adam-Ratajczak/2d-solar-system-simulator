@@ -16,6 +16,8 @@ int main() {
 
     GUI::Application application;
     auto& host_window = application.create_host_window({ 1000, 1000 }, "ESSA");
+    host_window.maximize();
+    host_window.set_background_color(Util::Colors::Black);
     auto& gui = host_window.set_main_widget<EssaGUI>(world);
 
     world.reset({});
@@ -28,21 +30,15 @@ int main() {
     }
 #endif
 
-    auto& notification_window = host_window.open_overlay<GUI::NotificationWindow>();
-    notification_window.set_size({ 200, 500 });
-    notification_window.set_position({ host_window.size().x() / 2 - notification_window.size().x() / 2, 10 });
-    gui.set_notification_window(notification_window);
-
-    host_window.on_event = [&](GUI::Event const& event) -> GUI::Widget::EventHandlerResult {
-        if (auto* resize = event.get<GUI::Event::WindowResize>()) {
-            notification_window.set_position({ resize->new_size().x() / 2 - notification_window.size().x() / 2, 10 });
-        }
-        return GUI::Widget::EventHandlerResult::NotAccepted;
-    };
-
     // Display splash
-    auto& splash = host_window.open_overlay<EssaSplash>(gui.settings_gui());
-    splash.show_modal();
+    // FIXME: Here basically repeating what WindowRoot does on relayout. Maybe we should:
+    // - add a helper function for that (force_relayout()??)
+    // - even better, ensure that layout is done as soon as possible (E.g immediately after setting main widget)
+    gui.set_raw_size(host_window.size());
+    gui.do_relayout();
+    gui.dump(0);
+    gui.mdi_host().open_overlay<EssaSplash>(gui.settings_gui());
+    // splash.overlay.show_modal();
 
     application.run();
     return EXIT_SUCCESS;

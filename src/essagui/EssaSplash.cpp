@@ -14,10 +14,10 @@
 
 #include <algorithm>
 
-EssaSplash::EssaSplash(GUI::MDI::Host& window, EssaSettings& essa_settings)
-    : GUI::ToolWindow(window)
+EssaSplash::EssaSplash(GUI::WidgetTreeRoot& window, EssaSettings& essa_settings)
+    : GUI::WindowRoot(window)
     , m_essa_settings(essa_settings) {
-    (void)load_from_eml_resource(resource_manager().require<EML::EMLResource>("Splash.eml"));
+    (void)load_from_eml_resource(GUI::Application::the().resource_manager().require<EML::EMLResource>("Splash.eml"));
 
     auto main_widget = static_cast<GUI::Container*>(this->main_widget());
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_solar_system")->on_click = [this]() {
@@ -25,19 +25,19 @@ EssaSplash::EssaSplash(GUI::MDI::Host& window, EssaSettings& essa_settings)
         close();
     };
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_file")->on_click = [this]() {
-        auto& prompt = host_window().open_overlay<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
-        prompt.add_desired_extension(".essa");
-        prompt.show_modal();
+        auto prompt = GUI::Application::the().open_host_window<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
+        prompt.root.add_desired_extension(".essa");
+        prompt.window.show_modal();
 
-        if (prompt.result().has_value()) {
-            m_essa_settings.load_world(prompt.result().value().encode());
+        if (prompt.root.result().has_value()) {
+            m_essa_settings.load_world(prompt.root.result().value().encode());
             close();
         }
     };
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("create_empty")->on_click = [this]() {
         close();
     };
-    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("about")->on_click = [this]() {
+    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("about")->on_click = [main_widget]() {
         constexpr char const AboutString[] = "ESSA - Extremely Sophiscated Space Application\n"
                                              "\n"
                                              "Copyright (c) 2022 Adam2004yt, sppmacd\n"
@@ -50,21 +50,21 @@ EssaSplash::EssaSplash(GUI::MDI::Host& window, EssaSettings& essa_settings)
                                              "\u2022 EssaUtil (https://github.com/essa-software/util)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
 
-        GUI::message_box(host_window(), AboutString, "About", GUI::MessageBox::Buttons::Ok);
+        // FIXME: Taking host window from random widget
+        GUI::message_box(main_widget->host_window(), AboutString, "About", GUI::MessageBox::Buttons::Ok);
     };
 }
 
-void EssaSplash::handle_event(GUI::Event const& event) {
-    GUI::ToolWindow::handle_event(event);
-
-    if (auto e = event.get<GUI::Event::MouseButtonPress>(); e) {
-        if (!full_rect().contains(e->local_position() + position().to_vector())) {
-            close();
-        }
+GUI::Widget::EventHandlerResult EssaSplash::handle_event(GUI::Event const& event) {
+    if (event.is<GUI::Event::WindowFocusLost>()) {
+        close();
+        return GUI::Widget::EventHandlerResult::Accepted;
     }
     else if (auto e = event.get<GUI::Event::KeyPress>(); e) {
         if (e->code() == llgl::KeyCode::Escape) {
             close();
+            return GUI::Widget::EventHandlerResult::Accepted;
         }
     }
+    return GUI::Widget::EventHandlerResult::NotAccepted;
 }
