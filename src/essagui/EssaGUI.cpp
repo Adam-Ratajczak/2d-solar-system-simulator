@@ -7,7 +7,6 @@
 
 #include <Essa/GUI/Application.hpp>
 #include <Essa/GUI/EML/EMLResource.hpp>
-#include <Essa/GUI/Overlay.hpp>
 #include <Essa/GUI/Overlays/FilePrompt.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
@@ -59,7 +58,7 @@ void EssaGUI::on_init() {
         };
 
         m_world.on_reset = [&]() {
-            m_mdi_host->for_each_overlay([](GUI::Overlay& wnd) {
+            m_mdi_host->for_each_window([](GUI::MDI::Window& wnd) {
                 if (wnd.id() == "FocusedGUI")
                     wnd.close();
             });
@@ -144,12 +143,12 @@ void EssaGUI::on_init() {
 
 void EssaGUI::open_python_repl() {
 #ifdef ENABLE_PYSSA
-    auto& python_repl_window = m_mdi_host->open_overlay<GUI::ToolWindow>();
-    python_repl_window.set_title("PySSA");
-    python_repl_window.set_position({ 600, 750 });
-    python_repl_window.set_size({ 700, 250 });
-    m_mdi_host->focus_overlay(python_repl_window);
-    python_repl_window.set_main_widget<PythonREPL>();
+    auto python_repl_window = m_mdi_host->open_window();
+    python_repl_window.window.set_title("PySSA");
+    python_repl_window.window.set_position({ 600, 750 });
+    python_repl_window.window.set_size({ 700, 250 });
+    m_mdi_host->focus_window(python_repl_window.window);
+    python_repl_window.root.set_main_widget<PythonREPL>();
 #else
     GUI::message_box("PySSA is not enabled on this build. Use Linux build with -DENABLE_PYSSA=1 instead.", "Error", GUI::MessageBox::Buttons::Ok);
 #endif

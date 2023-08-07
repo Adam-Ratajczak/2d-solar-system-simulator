@@ -37,7 +37,7 @@ int main() {
     gui.set_raw_size(host_window.size());
     gui.do_relayout();
     gui.dump(0);
-    gui.mdi_host().open_overlay<EssaSplash>(gui.settings_gui());
+    gui.mdi_host().open_window<EssaSplash>(gui.settings_gui());
     // splash.overlay.show_modal();
 
     application.run();
