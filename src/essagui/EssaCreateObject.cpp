@@ -359,23 +359,23 @@ void EssaCreateObject::m_create_object_from_params_gui(Container& container) {
 void EssaCreateObject::m_create_object_from_orbit_gui(Container& container) {
     container.set_layout<GUI::VerticalBoxLayout>().set_spacing(5);
 
-    m_apogee_control = container.add_widget<GUI::ValueSlider>();
-    m_apogee_control->set_min(0);
-    m_apogee_control->set_max(0.05 * Util::Constants::AU);
-    m_apogee_control->set_name("Apogee");
-    m_apogee_control->set_unit("km");
-    m_apogee_control->set_class_name("Dist");
-    m_apogee_control->on_change = [this](double) {
+    m_apoapsis_control = container.add_widget<GUI::ValueSlider>();
+    m_apoapsis_control->set_min(0);
+    m_apoapsis_control->set_max(0.05 * Util::Constants::AU);
+    m_apoapsis_control->set_name("Apoapsis");
+    m_apoapsis_control->set_unit("km");
+    m_apoapsis_control->set_class_name("Dist");
+    m_apoapsis_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
-    m_perigee_control = container.add_widget<GUI::ValueSlider>();
-    m_perigee_control->set_min(0);
-    m_perigee_control->set_max(0.05 * Util::Constants::AU);
-    m_perigee_control->set_name("Perigee");
-    m_perigee_control->set_unit("km");
-    m_perigee_control->set_class_name("Dist");
-    m_perigee_control->on_change = [this](double) {
+    m_periapsis_control = container.add_widget<GUI::ValueSlider>();
+    m_periapsis_control->set_min(0);
+    m_periapsis_control->set_max(0.05 * Util::Constants::AU);
+    m_periapsis_control->set_name("Periapsis");
+    m_periapsis_control->set_unit("km");
+    m_periapsis_control->set_class_name("Dist");
+    m_periapsis_control->on_change = [this](double) {
         m_forward_simulation_is_valid = false;
     };
 
@@ -433,23 +433,23 @@ std::unique_ptr<Object> EssaCreateObject::m_create_object_from_orbit() const {
         return nullptr;
     double mass = std::stod(m_mass_textbox->content().encode()) * std::pow(10, std::stod(m_mass_exponent_textbox->content().encode()));
     Distance radius = { static_cast<float>(m_radius_control->value() * 1000), Distance::Kilometer };
-    Distance apogee, perigee;
+    Distance apoapsis, periapsis;
     Util::Angle angle, tilt;
 
     if (m_toggle_unit_button->is_active()) {
-        apogee = { static_cast<float>(m_apogee_control->value() * Util::Constants::AU), Distance::Au };
-        perigee = { static_cast<float>(m_perigee_control->value() * Util::Constants::AU), Distance::Au };
+        apoapsis = { static_cast<float>(m_apoapsis_control->value() * Util::Constants::AU), Distance::Au };
+        periapsis = { static_cast<float>(m_periapsis_control->value() * Util::Constants::AU), Distance::Au };
 
         angle = Util::Angle::radians(static_cast<float>(m_orbit_angle_control->value()));
         tilt = Util::Angle::radians(static_cast<float>(m_orbit_tilt_control->value()));
     }
     else {
-        apogee = { static_cast<float>(m_apogee_control->value() * 1000), Distance::Kilometer };
-        perigee = { static_cast<float>(m_perigee_control->value() * 1000), Distance::Kilometer };
+        apoapsis = { static_cast<float>(m_apoapsis_control->value() * 1000), Distance::Kilometer };
+        periapsis = { static_cast<float>(m_periapsis_control->value() * 1000), Distance::Kilometer };
 
         angle = Util::Angle::degrees(m_orbit_angle_control->value());
         tilt = Util::Angle::degrees(m_orbit_tilt_control->value());
     }
 
-    return m_focused->create_object_relative_to_ap_pe(mass, radius, apogee, perigee, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->content(), 0.0_deg);
+    return m_focused->create_object_relative_to_ap_pe(mass, radius, apoapsis, periapsis, m_toggle_orbit_direction_button->is_active(), angle, tilt, m_color_control->color(), m_name_textbox->content(), 0.0_deg);
 }

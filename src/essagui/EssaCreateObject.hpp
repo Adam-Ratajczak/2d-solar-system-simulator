@@ -39,8 +39,8 @@ private:
 
     GUI::ValueSlider* m_orbit_angle_control = nullptr;
     GUI::ValueSlider* m_orbit_tilt_control = nullptr;
-    GUI::ValueSlider* m_apogee_control = nullptr;
-    GUI::ValueSlider* m_perigee_control = nullptr;
+    GUI::ValueSlider* m_apoapsis_control = nullptr;
+    GUI::ValueSlider* m_periapsis_control = nullptr;
 
     GUI::Textbox* m_mass_textbox = nullptr;
     GUI::Textbox* m_mass_exponent_textbox = nullptr;

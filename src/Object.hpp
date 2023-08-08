@@ -59,9 +59,9 @@ public:
     void set_display_lagrange_points(bool display) { m_display_lagrange_points = display; }
 
     void calculate_propieties();
-    std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
+    std::unique_ptr<Object> create_object_relative_to_ap_pe(double mass, Distance radius, Distance apoapsis, Distance periapsis, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
     std::unique_ptr<Object> create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation);
-    void add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation = 0.0_rad);
+    void add_object_relative_to(double mass, Distance radius, Distance apoapsis, Distance periapsis, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation = 0.0_rad);
 
     std::unique_ptr<Object> clone_for_forward_simulation() const;
 
@@ -106,10 +106,10 @@ public:
 
         // Only if orbiting around more massive object.
         double distance_from_most_massive_object = 0; // in AU
-        double apogee = 0;                            // in AU
-        double apogee_velocity = 0;
-        double perigee = 0; // in AU
-        double perigee_velocity = 0;
+        double apoapsis = 0;                            // in AU
+        double apoapsis_velocity = 0;
+        double periapsis = 0; // in AU
+        double periapsis_velocity = 0;
         double orbit_period = 0;
         double orbit_eccentrity = 0;
     };

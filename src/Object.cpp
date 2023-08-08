@@ -255,10 +255,10 @@ Object::Info Object::get_info() const {
 
     if (m_most_attracting_object) {
         info.distance_from_most_massive_object = Util::get_distance(this->m_pos, m_most_attracting_object->m_pos);
-        info.apogee = m_ap;
-        info.apogee_velocity = m_ap_vel;
-        info.perigee = m_pe;
-        info.perigee_velocity = m_pe_vel;
+        info.apoapsis = m_ap;
+        info.apoapsis_velocity = m_ap_vel;
+        info.periapsis = m_pe;
+        info.periapsis_velocity = m_pe_vel;
         info.orbit_period = m_orbit_len;
         info.orbit_eccentrity = eccentrity;
     }
@@ -307,12 +307,12 @@ void Object::draw_gui(Gfx::Painter& painter, SimulationView const& view) {
     draw_label(painter, view, render_position(), Util::UString { m_name }, m_is_forward_simulated ? Util::Color { 128, 128, 128 } : Util::Colors::White);
 }
 
-std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
+std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Distance radius, Distance apoapsis, Distance periapsis, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
     // formulae used from site: https://www.scirp.org/html/6-9701522_18001.htm
     // std::cout << m_gravity_factor << "\n";
     double GM = m_gravity_factor;
-    double a = (apogee.value() + perigee.value()) / 2;
-    double b = std::sqrt(apogee.value() * perigee.value());
+    double a = (apoapsis.value() + periapsis.value()) / 2;
+    double b = std::sqrt(apoapsis.value() * periapsis.value());
 
     double T = 2 * M_PI * std::sqrt((a * a * a) / GM);
     // T = T * std::sin(theta.rad()) + T * std::cos(alpha.rad());
@@ -321,16 +321,16 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
     pos += this->m_pos;
 
     auto result = std::make_unique<Object>(mass, radius.value(), pos, Util::DeprecatedVector3d {}, color, name, T / (3600 * 24));
-    result->m_ap = apogee.value();
-    result->m_pe = perigee.value();
+    result->m_ap = apoapsis.value();
+    result->m_pe = periapsis.value();
 
     result->eccentrity = std::sqrt(1 - (b * b) / (a * a));
     // std::cout << result.eccentrity << "\n";
 
-    double velocity_constant = (2 * GM) / (apogee.value() + perigee.value());
+    double velocity_constant = (2 * GM) / (apoapsis.value() + periapsis.value());
 
-    result->m_ap_vel = std::sqrt(2 * GM / apogee.value() - velocity_constant);
-    result->m_pe_vel = std::sqrt(2 * GM / perigee.value() - velocity_constant);
+    result->m_ap_vel = std::sqrt(2 * GM / apoapsis.value() - velocity_constant);
+    result->m_pe_vel = std::sqrt(2 * GM / periapsis.value() - velocity_constant);
     double velocity = std::sqrt(2 * GM / Util::get_distance(pos, this->m_pos) - velocity_constant);
 
     Util::DeprecatedVector3d vel(std::cos(theta.rad() + M_PI / 2) * velocity, std::sin(theta.rad() + M_PI / 2) * velocity, 0);
@@ -344,8 +344,8 @@ std::unique_ptr<Object> Object::create_object_relative_to_ap_pe(double mass, Dis
     return result;
 }
 
-void Object::add_object_relative_to(double mass, Distance radius, Distance apogee, Distance perigee, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
-    m_world->add_object(create_object_relative_to_ap_pe(mass, radius, apogee, perigee, direction, theta, alpha, color, name, rotation));
+void Object::add_object_relative_to(double mass, Distance radius, Distance apoapsis, Distance periapsis, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {
+    m_world->add_object(create_object_relative_to_ap_pe(mass, radius, apoapsis, periapsis, direction, theta, alpha, color, name, rotation));
 }
 
 std::unique_ptr<Object> Object::create_object_relative_to_maj_ecc(double mass, Distance radius, Distance semi_major, double ecc, bool direction, Util::Angle theta, Util::Angle alpha, Util::Color color, Util::UString name, Util::Angle rotation) {

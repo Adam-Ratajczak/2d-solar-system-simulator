@@ -48,10 +48,10 @@ private:
     std::vector<Container*> m_fields;
 
     Field m_distance_from_most_massive_object_textfield;
-    Field m_apogee_textfield;
-    Field m_apogee_velocity_textfield;
-    Field m_perigee_textfield;
-    Field m_perigee_velocity_textfield;
+    Field m_apoapsis_textfield;
+    Field m_apoapsis_velocity_textfield;
+    Field m_periapsis_textfield;
+    Field m_periapsis_velocity_textfield;
     Field m_orbit_period_textfield;
     Field m_orbit_eccentrity_textfield;
 

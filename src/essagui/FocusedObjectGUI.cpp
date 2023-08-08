@@ -84,10 +84,10 @@ void FocusedObjectGUI::m_create_info_gui(GUI::Container& info) {
     m_orbiting_title->set_class_name("most_massive_data");
 
     m_distance_from_most_massive_object_textfield = add_field("Distance", true);
-    m_apogee_textfield = add_field("Apogee", true);
-    m_apogee_velocity_textfield = add_field("Apogee velocity", true);
-    m_perigee_textfield = add_field("Perigee", true);
-    m_perigee_velocity_textfield = add_field("Perigee velocity", true);
+    m_apoapsis_textfield = add_field("Apoapsis", true);
+    m_apoapsis_velocity_textfield = add_field("Apoapsis velocity", true);
+    m_periapsis_textfield = add_field("Periapsis", true);
+    m_periapsis_velocity_textfield = add_field("Periapsis velocity", true);
     m_orbit_period_textfield = add_field("Orbit period", true);
     m_orbit_eccentrity_textfield = add_field("Orbit eccentrity", true);
 }
@@ -353,10 +353,10 @@ void FocusedObjectGUI::update_params() {
     m_radius_textfield.set_content_from_unit_value(Util::unit_display(info.radius, Util::Quantity::Length));
     m_absolute_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.absolute_velocity, Util::Quantity::Velocity));
     m_distance_from_most_massive_object_textfield.set_content_from_unit_value(Util::unit_display(info.distance_from_most_massive_object, Util::Quantity::Length));
-    m_apogee_textfield.set_content_from_unit_value(Util::unit_display(info.apogee, Util::Quantity::Length));
-    m_apogee_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.apogee_velocity, Util::Quantity::Velocity));
-    m_perigee_textfield.set_content_from_unit_value(Util::unit_display(info.perigee, Util::Quantity::Length));
-    m_perigee_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.perigee_velocity, Util::Quantity::Velocity));
+    m_apoapsis_textfield.set_content_from_unit_value(Util::unit_display(info.apoapsis, Util::Quantity::Length));
+    m_apoapsis_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.apoapsis_velocity, Util::Quantity::Velocity));
+    m_periapsis_textfield.set_content_from_unit_value(Util::unit_display(info.periapsis, Util::Quantity::Length));
+    m_periapsis_velocity_textfield.set_content_from_unit_value(Util::unit_display(info.periapsis_velocity, Util::Quantity::Velocity));
     m_orbit_period_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_period, Util::Quantity::Time));
     m_orbit_eccentrity_textfield.set_content_from_unit_value(Util::unit_display(info.orbit_eccentrity, Util::Quantity::None));
 
