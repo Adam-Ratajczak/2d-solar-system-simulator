@@ -106,7 +106,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     m_radius_control->set_unit("km");
 
     auto mass_container = modify.add_widget<GUI::Container>();
-    mass_container->set_size({ Util::Length::Auto, 30.0_px });
+    mass_container->set_size({ Util::Length::Auto, 32.0_px });
     {
         auto& mass_layout = mass_container->set_layout<GUI::HorizontalBoxLayout>();
         mass_layout.set_spacing(10);
@@ -169,7 +169,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
     m_y_position_control->set_class_name("Dist");
 
     auto main_color_container = modify.add_widget<Container>();
-    main_color_container->set_size({ Util::Length::Auto, 30.0_px });
+    main_color_container->set_size({ Util::Length::Auto, 32.0_px });
     auto& main_color_layout = main_color_container->set_layout<GUI::HorizontalBoxLayout>();
     main_color_layout.set_spacing(10);
     {
@@ -181,7 +181,7 @@ void FocusedObjectGUI::m_create_modify_gui(GUI::Container& modify) {
         m_color_control = main_color_container->add_widget<GUI::ColorPicker>();
     }
     auto name_container = modify.add_widget<Container>();
-    name_container->set_size({ Util::Length::Auto, 30.0_px });
+    name_container->set_size({ Util::Length::Auto, 32.0_px });
     auto& name_layout = name_container->set_layout<GUI::HorizontalBoxLayout>();
     name_layout.set_spacing(10);
     {
