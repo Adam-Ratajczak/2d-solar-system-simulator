@@ -13,7 +13,7 @@ endif()
 include(FetchContent)
 FetchContent_Declare(Essa
     GIT_REPOSITORY https://github.com/essa-software/EssaGUI.git
-    GIT_TAG bbe49093d560580f41e0abb649b8f524d6ae1960
+    GIT_TAG 5ca436cd864f8d5b38fad7b7b4e2c74ef7e1bd9a
     OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(Essa)
