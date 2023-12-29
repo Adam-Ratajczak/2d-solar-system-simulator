@@ -2,6 +2,7 @@
 
 #include "pyssa/WrappedObject.hpp"
 
+#include <Essa/Engine/3D/Shaders/Basic.hpp>
 #include <Essa/GUI/NotifyUser.hpp>
 #include <Essa/GUI/Widgets/Widget.hpp>
 #include <Essa/GUI/Widgets/WorldView.hpp>
@@ -19,9 +20,7 @@ class World;
 class SimulationView : public GUI::WorldView
     , public PySSA::WrappedObject<SimulationView> {
 public:
-    explicit SimulationView(World& world)
-        : WorldView()
-        , m_world(world) { reset(); }
+    explicit SimulationView(World& world);
 
     void set_offset(Util::DeprecatedVector3d o) { m_offset = o; }
     void set_zoom(double d) { m_zoom = d; }
@@ -103,6 +102,8 @@ public:
     bool is_paused() const { return m_pause_count > 0; }
     void push_pause();
     void pop_pause();
+
+    Gfx::FullShaderResource<Essa::Shaders::Basic>& basic_shader() const { return *m_basic_shader; }
 
 #ifdef ENABLE_PYSSA
     static void setup_python_bindings(TypeSetup);
@@ -189,4 +190,6 @@ private:
     int m_speed = 1;
     int m_saved_speed = 1;
     int m_pause_count = 0;
+
+    Gfx::FullShaderResource<Essa::Shaders::Basic>* m_basic_shader = nullptr;
 };

@@ -25,10 +25,12 @@
                 layout: @VerticalBoxLayout {
                     spacing: 10
                 }
+                width: auto
             }
 
             define Essa_SplashButton : @TextButton {
                 height: 40px
+                width: auto
             }
 
             @Essa_SplashColumn {

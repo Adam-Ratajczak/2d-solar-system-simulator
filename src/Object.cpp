@@ -192,7 +192,6 @@ void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const
     GUI::WorldDrawScope::verify();
 
     using Vertex = Essa::Shaders::Basic::Vertex;
-    static Essa::Shaders::Basic shader;
     Essa::Shaders::Basic::Uniforms uniforms;
     uniforms.set_model(view.matrix().convert<float>());
 
@@ -212,7 +211,7 @@ void Object::draw_closest_approaches(Gfx::Painter& painter, SimulationView const
             {},
         });
     }
-    GL::draw_with_temporary_vao<Vertex>(painter.renderer(), shader, uniforms, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
+    GL::draw_with_temporary_vao<Vertex>(painter.renderer(), view.basic_shader(), uniforms, llgl::PrimitiveType::Lines, closest_approaches_vertexes);
 }
 
 void Object::draw_closest_approaches_gui(Gfx::Painter& painter, SimulationView const& view) {

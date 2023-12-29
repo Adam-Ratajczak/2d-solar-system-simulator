@@ -10,6 +10,7 @@
 #include <Essa/GUI/Overlays/FilePrompt.hpp>
 #include <Essa/GUI/Overlays/MessageBox.hpp>
 #include <Essa/GUI/Overlays/ToolWindow.hpp>
+#include <Essa/GUI/Widgets/MDI/Host.hpp>
 #include <Essa/GUI/Widgets/NotificationContainer.hpp>
 #include <cmath>
 #include <filesystem>
@@ -101,7 +102,7 @@ void EssaGUI::on_init() {
             load_world.on_toggle = [this](bool) {
                 auto prompt = GUI::Application::the().open_host_window<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
                 prompt.root.add_desired_extension(".essa");
-                prompt.window.show_modal();
+                prompt.window.show_modal(&this->host_window());
 
                 if (prompt.root.result().has_value())
                     m_settings_gui->load_world(prompt.root.result().value().encode());
@@ -133,8 +134,8 @@ void EssaGUI::on_init() {
     notification_container->set_position({ Util::Length(host_window().size().x() / 2 - 250, Util::Length::Px), 10_px });
     m_notification_container = notification_container;
 
-    host_window().on_event = [notification_container](GUI::Event const& event) -> GUI::Widget::EventHandlerResult {
-        if (auto* resize = event.get<GUI::Event::WindowResize>()) {
+    host_window().on_event = [notification_container](llgl::Event const& event) -> GUI::Widget::EventHandlerResult {
+        if (auto* resize = event.get<llgl::Event::WindowResize>()) {
             notification_container->set_position({ Util::Length(resize->new_size().x() / 2 - 250, Util::Length::Px), 10_px });
         }
         return GUI::Widget::EventHandlerResult::NotAccepted;

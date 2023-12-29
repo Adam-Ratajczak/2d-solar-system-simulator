@@ -8,7 +8,7 @@ public:
     explicit EssaSplash(GUI::WidgetTreeRoot&, EssaSettings& essa_settings);
 
 private:
-    virtual GUI::Widget::EventHandlerResult handle_event(GUI::Event const&) override;
+    virtual GUI::Widget::EventHandlerResult handle_event(llgl::Event const&) override;
 
     EssaSettings& m_essa_settings;
 };

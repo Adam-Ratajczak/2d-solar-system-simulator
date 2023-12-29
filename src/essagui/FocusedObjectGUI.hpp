@@ -6,6 +6,7 @@
 #include <Essa/GUI/Widgets/Button.hpp>
 #include <Essa/GUI/Widgets/ColorPicker.hpp>
 #include <Essa/GUI/Widgets/Container.hpp>
+#include <Essa/GUI/Widgets/MDI/Window.hpp>
 #include <Essa/GUI/Widgets/TextButton.hpp>
 #include <Essa/GUI/Widgets/Textfield.hpp>
 #include <Essa/GUI/Widgets/ValueSlider.hpp>
@@ -15,7 +16,7 @@
 
 class FocusedObjectGUI : public GUI::Container {
 public:
-    FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w);
+    FocusedObjectGUI(Object* o, GUI::MDI::Window* wnd, World& w);
 
     virtual void on_init() override;
     virtual void update() override;
@@ -27,7 +28,7 @@ private:
     virtual GUI::Boxi intrinsic_padding() const override { return GUI::Boxi::all_equal(5); }
 
     Object* m_focused = nullptr;
-    GUI::ToolWindow* m_window = nullptr;
+    GUI::MDI::Window* m_window = nullptr;
     World& m_world;
 
     unsigned m_tab = 0;

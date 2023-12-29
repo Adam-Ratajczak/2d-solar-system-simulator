@@ -23,6 +23,13 @@
 #include <optional>
 #include <sstream>
 
+SimulationView::SimulationView(World& world)
+    : WorldView()
+    , m_world(world) {
+    reset();
+    m_basic_shader = &Essa::Shaders::Basic::load(GUI::Application::the().resource_manager());
+}
+
 GUI::Widget::EventHandlerResult SimulationView::on_mouse_button_press(GUI::Event::MouseButtonPress const& event) {
     m_prev_mouse_pos = event.local_position().cast<float>().to_deprecated_vector();
     // std::cout << "SV MouseButtonPressed " << Vector3 { m_prev_mouse_pos } << "b=" << (int)event.event().mouseButton.button << std::endl;
@@ -218,7 +225,6 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
         Util::Color const major_grid_line_color { 87, 87, 108 };
         Util::Color const grid_line_color { 25, 25, 37 };
 
-        static Essa::Shaders::Basic shader;
         Essa::Shaders::Basic::Uniforms uniforms;
         uniforms.set_transform({},
             camera().view_matrix(),
@@ -264,7 +270,7 @@ void SimulationView::draw_grid(Gfx::Painter& painter) const {
             index++;
         }
 
-        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(painter.renderer(), shader, uniforms, llgl::PrimitiveType::Lines, vertices);
+        GL::draw_with_temporary_vao<Essa::Shaders::Basic::Vertex>(painter.renderer(), *m_basic_shader, uniforms, llgl::PrimitiveType::Lines, vertices);
     }
 
     // guide

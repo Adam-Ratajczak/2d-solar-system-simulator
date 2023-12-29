@@ -88,18 +88,17 @@ void Trail::recalculate_with_offset(Util::Vector3d offset) {
 }
 
 void Trail::draw(SimulationView const& sv) const {
-    static Essa::Shaders::Basic shader;
     Essa::Shaders::Basic::Uniforms uniforms;
     uniforms.set_transform(llgl::Transform {}.translate(m_offset.cast<float>() / Util::Constants::AU).matrix(),
         sv.camera().view_matrix(),
         sv.projection().matrix());
 
     if (static_cast<size_t>(m_length) != m_vertexes.size()) {
-        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), sv.basic_shader(), uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + 1, static_cast<size_t>(m_append_offset - 1) });
     }
     else {
-        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
-        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), shader, uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), sv.basic_shader(), uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data(), static_cast<size_t>(m_append_offset) });
+        GL::draw_with_temporary_vao<Vertex>(sv.renderer(), sv.basic_shader(), uniforms, llgl::PrimitiveType::LineStrip, { m_vertexes.data() + m_append_offset, static_cast<size_t>(m_length - m_append_offset) });
     }
 }
 

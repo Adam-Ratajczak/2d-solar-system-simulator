@@ -7,6 +7,7 @@
 #include "pyssa/Environment.hpp"
 
 #include <Essa/GUI/Application.hpp>
+#include <Essa/GUI/Widgets/MDI/Host.hpp>
 #include <iostream>
 
 int main() {
@@ -36,7 +37,6 @@ int main() {
     // - even better, ensure that layout is done as soon as possible (E.g immediately after setting main widget)
     gui.set_raw_size(host_window.size());
     gui.do_relayout();
-    gui.dump(0);
     gui.mdi_host().open_window<EssaSplash>(gui.settings_gui());
     // splash.overlay.show_modal();
 

@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <memory>
 
-FocusedObjectGUI::FocusedObjectGUI(Object* o, GUI::ToolWindow* wnd, World& w)
+FocusedObjectGUI::FocusedObjectGUI(Object* o, GUI::MDI::Window* wnd, World& w)
     : m_focused(o)
     , m_window(wnd)
     , m_world(w) {

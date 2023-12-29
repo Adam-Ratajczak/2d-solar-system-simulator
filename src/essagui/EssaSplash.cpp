@@ -27,7 +27,7 @@ EssaSplash::EssaSplash(GUI::WidgetTreeRoot& window, EssaSettings& essa_settings)
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("open_file")->on_click = [this]() {
         auto prompt = GUI::Application::the().open_host_window<GUI::FilePrompt>("Choose file to open: ", "Open file", "e.g.: solar.essa");
         prompt.root.add_desired_extension(".essa");
-        prompt.window.show_modal();
+        prompt.window.show_modal(&this->window().host_window());
 
         if (prompt.root.result().has_value()) {
             m_essa_settings.load_world(prompt.root.result().value().encode());
@@ -37,7 +37,7 @@ EssaSplash::EssaSplash(GUI::WidgetTreeRoot& window, EssaSettings& essa_settings)
     main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("create_empty")->on_click = [this]() {
         close();
     };
-    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("about")->on_click = [main_widget]() {
+    main_widget->find_widget_of_type_by_id_recursively<GUI::Button>("about")->on_click = [this]() {
         constexpr char const AboutString[] = "ESSA - Extremely Sophiscated Space Application\n"
                                              "\n"
                                              "Copyright (c) 2022 Adam2004yt, sppmacd\n"
@@ -47,20 +47,18 @@ EssaSplash::EssaSplash(GUI::WidgetTreeRoot& window, EssaSettings& essa_settings)
                                              "\n"
                                              "Powered by:\n"
                                              "\u2022 EssaGUI (https://github.com/essa-software/EssaGUI)\n"
-                                             "\u2022 EssaUtil (https://github.com/essa-software/util)\n"
                                              "\u2022 Python (https://github.com/python/cpython";
 
-        // FIXME: Taking host window from random widget
-        GUI::message_box(main_widget->host_window(), AboutString, "About", GUI::MessageBox::Buttons::Ok);
+        GUI::message_box(this->window().host_window(), AboutString, "About", GUI::MessageBox::Buttons::Ok);
     };
 }
 
-GUI::Widget::EventHandlerResult EssaSplash::handle_event(GUI::Event const& event) {
-    if (event.is<GUI::Event::WindowFocusLost>()) {
+GUI::Widget::EventHandlerResult EssaSplash::handle_event(llgl::Event const& event) {
+    if (event.is<llgl::Event::WindowFocusLost>()) {
         close();
         return GUI::Widget::EventHandlerResult::Accepted;
     }
-    else if (auto e = event.get<GUI::Event::KeyPress>(); e) {
+    else if (auto e = event.get<llgl::Event::KeyPress>(); e) {
         if (e->code() == llgl::KeyCode::Escape) {
             close();
             return GUI::Widget::EventHandlerResult::Accepted;
